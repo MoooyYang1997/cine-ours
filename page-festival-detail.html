@@ -1253,5 +1253,6 @@ document.addEventListener('keydown',function(e){
 <script>
 if(!window.shellNavigate){window.shellNavigate=function(p){if(window.parent&&window.parent.navigate)window.parent.navigate(p);else window.parent.postMessage({type:"navigate",payload:{page:p}},"*")};window.shellShowToast=function(m){if(window.parent&&window.parent.showToast)window.parent.showToast(m);else window.parent.postMessage({type:"toast",payload:{msg:m}},"*")}}
 </script>
+<script src="supabase.js"></script>
 </body>
 </html>

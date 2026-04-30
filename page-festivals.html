@@ -121,5 +121,6 @@ function nav(p){if(window.parent&&window.parent.navigate)window.parent.navigate(
 function toast(m){if(window.parent&&window.parent.showToast)window.parent.showToast(m);else window.parent.postMessage({type:'toast',payload:{msg:m}},'*')}
 function toggleF(btn){btn.closest('.filters').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on')}
 </script>
+<script src="supabase.js"></script>
 </body>
 </html>
