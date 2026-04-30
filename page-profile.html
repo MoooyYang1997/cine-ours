@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>余小舟 — Cine Ours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+/* ── TOKENS ─────────────────────────────────────── */
+:root{
+  --bg:#0C0B09; --bg1:#111009; --bg2:#171510; --bg3:#1E1C16;
+  --bg4:#26231C; --bg5:#302D24;
+  --ink:#EDE6D9; --ink2:#B5AC9E; --ink3:#7A7268; --ink4:#4A4540;
+  --gold:#C8A44A; --gold2:#9B7A2E; --gold3:#5C4518;
+  --green:#5C9E6A; --green2:#3D6B4A;
+  --blue:#4A7FA5; --purple:#7A5FA5; --coral:#A55A4A;
+  --b:rgba(237,230,217,.07); --b2:rgba(237,230,217,.12); --b3:rgba(237,230,217,.2);
+  --tr:all .22s cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.03'/%3E%3C/svg%3E");opacity:.45}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4)}
+a{color:inherit;text-decoration:none}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:inherit}
+
+/* ── NAV ────────────────────────────────────────── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 48px;
+  border-bottom:1px solid var(--b);background:rgba(12,11,9,.92);backdrop-filter:blur(16px)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:19px;cursor:pointer}
+.nav-logo em{font-style:italic;color:var(--gold)}
+.nav-links{display:flex;gap:4px}
+.nav-link{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:6px 14px;transition:var(--tr);cursor:pointer}
+.nav-link:hover{color:var(--ink)}
+.nav-link.active{color:var(--ink)}
+.nav-right{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;font-size:12px;letter-spacing:.07em;text-transform:uppercase;padding:8px 20px;transition:var(--tr);cursor:pointer}
+.btn-outline{border:1px solid var(--b2);color:var(--ink3)}
+.btn-outline:hover{border-color:var(--b3);color:var(--ink)}
+.btn-gold{background:var(--gold);color:var(--bg);border:1px solid var(--gold)}
+.btn-gold:hover{background:#D9B55A}
+.nav-av{width:32px;height:32px;border-radius:50%;background:var(--gold3);border:2px solid var(--gold2);
+  display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;color:var(--gold);cursor:pointer}
+
+/* ── LAYOUT ─────────────────────────────────────── */
+.profile-root{padding-top:62px;display:grid;grid-template-columns:300px 1fr;min-height:100vh}
+
+/* ── LEFT SIDEBAR ───────────────────────────────── */
+.sidebar{
+  border-right:1px solid var(--b);
+  position:sticky;top:62px;height:calc(100vh - 62px);
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar::-webkit-scrollbar{width:2px}
+
+/* Avatar zone */
+.av-zone{
+  padding:36px 28px 24px;border-bottom:1px solid var(--b);
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  position:relative;
+}
+.av-bg{
+  position:absolute;top:0;left:0;right:0;height:80px;
+  background:linear-gradient(to bottom,rgba(200,164,74,.06),transparent);
+}
+.av-ring{
+  width:88px;height:88px;border-radius:50%;
+  border:2px solid var(--gold2);
+  background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);
+  position:relative;z-index:1;margin-bottom:14px;
+  box-shadow:0 0 0 4px rgba(200,164,74,.08);
+}
+.av-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;margin-bottom:3px}
+.av-handle{font-size:12px;color:var(--ink3);letter-spacing:.04em;margin-bottom:4px}
+.av-role{
+  display:inline-block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  padding:3px 10px;border:1px solid var(--gold3);color:var(--gold);margin-bottom:16px;
+}
+.av-bio{font-size:12px;color:var(--ink2);line-height:1.65;margin-bottom:18px}
+.follow-row{display:flex;gap:8px;width:100%}
+.follow-btn{
+  flex:1;padding:9px;text-align:center;font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  border:1px solid var(--b2);color:var(--ink2);transition:var(--tr);
+}
+.follow-btn:hover{border-color:var(--gold);color:var(--gold)}
+.msg-btn{
+  width:38px;height:38px;border:1px solid var(--b2);color:var(--ink3);
+  display:flex;align-items:center;justify-content:center;transition:var(--tr);flex-shrink:0;
+}
+.msg-btn:hover{border-color:var(--b3);color:var(--ink)}
+
+/* Stats grid */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--b)}
+.stat-cell{
+  padding:16px 18px;border-right:1px solid var(--b);border-bottom:1px solid var(--b);
+  cursor:pointer;transition:var(--tr);
+}
+.stat-cell:hover{background:var(--bg1)}
+.stat-cell:nth-child(2n){border-right:none}
+.stat-cell:nth-last-child(-n+2){border-bottom:none}
+.stat-n{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;line-height:1}
+.stat-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:3px}
+
+/* Taste preview */
+.taste-preview{padding:18px 22px;border-bottom:1px solid var(--b)}
+.side-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.taste-cloud{display:flex;flex-wrap:wrap;gap:5px}
+.taste-chip{
+  font-size:11px;padding:3px 10px;
+  border:1px solid var(--b);color:var(--ink2);
+  transition:var(--tr);cursor:pointer;
+}
+.taste-chip:hover{border-color:var(--b3);color:var(--ink)}
+.taste-chip.strong{border-color:var(--gold3);color:var(--gold)}
+
+/* Recent viewing */
+.recent-list{padding:18px 22px}
+.recent-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px solid var(--b);
+  cursor:pointer;
+}
+.recent-item:last-child{border-bottom:none}
+.recent-item:hover .recent-title{color:var(--gold)}
+.recent-mini-poster{
+  width:28px;height:40px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:12px;font-style:italic;color:var(--ink4);
+}
+.recent-title{font-size:13px;transition:color .2s;flex:1}
+.recent-ago{font-size:11px;color:var(--ink4);font-family:'DM Mono',monospace}
+
+/* ── MAIN CONTENT ───────────────────────────────── */
+.main{min-height:100%;display:flex;flex-direction:column}
+
+/* Tab bar */
+.tab-bar{
+  display:flex;border-bottom:1px solid var(--b);
+  position:sticky;top:62px;z-index:100;
+  background:rgba(12,11,9,.95);backdrop-filter:blur(12px);
+}
+.tab{
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:15px 24px;color:var(--ink3);cursor:pointer;
+  border-bottom:2px solid transparent;transition:var(--tr);
+}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--gold)}
+
+/* Section */
+.section{padding:36px 40px;border-bottom:1px solid var(--b)}
+.section:last-child{border-bottom:none}
+.section-hd{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid var(--b);
+}
+.section-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400}
+.section-action{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:opacity .2s}
+.section-action:hover{opacity:.7}
+
+/* ── BADGE SYSTEM ───────────────────────────────── */
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b)}
+.badge-card{
+  background:var(--bg);padding:22px 20px;cursor:pointer;transition:background .2s;
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;
+}
+.badge-card:hover{background:var(--bg1)}
+.badge-card.locked{opacity:.35;filter:grayscale(.8)}
+.badge-icon{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.badge-icon-inner{
+  width:44px;height:44px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:18px;font-style:italic;
+}
+.badge-icon-ring{
+  position:absolute;inset:0;border-radius:50%;border:1.5px solid;
+}
+.bi-gold{background:rgba(200,164,74,.12)} .bi-gold .badge-icon-inner{background:rgba(200,164,74,.15);color:var(--gold)} .bi-gold .badge-icon-ring{border-color:var(--gold2)}
+.bi-green{background:rgba(92,158,106,.1)} .bi-green .badge-icon-inner{background:rgba(92,158,106,.12);color:var(--green)} .bi-green .badge-icon-ring{border-color:var(--green2)}
+.bi-blue{background:rgba(74,127,165,.1)} .bi-blue .badge-icon-inner{background:rgba(74,127,165,.12);color:var(--blue)} .bi-blue .badge-icon-ring{border-color:var(--blue)}
+.bi-purple{background:rgba(122,95,165,.1)} .bi-purple .badge-icon-inner{background:rgba(122,95,165,.12);color:var(--purple)} .bi-purple .badge-icon-ring{border-color:var(--purple)}
+.bi-coral{background:rgba(165,90,74,.1)} .bi-coral .badge-icon-inner{background:rgba(165,90,74,.12);color:var(--coral)} .bi-coral .badge-icon-ring{border-color:var(--coral)}
+.bi-dim{background:var(--bg3)} .bi-dim .badge-icon-inner{background:var(--bg4);color:var(--ink4)} .bi-dim .badge-icon-ring{border-color:var(--bg4)}
+.badge-name{font-size:13px;font-weight:500;color:var(--ink);line-height:1.3}
+.badge-desc{font-size:11px;color:var(--ink3);line-height:1.5}
+.badge-progress-wrap{width:100%;margin-top:2px}
+.badge-pbar{height:2px;background:var(--bg4);overflow:hidden;border-radius:1px}
+.badge-pbar-fill{height:2px;border-radius:1px;transition:width .6s ease}
+.bp-gold{background:var(--gold)}
+.bp-green{background:var(--green)}
+.bp-blue{background:var(--blue)}
+.bp-purple{background:var(--purple)}
+.bp-coral{background:var(--coral)}
+.badge-pct{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:4px}
+
+/* Badge showcase (top 3) */
+.badge-showcase{
+  display:flex;gap:0;border:1px solid var(--b);margin-bottom:24px;
+}
+.showcase-item{
+  flex:1;padding:20px 22px;border-right:1px solid var(--b);
+  display:flex;align-items:center;gap:14px;cursor:pointer;transition:var(--tr);
+}
+.showcase-item:last-child{border-right:none}
+.showcase-item:hover{background:var(--bg1)}
+.showcase-icon{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:16px;font-style:italic;
+}
+.showcase-info{}
+.showcase-name{font-size:13px;font-weight:500;margin-bottom:2px}
+.showcase-sub{font-size:11px;color:var(--ink3)}
+
+/* ── TASTE MAP (radar/spider) ───────────────────── */
+.taste-section{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.taste-left{padding:32px 36px;border-right:1px solid var(--b)}
+.taste-right{padding:32px 36px}
+.radar-wrap{display:flex;justify-content:center;margin:8px 0 20px}
+.taste-legend{display:flex;flex-direction:column;gap:8px}
+.legend-row{display:flex;align-items:center;gap:10px;cursor:pointer;padding:4px 0;transition:opacity .2s}
+.legend-row:hover{opacity:.8}
+.legend-swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-label{font-size:12px;color:var(--ink2);flex:1}
+.legend-bar-wrap{flex:2}
+.legend-bar-bg{height:2px;background:var(--bg4)}
+.legend-bar-fill{height:2px;transition:width .5s ease}
+.legend-val{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);min-width:28px;text-align:right}
+
+/* Taste tags breakdown */
+.taste-breakdown{display:flex;flex-direction:column;gap:14px}
+.taste-cat{}
+.taste-cat-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.taste-tags-row{display:flex;flex-wrap:wrap;gap:5px}
+.tt{font-size:11px;padding:3px 10px;border:1px solid var(--b);color:var(--ink2);cursor:pointer;transition:var(--tr)}
+.tt:hover{border-color:var(--b3);color:var(--ink)}
+.tt.lg{font-size:12px;padding:4px 12px;border-color:var(--gold3);color:var(--gold)}
+.tt.md{border-color:var(--bg5);color:var(--ink2)}
+.tt.sm{color:var(--ink3)}
+
+/* ── VIEWING HISTORY / FOOTPRINT ────────────────── */
+.heatmap-wrap{margin-bottom:24px}
+.heatmap-label{font-size:11px;color:var(--ink3);margin-bottom:10px;display:flex;justify-content:space-between}
+.heatmap{display:flex;gap:3px;flex-wrap:wrap}
+.hm-week{display:flex;flex-direction:column;gap:3px}
+.hm-day{
+  width:11px;height:11px;border-radius:1px;
+  background:var(--bg3);transition:transform .1s;cursor:pointer;
+}
+.hm-day:hover{transform:scale(1.3)}
+.hm-day.d1{background:#2a2318}
+.hm-day.d2{background:#4a3e22}
+.hm-day.d3{background:#7A6230}
+.hm-day.d4{background:var(--gold2)}
+.hm-day.d5{background:var(--gold)}
+.hm-months{display:flex;gap:0;margin-top:6px}
+.hm-month{font-size:10px;color:var(--ink4);letter-spacing:.06em}
+
+/* Film list grid */
+.films-log{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--b)}
+.fl-item{
+  background:var(--bg);padding:14px 12px;cursor:pointer;transition:background .2s;
+  display:flex;flex-direction:column;
+}
+.fl-item:hover{background:var(--bg1)}
+.fl-poster{
+  aspect-ratio:2/3;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--ink4);
+  position:relative;overflow:hidden;
+}
+.fl-overlay{
+  position:absolute;inset:0;background:rgba(12,11,9,.7);
+  opacity:0;transition:opacity .2s;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:4px;
+}
+.fl-item:hover .fl-overlay{opacity:1}
+.fl-rating-big{font-family:'DM Mono',monospace;font-size:16px;color:var(--gold)}
+.fl-title{font-family:'Playfair Display',serif;font-size:12px;font-weight:400;line-height:1.3;margin-bottom:2px}
+.fl-meta{font-size:10px;color:var(--ink3)}
+.fl-rating{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);margin-top:4px}
+
+/* Country footprint */
+.country-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b)}
+.country-item{
+  background:var(--bg);padding:16px 18px;cursor:pointer;transition:background .2s;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.country-item:hover{background:var(--bg1)}
+.country-name{font-size:13px;color:var(--ink)}
+.country-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3)}
+
+/* Festival history */
+.fest-history{display:flex;flex-direction:column;gap:0}
+.fh-item{
+  display:flex;align-items:center;gap:0;border-bottom:1px solid var(--b);cursor:pointer;
+  transition:background .2s;
+}
+.fh-item:hover{background:var(--bg1)}
+.fh-num{
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--ink4);
+  padding:0 20px;min-width:60px;border-right:1px solid var(--b);
+  align-self:stretch;display:flex;align-items:center;
+}
+.fh-body{padding:16px 20px;flex:1}
+.fh-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:400;margin-bottom:4px;transition:color .2s}
+.fh-item:hover .fh-title{color:var(--gold)}
+.fh-meta{font-size:11px;color:var(--ink3);display:flex;gap:12px;flex-wrap:wrap}
+.fh-right{
+  padding:0 24px;border-left:1px solid var(--b);
+  align-self:stretch;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:4px;min-width:120px;
+}
+.fh-count{font-family:'Playfair Display',serif;font-size:20px}
+.fh-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.status-live-s{color:var(--green);display:inline-flex;align-items:center;gap:4px}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);flex-shrink:0}
+
+/* Creations */
+.creation-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b)}
+.creation-card{
+  background:var(--bg);padding:24px 22px;cursor:pointer;transition:background .2s;
+  display:flex;flex-direction:column;
+}
+.creation-card:hover{background:var(--bg1)}
+.cc-type{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.cc-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:400;line-height:1.3;margin-bottom:8px}
+.cc-body{font-size:12px;color:var(--ink2);line-height:1.7;flex:1;margin-bottom:14px}
+.cc-foot{display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid var(--b);font-size:11px}
+.cc-stat{color:var(--ink3)}
+.cc-link{color:var(--gold)}
+
+/* Progress ring (for badge) */
+.prog-ring{transform:rotate(-90deg)}
+.prog-ring-bg{fill:none;stroke:var(--bg4);stroke-width:3}
+.prog-ring-fill{fill:none;stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .5s ease forwards;opacity:0}
+@keyframes countUp{from{opacity:0}to{opacity:1}}
+
+/* Tab panels */
+.tab-panel{display:none}
+.tab-panel.on{display:block}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Cine <em>Ours</em></div>
+  <div class="nav-links">
+    <span class="nav-link" onclick="history.back()">← 返回</span>
+    <span class="nav-link">首页</span>
+    <span class="nav-link">世界地图</span>
+    <span class="nav-link">电影节</span>
+    <span class="nav-link active">个人主页</span>
+  </div>
+  <div class="nav-right">
+    <button class="btn btn-outline">设置</button>
+    <div class="nav-av">余</div>
+  </div>
+</nav>
+
+<div class="profile-root">
+
+<!-- ══ SIDEBAR ══════════════════════════════════════ -->
+<aside class="sidebar">
+
+  <div class="av-zone">
+    <div class="av-bg"></div>
+    <div class="av-ring">余</div>
+    <div class="av-name">余小舟</div>
+    <div class="av-handle">@YuXiaozhou</div>
+    <div class="av-role">策展人 · 影评人</div>
+    <p class="av-bio">慢电影爱好者，日本电影研究者。在上海生活，在电影里旅行。相信长镜头是一种道德姿态。</p>
+    <div class="follow-row">
+      <button class="follow-btn">+ 关注</button>
+      <button class="msg-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1h12v9H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M1 10l3-3M13 10l-3-3M1 1l6 5 6-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-cell" onclick="switchTab('history')"><div class="stat-n">847</div><div class="stat-l">已观影</div></div>
+    <div class="stat-cell" onclick="switchTab('festivals')"><div class="stat-n">12</div><div class="stat-l">办过电影节</div></div>
+    <div class="stat-cell" onclick="switchTab('history')"><div class="stat-n">35</div><div class="stat-l">国家足迹</div></div>
+    <div class="stat-cell" onclick="switchTab('creations')"><div class="stat-n">3</div><div class="stat-l">发布创作</div></div>
+    <div class="stat-cell"><div class="stat-n">2.1k</div><div class="stat-l">关注者</div></div>
+    <div class="stat-cell"><div class="stat-n">318</div><div class="stat-l">正在关注</div></div>
+  </div>
+
+  <div class="taste-preview">
+    <div class="side-label">品味标签</div>
+    <div class="taste-cloud">
+      <span class="taste-chip strong">日本电影</span>
+      <span class="taste-chip strong">慢电影</span>
+      <span class="taste-chip strong">长镜头</span>
+      <span class="taste-chip">公路片</span>
+      <span class="taste-chip">黑白影像</span>
+      <span class="taste-chip">女性导演</span>
+      <span class="taste-chip">实验影像</span>
+      <span class="taste-chip">新现实主义</span>
+    </div>
+  </div>
+
+  <div class="recent-list">
+    <div class="side-label" style="padding:18px 22px 10px;margin-bottom:0">近期观影</div>
+    <div style="padding:0 22px 16px">
+      <div class="recent-item">
+        <div class="recent-mini-poster" style="background:#0a1410">春</div>
+        <div class="recent-title">晚春</div>
+        <div class="recent-ago">昨天</div>
+      </div>
+      <div class="recent-item">
+        <div class="recent-mini-poster" style="background:#1a0a18">罗</div>
+        <div class="recent-title">罗生门</div>
+        <div class="recent-ago">2d</div>
+      </div>
+      <div class="recent-item">
+        <div class="recent-mini-poster" style="background:#0a1218">一</div>
+        <div class="recent-title">一一</div>
+        <div class="recent-ago">4d</div>
+      </div>
+      <div class="recent-item">
+        <div class="recent-mini-poster" style="background:#1e1028">花</div>
+        <div class="recent-title">花样年华</div>
+        <div class="recent-ago">7d</div>
+      </div>
+      <div class="recent-item">
+        <div class="recent-mini-poster" style="background:#0a1018">安</div>
+        <div class="recent-title">安德烈·鲁布廖夫</div>
+        <div class="recent-ago">9d</div>
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<!-- ══ MAIN ══════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <button class="tab on" onclick="switchTab('badges',this)">勋章</button>
+    <button class="tab" onclick="switchTab('taste',this)">品味图谱</button>
+    <button class="tab" onclick="switchTab('history',this)">观影足迹</button>
+    <button class="tab" onclick="switchTab('festivals',this)">电影节</button>
+    <button class="tab" onclick="switchTab('creations',this)">创作</button>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- TAB: BADGES -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div class="tab-panel on" id="panel-badges">
+
+    <!-- Showcase: top earned badges -->
+    <div class="section" style="padding-bottom:24px">
+      <div class="section-hd">
+        <div class="section-title">已获勋章 <span style="font-family:'DM Mono',monospace;font-size:14px;color:var(--ink3);font-weight:400">9 / 28</span></div>
+        <span class="section-action">查看全部 →</span>
+      </div>
+      <div class="badge-showcase">
+        <div class="showcase-item">
+          <div class="showcase-icon bi-gold" style="width:40px;height:40px;border-radius:50%;background:rgba(200,164,74,.12);border:1.5px solid var(--gold2);font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:var(--gold)">策</div>
+          <div class="showcase-info">
+            <div class="showcase-name">百人影展主办人</div>
+            <div class="showcase-sub">举办电影节参与者超百人</div>
+          </div>
+        </div>
+        <div class="showcase-item">
+          <div class="showcase-icon bi-green" style="width:40px;height:40px;border-radius:50%;background:rgba(92,158,106,.12);border:1.5px solid var(--green2);font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:var(--green)">黑</div>
+          <div class="showcase-info">
+            <div class="showcase-name">黑泽明全集</div>
+            <div class="showcase-sub">完成导演全部作品观影</div>
+          </div>
+        </div>
+        <div class="showcase-item">
+          <div class="showcase-icon bi-blue" style="width:40px;height:40px;border-radius:50%;background:rgba(74,127,165,.12);border:1.5px solid var(--blue);font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:var(--blue)">漫</div>
+          <div class="showcase-info">
+            <div class="showcase-name">35国电影漫游者</div>
+            <div class="showcase-sub">观看来自35个国家的电影</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- All badges grid -->
+      <div class="badge-grid">
+
+        <!-- EARNED -->
+        <div class="badge-card" onclick="showBadgeDetail('curator')">
+          <div class="badge-icon bi-gold">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">策</div>
+          </div>
+          <div>
+            <div class="badge-name">百人影展主办人</div>
+            <div class="badge-desc">单届电影节参与者超过100人</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill bp-gold" style="width:100%"></div></div>
+            <div class="badge-pct">已获得</div>
+          </div>
+        </div>
+
+        <div class="badge-card" onclick="showBadgeDetail('kurosawa')">
+          <div class="badge-icon bi-green">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">黑</div>
+          </div>
+          <div>
+            <div class="badge-name">黑泽明全集</div>
+            <div class="badge-desc">完成黑泽明全部30部作品</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill bp-green" style="width:100%"></div></div>
+            <div class="badge-pct">已获得 · 30/30</div>
+          </div>
+        </div>
+
+        <div class="badge-card" onclick="showBadgeDetail('globe')">
+          <div class="badge-icon bi-blue">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">漫</div>
+          </div>
+          <div>
+            <div class="badge-name">35国电影漫游者</div>
+            <div class="badge-desc">观看来自35个国家的电影</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill bp-blue" style="width:100%"></div></div>
+            <div class="badge-pct">已获得 · 35/35</div>
+          </div>
+        </div>
+
+        <div class="badge-card" onclick="showBadgeDetail('script')">
+          <div class="badge-icon bi-purple">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">著</div>
+          </div>
+          <div>
+            <div class="badge-name">剧本发布者</div>
+            <div class="badge-desc">在平台发布第一份剧本</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill bp-purple" style="width:100%"></div></div>
+            <div class="badge-pct">已获得</div>
+          </div>
+        </div>
+
+        <div class="badge-card" onclick="showBadgeDetail('500')">
+          <div class="badge-icon bi-coral">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">五</div>
+          </div>
+          <div>
+            <div class="badge-name">500部里程碑</div>
+            <div class="badge-desc">观影总数突破500部</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill bp-coral" style="width:100%"></div></div>
+            <div class="badge-pct">已获得</div>
+          </div>
+        </div>
+
+        <div class="badge-card" onclick="showBadgeDetail('cannes')">
+          <div class="badge-icon bi-gold">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">金</div>
+          </div>
+          <div>
+            <div class="badge-name">金棕榈全记录</div>
+            <div class="badge-desc">看遍所有金棕榈获奖影片</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill bp-gold" style="width:72%"></div></div>
+            <div class="badge-pct">进行中 · 52/72</div>
+          </div>
+        </div>
+
+        <!-- IN PROGRESS -->
+        <div class="badge-card" onclick="showBadgeDetail('ozu')">
+          <div class="badge-icon bi-green">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">小</div>
+          </div>
+          <div>
+            <div class="badge-name">小津安二郎全集</div>
+            <div class="badge-desc">完成小津全部54部作品</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill bp-green" style="width:44%"></div></div>
+            <div class="badge-pct">进行中 · 24/54</div>
+          </div>
+        </div>
+
+        <div class="badge-card" onclick="showBadgeDetail('tarkovsky')">
+          <div class="badge-icon bi-blue">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">塔</div>
+          </div>
+          <div>
+            <div class="badge-name">塔可夫斯基全集</div>
+            <div class="badge-desc">完成塔可夫斯基7部长片</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill bp-blue" style="width:86%"></div></div>
+            <div class="badge-pct">进行中 · 6/7</div>
+          </div>
+        </div>
+
+        <div class="badge-card" onclick="showBadgeDetail('1000')">
+          <div class="badge-icon bi-coral">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">千</div>
+          </div>
+          <div>
+            <div class="badge-name">千部观影者</div>
+            <div class="badge-desc">观影总数突破1000部</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill bp-coral" style="width:85%"></div></div>
+            <div class="badge-pct">进行中 · 847/1000</div>
+          </div>
+        </div>
+
+        <!-- LOCKED -->
+        <div class="badge-card locked">
+          <div class="badge-icon bi-dim">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">导</div>
+          </div>
+          <div>
+            <div class="badge-name">驻场策展人</div>
+            <div class="badge-desc">举办5届以上，总参与超千人</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill" style="width:60%;background:var(--ink4)"></div></div>
+            <div class="badge-pct" style="color:var(--ink4)">需达成 · 600/1000人</div>
+          </div>
+        </div>
+
+        <div class="badge-card locked">
+          <div class="badge-icon bi-dim">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">史</div>
+          </div>
+          <div>
+            <div class="badge-name">电影史学家</div>
+            <div class="badge-desc">补充50条影史今天词条</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill" style="width:16%;background:var(--ink4)"></div></div>
+            <div class="badge-pct" style="color:var(--ink4)">需达成 · 8/50</div>
+          </div>
+        </div>
+
+        <div class="badge-card locked">
+          <div class="badge-icon bi-dim">
+            <div class="badge-icon-ring"></div>
+            <div class="badge-icon-inner">界</div>
+          </div>
+          <div>
+            <div class="badge-name">世界影院</div>
+            <div class="badge-desc">观看来自50个国家的电影</div>
+          </div>
+          <div class="badge-progress-wrap">
+            <div class="badge-pbar"><div class="badge-pbar-fill" style="width:70%;background:var(--ink4)"></div></div>
+            <div class="badge-pct" style="color:var(--ink4)">需达成 · 35/50</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- TAB: TASTE MAP -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-taste">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-title">品味图谱</div>
+        <span class="section-action">基于847部观影记录</span>
+      </div>
+
+      <div class="taste-section">
+        <div class="taste-left">
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px">风格偏好雷达</div>
+          <div class="radar-wrap">
+            <svg id="radar-chart" width="240" height="240"></svg>
+          </div>
+          <div class="taste-legend" id="radar-legend"></div>
+        </div>
+
+        <div class="taste-right">
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px">标签分布</div>
+          <div class="taste-breakdown">
+            <div class="taste-cat">
+              <div class="taste-cat-label">地区偏好</div>
+              <div class="taste-tags-row">
+                <span class="tt lg">日本</span>
+                <span class="tt lg">华语</span>
+                <span class="tt md">法国</span>
+                <span class="tt md">意大利</span>
+                <span class="tt sm">俄罗斯</span>
+                <span class="tt sm">伊朗</span>
+                <span class="tt sm">韩国</span>
+                <span class="tt sm">台湾</span>
+              </div>
+            </div>
+            <div class="taste-cat">
+              <div class="taste-cat-label">导演偏好</div>
+              <div class="taste-tags-row">
+                <span class="tt lg">黑泽明</span>
+                <span class="tt lg">侯孝贤</span>
+                <span class="tt md">塔可夫斯基</span>
+                <span class="tt md">小津安二郎</span>
+                <span class="tt sm">王家卫</span>
+                <span class="tt sm">杨德昌</span>
+                <span class="tt sm">安哲罗普洛斯</span>
+              </div>
+            </div>
+            <div class="taste-cat">
+              <div class="taste-cat-label">题材偏好</div>
+              <div class="taste-tags-row">
+                <span class="tt lg">家庭</span>
+                <span class="tt lg">旅途</span>
+                <span class="tt md">记忆</span>
+                <span class="tt md">城市</span>
+                <span class="tt sm">战争</span>
+                <span class="tt sm">成长</span>
+                <span class="tt sm">女性</span>
+              </div>
+            </div>
+            <div class="taste-cat">
+              <div class="taste-cat-label">形式偏好</div>
+              <div class="taste-tags-row">
+                <span class="tt lg">长镜头</span>
+                <span class="tt lg">慢电影</span>
+                <span class="tt md">黑白影像</span>
+                <span class="tt md">非线性叙事</span>
+                <span class="tt sm">无对白</span>
+                <span class="tt sm">手持摄影</span>
+              </div>
+            </div>
+            <div class="taste-cat">
+              <div class="taste-cat-label">年代偏好</div>
+              <div style="display:flex;gap:6px;align-items:flex-end;margin-top:4px" id="decade-bars"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- TAB: HISTORY / FOOTPRINT -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-history">
+
+    <!-- Heatmap -->
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-title">观影热力图</div>
+        <span class="section-action">过去一年 · 847部</span>
+      </div>
+      <div class="heatmap-wrap">
+        <div class="heatmap-label">
+          <span>少</span>
+          <span>多</span>
+        </div>
+        <div class="heatmap" id="heatmap"></div>
+        <div style="display:flex;gap:4px;margin-top:8px;align-items:center">
+          <span style="font-size:10px;color:var(--ink4)">少</span>
+          <div style="display:flex;gap:3px">
+            <div style="width:11px;height:11px;background:var(--bg3);border-radius:1px"></div>
+            <div style="width:11px;height:11px;background:#2a2318;border-radius:1px"></div>
+            <div style="width:11px;height:11px;background:#4a3e22;border-radius:1px"></div>
+            <div style="width:11px;height:11px;background:#7A6230;border-radius:1px"></div>
+            <div style="width:11px;height:11px;background:var(--gold);border-radius:1px"></div>
+          </div>
+          <span style="font-size:10px;color:var(--ink4)">多</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Film log -->
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-title">最近观影</div>
+        <span class="section-action">全部记录 →</span>
+      </div>
+      <div class="films-log">
+        <div class="fl-item"><div class="fl-poster" style="background:#0a1410"><span>春</span><div class="fl-overlay"><div class="fl-rating-big">★ 9</div></div></div><div class="fl-title">晚春</div><div class="fl-meta">1949 · 小津</div><div class="fl-rating mono">★ 9.0</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#1a0a18"><span>罗</span><div class="fl-overlay"><div class="fl-rating-big">★ 9</div></div></div><div class="fl-title">罗生门</div><div class="fl-meta">1950 · 黑泽明</div><div class="fl-rating mono">★ 9.2</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#0a1218"><span>一</span><div class="fl-overlay"><div class="fl-rating-big">★ 10</div></div></div><div class="fl-title">一一</div><div class="fl-meta">2000 · 杨德昌</div><div class="fl-rating mono">★ 10</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#1e1028"><span>花</span><div class="fl-overlay"><div class="fl-rating-big">★ 9</div></div></div><div class="fl-title">花样年华</div><div class="fl-meta">2000 · 王家卫</div><div class="fl-rating mono">★ 9.4</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#0a1018"><span>安</span><div class="fl-overlay"><div class="fl-rating-big">★ 9</div></div></div><div class="fl-title">安德烈·鲁布廖夫</div><div class="fl-meta">1966 · 塔可夫斯基</div><div class="fl-rating mono">★ 9.5</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#0f1a0a"><span>绿</span><div class="fl-overlay"><div class="fl-rating-big">★ 8</div></div></div><div class="fl-title">绿光</div><div class="fl-meta">1986 · 侯麦</div><div class="fl-rating mono">★ 8.2</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#141018"><span>镜</span><div class="fl-overlay"><div class="fl-rating-big">★ 10</div></div></div><div class="fl-title">镜子</div><div class="fl-meta">1975 · 塔可夫斯基</div><div class="fl-rating mono">★ 10</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#181208"><span>七</span><div class="fl-overlay"><div class="fl-rating-big">★ 10</div></div></div><div class="fl-title">七武士</div><div class="fl-meta">1954 · 黑泽明</div><div class="fl-rating mono">★ 10</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#0a1814"><span>悲</span><div class="fl-overlay"><div class="fl-rating-big">★ 9</div></div></div><div class="fl-title">悲情城市</div><div class="fl-meta">1989 · 侯孝贤</div><div class="fl-rating mono">★ 9.6</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#1a0808"><span>霸</span><div class="fl-overlay"><div class="fl-rating-big">★ 9</div></div></div><div class="fl-title">霸王别姬</div><div class="fl-meta">1993 · 陈凯歌</div><div class="fl-rating mono">★ 9.5</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#0a1020"><span>流</span><div class="fl-overlay"><div class="fl-rating-big">★ 9</div></div></div><div class="fl-title">流浪艺人</div><div class="fl-meta">1975 · 安哲罗普洛斯</div><div class="fl-rating mono">★ 9.3</div></div>
+        <div class="fl-item"><div class="fl-poster" style="background:#0d1410"><span>大</span><div class="fl-overlay"><div class="fl-rating-big">★ 9</div></div></div><div class="fl-title">大地之歌</div><div class="fl-meta">1955 · 雷伊</div><div class="fl-rating mono">★ 9.1</div></div>
+      </div>
+    </div>
+
+    <!-- Country footprint -->
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-title">国家足迹 <span style="font-family:'DM Mono',monospace;font-size:14px;color:var(--ink3);font-weight:400">35 国</span></div>
+        <span class="section-action">在地图上查看 →</span>
+      </div>
+      <div class="country-grid">
+        <div class="country-item"><span class="country-name">日本</span><span class="country-count">243部</span></div>
+        <div class="country-item"><span class="country-name">中国（含港台）</span><span class="country-count">178部</span></div>
+        <div class="country-item"><span class="country-name">法国</span><span class="country-count">112部</span></div>
+        <div class="country-item"><span class="country-name">美国</span><span class="country-count">89部</span></div>
+        <div class="country-item"><span class="country-name">意大利</span><span class="country-count">64部</span></div>
+        <div class="country-item"><span class="country-name">俄罗斯</span><span class="country-count">42部</span></div>
+        <div class="country-item"><span class="country-name">伊朗</span><span class="country-count">28部</span></div>
+        <div class="country-item"><span class="country-name">韩国</span><span class="country-count">24部</span></div>
+        <div class="country-item"><span class="country-name">德国</span><span class="country-count">19部</span></div>
+        <div class="country-item"><span class="country-name">希腊</span><span class="country-count">14部</span></div>
+        <div class="country-item"><span class="country-name">英国</span><span class="country-count">12部</span></div>
+        <div class="country-item"><span class="country-name">其他 24 国</span><span class="country-count" style="color:var(--ink3)">22部</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- TAB: FESTIVALS -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-festivals">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-title">举办的电影节</div>
+        <button class="btn btn-gold" style="font-size:11px;padding:7px 18px">+ 创建新电影节</button>
+      </div>
+      <div class="fest-history">
+        <div class="fh-item">
+          <div class="fh-num">01</div>
+          <div class="fh-body">
+            <div class="fh-title">黑泽明与日本新浪潮 · 东京映画周</div>
+            <div class="fh-meta">
+              <span class="status-live-s"><span class="sdot"></span>进行中</span>
+              <span>4月10日 — 4月17日</span><span>6部影片</span>
+            </div>
+          </div>
+          <div class="fh-right"><div class="fh-count">247</div><div class="fh-label">人参与</div></div>
+        </div>
+        <div class="fh-item">
+          <div class="fh-num">02</div>
+          <div class="fh-body">
+            <div class="fh-title">侯孝贤三部曲：城市的背面</div>
+            <div class="fh-meta"><span>2024年3月</span><span>已结束</span><span>5部影片</span></div>
+          </div>
+          <div class="fh-right"><div class="fh-count">189</div><div class="fh-label">人参与</div></div>
+        </div>
+        <div class="fh-item">
+          <div class="fh-num">03</div>
+          <div class="fh-body">
+            <div class="fh-title">伊朗电影：被遮蔽的光</div>
+            <div class="fh-meta"><span>2024年1月</span><span>已结束</span><span>4部影片</span></div>
+          </div>
+          <div class="fh-right"><div class="fh-count">134</div><div class="fh-label">人参与</div></div>
+        </div>
+        <div class="fh-item">
+          <div class="fh-num">04</div>
+          <div class="fh-body">
+            <div class="fh-title">五部关于失眠的电影</div>
+            <div class="fh-meta"><span>2023年11月</span><span>已结束</span><span>5部影片</span></div>
+          </div>
+          <div class="fh-right"><div class="fh-count">98</div><div class="fh-label">人参与</div></div>
+        </div>
+        <div class="fh-item">
+          <div class="fh-num">05</div>
+          <div class="fh-body">
+            <div class="fh-title">新现实主义：意大利战后电影回顾</div>
+            <div class="fh-meta"><span>2023年9月</span><span>已结束</span><span>6部影片</span></div>
+          </div>
+          <div class="fh-right"><div class="fh-count">211</div><div class="fh-label">人参与</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-title">参加过的电影节</div>
+        <span class="section-action">全部记录 →</span>
+      </div>
+      <div class="fest-history">
+        <div class="fh-item">
+          <div class="fh-num">01</div>
+          <div class="fh-body">
+            <div class="fh-title">她在路上：女性凝视电影周</div>
+            <div class="fh-meta"><span>2024年2月</span><span>@LunaWatch 主办</span><span>已打卡 6/7</span></div>
+          </div>
+          <div class="fh-right"><div class="fh-count">86%</div><div class="fh-label">完成率</div></div>
+        </div>
+        <div class="fh-item">
+          <div class="fh-num">02</div>
+          <div class="fh-body">
+            <div class="fh-title">塔可夫斯基全集观影周</div>
+            <div class="fh-meta"><span>2023年12月</span><span>@TarkovskyFan 主办</span><span>已打卡 6/7</span></div>
+          </div>
+          <div class="fh-right"><div class="fh-count">86%</div><div class="fh-label">完成率</div></div>
+        </div>
+        <div class="fh-item">
+          <div class="fh-num">03</div>
+          <div class="fh-body">
+            <div class="fh-title">九十年代港片重看</div>
+            <div class="fh-meta"><span>2023年10月</span><span>@HKFilmLover 主办</span><span>已打卡 8/8</span></div>
+          </div>
+          <div class="fh-right"><div class="fh-count">100%</div><div class="fh-label" style="color:var(--green)">全勤完成</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── -->
+  <!-- TAB: CREATIONS -->
+  <!-- ─────────────────────────────────────────────── -->
+  <div class="tab-panel" id="panel-creations">
+    <div class="section">
+      <div class="section-hd">
+        <div class="section-title">发布的创作</div>
+        <button class="btn btn-gold" style="font-size:11px;padding:7px 18px">+ 上传创作</button>
+      </div>
+      <div class="creation-grid">
+        <div class="creation-card">
+          <div class="cc-type">剧本 · 初稿</div>
+          <div class="cc-title">《候鸟》第一幕</div>
+          <div class="cc-body">两个陌生人在机场滞留18小时的故事。灵感来自侯孝贤的《咖啡时光》，试图在等待中构建一种亲密关系的可能性……</div>
+          <div class="cc-foot"><span class="cc-stat">34次反馈 · 12人收藏</span><span class="cc-link">查看 →</span></div>
+        </div>
+        <div class="creation-card">
+          <div class="cc-type">灵感板 · 图文</div>
+          <div class="cc-title">关于孤独的光影：50张参考画面</div>
+          <div class="cc-body">从塔可夫斯基的水面倒影到阿彼察邦的丛林余晖——思考"空"在电影语言中的重量……</div>
+          <div class="cc-foot"><span class="cc-stat">23人收藏 · 8条评论</span><span class="cc-link">查看 →</span></div>
+        </div>
+        <div class="creation-card" style="border-style:dashed;background:transparent;align-items:center;justify-content:center;text-align:center;cursor:pointer" onclick="alert('进入创作上传页面')">
+          <div style="font-size:24px;color:var(--ink4);margin-bottom:10px">+</div>
+          <div style="font-size:13px;color:var(--ink3)">上传新创作</div>
+          <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink4);margin-top:6px">剧本 · 灵感 · 短片</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div><!-- profile-root -->
+
+<!-- ── BADGE DETAIL MODAL ────────────────────────── -->
+<div id="badge-modal" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(12,11,9,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center">
+  <div style="background:var(--bg2);border:1px solid var(--b2);width:480px;max-width:90vw">
+    <div style="padding:24px 28px;border-bottom:1px solid var(--b);display:flex;align-items:flex-start;justify-content:space-between">
+      <div id="modal-header"></div>
+      <button onclick="closeBadgeModal()" style="width:28px;height:28px;border:1px solid var(--b2);color:var(--ink3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-left:16px;transition:var(--tr)">✕</button>
+    </div>
+    <div id="modal-body" style="padding:24px 28px"></div>
+  </div>
+</div>
+
+<script>
+// ── TABS ─────────────────────────────────────────
+function switchTab(id, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  else {
+    const tabs = document.querySelectorAll('.tab');
+    const map = {badges:0,taste:1,history:2,festivals:3,creations:4};
+    if(map[id]!==undefined) tabs[map[id]].classList.add('on');
+  }
+  const panel = document.getElementById('panel-'+id);
+  if(panel){ panel.classList.add('on'); }
+
+  // Init viz on first open
+  if(id==='taste' && !window.radarInited){ initRadar(); window.radarInited=true; }
+  if(id==='history' && !window.heatmapInited){ initHeatmap(); window.heatmapInited=true; }
+  if(id==='taste' && !window.decadeInited){ initDecadeBars(); window.decadeInited=true; }
+}
+
+// ── BADGE MODAL ──────────────────────────────────
+const BADGE_DATA = {
+  curator:{name:'百人影展主办人',color:'var(--gold)',icon:'策',desc:'你举办的电影节参与者超过100人。这枚勋章代表你的策展影响力已经扩散到一个真实的社群。',progress:100,detail:'举办了 12 届电影节，总计吸引 879 人参与打卡。'},
+  kurosawa:{name:'黑泽明全集',color:'var(--green)',icon:'黑',desc:'完成黑泽明全部30部作品的观看。从《姿三四郎》到《八月狂想曲》，你走过了他的完整电影生命。',progress:100,detail:'30/30 · 用时约14个月完成'},
+  globe:{name:'35国电影漫游者',color:'var(--blue)',icon:'漫',desc:'你的观影足迹覆盖了35个国家和地区的电影。你的眼睛比你的护照走得更远。',progress:100,detail:'35/35 · 已覆盖亚洲、欧洲、中东、非洲'},
+  script:{name:'剧本发布者',color:'var(--purple)',icon:'著',desc:'你在平台发布了第一份剧本，成为创作者社群的一员。从观众到创作者，这是重要的一步。',progress:100,detail:'1部剧本 · 34次阅读反馈'},
+  '500':{name:'500部里程碑',color:'var(--coral)',icon:'五',desc:'观影总数突破500部。在这500部里，你积累了自己的电影语言。',progress:100,detail:'里程碑达成于 2023年6月'},
+  cannes:{name:'金棕榈全记录',color:'var(--gold)',icon:'金',desc:'目标是看遍所有戛纳金棕榈获奖影片。你已经完成了72届中的52届。',progress:72,detail:'52/72 · 还差 20 部'},
+  ozu:{name:'小津安二郎全集',color:'var(--green)',icon:'小',desc:'小津的54部作品是一部关于家庭与时间的百科全书。你已经完成了其中24部。',progress:44,detail:'24/54 · 进行中'},
+  tarkovsky:{name:'塔可夫斯基全集',color:'var(--blue)',icon:'塔',desc:'7部长片，7种时间的质感。你还差最后一部《伊万的童年》。',progress:86,detail:'6/7 · 还差《伊万的童年》'},
+  '1000':{name:'千部观影者',color:'var(--coral)',icon:'千',desc:'观影1000部是一个里程碑，也是一种生活方式的声明。你已经走了85%的路。',progress:85,detail:'847/1000 · 还差 153 部'},
+};
+
+function showBadgeDetail(id){
+  const d = BADGE_DATA[id]; if(!d) return;
+  const modal = document.getElementById('badge-modal');
+  document.getElementById('modal-header').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.2);border:1.5px solid ${d.color};display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:17px;font-style:italic;color:${d.color}">${d.icon}</div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:400">${d.name}</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:2px">${d.progress===100?'已获得':'进行中 · '+d.progress+'%'}</div>
+      </div>
+    </div>`;
+  document.getElementById('modal-body').innerHTML = `
+    <p style="font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:16px">${d.desc}</p>
+    <div style="background:var(--bg3);padding:12px 16px;font-size:12px;color:var(--ink2);border-left:2px solid ${d.color};margin-bottom:16px">${d.detail}</div>
+    <div style="height:3px;background:var(--bg4);border-radius:2px;overflow:hidden">
+      <div style="height:3px;background:${d.color};width:${d.progress}%;transition:width .6s ease;border-radius:2px"></div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);margin-top:6px;text-align:right">${d.progress}%</div>`;
+  modal.style.display='flex';
+  setTimeout(()=>{ modal.querySelector('[id=modal-body] div:nth-child(3) div').style.width=d.progress+'%'; },50);
+}
+function closeBadgeModal(){ document.getElementById('badge-modal').style.display='none'; }
+document.getElementById('badge-modal').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeBadgeModal(); });
+
+// ── RADAR CHART ──────────────────────────────────
+function initRadar(){
+  const data = [
+    {label:'叙事强度', val:0.45, color:'#C8A44A'},
+    {label:'视觉风格', val:0.92, color:'#7EC98E'},
+    {label:'情感密度', val:0.78, color:'#7A9EC8'},
+    {label:'节奏缓慢', val:0.88, color:'#A87AC8'},
+    {label:'历史厚度', val:0.65, color:'#C88A7A'},
+    {label:'地域多样', val:0.70, color:'#C8B47A'},
+  ];
+  const W=240,H=240,cx=W/2,cy=H/2,R=90;
+  const svg=d3.select('#radar-chart');
+  const N=data.length;
+  const angle = i => (i/N)*2*Math.PI - Math.PI/2;
+  const pt = (i,r) => [cx+r*Math.cos(angle(i)), cy+r*Math.sin(angle(i))];
+
+  // Grid rings
+  [.25,.5,.75,1].forEach(t=>{
+    const pts = d3.range(N).map(i=>pt(i,R*t)).map(p=>p.join(',')).join(' ');
+    svg.append('polygon').attr('points',pts).attr('fill','none').attr('stroke','rgba(237,230,217,.06)').attr('stroke-width',1);
+  });
+  // Spokes
+  d3.range(N).forEach(i=>{
+    const [x,y]=pt(i,R);
+    svg.append('line').attr('x1',cx).attr('y1',cy).attr('x2',x).attr('y2',y).attr('stroke','rgba(237,230,217,.06)').attr('stroke-width',1);
+  });
+  // Data polygon
+  const dpts = data.map((d,i)=>pt(i,R*d.val)).map(p=>p.join(',')).join(' ');
+  svg.append('polygon').attr('points',dpts).attr('fill','rgba(200,164,74,.12)').attr('stroke','#C8A44A').attr('stroke-width',1.5).attr('stroke-linejoin','round');
+  // Dots
+  data.forEach((d,i)=>{
+    const [x,y]=pt(i,R*d.val);
+    svg.append('circle').attr('cx',x).attr('cy',y).attr('r',4).attr('fill',d.color);
+  });
+  // Labels
+  data.forEach((d,i)=>{
+    const [x,y]=pt(i,R*1.2);
+    svg.append('text').attr('x',x).attr('y',y).attr('text-anchor','middle').attr('dominant-baseline','central')
+      .attr('font-size',10).attr('font-family','DM Sans').attr('fill','rgba(181,172,158,.7)').text(d.label);
+  });
+  // Legend
+  const leg = document.getElementById('radar-legend');
+  data.forEach(d=>{
+    leg.innerHTML += `<div class="legend-row">
+      <div class="legend-swatch" style="background:${d.color}"></div>
+      <div class="legend-label">${d.label}</div>
+      <div class="legend-bar-wrap"><div class="legend-bar-bg"><div class="legend-bar-fill" style="background:${d.color};width:${d.val*100}%"></div></div></div>
+      <div class="legend-val">${Math.round(d.val*100)}%</div>
+    </div>`;
+  });
+}
+
+// ── DECADE BARS ──────────────────────────────────
+function initDecadeBars(){
+  const decades = [{d:'40s',v:12},{d:'50s',v:34},{d:'60s',v:28},{d:'70s',v:42},{d:'80s',v:56},{d:'90s',v:98},{d:'00s',v:178},{d:'10s',v:243},{d:'20s',v:156}];
+  const max = Math.max(...decades.map(d=>d.v));
+  const wrap = document.getElementById('decade-bars');
+  wrap.innerHTML = decades.map(d=>`
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
+      <div style="width:100%;background:var(--bg4);display:flex;flex-direction:column;justify-content:flex-end;height:60px">
+        <div style="background:var(--gold2);opacity:.7;width:100%;height:${(d.v/max)*60}px;transition:height .5s ease"></div>
+      </div>
+      <div style="font-size:9px;color:var(--ink4);letter-spacing:.04em">${d.d}</div>
+    </div>`).join('');
+}
+
+// ── HEATMAP ──────────────────────────────────────
+function initHeatmap(){
+  const wrap = document.getElementById('heatmap');
+  const levels = [0,0,1,1,2,2,3,4,4,5,3,2,1,0,0,1,2,3,4,5,5,4,3,2,1,0,0,0,1,2,3,4,3,2,1,1,2,3,4,5,4,3,2,1,0,1,2,3,2,1,0,0];
+  let html='';
+  for(let w=0;w<52;w++){
+    html+='<div class="hm-week">';
+    for(let d=0;d<7;d++){
+      const idx=(w*7+d)%levels.length;
+      const v=levels[idx];
+      const cls=v===0?'':v===1?'d1':v===2?'d2':v===3?'d3':v===4?'d4':'d5';
+      html+=`<div class="hm-day ${cls}" title="${v?v+'部':'-'}"></div>`;
+    }
+    html+='</div>';
+  }
+  wrap.innerHTML=html;
+}
+
+// ── INIT ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  // Animate sidebar stats
+  document.querySelectorAll('.stat-n').forEach((el,i)=>{
+    el.style.opacity='0';
+    el.style.transform='translateY(8px)';
+    el.style.transition='opacity .4s '+(i*.06)+'s ease, transform .4s '+(i*.06)+'s ease';
+    setTimeout(()=>{el.style.opacity='1';el.style.transform='translateY(0)'},60);
+  });
+  // Animate badge progress bars
+  setTimeout(()=>{
+    document.querySelectorAll('.badge-pbar-fill').forEach(el=>{
+      const w=el.style.width;el.style.width='0';
+      setTimeout(()=>el.style.width=w,100);
+    });
+  },300);
+});
+</script>
+<script>
+if(!window.shellNavigate){window.shellNavigate=function(p){if(window.parent&&window.parent.navigate)window.parent.navigate(p);else window.parent.postMessage({type:"navigate",payload:{page:p}},"*")};window.shellShowToast=function(m){if(window.parent&&window.parent.showToast)window.parent.showToast(m);else window.parent.postMessage({type:"toast",payload:{msg:m}},"*")}}
+</script>
+</body>
+</html>

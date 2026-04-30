@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>香港国际电影节 第50届 — Cine Ours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C0B09;--bg1:#111009;--bg2:#161410;--bg3:#1C1A15;--bg4:#252018;--bg5:#2E2A1E;
+  --ink:#EDE6D9;--ink2:#B5AC9E;--ink3:#7A7268;--ink4:#4A4540;
+  --gold:#C8A44A;--gold2:#9B7A2E;--gold3:#3D2E0E;
+  --green:#5C9E6A;--green2:#3D6B4A;
+  --red:#9B4040;--blue:#4A7FA5;
+  --b:rgba(237,230,217,.07);--b2:rgba(237,230,217,.13);--b3:rgba(237,230,217,.22);
+  --tr:all .22s cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.28;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
+::-webkit-scrollbar{width:2px;height:2px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4)}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea{font-family:'DM Sans',sans-serif;background:none;border:none;outline:none;color:var(--ink)}
+
+/* ── NAV ─────────────────────────────────────── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:300;height:58px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 40px;
+  border-bottom:1px solid var(--b);background:rgba(12,11,9,.94);backdrop-filter:blur(14px)}
+.logo{font-family:'Playfair Display',serif;font-size:18px;cursor:pointer}
+.logo em{font-style:italic;color:var(--gold)}
+.nav-back{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);
+  display:flex;align-items:center;gap:7px;cursor:pointer;transition:var(--tr)}
+.nav-back:hover{color:var(--ink)}
+.nav-r{display:flex;gap:8px}
+.nbtn{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 18px;transition:var(--tr)}
+.nbtn-g{border:1px solid var(--b2);color:var(--ink3)}.nbtn-g:hover{border-color:var(--b3);color:var(--ink)}
+.nbtn-gold{background:var(--gold);color:var(--bg);border:1px solid var(--gold)}.nbtn-gold:hover{background:#D4AE55}
+
+/* ── HERO ────────────────────────────────────── */
+.hero{
+  padding-top:58px;position:relative;overflow:hidden;
+  min-height:52vh;display:flex;flex-direction:column;justify-content:flex-end;
+  border-bottom:1px solid var(--b);
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,#0a1818 0%,#101f20 40%,#0a1810 70%,#080e14 100%);
+}
+.hero-bg-glow{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 50% at 80% 30%,rgba(200,164,74,.06),transparent 55%),
+             radial-gradient(ellipse 40% 50% at 20% 70%,rgba(92,158,106,.04),transparent 50%)}
+/* Filmstrip decoration */
+.hero-filmstrip{
+  position:absolute;top:0;bottom:0;right:0;width:60px;
+  border-left:1px solid rgba(237,230,217,.05);
+  display:flex;flex-direction:column;opacity:.4;
+}
+.hfs-frame{flex:1;border-bottom:1px solid rgba(237,230,217,.05);
+  display:flex;align-items:center;justify-content:center}
+.hfs-hole{width:10px;height:10px;border-radius:50%;border:1px solid rgba(237,230,217,.1)}
+.hero-content{position:relative;z-index:1;padding:48px 48px 36px}
+.hero-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.hero-eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
+.hero-status{display:flex;align-items:center;gap:6px;font-size:11px;
+  color:var(--green);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 6px var(--green);animation:lp 2s ease-in-out infinite;flex-shrink:0}
+@keyframes lp{0%,100%{box-shadow:0 0 3px var(--green)}50%{box-shadow:0 0 10px var(--green)}}
+.hero-title{font-family:'Playfair Display',serif;
+  font-size:clamp(32px,5vw,58px);font-weight:400;line-height:1.05;margin-bottom:10px}
+.hero-title em{font-style:italic;color:var(--gold)}
+.hero-meta{font-size:13px;color:var(--ink2);display:flex;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+/* Progress bar in hero */
+.hero-progress{
+  display:flex;align-items:center;gap:16px;margin-bottom:28px;
+}
+.hp-label{font-size:11px;color:var(--ink3);white-space:nowrap}
+.hp-bar{flex:1;height:2px;background:rgba(237,230,217,.1);overflow:hidden;max-width:280px}
+.hp-fill{height:2px;background:var(--gold);transition:width .6s ease}
+.hp-pct{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold)}
+/* Stats row */
+.hero-stats{
+  display:flex;gap:0;border-top:1px solid var(--b);
+  margin:0 -48px;padding:0 48px;
+}
+.hs{padding:16px 0;margin-right:36px;flex-shrink:0}
+.hs-n{font-family:'Playfair Display',serif;font-size:26px;font-weight:400;line-height:1}
+.hs-l{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:3px}
+.hs-n.gold{color:var(--gold)}
+
+/* ── TABS ─────────────────────────────────────── */
+.tabs-bar{
+  display:flex;border-bottom:1px solid var(--b);
+  position:sticky;top:58px;z-index:200;
+  background:rgba(12,11,9,.96);backdrop-filter:blur(12px);
+}
+.tab{font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:14px 24px;color:var(--ink3);cursor:pointer;
+  border-bottom:2px solid transparent;transition:var(--tr);
+  display:flex;align-items:center;gap:8px;
+}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--gold)}
+.tab-count{font-family:'DM Mono',monospace;font-size:10px;
+  background:var(--bg4);padding:2px 6px;color:var(--ink3)}
+.tab.on .tab-count{background:var(--gold3);color:var(--gold)}
+.tab-panel{display:none}.tab-panel.on{display:block}
+
+/* ── SECTION HELPERS ─────────────────────────── */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;
+  padding:22px 40px 16px}
+.sec-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:400}
+.sec-action{font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink3);cursor:pointer;transition:var(--tr);border:1px solid var(--b2);padding:6px 14px}
+.sec-action:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ══════════════════════════════════════════════
+   TAB 1 — 片单
+══════════════════════════════════════════════ */
+/* Import header */
+.import-bar{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 40px;background:var(--bg1);border-bottom:1px solid var(--b);
+}
+.import-bar-text{font-size:12px;color:var(--ink2);flex:1}
+.import-bar-text strong{color:var(--ink)}
+.import-btn{font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  padding:7px 16px;border:1px solid var(--b2);color:var(--ink3);transition:var(--tr)}
+.import-btn:hover{border-color:var(--gold);color:var(--gold)}
+.import-btn.primary{border-color:var(--gold);color:var(--gold)}
+.import-btn.primary:hover{background:var(--gold);color:var(--bg)}
+/* Filter row */
+.filter-row{
+  display:flex;gap:6px;padding:14px 40px;border-bottom:1px solid var(--b);
+  overflow-x:auto;
+}
+.filter-row::-webkit-scrollbar{height:2px}
+.fbtn{font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+  padding:5px 13px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr);white-space:nowrap}
+.fbtn:hover{border-color:var(--b2);color:var(--ink)}.fbtn.on{border-color:var(--gold);color:var(--gold)}
+/* Film list */
+.film-list{display:flex;flex-direction:column;gap:0}
+.fl-item{
+  display:grid;grid-template-columns:60px auto 1fr auto;
+  border-bottom:1px solid var(--b);transition:background .2s;cursor:pointer;
+  min-height:80px;
+}
+.fl-item:hover{background:var(--bg1)}
+.fl-item.seen{opacity:.7}
+.fl-item.want{border-left:2px solid var(--gold)}
+.fl-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink4);
+  display:flex;align-items:center;justify-content:center;border-right:1px solid var(--b)}
+.fl-poster{
+  width:50px;flex-shrink:0;margin:8px 12px;
+  background:var(--bg3);display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:var(--ink4);
+  aspect-ratio:2/3;
+}
+.fl-body{padding:14px 16px;flex:1;min-width:0}
+.fl-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:400;
+  margin-bottom:4px;line-height:1.25}
+.fl-title em{font-style:italic}
+.fl-meta{font-size:12px;color:var(--ink3);display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.fl-tags{display:flex;gap:5px;flex-wrap:wrap}
+.fl-tag{font-size:10px;padding:2px 8px;border:1px solid var(--b);color:var(--ink3)}
+.fl-tag.special{border-color:var(--gold3);color:var(--gold)}
+.fl-right{padding:14px 18px;border-left:1px solid var(--b);
+  display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;
+  flex-shrink:0;min-width:120px}
+.fl-screening{font-size:11px;color:var(--ink2);text-align:right;line-height:1.5}
+.fl-venue{font-size:11px;color:var(--ink3)}
+/* Want / seen toggle */
+.fl-toggle{display:flex;gap:5px}
+.fl-tog-btn{font-size:10px;letter-spacing:.07em;text-transform:uppercase;
+  padding:4px 10px;border:1px solid var(--b);color:var(--ink4);transition:var(--tr)}
+.fl-tog-btn:hover{border-color:var(--b2);color:var(--ink3)}
+.fl-tog-btn.active-want{border-color:var(--gold2);color:var(--gold);background:rgba(200,164,74,.07)}
+.fl-tog-btn.active-seen{border-color:var(--green2);color:var(--green);background:rgba(92,158,106,.07)}
+/* My plan summary */
+.plan-summary{
+  display:flex;gap:0;border:1px solid var(--b);margin:20px 40px;background:var(--bg1);
+}
+.ps-item{flex:1;padding:14px 18px;border-right:1px solid var(--b);text-align:center}
+.ps-item:last-child{border-right:none}
+.ps-n{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:3px}
+.ps-n.gold{color:var(--gold)}.ps-n.green{color:var(--green)}
+.ps-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+
+/* ══════════════════════════════════════════════
+   TAB 2 — 评分
+══════════════════════════════════════════════ */
+/* Rating overview */
+.rating-overview{
+  display:grid;grid-template-columns:220px 1fr;
+  border-bottom:1px solid var(--b);
+}
+.ro-left{padding:32px 40px;border-right:1px solid var(--b);
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+.ro-big{font-family:'Playfair Display',serif;font-size:72px;font-weight:400;
+  color:var(--gold);line-height:1;margin-bottom:6px}
+.ro-stars{display:flex;gap:3px;margin-bottom:8px}
+.ro-star{font-size:18px;color:var(--gold)}
+.ro-star.half{color:var(--gold2)}.ro-star.empty{color:var(--bg4)}
+.ro-count{font-size:12px;color:var(--ink3)}
+.ro-right{padding:24px 32px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+.ro-bar-row{display:flex;align-items:center;gap:12px}
+.rob-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);min-width:20px;text-align:right}
+.rob-bar{flex:1;height:3px;background:var(--bg4);overflow:hidden;border-radius:2px}
+.rob-fill{height:3px;background:var(--gold);border-radius:2px;transition:width .6s ease}
+.rob-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);min-width:24px}
+/* Batch sections */
+.batch-section{border-bottom:1px solid var(--b)}
+.batch-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 40px 14px;border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s;
+}
+.batch-header:hover{background:var(--bg1)}
+.batch-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:400;
+  display:flex;align-items:center;gap:12px}
+.batch-n{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink4);
+  padding:2px 8px;border:1px solid var(--b2)}
+.batch-avg{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold)}
+.batch-toggle{font-size:14px;color:var(--ink4);transition:transform .2s}
+.batch-toggle.open{transform:rotate(180deg)}
+.batch-films{display:none}
+.batch-films.open{display:block}
+/* Rating card */
+.rating-card{
+  display:grid;grid-template-columns:60px auto 1fr auto;
+  border-bottom:1px solid var(--b);
+}
+.rc-poster{width:48px;margin:10px 0 10px 14px;aspect-ratio:2/3;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:var(--ink4)}
+.rc-body{padding:12px 16px;flex:1;min-width:0}
+.rc-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:400;margin-bottom:4px}
+.rc-meta{font-size:11px;color:var(--ink3);margin-bottom:8px;display:flex;gap:10px}
+/* Star rating input */
+.star-input{display:flex;gap:4px;margin-bottom:8px}
+.si-star{font-size:22px;cursor:pointer;color:var(--bg4);transition:color .15s;line-height:1}
+.si-star:hover,.si-star.on{color:var(--gold)}
+.si-star:hover ~ .si-star{color:var(--bg4) !important}
+/* Review input */
+.review-compose{
+  border:1px solid var(--b);padding:0;transition:border-color .2s;margin-bottom:0;
+}
+.review-compose:focus-within{border-color:var(--b2)}
+.review-textarea{width:100%;padding:10px 12px;font-size:13px;color:var(--ink);
+  line-height:1.65;min-height:60px;}
+.review-textarea::placeholder{color:var(--ink4)}
+.review-footer{display:flex;align-items:center;justify-content:space-between;
+  padding:7px 12px;border-top:1px solid var(--b)}
+.review-tags{display:flex;gap:5px}
+.rtag{font-size:10px;padding:3px 8px;border:1px solid var(--b);color:var(--ink3);
+  cursor:pointer;transition:var(--tr)}
+.rtag:hover,.rtag.on{border-color:var(--b2);color:var(--ink)}
+.rtag.on{background:var(--bg3)}
+.review-submit{font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  padding:5px 12px;border:1px solid var(--gold);color:var(--gold);transition:var(--tr)}
+.review-submit:hover{background:var(--gold);color:var(--bg)}
+/* Existing review */
+.existing-review{
+  font-size:13px;color:var(--ink2);line-height:1.7;
+  border-left:2px solid var(--b2);padding-left:12px;margin-bottom:6px;
+  font-style:italic;
+}
+.existing-review-meta{font-size:11px;color:var(--ink3);display:flex;gap:10px}
+.rc-right{padding:12px 18px;border-left:1px solid var(--b);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  flex-shrink:0;min-width:80px}
+.rc-score{font-family:'Playfair Display',serif;font-size:28px;font-weight:400;color:var(--gold)}
+.rc-score-label{font-size:10px;color:var(--ink3);text-align:center}
+/* Write review floating btn */
+.write-review-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 40px;border-bottom:1px solid var(--b);
+  cursor:pointer;transition:background .2s;background:var(--bg1);
+}
+.write-review-btn:hover{background:var(--bg2)}
+.wrb-text{font-size:12px;color:var(--ink3)}
+
+/* ══════════════════════════════════════════════
+   TAB 3 — 周边
+══════════════════════════════════════════════ */
+/* Cinema ratings */
+.cinema-section{border-bottom:1px solid var(--b)}
+.cinema-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b)}
+.cinema-card{background:var(--bg);padding:20px 22px;cursor:pointer;transition:background .2s}
+.cinema-card:hover{background:var(--bg1)}
+.cc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.cc-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:400;margin-bottom:3px}
+.cc-addr{font-size:11px;color:var(--ink3)}
+.cc-score{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold);text-align:right}
+.cc-score-label{font-size:10px;color:var(--ink3);text-align:right}
+.cc-tips{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.cc-tip{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--ink2);line-height:1.5}
+.cc-tip-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:5px}
+.cc-stars{display:flex;gap:2px;margin-bottom:8px}
+.cc-star{font-size:12px;color:var(--gold)}
+.cc-star.e{color:var(--bg4)}
+.cc-tags{display:flex;gap:5px;flex-wrap:wrap}
+.cc-tag{font-size:10px;padding:2px 8px;border:1px solid var(--b);color:var(--ink3)}
+.cc-tag.good{border-color:var(--green2);color:var(--green)}
+.cc-tag.bad{border-color:rgba(155,64,64,.3);color:var(--red)}
+/* Add tip button */
+.add-tip-row{
+  padding:14px 22px;border-top:1px solid var(--b);
+  display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .2s;
+}
+.add-tip-row:hover{background:var(--bg2)}
+.add-tip-text{font-size:12px;color:var(--ink3)}
+/* Materials exchange */
+.materials-section{border-bottom:1px solid var(--b)}
+.mat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b);padding:0}
+.mat-card{background:var(--bg);padding:18px 16px;cursor:pointer;transition:background .2s;
+  display:flex;flex-direction:column;gap:8px}
+.mat-card:hover{background:var(--bg1)}
+.mat-img{aspect-ratio:3/4;background:var(--bg3);margin-bottom:4px;
+  display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.mat-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.6}
+.mat-img-letter{font-family:'Playfair Display',serif;font-size:28px;font-style:italic;
+  color:var(--ink4);position:relative;z-index:1}
+.mat-type{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.mat-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:400;line-height:1.3}
+.mat-owner{font-size:11px;color:var(--ink3)}
+.mat-status{font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 8px;border:1px solid;align-self:flex-start}
+.ms-want{border-color:var(--gold3);color:var(--gold)}
+.ms-swap{border-color:var(--green2);color:var(--green)}
+.ms-have{border-color:var(--b2);color:var(--ink3)}
+.mat-add{background:var(--bg);border:1px dashed var(--b2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:8px;cursor:pointer;transition:var(--tr);padding:18px 16px;aspect-ratio:auto}
+.mat-add:hover{border-color:var(--gold2);background:var(--bg1)}
+.mat-add-icon{font-size:22px;color:var(--ink4)}
+.mat-add-text{font-size:12px;color:var(--ink3)}
+/* Nearby section */
+.nearby-section{}
+.nearby-tabs{display:flex;gap:6px;padding:16px 40px;border-bottom:1px solid var(--b);flex-wrap:wrap}
+.nearby-tab{font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+  padding:6px 14px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr)}
+.nearby-tab:hover{border-color:var(--b2);color:var(--ink)}
+.nearby-tab.on{border-color:var(--gold);color:var(--gold)}
+.nearby-list{display:flex;flex-direction:column;gap:0}
+.nearby-item{
+  display:flex;align-items:center;gap:16px;
+  padding:16px 40px;border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s;
+}
+.nearby-item:hover{background:var(--bg1)}
+.ni-icon{width:40px;height:40px;border:1px solid var(--b2);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:16px}
+.ni-body{flex:1}
+.ni-name{font-size:14px;font-weight:500;margin-bottom:3px}
+.ni-meta{font-size:12px;color:var(--ink3);display:flex;gap:12px;flex-wrap:wrap}
+.ni-rating{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold)}
+.ni-tags{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.ni-tag{font-size:10px;padding:2px 7px;border:1px solid var(--b);color:var(--ink3)}
+.ni-right{text-align:right;flex-shrink:0}
+.ni-dist{font-size:12px;color:var(--ink2);margin-bottom:3px}
+.ni-price{font-size:11px;color:var(--ink3)}
+.ni-add-btn{
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 11px;border:1px solid var(--b2);color:var(--ink3);transition:var(--tr)
+}
+.ni-add-btn:hover{border-color:var(--gold);color:var(--gold)}
+/* Add nearby form */
+.nearby-compose{
+  padding:18px 40px;background:var(--bg1);border-bottom:1px solid var(--b);
+  display:none;
+}
+.nearby-compose.open{display:block}
+.nc-row{display:flex;gap:10px;margin-bottom:10px}
+.nc-input{flex:1;padding:10px 13px;border:1px solid var(--b2);font-size:13px;
+  color:var(--ink);background:var(--bg);transition:border-color .2s}
+.nc-input:focus{border-color:var(--b3)}
+.nc-input::placeholder{color:var(--ink4)}
+.nc-submit{font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  padding:10px 20px;background:var(--gold);color:var(--bg);border:1px solid var(--gold);transition:var(--tr)}
+.nc-submit:hover{background:#D4AE55}
+
+/* ══════════════════════════════════════════════
+   SUMMARY PANEL (bottom of all tabs)
+══════════════════════════════════════════════ */
+.summary-panel{
+  border-top:2px solid var(--gold3);
+  background:var(--bg1);
+  padding:40px;
+}
+.summary-header{
+  display:flex;align-items:baseline;justify-content:space-between;margin-bottom:28px;
+}
+.summary-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:400}
+.summary-subtitle{font-size:12px;color:var(--ink3)}
+/* Big stats */
+.summary-stats{display:flex;gap:0;border:1px solid var(--b);margin-bottom:28px}
+.ss-item{flex:1;padding:20px 24px;border-right:1px solid var(--b);text-align:center}
+.ss-item:last-child{border-right:none}
+.ss-n{font-family:'Playfair Display',serif;font-size:36px;font-weight:400;line-height:1;margin-bottom:4px}
+.ss-n.gold{color:var(--gold)}.ss-n.green{color:var(--green)}
+.ss-l{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+/* Favorite film */
+.fav-section{margin-bottom:28px}
+.fav-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.fav-label::before{content:'';width:16px;height:1px;background:var(--gold)}
+.fav-card{
+  display:flex;gap:18px;border:1px solid var(--gold3);padding:18px;
+  background:rgba(200,164,74,.03);cursor:pointer;transition:var(--tr);
+}
+.fav-card:hover{background:rgba(200,164,74,.06)}
+.fav-poster{width:60px;aspect-ratio:2/3;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:24px;font-style:italic;color:var(--ink4)}
+.fav-body{}
+.fav-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;margin-bottom:5px}
+.fav-title em{font-style:italic;color:var(--gold)}
+.fav-meta{font-size:12px;color:var(--ink3);margin-bottom:8px}
+.fav-review{font-size:13px;color:var(--ink2);line-height:1.7;font-style:italic;
+  border-left:2px solid var(--gold3);padding-left:12px}
+/* Memories compose */
+.memories-compose{
+  border:1px solid var(--b2);
+}
+.memories-compose:focus-within{border-color:var(--b3)}
+.memories-textarea{width:100%;padding:16px 18px;font-size:14px;color:var(--ink);
+  line-height:1.75;min-height:100px;font-family:'Playfair Display',serif;font-style:italic}
+.memories-textarea::placeholder{color:var(--ink4);font-style:italic}
+.memories-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px;border-top:1px solid var(--b);
+}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(14px);
+  background:var(--bg3);border:1px solid var(--b2);padding:10px 22px;
+  font-size:13px;color:var(--ink2);z-index:800;
+  opacity:0;transition:all .25s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo">Cine <em>Ours</em></div>
+  <div class="nav-back" onclick="history.back()">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 1L3 6.5 8 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    线下影展
+  </div>
+  <div class="nav-r">
+    <button class="nbtn nbtn-g" onclick="toast('分享本届观影记录')">分享</button>
+    <button class="nbtn nbtn-gold" onclick="toast('导出本届总结')">导出总结</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-bg-glow"></div>
+  <div class="hero-filmstrip" id="filmstrip"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">线下影展 · 官方电影节</div>
+    <div class="hero-status"><span class="live-dot"></span>正在举办 · 已进入第15天</div>
+    <h1 class="hero-title">香港国际<em>电影节</em><br>第50届 · HKIFF50</h1>
+    <div class="hero-meta">
+      <span>2026年3月25日 — 4月7日</span>
+      <span>香港，中国</span>
+      <span>240余部影片</span>
+      <span>50余个放映场地</span>
+    </div>
+    <div class="hero-progress">
+      <span class="hp-label">本届进度</span>
+      <div class="hp-bar"><div class="hp-fill" style="width:68%"></div></div>
+      <span class="hp-pct">68%</span>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-n gold">8</div><div class="hs-l">已观影</div></div>
+      <div class="hs"><div class="hs-n">3</div><div class="hs-l">想看未看</div></div>
+      <div class="hs"><div class="hs-n">24.5</div><div class="hs-l">观影时长（小时）</div></div>
+      <div class="hs"><div class="hs-n gold">8.4</div><div class="hs-l">平均评分</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <div class="tab on" id="tab-list" onclick="switchTab('list',this)">
+    片单 <span class="tab-count">11</span>
+  </div>
+  <div class="tab" id="tab-rating" onclick="switchTab('rating',this)">
+    评分 <span class="tab-count">8</span>
+  </div>
+  <div class="tab" id="tab-nearby" onclick="switchTab('nearby',this)">
+    周边
+  </div>
+  <div class="tab" id="tab-summary" onclick="switchTab('summary',this)">
+    本届总结
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 1 — 片单
+══════════════════════════════════════════════ -->
+<div class="tab-panel on" id="panel-list">
+
+  <!-- Import bar -->
+  <div class="import-bar">
+    <div class="import-bar-text">从 <strong>HKIFF 官网</strong> 自动抓取片单，或手动添加</div>
+    <button class="import-btn primary" onclick="toast('正在从官网提取片单…')">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="display:inline;margin-right:5px"><path d="M6 1v7M3 5l3 3 3-3M1 9v.5A1.5 1.5 0 002.5 11h7A1.5 1.5 0 0011 9.5V9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      从官网提取
+    </button>
+    <button class="import-btn" onclick="addFilmManual()">手动添加</button>
+  </div>
+
+  <!-- Plan summary -->
+  <div class="plan-summary">
+    <div class="ps-item"><div class="ps-n gold">8</div><div class="ps-l">已看</div></div>
+    <div class="ps-item"><div class="ps-n">3</div><div class="ps-l">想看</div></div>
+    <div class="ps-item"><div class="ps-n">11</div><div class="ps-l">总计</div></div>
+    <div class="ps-item"><div class="ps-n green">24.5h</div><div class="ps-l">累计时长</div></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-row">
+    <button class="fbtn on" onclick="setFilter(this)">全部</button>
+    <button class="fbtn" onclick="setFilter(this)">已看</button>
+    <button class="fbtn" onclick="setFilter(this)">想看</button>
+    <button class="fbtn" onclick="setFilter(this)">竞赛单元</button>
+    <button class="fbtn" onclick="setFilter(this)">华语电影</button>
+    <button class="fbtn" onclick="setFilter(this)">亚洲电影</button>
+    <button class="fbtn" onclick="setFilter(this)">修复经典</button>
+  </div>
+
+  <!-- Film list -->
+  <div class="film-list" id="film-list">
+
+    <!-- Film 1 — seen, rated -->
+    <div class="fl-item seen">
+      <div class="fl-num">01</div>
+      <div class="fl-poster" style="background:linear-gradient(150deg,#0a1018,#101428)">悲</div>
+      <div class="fl-body">
+        <div class="fl-title">《悲情城市》4K修复版</div>
+        <div class="fl-meta"><span>1989</span><span>侯孝贤</span><span>157分钟</span></div>
+        <div class="fl-tags">
+          <span class="fl-tag special">50周年特别放映</span>
+          <span class="fl-tag">4K修复</span>
+          <span class="fl-tag">竞赛</span>
+        </div>
+      </div>
+      <div class="fl-right">
+        <div class="fl-screening">3月26日 18:30<br>香港文化中心</div>
+        <div class="fl-toggle">
+          <button class="fl-tog-btn active-seen" onclick="toggleSeen(this,'1')">✓ 已看</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Film 2 — seen -->
+    <div class="fl-item seen">
+      <div class="fl-num">02</div>
+      <div class="fl-poster" style="background:linear-gradient(150deg,#1a0808,#280f10)">霸</div>
+      <div class="fl-body">
+        <div class="fl-title">《霸王别姬》30周年修复版</div>
+        <div class="fl-meta"><span>1993</span><span>陈凯歌</span><span>171分钟</span></div>
+        <div class="fl-tags">
+          <span class="fl-tag special">华语经典</span>
+          <span class="fl-tag">修复版</span>
+        </div>
+      </div>
+      <div class="fl-right">
+        <div class="fl-screening">3月27日 14:00<br>香港科学馆</div>
+        <div class="fl-toggle">
+          <button class="fl-tog-btn active-seen" onclick="toggleSeen(this,'2')">✓ 已看</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Film 3 — seen -->
+    <div class="fl-item seen">
+      <div class="fl-num">03</div>
+      <div class="fl-poster" style="background:linear-gradient(150deg,#0a1810,#101a14)">驾</div>
+      <div class="fl-body">
+        <div class="fl-title">《驾驶我的车》</div>
+        <div class="fl-meta"><span>2021</span><span>滨口龙介</span><span>179分钟</span></div>
+        <div class="fl-tags">
+          <span class="fl-tag">日本电影</span>
+          <span class="fl-tag">竞赛</span>
+        </div>
+      </div>
+      <div class="fl-right">
+        <div class="fl-screening">3月28日 20:00<br>AMC Pacific Place</div>
+        <div class="fl-toggle">
+          <button class="fl-tog-btn active-seen" onclick="toggleSeen(this,'3')">✓ 已看</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Film 4 — seen -->
+    <div class="fl-item seen">
+      <div class="fl-num">04</div>
+      <div class="fl-poster" style="background:linear-gradient(150deg,#180818,#200f20)">她</div>
+      <div class="fl-body">
+        <div class="fl-title">《她说：莎拉·波莉的故事》</div>
+        <div class="fl-meta"><span>2012</span><span>莎拉·波莉</span><span>108分钟</span></div>
+        <div class="fl-tags">
+          <span class="fl-tag">女性导演</span>
+          <span class="fl-tag">纪录片</span>
+        </div>
+      </div>
+      <div class="fl-right">
+        <div class="fl-screening">3月29日 16:30<br>UA IMAX Times Square</div>
+        <div class="fl-toggle">
+          <button class="fl-tog-btn active-seen" onclick="toggleSeen(this,'4')">✓ 已看</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Film 5-8 condensed seen -->
+    <div class="fl-item seen"><div class="fl-num">05</div><div class="fl-poster" style="background:linear-gradient(150deg,#0a1820,#101a28)">流</div><div class="fl-body"><div class="fl-title">《流浪艺人》</div><div class="fl-meta"><span>1975</span><span>安哲罗普洛斯</span><span>230分钟</span></div><div class="fl-tags"><span class="fl-tag special">影史经典</span><span class="fl-tag">希腊</span></div></div><div class="fl-right"><div class="fl-screening">3月30日 14:00<br>香港文化中心</div><div class="fl-toggle"><button class="fl-tog-btn active-seen" onclick="toggleSeen(this,'5')">✓ 已看</button></div></div></div>
+    <div class="fl-item seen"><div class="fl-num">06</div><div class="fl-poster" style="background:linear-gradient(150deg,#1a1208,#221a10)">阳</div><div class="fl-body"><div class="fl-title">《阳光灿烂的日子》</div><div class="fl-meta"><span>1994</span><span>姜文</span><span>134分钟</span></div><div class="fl-tags"><span class="fl-tag">华语电影</span><span class="fl-tag">修复版</span></div></div><div class="fl-right"><div class="fl-screening">4月1日 19:30<br>百老汇电影中心</div><div class="fl-toggle"><button class="fl-tog-btn active-seen" onclick="toggleSeen(this,'6')">✓ 已看</button></div></div></div>
+    <div class="fl-item seen"><div class="fl-num">07</div><div class="fl-poster" style="background:linear-gradient(150deg,#0a1018,#101428)">安</div><div class="fl-body"><div class="fl-title">《安德烈·鲁布廖夫》</div><div class="fl-meta"><span>1966</span><span>塔可夫斯基</span><span>183分钟</span></div><div class="fl-tags"><span class="fl-tag">俄罗斯</span><span class="fl-tag">修复版</span></div></div><div class="fl-right"><div class="fl-screening">4月2日 15:00<br>香港科学馆</div><div class="fl-toggle"><button class="fl-tog-btn active-seen" onclick="toggleSeen(this,'7')">✓ 已看</button></div></div></div>
+    <div class="fl-item seen"><div class="fl-num">08</div><div class="fl-poster" style="background:linear-gradient(150deg,#0d1f16,#152d20)">绿</div><div class="fl-body"><div class="fl-title">《绿光》</div><div class="fl-meta"><span>1986</span><span>侯麦</span><span>98分钟</span></div><div class="fl-tags"><span class="fl-tag">法国</span><span class="fl-tag">侯麦回顾展</span></div></div><div class="fl-right"><div class="fl-screening">4月3日 20:00<br>百老汇电影中心</div><div class="fl-toggle"><button class="fl-tog-btn active-seen" onclick="toggleSeen(this,'8')">✓ 已看</button></div></div></div>
+
+    <!-- Film 9 — want -->
+    <div class="fl-item want"><div class="fl-num">09</div><div class="fl-poster" style="background:linear-gradient(150deg,#1a1a0d,#28280f)">一</div><div class="fl-body"><div class="fl-title">《一一》</div><div class="fl-meta"><span>2000</span><span>杨德昌</span><span>173分钟</span></div><div class="fl-tags"><span class="fl-tag special">50周年特选</span><span class="fl-tag">台湾</span></div></div><div class="fl-right"><div class="fl-screening">4月5日 18:00<br>香港文化中心</div><div class="fl-toggle"><button class="fl-tog-btn active-want" onclick="toggleSeen(this,'9')">♥ 想看</button></div></div></div>
+    <div class="fl-item want"><div class="fl-num">10</div><div class="fl-poster" style="background:linear-gradient(150deg,#1e1028,#2e1840)">花</div><div class="fl-body"><div class="fl-title">《花样年华》</div><div class="fl-meta"><span>2000</span><span>王家卫</span><span>98分钟</span></div><div class="fl-tags"><span class="fl-tag">香港电影</span><span class="fl-tag">4K修复</span></div></div><div class="fl-right"><div class="fl-screening">4月6日 20:30<br>UA IMAX</div><div class="fl-toggle"><button class="fl-tog-btn active-want" onclick="toggleSeen(this,'10')">♥ 想看</button></div></div></div>
+    <div class="fl-item want"><div class="fl-num">11</div><div class="fl-poster" style="background:linear-gradient(150deg,#181208,#221808)">七</div><div class="fl-body"><div class="fl-title">《七武士》</div><div class="fl-meta"><span>1954</span><span>黑泽明</span><span>207分钟</span></div><div class="fl-tags"><span class="fl-tag">日本</span><span class="fl-tag">修复版</span></div></div><div class="fl-right"><div class="fl-screening">4月7日 14:00<br>香港文化中心</div><div class="fl-toggle"><button class="fl-tog-btn active-want" onclick="toggleSeen(this,'11')">♥ 想看</button></div></div></div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 2 — 评分
+══════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-rating">
+
+  <!-- Rating overview -->
+  <div class="rating-overview">
+    <div class="ro-left">
+      <div class="ro-big">8.4</div>
+      <div class="ro-stars">
+        <span class="ro-star">★</span><span class="ro-star">★</span><span class="ro-star">★</span>
+        <span class="ro-star">★</span><span class="ro-star half">★</span>
+      </div>
+      <div class="ro-count">基于 8 部影片的评分</div>
+    </div>
+    <div class="ro-right">
+      <div class="ro-bar-row"><span class="rob-label">5★</span><div class="rob-bar"><div class="rob-fill" style="width:50%"></div></div><span class="rob-count">4</span></div>
+      <div class="ro-bar-row"><span class="rob-label">4★</span><div class="rob-bar"><div class="rob-fill" style="width:25%"></div></div><span class="rob-count">2</span></div>
+      <div class="ro-bar-row"><span class="rob-label">3★</span><div class="rob-bar"><div class="rob-fill" style="width:12%"></div></div><span class="rob-count">1</span></div>
+      <div class="ro-bar-row"><span class="rob-label">2★</span><div class="rob-bar"><div class="rob-fill" style="width:12%"></div></div><span class="rob-count">1</span></div>
+      <div class="ro-bar-row"><span class="rob-label">1★</span><div class="rob-bar"><div class="rob-fill" style="width:0%"></div></div><span class="rob-count">0</span></div>
+    </div>
+  </div>
+
+  <!-- Batch 1 -->
+  <div class="batch-section">
+    <div class="batch-header" onclick="toggleBatch('b1',this)">
+      <div class="batch-title">
+        第一批 <span class="batch-n">4部</span>
+        <span style="font-size:11px;color:var(--ink3)">3月26—29日</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <span class="batch-avg">平均 8.6</span>
+        <span class="batch-toggle open">▾</span>
+      </div>
+    </div>
+    <div class="batch-films open" id="b1">
+
+      <!-- Rated film 1 -->
+      <div class="rating-card">
+        <div style="width:14px;border-right:1px solid var(--b)"></div>
+        <div class="rc-poster" style="background:linear-gradient(150deg,#0a1018,#101428)">悲</div>
+        <div class="rc-body">
+          <div class="rc-title">《悲情城市》4K修复版</div>
+          <div class="rc-meta"><span>1989 · 侯孝贤</span><span>3月26日观影</span></div>
+          <div class="existing-review">"那场婚宴之后，文清坐在窗边，光打在他脸上——一个聋哑人比所有人都看得更清楚。这部影片的沉默不是缺失，是一种比语言更诚实的陈述。4K修复版的色调比记忆中更蓝，更冷，更远。"</div>
+          <div class="existing-review-meta">
+            <span style="color:var(--gold)">★★★★★</span>
+            <span>写于观影后第2天</span>
+            <span style="color:var(--ink3);cursor:pointer;transition:var(--tr)" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--ink3)'">编辑</span>
+          </div>
+        </div>
+        <div class="rc-right">
+          <div class="rc-score">9.5</div>
+          <div class="rc-score-label">个人评分</div>
+        </div>
+      </div>
+
+      <!-- Rated film 2 -->
+      <div class="rating-card">
+        <div style="width:14px;border-right:1px solid var(--b)"></div>
+        <div class="rc-poster" style="background:linear-gradient(150deg,#1a0808,#280f10)">霸</div>
+        <div class="rc-body">
+          <div class="rc-title">《霸王别姬》30周年修复版</div>
+          <div class="rc-meta"><span>1993 · 陈凯歌</span><span>3月27日观影</span></div>
+          <div class="existing-review">"修复版的颗粒感和老拷贝不一样，画面更干净，但那种70mm胶片的重量还在。程蝶衣的眼神里有一种被时代反复辜负但仍然相信戏比天大的人才有的神情。"</div>
+          <div class="existing-review-meta">
+            <span style="color:var(--gold)">★★★★★</span>
+            <span>写于观影后1天</span>
+          </div>
+        </div>
+        <div class="rc-right">
+          <div class="rc-score">9.0</div>
+          <div class="rc-score-label">个人评分</div>
+        </div>
+      </div>
+
+      <!-- Unrated film with input -->
+      <div class="rating-card">
+        <div style="width:14px;border-right:1px solid var(--b)"></div>
+        <div class="rc-poster" style="background:linear-gradient(150deg,#0a1810,#101a14)">驾</div>
+        <div class="rc-body">
+          <div class="rc-title">《驾驶我的车》</div>
+          <div class="rc-meta"><span>2021 · 滨口龙介</span><span>3月28日观影</span></div>
+          <div class="star-input" id="stars-3">
+            <span class="si-star" onclick="setStar(3,1)" onmouseover="hoverStar(3,1)" onmouseout="unhoverStar(3)">★</span>
+            <span class="si-star" onclick="setStar(3,2)" onmouseover="hoverStar(3,2)" onmouseout="unhoverStar(3)">★</span>
+            <span class="si-star" onclick="setStar(3,3)" onmouseover="hoverStar(3,3)" onmouseout="unhoverStar(3)">★</span>
+            <span class="si-star" onclick="setStar(3,4)" onmouseover="hoverStar(3,4)" onmouseout="unhoverStar(3)">★</span>
+            <span class="si-star" onclick="setStar(3,5)" onmouseover="hoverStar(3,5)" onmouseout="unhoverStar(3)">★</span>
+          </div>
+          <div class="review-compose" id="compose-3">
+            <textarea class="review-textarea" placeholder="写下这部影片给你留下的感受……" id="review-3" rows="2"></textarea>
+            <div class="review-footer">
+              <div class="review-tags">
+                <span class="rtag" onclick="this.classList.toggle('on')">被打动</span>
+                <span class="rtag" onclick="this.classList.toggle('on')">需要消化</span>
+                <span class="rtag" onclick="this.classList.toggle('on')">想二刷</span>
+              </div>
+              <button class="review-submit" onclick="submitReview(3)">保存</button>
+            </div>
+          </div>
+        </div>
+        <div class="rc-right" id="score-3">
+          <div style="font-size:11px;color:var(--ink4);text-align:center">点击<br>评分</div>
+        </div>
+      </div>
+
+      <div class="rating-card">
+        <div style="width:14px;border-right:1px solid var(--b)"></div>
+        <div class="rc-poster" style="background:linear-gradient(150deg,#180818,#200f20)">她</div>
+        <div class="rc-body">
+          <div class="rc-title">《她说：莎拉·波莉的故事》</div>
+          <div class="rc-meta"><span>2012 · 莎拉·波莉</span><span>3月29日观影</span></div>
+          <div class="existing-review">"记忆是可以被重新剪辑的。这部纪录片最厉害的地方在于它最终揭示了一个事实：关于同一件事，每个人记住的都是不同的版本。没有谎言，只有各自的真相。"</div>
+          <div class="existing-review-meta">
+            <span style="color:var(--gold)">★★★★</span>
+            <span>写于观影后3天</span>
+          </div>
+        </div>
+        <div class="rc-right">
+          <div class="rc-score">8.0</div>
+          <div class="rc-score-label">个人评分</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch 2 -->
+  <div class="batch-section">
+    <div class="batch-header" onclick="toggleBatch('b2',this)">
+      <div class="batch-title">第二批 <span class="batch-n">4部</span><span style="font-size:11px;color:var(--ink3)">3月30—4月3日</span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span class="batch-avg">平均 8.2</span><span class="batch-toggle">▾</span></div>
+    </div>
+    <div class="batch-films" id="b2">
+      <div class="rating-card"><div style="width:14px;border-right:1px solid var(--b)"></div><div class="rc-poster" style="background:linear-gradient(150deg,#0a1820,#101a28)">流</div><div class="rc-body"><div class="rc-title">《流浪艺人》</div><div class="rc-meta"><span>1975 · 安哲罗普洛斯</span><span>3月30日观影</span></div><div class="existing-review">"230分钟之后，时间这个概念在我身上发生了什么变化，我说不清楚。历史、时间、希腊大地，和那些在雨中行走的人，好像都变成了同一件事。"</div><div class="existing-review-meta"><span style="color:var(--gold)">★★★★★</span><span>4月1日写下</span></div></div><div class="rc-right"><div class="rc-score">9.8</div><div class="rc-score-label">个人评分</div></div></div>
+      <div class="rating-card"><div style="width:14px;border-right:1px solid var(--b)"></div><div class="rc-poster" style="background:linear-gradient(150deg,#1a1208,#221a10)">阳</div><div class="rc-body"><div class="rc-title">《阳光灿烂的日子》</div><div class="rc-meta"><span>1994 · 姜文</span><span>4月1日观影</span></div><div class="star-input" id="stars-5"><span class="si-star on" onclick="setStar(5,1)">★</span><span class="si-star on" onclick="setStar(5,2)">★</span><span class="si-star on" onclick="setStar(5,3)">★</span><span class="si-star on" onclick="setStar(5,4)">★</span><span class="si-star" onclick="setStar(5,5)">★</span></div><div class="review-compose"><textarea class="review-textarea" placeholder="写下观感……" rows="2"></textarea><div class="review-footer"><div class="review-tags"><span class="rtag" onclick="this.classList.toggle('on')">被打动</span></div><button class="review-submit" onclick="submitReview(5)">保存</button></div></div></div><div class="rc-right" id="score-5"><div class="rc-score">8.0</div><div class="rc-score-label">已评分</div></div></div>
+      <div class="rating-card"><div style="width:14px;border-right:1px solid var(--b)"></div><div class="rc-poster" style="background:linear-gradient(150deg,#0a1018,#101428)">安</div><div class="rc-body"><div class="rc-title">《安德烈·鲁布廖夫》</div><div class="rc-meta"><span>1966 · 塔可夫斯基</span><span>4月2日观影</span></div><div class="existing-review">"大银幕上的黑白画面，和家里的屏幕完全是两种体验。那口钟最后被铸出来的那场戏，你感觉整个影院都在颤动。"</div><div class="existing-review-meta"><span style="color:var(--gold)">★★★★★</span></div></div><div class="rc-right"><div class="rc-score">9.5</div><div class="rc-score-label">个人评分</div></div></div>
+      <div class="rating-card"><div style="width:14px;border-right:1px solid var(--b)"></div><div class="rc-poster" style="background:linear-gradient(150deg,#0d1f16,#152d20)">绿</div><div class="rc-body"><div class="rc-title">《绿光》</div><div class="rc-meta"><span>1986 · 侯麦</span><span>4月3日观影</span></div><div class="existing-review">"侯麦的夏天让我觉得自己也在那个海边。德尔菲娜站在海边等待绿光的那一刻，我以为自己要哭了，但没有——因为那个瞬间太轻，重了就碎了。"</div><div class="existing-review-meta"><span style="color:var(--gold)">★★★★</span></div></div><div class="rc-right"><div class="rc-score">8.5</div><div class="rc-score-label">个人评分</div></div></div>
+    </div>
+  </div>
+
+  <!-- Write next review -->
+  <div class="write-review-btn" onclick="switchTab('list',document.getElementById('tab-list'))">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <span class="wrb-text">继续添加观影评分 — 前往片单标记已看</span>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 3 — 周边
+══════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-nearby">
+
+  <!-- Cinema ratings -->
+  <div class="cinema-section">
+    <div class="sec-hd">
+      <div class="sec-title">影院评分 · Tips</div>
+      <button class="sec-action" onclick="toast('添加影院评分')">+ 添加影院</button>
+    </div>
+    <div class="cinema-grid">
+
+      <!-- Cinema 1 -->
+      <div class="cinema-card">
+        <div class="cc-header">
+          <div>
+            <div class="cc-name">香港文化中心</div>
+            <div class="cc-addr">广东道10号，尖沙咀</div>
+          </div>
+          <div>
+            <div class="cc-score">9.2</div>
+            <div class="cc-score-label">我的评分</div>
+          </div>
+        </div>
+        <div class="cc-stars">
+          <span class="cc-star">★</span><span class="cc-star">★</span><span class="cc-star">★</span>
+          <span class="cc-star">★</span><span class="cc-star">★</span>
+        </div>
+        <div class="cc-tips">
+          <div class="cc-tip"><span class="cc-tip-dot"></span>大厅音效极佳，距舞台约15排以内视觉最好</div>
+          <div class="cc-tip"><span class="cc-tip-dot"></span>提前30分钟到场可以在维港边散步，值得</div>
+          <div class="cc-tip"><span class="cc-tip-dot"></span>厕所在2楼走廊右侧，人多时别等散场再去</div>
+        </div>
+        <div class="cc-tags">
+          <span class="cc-tag good">音效极佳</span>
+          <span class="cc-tag good">座位宽敞</span>
+          <span class="cc-tag">停车不便</span>
+        </div>
+        <div class="add-tip-row" onclick="addTip('hkcc')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span class="add-tip-text">添加 Tips</span>
+        </div>
+      </div>
+
+      <!-- Cinema 2 -->
+      <div class="cinema-card">
+        <div class="cc-header">
+          <div>
+            <div class="cc-name">百老汇电影中心</div>
+            <div class="cc-addr">油麻地众坊街3号</div>
+          </div>
+          <div>
+            <div class="cc-score">8.8</div>
+            <div class="cc-score-label">我的评分</div>
+          </div>
+        </div>
+        <div class="cc-stars">
+          <span class="cc-star">★</span><span class="cc-star">★</span><span class="cc-star">★</span>
+          <span class="cc-star">★</span><span class="cc-star half" style="color:var(--gold2)">★</span>
+        </div>
+        <div class="cc-tips">
+          <div class="cc-tip"><span class="cc-tip-dot"></span>独立影院氛围最好，墙上的电影海报值得看</div>
+          <div class="cc-tip"><span class="cc-tip-dot"></span>楼下的kubrick书店必去，电影相关书籍很全</div>
+          <div class="cc-tip"><span class="cc-tip-dot"></span>咖啡可以带进场，旁边有711</div>
+        </div>
+        <div class="cc-tags">
+          <span class="cc-tag good">独立氛围</span>
+          <span class="cc-tag good">Kubrick书店</span>
+          <span class="cc-tag bad">座位略小</span>
+        </div>
+        <div class="add-tip-row" onclick="addTip('broadway')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span class="add-tip-text">添加 Tips</span>
+        </div>
+      </div>
+
+      <!-- Cinema 3 -->
+      <div class="cinema-card">
+        <div class="cc-header">
+          <div>
+            <div class="cc-name">AMC Pacific Place</div>
+            <div class="cc-addr">金钟太古广场</div>
+          </div>
+          <div>
+            <div class="cc-score">7.5</div>
+            <div class="cc-score-label">我的评分</div>
+          </div>
+        </div>
+        <div class="cc-stars">
+          <span class="cc-star">★</span><span class="cc-star">★</span><span class="cc-star">★</span>
+          <span class="cc-star half" style="color:var(--gold2)">★</span><span class="cc-star e">★</span>
+        </div>
+        <div class="cc-tips">
+          <div class="cc-tip"><span class="cc-tip-dot"></span>商场影院，硬件好但缺乏电影节氛围</div>
+          <div class="cc-tip"><span class="cc-tip-dot"></span>MTR金钟站步行5分钟，交通便利</div>
+        </div>
+        <div class="cc-tags">
+          <span class="cc-tag good">交通便利</span>
+          <span class="cc-tag bad">氛围一般</span>
+        </div>
+        <div class="add-tip-row" onclick="addTip('amc')">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span class="add-tip-text">添加 Tips</span>
+        </div>
+      </div>
+
+      <!-- Add cinema -->
+      <div class="cinema-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;border:1px dashed var(--b2);background:transparent;min-height:200px" onclick="toast('添加新影院评分')">
+        <div style="font-size:22px;color:var(--ink4);margin-bottom:8px">+</div>
+        <div style="font-size:13px;color:var(--ink3)">添加影院评分</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Materials exchange -->
+  <div class="materials-section">
+    <div class="sec-hd">
+      <div class="sec-title">物料交换 · 分享</div>
+      <button class="sec-action" onclick="toast('发布物料')">+ 发布物料</button>
+    </div>
+    <div style="font-size:12px;color:var(--ink3);padding:0 40px 14px">电影节手册、场刊、海报、周边——标注你有什么、想要什么</div>
+    <div class="mat-grid">
+
+      <div class="mat-card">
+        <div class="mat-img" style="background:linear-gradient(135deg,#0a1018,#101428)">
+          <div class="mat-img-letter">场</div>
+        </div>
+        <div class="mat-type">场刊</div>
+        <div class="mat-name">HKIFF50 官方场刊</div>
+        <div class="mat-owner">@YueLiang 有两本</div>
+        <div class="mat-status ms-swap">可交换</div>
+      </div>
+
+      <div class="mat-card">
+        <div class="mat-img" style="background:linear-gradient(150deg,#0a1810,#101a14)">
+          <div class="mat-img-letter">海</div>
+        </div>
+        <div class="mat-type">海报</div>
+        <div class="mat-name">《悲情城市》4K修复版限定海报</div>
+        <div class="mat-owner">@CinemasHiro</div>
+        <div class="mat-status ms-want">寻求</div>
+      </div>
+
+      <div class="mat-card">
+        <div class="mat-img" style="background:linear-gradient(150deg,#1a0808,#280f10)">
+          <div class="mat-img-letter">册</div>
+        </div>
+        <div class="mat-type">手册</div>
+        <div class="mat-name">侯麦回顾展专题手册</div>
+        <div class="mat-owner">@Ruan_Xiao 有一本</div>
+        <div class="mat-status ms-have">出让</div>
+      </div>
+
+      <div class="mat-card" style="cursor:pointer" onclick="toast('发布我的物料')">
+        <div class="mat-img" style="background:var(--bg3);border:1px dashed var(--b2)">
+          <div style="font-size:22px;color:var(--ink4)">+</div>
+        </div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:4px">发布我的物料</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Nearby: restaurants & transport -->
+  <div class="nearby-section">
+    <div class="sec-hd">
+      <div class="sec-title">周边推荐</div>
+      <button class="sec-action" onclick="toggleNearbyCompose()">+ 推荐一个</button>
+    </div>
+    <div class="nearby-tabs">
+      <button class="nearby-tab on" onclick="setNearbyTab(this,'food')">🍜 餐饮</button>
+      <button class="nearby-tab" onclick="setNearbyTab(this,'coffee')">☕ 咖啡</button>
+      <button class="nearby-tab" onclick="setNearbyTab(this,'bar')">🍺 酒吧</button>
+      <button class="nearby-tab" onclick="setNearbyTab(this,'transit')">🚇 交通</button>
+      <button class="nearby-tab" onclick="setNearbyTab(this,'stay')">🏨 住宿</button>
+    </div>
+
+    <!-- Compose -->
+    <div class="nearby-compose" id="nearby-compose">
+      <div class="nc-row">
+        <input type="text" class="nc-input" placeholder="名称" style="flex:1.5">
+        <input type="text" class="nc-input" placeholder="地址或描述" style="flex:2">
+        <input type="text" class="nc-input" placeholder="推荐理由（一句话）" style="flex:2">
+        <button class="nc-submit" onclick="submitNearby()">发布</button>
+      </div>
+    </div>
+
+    <!-- Food list -->
+    <div class="nearby-list" id="nearby-food">
+      <div class="nearby-item">
+        <div class="ni-icon">🍜</div>
+        <div class="ni-body">
+          <div class="ni-name">兰芳园（尖沙咀店）</div>
+          <div class="ni-meta"><span>尖东科学馆道16号</span><span>距文化中心 8分钟步行</span></div>
+          <div class="ni-tags">
+            <span class="ni-tag">港式茶餐厅</span>
+            <span class="ni-tag">丝袜奶茶</span>
+            <span class="ni-tag">散场后宵夜</span>
+          </div>
+        </div>
+        <div class="ni-right">
+          <div class="ni-dist">680m</div>
+          <div class="ni-rating">★ 9.1</div>
+          <div class="ni-price">¥50—80/人</div>
+        </div>
+      </div>
+      <div class="nearby-item">
+        <div class="ni-icon">🍱</div>
+        <div class="ni-body">
+          <div class="ni-name">翠苑冰室</div>
+          <div class="ni-meta"><span>油麻地庙街附近</span><span>百老汇影院步行3分钟</span></div>
+          <div class="ni-tags">
+            <span class="ni-tag">怀旧冰室</span>
+            <span class="ni-tag">午市套餐</span>
+          </div>
+        </div>
+        <div class="ni-right">
+          <div class="ni-dist">300m</div>
+          <div class="ni-rating">★ 8.7</div>
+          <div class="ni-price">¥40—60/人</div>
+        </div>
+      </div>
+      <div class="nearby-item">
+        <div class="ni-icon">🥘</div>
+        <div class="ni-body">
+          <div class="ni-name">泰昌饼家（中环总店）</div>
+          <div class="ni-meta"><span>中环摆花街35号</span><span>散场后绕路必去</span></div>
+          <div class="ni-tags">
+            <span class="ni-tag">港式点心</span>
+            <span class="ni-tag">蛋挞</span>
+            <span class="ni-tag">经典必试</span>
+          </div>
+        </div>
+        <div class="ni-right">
+          <div class="ni-dist">2.1km</div>
+          <div class="ni-rating">★ 9.4</div>
+          <div class="ni-price">¥20—40/人</div>
+        </div>
+      </div>
+      <div class="nearby-item">
+        <div class="ni-icon">☕</div>
+        <div class="ni-body">
+          <div class="ni-name">Kubrick Café（百老汇内）</div>
+          <div class="ni-meta"><span>油麻地百老汇电影中心内</span></div>
+          <div class="ni-tags">
+            <span class="ni-tag">电影氛围</span>
+            <span class="ni-tag">书店咖啡</span>
+            <span class="ni-tag">观影前后</span>
+          </div>
+        </div>
+        <div class="ni-right">
+          <div class="ni-dist">0m</div>
+          <div class="ni-rating">★ 8.9</div>
+          <div class="ni-price">¥50—80</div>
+        </div>
+      </div>
+    </div>
+    <div class="nearby-list" id="nearby-coffee" style="display:none">
+      <div class="nearby-item"><div class="ni-icon">☕</div><div class="ni-body"><div class="ni-name">Kubrick Café</div><div class="ni-meta"><span>百老汇电影中心内</span></div><div class="ni-tags"><span class="ni-tag">电影氛围</span><span class="ni-tag">书店咖啡</span></div></div><div class="ni-right"><div class="ni-dist">0m</div><div class="ni-rating">★ 8.9</div></div></div>
+      <div class="nearby-item"><div class="ni-icon">☕</div><div class="ni-body"><div class="ni-name">Pacific Coffee（尖沙咀店）</div><div class="ni-meta"><span>文化中心附近多家门店</span></div><div class="ni-tags"><span class="ni-tag">快捷</span><span class="ni-tag">观影前</span></div></div><div class="ni-right"><div class="ni-dist">400m</div><div class="ni-rating">★ 7.8</div></div></div>
+    </div>
+    <div class="nearby-list" id="nearby-bar" style="display:none">
+      <div class="nearby-item"><div class="ni-icon">🍺</div><div class="ni-body"><div class="ni-name">The Pawn（湾仔）</div><div class="ni-meta"><span>湾仔庄士敦道62号</span></div><div class="ni-tags"><span class="ni-tag">港式工业风</span><span class="ni-tag">散场聚会</span></div></div><div class="ni-right"><div class="ni-dist">1.8km</div><div class="ni-rating">★ 8.5</div><div class="ni-price">¥100—150/人</div></div></div>
+    </div>
+    <div class="nearby-list" id="nearby-transit" style="display:none">
+      <div class="nearby-item"><div class="ni-icon">🚇</div><div class="ni-body"><div class="ni-name">八达通 Octopus Card</div><div class="ni-meta"><span>香港所有公共交通通用</span></div><div class="ni-tags"><span class="ni-tag">必备</span><span class="ni-tag">地铁+巴士+渡轮</span></div></div><div class="ni-right"><div class="ni-dist">—</div></div></div>
+      <div class="nearby-item"><div class="ni-icon">🚌</div><div class="ni-body"><div class="ni-name">天星小轮</div><div class="ni-meta"><span>尖沙咀—中环 8分钟</span></div><div class="ni-tags"><span class="ni-tag">观景体验</span><span class="ni-tag">¥3.4</span></div></div><div class="ni-right"><div class="ni-dist">尖咀码头</div><div class="ni-rating">★ 9.6</div></div></div>
+    </div>
+    <div class="nearby-list" id="nearby-stay" style="display:none">
+      <div class="nearby-item"><div class="ni-icon">🏨</div><div class="ni-body"><div class="ni-name">美丽华酒店（尖沙咀）</div><div class="ni-meta"><span>尖沙咀弥敦道118号</span></div><div class="ni-tags"><span class="ni-tag">距文化中心近</span><span class="ni-tag">电影节期间需提前</span></div></div><div class="ni-right"><div class="ni-dist">1.2km</div><div class="ni-price">¥800—1200/晚</div></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 4 — 本届总结
+══════════════════════════════════════════════ -->
+<div class="tab-panel" id="panel-summary">
+  <div class="summary-panel">
+    <div class="summary-header">
+      <div>
+        <div class="summary-title">本届总结</div>
+        <div class="summary-subtitle">香港国际电影节 · 第50届 · 2026年3—4月</div>
+      </div>
+      <button class="nbtn-g nbtn" onclick="toast('导出为PDF')">导出总结</button>
+    </div>
+
+    <!-- Big stats -->
+    <div class="summary-stats">
+      <div class="ss-item">
+        <div class="ss-n gold">8</div>
+        <div class="ss-l">本届观影</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:4px">/ 11部片单</div>
+      </div>
+      <div class="ss-item">
+        <div class="ss-n green">24.5</div>
+        <div class="ss-l">观影时长（小时）</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:4px">约等于1.02天</div>
+      </div>
+      <div class="ss-item">
+        <div class="ss-n gold">8.4</div>
+        <div class="ss-l">平均评分</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:4px">8部已评分</div>
+      </div>
+      <div class="ss-item">
+        <div class="ss-n">3</div>
+        <div class="ss-l">影院 / 场地</div>
+      </div>
+      <div class="ss-item">
+        <div class="ss-n">5</div>
+        <div class="ss-l">导演国籍</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:4px">日·法·港·中·苏</div>
+      </div>
+    </div>
+
+    <!-- Favorite -->
+    <div class="fav-section">
+      <div class="fav-label">本届最喜欢</div>
+      <div class="fav-card" onclick="switchTab('rating',document.getElementById('tab-rating'))">
+        <div class="fav-poster" style="background:linear-gradient(150deg,#0a1820,#101a28)">流</div>
+        <div class="fav-body">
+          <div class="fav-title">《流浪<em>艺人</em>》</div>
+          <div class="fav-meta">1975 · 安哲罗普洛斯 · 230分钟 · 个人评分 9.8</div>
+          <div class="fav-review">"230分钟之后，时间这个概念在我身上发生了什么变化，我说不清楚。历史、时间、希腊大地，和那些在雨中行走的人，好像都变成了同一件事。我坐在香港文化中心里，但感觉自己去了一个很远很远的地方。"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memories text area -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+        margin-bottom:12px;display:flex;align-items:center;gap:10px">
+        <span style="display:block;width:16px;height:1px;background:var(--gold)"></span>
+        本届记忆
+      </div>
+      <div class="memories-compose">
+        <textarea class="memories-textarea" placeholder="这届电影节留给你的，是什么……" rows="6">今年的HKIFF是我第一次来香港看电影节。第50届，比我预想的要更有仪式感。
+
+最难忘的是在文化中心大厅看《悲情城市》，散场之后出来，维港的灯还亮着，突然觉得那些在历史里消失的人离我很近。
+
+下一届还来。</textarea>
+        <div class="memories-footer">
+          <span style="font-size:11px;color:var(--ink3)">仅自己可见</span>
+          <button class="review-submit" onclick="toast('记忆已保存')">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Year comparison -->
+    <div style="border:1px solid var(--b);padding:18px 20px;background:var(--bg2)">
+      <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px">历届参与记录</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--ink2)">
+          <span style="font-family:'DM Mono',monospace;color:var(--ink3);min-width:48px">2026</span>
+          <div style="flex:1;height:2px;background:var(--bg4);overflow:hidden"><div style="height:2px;background:var(--gold);width:73%"></div></div>
+          <span style="font-family:'DM Mono',monospace;color:var(--gold);min-width:28px">8部</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--ink3)">
+          <span style="font-family:'DM Mono',monospace;min-width:48px">2025</span>
+          <div style="flex:1;height:2px;background:var(--bg4);overflow:hidden"><div style="height:2px;background:var(--ink3);width:54%"></div></div>
+          <span style="font-family:'DM Mono',monospace;min-width:28px">6部</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--ink3)">
+          <span style="font-family:'DM Mono',monospace;min-width:48px">2024</span>
+          <div style="flex:1;height:2px;background:var(--bg4);overflow:hidden"><div style="height:2px;background:var(--ink3);width:36%"></div></div>
+          <span style="font-family:'DM Mono',monospace;min-width:28px">4部</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── FILMSTRIP ─────────────────────────────────────────────
+(function(){
+  var el=document.getElementById('filmstrip');
+  if(!el) return;
+  var h='';for(var i=0;i<28;i++) h+='<div class="hfs-frame"><div class="hfs-hole"></div></div>';
+  el.innerHTML=h;
+})();
+
+// ── TABS ──────────────────────────────────────────────────
+function switchTab(id, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  document.getElementById('panel-'+id).classList.add('on');
+  window.scrollTo({top:document.querySelector('.tabs-bar').offsetTop,behavior:'smooth'});
+}
+
+// ── FILM LIST ─────────────────────────────────────────────
+function setFilter(btn){
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function toggleSeen(btn, id){
+  var isWant=btn.classList.contains('active-want');
+  var isSeen=btn.classList.contains('active-seen');
+  var row=btn.closest('.fl-item');
+  if(isWant){
+    // Move to seen
+    btn.className='fl-tog-btn active-seen';
+    btn.textContent='✓ 已看';
+    row.classList.remove('want');
+    row.classList.add('seen');
+    toast('已标记为看过，去评分 →');
+  } else if(isSeen){
+    btn.className='fl-tog-btn';
+    btn.textContent='标记';
+    row.classList.remove('seen');
+    toast('已取消标记');
+  } else {
+    btn.className='fl-tog-btn active-want';
+    btn.textContent='♥ 想看';
+    row.classList.add('want');
+  }
+}
+function addFilmManual(){
+  var list=document.getElementById('film-list');
+  var item=document.createElement('div');
+  item.className='fl-item';
+  item.style.animation='fadeUp .3s ease both';
+  item.innerHTML=`
+    <div class="fl-num">—</div>
+    <div class="fl-poster" style="background:var(--bg3)">+</div>
+    <div class="fl-body" style="display:flex;flex-direction:column;justify-content:center;gap:8px">
+      <input type="text" style="font-size:15px;color:var(--ink);border-bottom:1px solid var(--b2);padding:4px 0;background:none;outline:none;font-family:'Playfair Display',serif" placeholder="片名" onkeydown="if(event.key==='Enter')this.closest('.fl-item').querySelector('.fl-tog-btn').focus()">
+      <input type="text" style="font-size:12px;color:var(--ink3);border-bottom:1px solid var(--b);padding:3px 0;background:none;outline:none" placeholder="年份 · 导演 · 时长">
+    </div>
+    <div class="fl-right">
+      <div class="fl-toggle">
+        <button class="fl-tog-btn" onclick="saveManualFilm(this)">添加</button>
+      </div>
+    </div>`;
+  list.insertBefore(item, list.firstChild);
+  item.querySelector('input').focus();
+}
+function saveManualFilm(btn){
+  var item=btn.closest('.fl-item');
+  var title=item.querySelector('input').value||'新影片';
+  btn.className='fl-tog-btn active-want';
+  btn.textContent='♥ 想看';
+  btn.onclick=function(){ toggleSeen(btn,'new'); };
+  item.querySelector('.fl-poster').textContent=title[0]||'?';
+  item.querySelector('[placeholder="片名"]').style.pointerEvents='none';
+  toast('已添加到片单');
+}
+
+// ── RATINGS ───────────────────────────────────────────────
+var ratings={};
+function setStar(filmId, n){
+  ratings[filmId]=n;
+  var stars=document.querySelectorAll('#stars-'+filmId+' .si-star');
+  stars.forEach((s,i)=>{ s.style.color=i<n?'var(--gold)':'var(--bg4)'; s.classList.toggle('on',i<n); });
+  var sc=document.getElementById('score-'+filmId);
+  if(sc){ sc.innerHTML='<div class="rc-score">'+(n*2).toFixed(1)+'</div><div class="rc-score-label">已评分</div>'; }
+}
+function hoverStar(filmId, n){
+  var stars=document.querySelectorAll('#stars-'+filmId+' .si-star');
+  stars.forEach((s,i)=>{ s.style.color=i<n?'var(--gold)':'var(--bg4)'; });
+}
+function unhoverStar(filmId){
+  var n=ratings[filmId]||0;
+  var stars=document.querySelectorAll('#stars-'+filmId+' .si-star');
+  stars.forEach((s,i)=>{ s.style.color=i<n?'var(--gold)':'var(--bg4)'; });
+}
+function submitReview(filmId){
+  var text=document.getElementById('review-'+filmId)?.value?.trim();
+  if(!text){ toast('请先写点什么或给出评分'); return; }
+  toast('评分已保存');
+}
+function toggleBatch(id, header){
+  var panel=document.getElementById(id);
+  var toggle=header.querySelector('.batch-toggle');
+  var isOpen=panel.classList.toggle('open');
+  toggle.classList.toggle('open',isOpen);
+  panel.style.display=isOpen?'block':'none';
+}
+
+// ── NEARBY ────────────────────────────────────────────────
+var nearbyLists=['food','coffee','bar','transit','stay'];
+function setNearbyTab(btn, id){
+  document.querySelectorAll('.nearby-tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  nearbyLists.forEach(l=>{
+    var el=document.getElementById('nearby-'+l);
+    if(el) el.style.display=l===id?'flex':'none';
+  });
+  document.getElementById('nearby-'+id).style.flexDirection='column';
+}
+// Fix: initial state — only food visible
+nearbyLists.slice(1).forEach(l=>{
+  var el=document.getElementById('nearby-'+l);
+  if(el) el.style.display='none';
+});
+function toggleNearbyCompose(){
+  document.getElementById('nearby-compose').classList.toggle('open');
+}
+function submitNearby(){
+  document.getElementById('nearby-compose').classList.remove('open');
+  toast('已发布推荐');
+}
+function addTip(cinemaId){
+  var tip=prompt('添加一条 Tip：');
+  if(tip) toast('Tips 已添加');
+}
+
+// ── TOAST ─────────────────────────────────────────────────
+var toastT;
+function toast(m){
+  var t=document.getElementById('toast');
+  t.textContent=m;t.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── KEYBOARD ──────────────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.getElementById('nearby-compose').classList.remove('open');
+});
+</script>
+</body>
+</html>

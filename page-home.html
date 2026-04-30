@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cine Ours — 首页</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<style>
+:root{--bg:#0C0B09;--bg1:#111009;--bg2:#161410;--bg3:#1C1A15;--bg4:#252018;
+--ink:#EDE6D9;--ink2:#B5AC9E;--ink3:#7A7268;--ink4:#4A4540;
+--gold:#C8A44A;--gold2:#9B7A2E;--gold3:#3D2E0E;--green:#5C9E6A;
+--b:rgba(237,230,217,.07);--b2:rgba(237,230,217,.13);--b3:rgba(237,230,217,.22);
+--tr:all .22s cubic-bezier(.4,0,.2,1)}
+*{margin:0;padding:0;box-sizing:border-box}html{font-size:15px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4)}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:inherit}
+/* HERO */
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;border-bottom:1px solid var(--b)}
+.hero-l{padding:52px 48px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--b);position:relative;overflow:hidden}
+.hero-l-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 60% at 20% 50%,rgba(200,164,74,.055),transparent 55%)}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.eyebrow::before{content:'';width:22px;height:1px;background:var(--gold)}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(48px,6vw,82px);font-weight:400;line-height:1.0;margin-bottom:10px}
+.hero-title em{font-style:italic;color:var(--gold)}
+.hero-tagline{font-family:'Playfair Display',serif;font-size:clamp(14px,1.8vw,19px);font-style:italic;color:var(--ink2);margin-bottom:20px}
+.hero-desc{font-size:13px;color:var(--ink2);max-width:400px;line-height:1.85;margin-bottom:32px}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.btn-gold{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:12px 28px;background:var(--gold);color:var(--bg);border:1px solid var(--gold);transition:var(--tr)}
+.btn-gold:hover{background:#D4AE55}
+.btn-ghost{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:12px 22px;border:1px solid var(--b2);color:var(--ink2);transition:var(--tr)}
+.btn-ghost:hover{border-color:var(--b3);color:var(--ink)}
+.hero-stats{display:flex;gap:0;border-top:1px solid var(--b)}
+.hero-stat{flex:1;padding:14px 0;border-right:1px solid var(--b)}
+.hero-stat:last-child{border-right:none}
+.hero-stat-n{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:2px}
+.hero-stat-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+/* RIGHT PANEL - Live festivals */
+.hero-r{display:flex;flex-direction:column;background:var(--bg1)}
+.hr-header{padding:18px 24px 12px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.hr-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.hr-live{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green)}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:livp 2s ease-in-out infinite;flex-shrink:0}
+@keyframes livp{0%,100%{box-shadow:0 0 3px var(--green)}50%{box-shadow:0 0 10px var(--green)}}
+.hero-fest-list{flex:1;overflow-y:auto}
+.hf-card{border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s;overflow:hidden}
+.hf-card:hover{background:var(--bg2)}
+.hf-poster{width:100%;height:100px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.hf-poster-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.5)}
+.hf-poster-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 20%,rgba(12,11,9,.92) 100%)}
+.hf-poster-content{position:relative;z-index:1;padding:0 18px 10px;width:100%}
+.hf-status{font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.hf-title-over{font-family:'Playfair Display',serif;font-size:14px;font-weight:400;line-height:1.2;color:var(--ink)}
+.hf-title-over em{font-style:italic;color:var(--gold)}
+.hf-body{padding:10px 18px 12px}
+.hf-meta{font-size:11px;color:var(--ink3);margin-bottom:7px;display:flex;gap:10px}
+.hf-foot{display:flex;align-items:center;justify-content:space-between}
+.hf-host{font-size:11px;color:var(--ink3)}
+.hf-join{font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);transition:var(--tr)}
+.hf-join:hover{background:var(--gold);color:var(--bg)}
+.hf-pbar{height:2px;background:var(--bg4);margin-top:7px;overflow:hidden}
+.hf-pbar-fill{height:2px;background:var(--gold)}
+.hf-new{padding:16px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:var(--tr)}
+.hf-new:hover{background:var(--bg2)}
+/* MAP TEASER */
+.map-teaser{height:400px;position:relative;overflow:hidden;cursor:pointer;border-bottom:1px solid var(--b)}
+#teaser-svg{width:100%;height:100%}
+.map-overlay{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(to right,rgba(12,11,9,.92) 0%,rgba(12,11,9,.4) 40%,transparent 70%),linear-gradient(to top,rgba(12,11,9,.5) 0%,transparent 30%)}
+.map-content{position:absolute;top:50%;left:48px;transform:translateY(-50%);z-index:3}
+.map-eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.map-eyebrow::before{content:'';width:16px;height:1px;background:var(--gold)}
+.map-title{font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,44px);font-weight:400;line-height:1.1;margin-bottom:8px}
+.map-title em{font-style:italic;color:var(--gold)}
+.map-sub{font-size:13px;color:var(--ink2);max-width:380px;line-height:1.7;margin-bottom:18px}
+.map-btn{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:10px 22px;border:1px solid var(--gold);color:var(--gold);transition:var(--tr)}
+.map-teaser:hover .map-btn{background:var(--gold);color:var(--bg)}
+.map-chips{position:absolute;bottom:20px;right:48px;z-index:3;display:flex;gap:8px}
+.map-chip{background:rgba(17,16,9,.92);border:1px solid var(--b2);padding:7px 14px;backdrop-filter:blur(8px);display:flex;align-items:center;gap:8px}
+.map-chip-n{font-family:'Playfair Display',serif;font-size:16px}
+.map-chip-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+/* TODAY SECTION */
+.sec-hd{display:flex;align-items:baseline;justify-content:space-between;padding:26px 48px 18px}
+.sec-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400}
+.sec-more{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:opacity .2s}
+.sec-more:hover{opacity:.7}
+/* News ticker */
+.ticker{border-top:1px solid var(--b);border-bottom:1px solid var(--b);padding:9px 48px;background:var(--bg1);display:flex;align-items:center;gap:14px;overflow:hidden}
+.ticker-badge{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold3);padding:2px 8px;flex-shrink:0;white-space:nowrap}
+.ticker-track{overflow:hidden;flex:1}
+.ticker-inner{display:flex;gap:28px;white-space:nowrap;animation:tick 22s linear infinite}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{font-size:12px;color:var(--ink2);cursor:pointer}
+.ticker-item:hover{color:var(--gold)}
+/* Today main event */
+.today-hero{display:grid;grid-template-columns:auto 1fr;border-bottom:1px solid var(--b)}
+.today-date-col{padding:28px 32px;border-right:1px solid var(--b);background:var(--bg1);min-width:140px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-start}
+.today-year{font-family:'Playfair Display',serif;font-size:64px;font-weight:400;color:var(--bg4);line-height:1}
+.today-date{font-size:12px;color:var(--ink3);margin-bottom:auto;margin-top:4px}
+.today-badge{font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--gold3);color:var(--gold);margin-top:16px}
+.today-main{display:grid;grid-template-columns:1fr 300px}
+.tmc{padding:26px 32px;border-right:1px solid var(--b)}
+.tme-title{font-family:'Playfair Display',serif;font-size:clamp(18px,2.5vw,28px);font-weight:400;line-height:1.2;margin-bottom:10px}
+.tme-title em{font-style:italic;color:var(--gold)}
+.tme-body{font-size:13px;color:var(--ink2);line-height:1.8;margin-bottom:16px}
+.tme-link{color:var(--ink);border-bottom:1px solid var(--b2);cursor:pointer;transition:var(--tr)}
+.tme-link:hover{border-bottom-color:var(--gold);color:var(--gold)}
+.tme-img{position:relative;overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center}
+.tme-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.5)}
+.tme-img-letter{font-family:'Playfair Display',serif;font-size:64px;font-style:italic;color:var(--bg4);position:relative;z-index:1}
+.tme-img-caption{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;background:linear-gradient(transparent,rgba(12,11,9,.9));font-size:11px;color:var(--ink2)}
+.tmdb-badge{position:absolute;top:10px;right:10px;background:rgba(12,11,9,.85);border:1px solid var(--b2);padding:3px 9px;font-size:10px;color:var(--ink3);display:flex;align-items:center;gap:4px}
+.tmdb-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green)}
+/* Events strip */
+.events-strip{display:flex;overflow-x:auto;border-bottom:1px solid var(--b)}
+.events-strip::-webkit-scrollbar{height:2px}
+.ev-card{min-width:200px;border-right:1px solid var(--b);cursor:pointer;transition:background .2s;overflow:hidden;flex-shrink:0}
+.ev-card:hover{background:var(--bg1)}
+.ev-img{height:72px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.ev-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.45)}
+.ev-img-ov{position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(12,11,9,.8))}
+.ev-img-let{font-family:'Playfair Display',serif;font-size:28px;font-style:italic;color:var(--ink4);position:relative;z-index:1}
+.ev-body{padding:10px 14px 12px}
+.ev-year{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-bottom:3px}
+.ev-type{font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.ev-type.premiere{color:var(--gold)}.ev-type.award{color:#4A7FA5}.ev-type.birth{color:var(--green)}.ev-type.death{color:var(--ink4)}
+.ev-title{font-family:'Playfair Display',serif;font-size:12px;line-height:1.3;margin-bottom:3px}
+.ev-desc{font-size:11px;color:var(--ink3);line-height:1.4}
+/* Today news */
+.news-wrap{padding:0 48px 24px}
+.news-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);padding:18px 0 12px;border-bottom:1px solid var(--b);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.news-live{color:var(--green);display:flex;align-items:center;gap:4px;font-size:10px}
+.news-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:livp 2s ease-in-out infinite}
+.news-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b)}
+.nc{background:var(--bg);cursor:pointer;transition:background .2s;overflow:hidden}
+.nc:hover{background:var(--bg1)}
+.nc-img{height:110px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.nc-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.5);transition:transform .4s}
+.nc:hover .nc-img-bg{transform:scale(1.04)}
+.nc-img-ov{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(12,11,9,.7) 100%)}
+.nc-img-let{font-family:'Playfair Display',serif;font-size:38px;font-style:italic;color:var(--ink4);position:relative;z-index:1}
+.nc-body{padding:12px 14px}
+.nc-src{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+.nc-title{font-family:'Playfair Display',serif;font-size:13px;line-height:1.3;margin-bottom:4px}
+.nc-desc{font-size:11px;color:var(--ink3);line-height:1.5}
+.tmdb-note{text-align:center;padding:12px 0;font-size:11px;color:var(--ink4)}
+/* FILM PICKER */
+.picker-sec{border-bottom:1px solid var(--b);background:var(--bg1)}
+.mood-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:0 48px 18px}
+.mood-card{padding:12px 14px;border:1px solid var(--b);cursor:pointer;transition:var(--tr)}
+.mood-card:hover{border-color:var(--b2);background:var(--bg2)}
+.mood-card.on{border-color:var(--gold);background:rgba(200,164,74,.05)}
+.mood-emoji{font-size:18px;margin-bottom:5px}
+.mood-name{font-size:11px;font-weight:500}
+.mood-desc{font-size:10px;color:var(--ink3);line-height:1.4;margin-top:3px}
+.ctx-row{display:flex;gap:6px;padding:0 48px 16px;align-items:center}
+.ctx-label{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:5px;margin-right:4px}
+.ctx-btn{font-size:11px;letter-spacing:.07em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr)}
+.ctx-btn:hover{border-color:var(--b2);color:var(--ink)}.ctx-btn.on{border-color:var(--b2);color:var(--ink);background:var(--bg2)}
+.ctx-sep{width:1px;height:14px;background:var(--b2);margin:0 4px}
+.films-grid{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--b);border-left:1px solid var(--b);transition:opacity .3s}
+.films-grid.loading{opacity:.4;pointer-events:none}
+.pf{border-right:1px solid var(--b);border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s;overflow:hidden}
+.pf:hover{background:var(--bg2)}
+.pf-poster{aspect-ratio:2/3;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.pf-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .4s}
+.pf:hover .pf-bg{transform:scale(1.05)}
+.pf-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(12,11,9,.85) 0%,transparent 50%);opacity:0;transition:opacity .25s}
+.pf:hover .pf-ov{opacity:1}
+.pf-action{position:absolute;bottom:8px;left:8px;right:8px;z-index:1;font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:5px;background:var(--gold);color:var(--bg);text-align:center;opacity:0;transform:translateY(5px);transition:all .2s}
+.pf:hover .pf-action{opacity:1;transform:translateY(0)}
+.pf-letter{font-family:'Playfair Display',serif;font-size:44px;font-style:italic;color:var(--ink4);position:relative;z-index:1}
+.pf-info{padding:10px 12px}
+.pf-title{font-family:'Playfair Display',serif;font-size:12px;font-weight:400;margin-bottom:2px}
+.pf-meta{font-size:10px;color:var(--ink3);margin-bottom:4px}
+.pf-rating{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold)}
+/* Curator pick */
+.curator-pick{padding:18px 48px;border-top:1px solid var(--b);display:flex;align-items:center;gap:20px;background:var(--bg2)}
+.cp-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);writing-mode:vertical-rl;transform:rotate(180deg);flex-shrink:0}
+.cp-poster{width:60px;height:88px;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative}
+.cp-poster-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.6)}
+.cp-poster-let{font-family:'Playfair Display',serif;font-size:24px;font-style:italic;color:var(--ink4);position:relative;z-index:1}
+.cp-film{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;margin-bottom:5px;cursor:pointer}
+.cp-film em{font-style:italic;color:var(--gold)}
+.cp-film:hover em{opacity:.8}
+.cp-reason{font-size:12px;color:var(--ink2);line-height:1.65}
+.cp-curator{font-size:11px;color:var(--ink3);margin-top:5px}
+/* OFFLINE FESTIVALS */
+.off-sec{border-bottom:1px solid var(--b)}
+.off-tabs{display:flex;gap:0;border-bottom:1px solid var(--b);padding:0 48px}
+.off-tab{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:10px 16px;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:var(--tr)}
+.off-tab:hover{color:var(--ink)}.off-tab.on{color:var(--ink);border-bottom-color:var(--gold)}
+.off-panel{display:none}.off-panel.on{display:block}
+.off-featured{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--b)}
+.off-feat-img{position:relative;overflow:hidden;min-height:240px;display:flex;align-items:flex-end}
+.off-fi-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.45)}
+.off-fi-ov{position:absolute;inset:0;background:linear-gradient(to right,transparent 50%,var(--bg) 95%),linear-gradient(to top,rgba(12,11,9,.8) 0%,transparent 40%)}
+.off-fi-cnt{position:absolute;bottom:0;left:0;right:0;padding:20px 24px}
+.off-feat-body{padding:24px 28px;border-left:1px solid var(--b)}
+.off-ey{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.off-ey::before{content:'';width:14px;height:1px;background:var(--gold)}
+.off-feat-title{font-family:'Playfair Display',serif;font-size:clamp(20px,3vw,32px);font-weight:400;line-height:1.1;margin-bottom:8px}
+.off-feat-title em{font-style:italic;color:var(--gold)}
+.off-feat-meta{font-size:12px;color:var(--ink3);margin-bottom:12px;display:flex;gap:12px;flex-wrap:wrap}
+.off-feat-desc{font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:16px}
+.off-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px}
+.off-tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 9px;border:1px solid var(--b2);color:var(--ink3)}
+.off-tag.g{border-color:var(--gold3);color:var(--gold)}
+.off-btn{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:9px 20px;border:1px solid var(--b2);color:var(--ink2);transition:var(--tr)}
+.off-btn:hover{border-color:var(--gold);color:var(--gold)}
+.off-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b)}
+.off-card{background:var(--bg);cursor:pointer;transition:background .2s;overflow:hidden}
+.off-card:hover{background:var(--bg1)}
+.off-card-img{height:90px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.oci-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.45);transition:transform .4s}
+.off-card:hover .oci-bg{transform:scale(1.05)}
+.oci-ov{position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(12,11,9,.85))}
+.oci-title{position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:14px;font-weight:400;padding:0 12px 8px;line-height:1.2}
+.oci-title em{font-style:italic;color:var(--gold)}
+.off-card-body{padding:10px 12px 14px}
+.ocb-status{font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.s-active{color:var(--green)}.s-soon{color:var(--gold)}.s-past{color:var(--ink4)}
+.ocb-meta{font-size:11px;color:var(--ink3);margin-bottom:7px;display:flex;gap:10px;flex-wrap:wrap}
+.ocb-desc{font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:8px}
+.ocb-awards{display:flex;gap:4px;flex-wrap:wrap}
+.ocb-aw{font-size:10px;padding:2px 8px;border:1px solid var(--b);color:var(--ink3)}
+/* HISTORY */
+.hist-sec{border-bottom:1px solid var(--b)}
+.h-strip{display:flex;overflow-x:auto;border-top:1px solid var(--b);margin-top:0}
+.h-strip::-webkit-scrollbar{height:2px}
+.h-date{padding:24px 28px;border-right:1px solid var(--b);flex-shrink:0;min-width:110px;display:flex;flex-direction:column;justify-content:center}
+.h-date-big{font-family:'Playfair Display',serif;font-size:40px;font-weight:400;color:var(--ink4);line-height:1}
+.h-date-sub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:5px}
+.h-ev{min-width:0;width:200px;border-right:1px solid var(--b);cursor:pointer;transition:background .2s;flex-shrink:0;overflow:hidden}
+.h-ev:hover{background:var(--bg1)}
+.h-ev-img{height:72px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.h-ev-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.45)}
+.h-ev-img-ov{position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(12,11,9,.8))}
+.h-ev-img-let{font-family:'Playfair Display',serif;font-size:28px;font-style:italic;color:var(--ink4);position:relative;z-index:1}
+.h-ev-body{padding:10px 12px}
+.h-ev-no{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-bottom:4px}
+.h-ev-title{font-family:'Playfair Display',serif;font-size:12px;line-height:1.3;margin-bottom:3px}
+.h-ev-desc{font-size:11px;color:var(--ink3);line-height:1.4}
+/* CREATOR */
+.cc-sec{border-bottom:1px solid var(--b)}
+.cc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b);margin-top:0}
+.cc{background:var(--bg);padding:18px 16px;cursor:pointer;transition:background .2s;display:flex;flex-direction:column}
+.cc:hover{background:var(--bg1)}
+.cc-type{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.cc-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:400;margin-bottom:6px;line-height:1.3}
+.cc-body{font-size:12px;color:var(--ink2);line-height:1.7;flex:1;margin-bottom:12px}
+.cc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--b);font-size:11px}
+.cc-stat{color:var(--ink3)}.cc-link{color:var(--gold)}
+/* FOOTER */
+footer{border-top:1px solid var(--b);padding:40px 48px 28px}
+.footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:32px;margin-bottom:28px}
+.footer-logo{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:8px}
+.footer-logo em{font-style:italic;color:var(--gold)}
+.footer-desc{font-size:12px;color:var(--ink3);line-height:1.7}
+.footer-col-t{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-bottom:12px}
+.footer-col a{display:block;font-size:12px;color:var(--ink3);margin-bottom:7px;transition:color .2s;cursor:pointer}
+.footer-col a:hover{color:var(--ink)}
+.footer-btm{display:flex;justify-content:space-between;padding-top:18px;border-top:1px solid var(--b);font-size:11px;color:var(--ink4)}
+/* Utils */
+.sec-sep{display:flex;align-items:center;gap:18px;padding:0 48px;margin:36px 0 0}
+.sec-sep::before,.sec-sep::after{content:'';flex:1;height:1px;background:var(--b)}
+.sec-sep-t{font-family:'Playfair Display',serif;font-size:12px;font-style:italic;color:var(--ink4);white-space:nowrap}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-l">
+    <div class="hero-l-bg"></div>
+    <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div class="eyebrow">Cinema of Our Own</div>
+      <h1 class="hero-title">Cine<br><em>Ours</em></h1>
+      <p class="hero-tagline">属于我们自己的电影空间</p>
+      <p class="hero-desc">举办你的电影节，分享剧本与灵感，与同频的人共同打卡观影。在世界地图上，发现每一个电影故事发生的地方。</p>
+      <div class="hero-cta">
+        <button class="btn-gold" onclick="nav('festivals')">探索电影节</button>
+        <button class="btn-ghost" onclick="nav('map')">世界电影地图</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-n">1,247</div><div class="hero-stat-l">线上电影节</div></div>
+      <div class="hero-stat"><div class="hero-stat-n">38k</div><div class="hero-stat-l">策展人</div></div>
+      <div class="hero-stat"><div class="hero-stat-n">96</div><div class="hero-stat-l">国家与地区</div></div>
+    </div>
+  </div>
+  <div class="hero-r">
+    <div class="hr-header">
+      <div class="hr-title">正在举办的电影节</div>
+      <div class="hr-live"><span class="live-dot"></span>3个进行中</div>
+    </div>
+    <div class="hero-fest-list">
+      <div class="hf-card" onclick="nav('festival-detail')">
+        <div class="hf-poster">
+          <div class="hf-poster-bg" style="background:linear-gradient(135deg,#0a1220,#1a2040)"></div>
+          <div class="hf-poster-overlay"></div>
+          <div class="hf-poster-content">
+            <div class="hf-status"><span class="live-dot"></span><span style="font-size:10px;color:var(--green);letter-spacing:.08em;text-transform:uppercase">进行中 · 第4天</span></div>
+            <div class="hf-title-over">黑泽明与<em>日本新浪潮</em> · 东京映画周</div>
+          </div>
+        </div>
+        <div class="hf-body">
+          <div class="hf-meta"><span>4月10—17日</span><span>6部影片</span></div>
+          <div class="hf-foot"><span class="hf-host">@CinemasHiro · 247人打卡</span><button class="hf-join" onclick="event.stopPropagation();nav('festival-detail')">进入</button></div>
+          <div class="hf-pbar"><div class="hf-pbar-fill" style="width:55%"></div></div>
+        </div>
+      </div>
+      <div class="hf-card" onclick="toast('进入华语独立短片展')">
+        <div class="hf-poster">
+          <div class="hf-poster-bg" style="background:linear-gradient(135deg,#1a0808,#2a1510)"></div>
+          <div class="hf-poster-overlay"></div>
+          <div class="hf-poster-content">
+            <div class="hf-status"><span class="live-dot"></span><span style="font-size:10px;color:var(--green);letter-spacing:.08em;text-transform:uppercase">进行中</span></div>
+            <div class="hf-title-over">上海<em>华语独立</em>短片展</div>
+          </div>
+        </div>
+        <div class="hf-body">
+          <div class="hf-meta"><span>4月25—5月5日</span><span>203人</span></div>
+          <div class="hf-foot"><span class="hf-host">@SH_Indie</span><button class="hf-join" onclick="event.stopPropagation();toast('参与成功')">参与</button></div>
+        </div>
+      </div>
+      <div class="hf-card" onclick="toast('进入女性凝视')">
+        <div class="hf-poster">
+          <div class="hf-poster-bg" style="background:linear-gradient(135deg,#1a0818,#280f28)"></div>
+          <div class="hf-poster-overlay"></div>
+          <div class="hf-poster-content">
+            <div class="hf-status"><span style="width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block"></span><span style="font-size:10px;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-left:5px">3天后</span></div>
+            <div class="hf-title-over">她在路上：<em>女性凝视</em>电影周</div>
+          </div>
+        </div>
+        <div class="hf-body">
+          <div class="hf-meta"><span>5月2—8日</span><span>89人报名</span></div>
+          <div class="hf-foot"><span class="hf-host">@LunaWatch</span><button class="hf-join" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
+        </div>
+      </div>
+      <div class="hf-card" onclick="toast('进入港片重看')">
+        <div class="hf-poster">
+          <div class="hf-poster-bg" style="background:linear-gradient(135deg,#0a1818,#101f20)"></div>
+          <div class="hf-poster-overlay"></div>
+          <div class="hf-poster-content">
+            <div class="hf-status"><span style="font-size:10px;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase">招募中</span></div>
+            <div class="hf-title-over"><em>九十年代</em>港片重看</div>
+          </div>
+        </div>
+        <div class="hf-body">
+          <div class="hf-meta"><span>5月5日起</span><span>156人</span></div>
+          <div class="hf-foot"><span class="hf-host">@HKFilmLover</span><button class="hf-join" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
+        </div>
+      </div>
+      <div class="hf-new" onclick="nav('festivals')">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span style="font-size:12px;color:var(--ink3)">查看全部 1,247 个电影节</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAP TEASER -->
+<div class="map-teaser" onclick="nav('map')">
+  <svg id="teaser-svg"></svg>
+  <div class="map-overlay"></div>
+  <div class="map-content">
+    <div class="map-eyebrow">世界电影地图</div>
+    <h2 class="map-title">在地球上找到<br>每一个<em>电影现场</em></h2>
+    <p class="map-sub">4,800余处取景地标注，96个国家正在举办的影展，点击探索。</p>
+    <div class="map-btn">进入世界地图 →</div>
+  </div>
+  <div class="map-chips">
+    <div class="map-chip"><svg width="7" height="7"><circle cx="3.5" cy="3.5" r="3.5" fill="#C8A44A"/></svg><div><div class="map-chip-n">12</div><div class="map-chip-l">进行中影展</div></div></div>
+    <div class="map-chip"><svg width="7" height="7"><circle cx="3.5" cy="3.5" r="3.5" fill="#7EC98E"/></svg><div><div class="map-chip-n">4,800+</div><div class="map-chip-l">取景地</div></div></div>
+  </div>
+</div>
+
+<!-- TODAY SECTION -->
+<div style="border-bottom:1px solid var(--b)">
+  <div class="sec-hd"><div class="sec-title">影史今天 · 今日事件</div><span class="sec-more" onclick="nav('history')">完整日历 →</span></div>
+  <!-- ticker -->
+  <div class="ticker">
+    <div class="ticker-badge">实时动态</div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="ticker-inner">
+        <span class="ticker-item">《悲情城市》4K修复版将于戛纳期间全球重映</span><span class="ticker-item" style="color:var(--ink4)">·</span>
+        <span class="ticker-item">洪常秀新作入围2026年柏林主竞赛单元</span><span class="ticker-item" style="color:var(--ink4)">·</span>
+        <span class="ticker-item">上海国际电影节公布2026年主竞赛评委阵容</span><span class="ticker-item" style="color:var(--ink4)">·</span>
+        <span class="ticker-item">贝拉·塔尔宣布新项目开发中，预计2027年完成</span><span class="ticker-item" style="color:var(--ink4)">·</span>
+        <span class="ticker-item">《悲情城市》4K修复版将于戛纳期间全球重映</span><span class="ticker-item" style="color:var(--ink4)">·</span>
+        <span class="ticker-item">洪常秀新作入围2026年柏林主竞赛单元</span><span class="ticker-item" style="color:var(--ink4)">·</span>
+        <span class="ticker-item">上海国际电影节公布2026年主竞赛评委阵容</span><span class="ticker-item" style="color:var(--ink4)">·</span>
+        <span class="ticker-item">贝拉·塔尔宣布新项目开发中，预计2027年完成</span><span class="ticker-item" style="color:var(--ink4)">·</span>
+      </div>
+    </div>
+  </div>
+  <!-- main event with image -->
+  <div class="today-hero">
+    <div class="today-date-col"><div class="today-year">1993</div><div class="today-date">4月29日</div><div class="today-badge">首映</div></div>
+    <div class="today-main">
+      <div class="tmc">
+        <h2 class="tme-title"><span class="tme-link" onclick="nav('history')">《霸王别姬》</span>在<em>戛纳</em>举行世界首映</h2>
+        <p class="tme-body"><span class="tme-link" onclick="nav('history')">陈凯歌</span>执导，<span class="tme-link">张国荣</span>、<span class="tme-link">张丰毅</span>、<span class="tme-link">巩俐</span>主演。随后以全票通过摘得<strong style="color:var(--gold)">金棕榈奖</strong>，成为迄今为止唯一获此殊荣的华语影片。横跨半个世纪的中国历史，以京剧艺人命运折射时代暴力与柔情。</p>
+        <button class="btn-ghost" style="font-size:11px;padding:8px 18px" onclick="nav('history')">查看今日完整影史 →</button>
+      </div>
+      <div class="tme-img">
+        <div class="tme-img-bg" style="background:linear-gradient(135deg,#1a0808,#280f10)" id="tme-img-bg"></div>
+        <div class="tme-img-letter" id="tme-letter">霸</div>
+        <div class="tme-img-caption">《霸王别姬》1993 · 陈凯歌 · 第46届戛纳金棕榈</div>
+        <div class="tmdb-badge" id="tmdb-badge"><span class="tmdb-dot"></span>TMDB 接入中</div>
+      </div>
+    </div>
+  </div>
+  <!-- events strip -->
+  <div class="events-strip">
+    <div class="ev-card" onclick="nav('history')"><div class="ev-img"><div class="ev-img-bg" style="background:linear-gradient(135deg,#0a1018,#101428)"></div><div class="ev-img-ov"></div><div class="ev-img-let">一</div></div><div class="ev-body"><div class="ev-year">2000</div><div class="ev-type premiere">首映</div><div class="ev-title">杨德昌《一一》戛纳首映</div><div class="ev-desc">获最佳导演，成为导演遗作</div></div></div>
+    <div class="ev-card" onclick="nav('history')"><div class="ev-img"><div class="ev-img-bg" style="background:linear-gradient(135deg,#181208,#221808)"></div><div class="ev-img-ov"></div><div class="ev-img-let">赤</div></div><div class="ev-body"><div class="ev-year">1956</div><div class="ev-type death">辞世</div><div class="ev-title">沟口健二完成最后作品</div><div class="ev-desc">《赤线地带》，同年因白血病离世</div></div></div>
+    <div class="ev-card" onclick="nav('history')"><div class="ev-img"><div class="ev-img-bg" style="background:linear-gradient(135deg,#0a1820,#101a28)"></div><div class="ev-img-ov"></div><div class="ev-img-let">启</div></div><div class="ev-body"><div class="ev-year">1979</div><div class="ev-type award">获奖</div><div class="ev-title">《现代启示录》并列金棕榈</div><div class="ev-desc">与《铁皮鼓》共同获奖</div></div></div>
+    <div class="ev-card" onclick="nav('history')"><div class="ev-img"><div class="ev-img-bg" style="background:linear-gradient(135deg,#0a1810,#101a14)"></div><div class="ev-img-ov"></div><div class="ev-img-let">绿</div></div><div class="ev-body"><div class="ev-year">1987</div><div class="ev-type award">获奖</div><div class="ev-title">侯麦《绿光》威尼斯金狮</div><div class="ev-desc">当年最具争议的金狮</div></div></div>
+    <div class="ev-card" onclick="nav('history')"><div class="ev-img"><div class="ev-img-bg" style="background:linear-gradient(135deg,#180818,#200f20)"></div><div class="ev-img-ov"></div><div class="ev-img-let">玩</div></div><div class="ev-body"><div class="ev-year">1932</div><div class="ev-type birth">诞辰</div><div class="ev-title">雅克·塔蒂出生</div><div class="ev-desc">《玩乐时间》导演，现代喜剧大师</div></div></div>
+  </div>
+  <!-- news grid -->
+  <div class="news-wrap">
+    <div class="news-label">今日影坛动态<div class="news-live"><span class="news-dot"></span>实时更新</div></div>
+    <div class="news-grid" id="news-grid">
+      <div class="nc" onclick="toast('阅读完整报道')"><div class="nc-img"><div class="nc-img-bg" style="background:linear-gradient(135deg,#0a1018,#101428)"></div><div class="nc-img-ov"></div><div class="nc-img-let">悲</div></div><div class="nc-body"><div class="nc-src">修复重映</div><div class="nc-title">《悲情城市》4K修复版宣布全球重映</div><div class="nc-desc">侯孝贤经典将以4K修复版在戛纳期间首映，随后在两岸三地同步上映。</div></div></div>
+      <div class="nc" onclick="toast('阅读完整报道')"><div class="nc-img"><div class="nc-img-bg" style="background:linear-gradient(135deg,#0a1810,#101a14)"></div><div class="nc-img-ov"></div><div class="nc-img-let">洪</div></div><div class="nc-body"><div class="nc-src">柏林电影节</div><div class="nc-title">洪常秀新作入围2026年柏林主竞赛</div><div class="nc-desc">继《小说家的电影》后再度入围柏林，延续其极简主义风格。</div></div></div>
+      <div class="nc" onclick="toast('阅读完整报道')"><div class="nc-img"><div class="nc-img-bg" style="background:linear-gradient(135deg,#1a0808,#221010)"></div><div class="nc-img-ov"></div><div class="nc-img-let">沪</div></div><div class="nc-body"><div class="nc-src">上海国际电影节</div><div class="nc-title">上影节2026年主竞赛评委阵容公布</div><div class="nc-desc">评委会主席由韩国导演奉俊昊担任，将于6月在上海主持金爵奖评审。</div></div></div>
+    </div>
+    <div class="tmdb-note" id="tmdb-note">接入 TMDB API 后将显示实时新闻 · <span style="color:var(--gold);cursor:pointer" onclick="toast('请在代码中替换 YOUR_API_KEY_HERE')">配置 API Key →</span></div>
+  </div>
+</div>
+
+<!-- FILM PICKER -->
+<div class="picker-sec">
+  <div class="sec-hd" style="padding-bottom:16px">
+    <div class="sec-title">今天看什么</div>
+    <button onclick="shuffleFilms()" style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);border:1px solid var(--b);padding:6px 14px;transition:var(--tr)" onmouseover="this.style.borderColor='var(--b2)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--b)';this.style.color='var(--ink3)'">换一批</button>
+  </div>
+  <div class="mood-grid">
+    <div class="mood-card on" onclick="setMood(this,'quiet')"><div class="mood-emoji">🌧</div><div class="mood-name">需要安静</div><div class="mood-desc">看完想一个人坐着</div></div>
+    <div class="mood-card" onclick="setMood(this,'moved')"><div class="mood-emoji">🌊</div><div class="mood-name">想被打动</div><div class="mood-desc">眼眶热了说不出话</div></div>
+    <div class="mood-card" onclick="setMood(this,'shock')"><div class="mood-emoji">⚡</div><div class="mood-name">想被震撼</div><div class="mood-desc">视觉或叙事的冲击</div></div>
+    <div class="mood-card" onclick="setMood(this,'midnight')"><div class="mood-emoji">🌙</div><div class="mood-name">深夜独处</div><div class="mood-desc">凌晨独自看，越孤独越好</div></div>
+    <div class="mood-card" onclick="setMood(this,'light')"><div class="mood-emoji">☕</div><div class="mood-name">轻松一点</div><div class="mood-desc">不沉重，但不烂俗</div></div>
+    <div class="mood-card" onclick="setMood(this,'random')"><div class="mood-emoji">🎲</div><div class="mood-name">随机一部</div><div class="mood-desc">让命运决定今晚</div></div>
+  </div>
+  <div class="ctx-row">
+    <div class="ctx-label"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.1"/><path d="M6 3v3l2 1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>现在是</div>
+    <button class="ctx-btn" onclick="setCtx(this)">下午</button>
+    <button class="ctx-btn on" onclick="setCtx(this)">晚上</button>
+    <button class="ctx-btn" onclick="setCtx(this)">深夜</button>
+    <div class="ctx-sep"></div>
+    <button class="ctx-btn on" onclick="setCtx(this)">☁ 多云</button>
+    <button class="ctx-btn" onclick="setCtx(this)">🌧 下雨</button>
+    <button class="ctx-btn" onclick="setCtx(this)">☀ 晴天</button>
+  </div>
+  <div class="films-grid" id="films-grid"></div>
+  <!-- Curator pick -->
+  <div class="curator-pick">
+    <div class="cp-label">今晚策展人手选</div>
+    <div class="cp-poster"><div class="cp-poster-bg" style="background:linear-gradient(135deg,#0a1410,#101a14)"></div><span class="cp-poster-let">春</span></div>
+    <div>
+      <div class="cp-film" onclick="toast('查看晚春详情')"><em>《晚春》</em> · 小津安二郎 · 1949</div>
+      <div class="cp-reason">今天是4月29日。1956年的这一天，沟口健二完成了他最后一部作品。而《晚春》是小津同时代的回答——两个人对"告别"这件事，用截然不同的方式说了同一句话。今晚，108分钟，重新想想有些东西放手了才算真的拥有过。</div>
+      <div class="cp-curator">by @CinemasHiro · 今日策展人</div>
+    </div>
+  </div>
+</div>
+
+<!-- OFFLINE FESTIVALS -->
+<div class="off-sec reveal">
+  <div class="sec-hd"><div class="sec-title">线下影展</div><span class="sec-more" onclick="toast('查看全部')">全部影展 →</span></div>
+  <div class="off-tabs">
+    <div class="off-tab on" onclick="switchOff(this,'focus')">重点影展</div>
+    <div class="off-tab" onclick="switchOff(this,'alist')">世界A类</div>
+    <div class="off-tab" onclick="switchOff(this,'cn')">中国三大</div>
+    <div class="off-tab" onclick="switchOff(this,'asia')">亚洲影展</div>
+  </div>
+  <div class="off-panel on" id="opanel-focus">
+    <div class="off-featured">
+      <div class="off-feat-img"><div class="off-fi-bg" style="background:linear-gradient(135deg,#0a1818,#101f20)"></div><div class="off-fi-ov"></div><div class="off-fi-cnt"><div style="font-size:11px;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:5px"><span class="live-dot"></span>正在举办</div><div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--ink)">香港国际<em style="font-style:italic;color:var(--gold)">电影节</em></div></div></div>
+      <div class="off-feat-body"><div class="off-ey">港影节 HKIFF · 第50届</div><h3 class="off-feat-title">香港国际<em>电影节</em></h3><div class="off-feat-meta"><span>2026年3月25日—4月7日</span><span>香港</span><span>240余部影片</span></div><p class="off-feat-desc">亚洲最重要的电影节之一，以华语电影和亚洲电影的国际推广著称。2026年迎来第50届，特别设立"五十年香港影像"回顾单元，展映从1970年代至今的香港电影史重要作品。</p><div class="off-tags"><span class="off-tag g">亚洲最重要</span><span class="off-tag">华语电影</span><span class="off-tag">第50届</span></div><button class="off-btn" onclick="toast('港影节官网')">官方网站 →</button></div>
+    </div>
+    <div class="off-grid">
+      <div class="off-card" onclick="toast('北影节详情')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#1a0808,#220f10)"></div><div class="oci-ov"></div><div class="oci-title">北京国际<em>电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-soon"><span style="width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block;margin-right:3px"></span>即将举办</div><div class="ocb-meta"><span>4月19—26日</span><span>北京</span></div><div class="ocb-desc">天坛奖是中国唯一面向国际长片的竞赛单元，同期的北京展映是最重要的艺术片展映平台。</div><div class="ocb-awards"><span class="ocb-aw">天坛奖</span><span class="ocb-aw">北京展映</span></div></div></div>
+      <div class="off-card" onclick="toast('上影节详情')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#1a1008,#221808)"></div><div class="oci-ov"></div><div class="oci-title">上海国际<em>电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-soon"><span style="width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block;margin-right:3px"></span>2个月后</div><div class="ocb-meta"><span>6月14—23日</span><span>上海</span></div><div class="ocb-desc">亚洲最大A类电影节，金爵奖主竞赛今年评委会主席由奉俊昊担任。</div><div class="ocb-awards"><span class="ocb-aw">金爵奖</span><span class="ocb-aw">亚洲新人</span></div></div></div>
+      <div class="off-card" onclick="toast('戛纳详情')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#080a1a,#10122a)"></div><div class="oci-ov"></div><div class="oci-title">戛纳<em>国际电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-soon"><span style="width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block;margin-right:3px"></span>即将举办</div><div class="ocb-meta"><span>5月13—24日</span><span>法国</span></div><div class="ocb-desc">世界最具声望的电影节，金棕榈奖是影史最高荣誉之一。</div><div class="ocb-awards"><span class="ocb-aw">金棕榈</span><span class="ocb-aw">一种关注</span></div></div></div>
+    </div>
+  </div>
+  <div class="off-panel" id="opanel-alist">
+    <div class="off-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="off-card" onclick="toast('戛纳')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#080a1a,#10122a)"></div><div class="oci-ov"></div><div class="oci-title">戛纳<em>国际电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-soon">5月13—24日 · 法国</div><div class="ocb-desc">三大中最具声望，金棕榈是影史最高荣誉。1946年创立。</div><div class="ocb-awards"><span class="ocb-aw">金棕榈</span></div></div></div>
+      <div class="off-card" onclick="toast('威尼斯')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#0a1018,#101428)"></div><div class="oci-ov"></div><div class="oci-title">威尼斯<em>国际电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-past">8月27—9月6日 · 意大利</div><div class="ocb-desc">历史最悠久，1932年创立，金狮奖以大胆艺术电影著称。</div><div class="ocb-awards"><span class="ocb-aw">金狮奖</span></div></div></div>
+      <div class="off-card" onclick="toast('柏林')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#181410,#201c14)"></div><div class="oci-ov"></div><div class="oci-title">柏林<em>国际电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-past">2月13—23日 · 德国</div><div class="ocb-desc">三大中政治性最强，金熊奖历来关注社会议题影片。</div><div class="ocb-awards"><span class="ocb-aw">金熊奖</span></div></div></div>
+      <div class="off-card" onclick="toast('多伦多')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#0a1018,#10181a)"></div><div class="oci-ov"></div><div class="oci-title">多伦多<em>国际电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-past">9月4—14日 · 加拿大</div><div class="ocb-desc">观众选择奖常被视为奥斯卡风向标，最重要的市场型电影节。</div><div class="ocb-awards"><span class="ocb-aw">观众选择奖</span></div></div></div>
+      <div class="off-card" onclick="toast('圣丹斯')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#080e18,#10161e)"></div><div class="oci-ov"></div><div class="oci-title">圣丹斯<em>电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-past">1月23—2月2日 · 美国</div><div class="ocb-desc">独立电影圣地，大量重要独立电影在此首映并被发行。</div><div class="ocb-awards"><span class="ocb-aw">评审团大奖</span></div></div></div>
+      <div class="off-card" onclick="toast('釜山')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#180808,#200e10)"></div><div class="oci-ov"></div><div class="oci-title">釜山<em>国际电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-past">10月2—11日 · 韩国</div><div class="ocb-desc">亚洲最重要的电影节之一，亚洲新导演最重要展映平台。</div><div class="ocb-awards"><span class="ocb-aw">新浪潮奖</span></div></div></div>
+    </div>
+  </div>
+  <div class="off-panel" id="opanel-cn">
+    <div class="off-featured">
+      <div class="off-feat-img"><div class="off-fi-bg" style="background:linear-gradient(135deg,#1a1008,#221808)"></div><div class="off-fi-ov"></div><div class="off-fi-cnt"><div style="font-size:11px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">金爵奖</div><div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--ink)">上海国际<em style="font-style:italic;color:var(--gold)">电影节</em></div></div></div>
+      <div class="off-feat-body"><div class="off-ey">上影节 SIFF · 第30届</div><h3 class="off-feat-title">上海国际<em>电影节</em></h3><div class="off-feat-meta"><span>2026年6月14—23日</span><span>上海</span></div><p class="off-feat-desc">亚洲最大A类国际电影节，金爵奖主竞赛今年评委会主席由韩国导演奉俊昊担任。设有亚洲新人奖、中国电影频道传媒关注单元等多个重要奖项，是华语电影最重要的国际展映平台。</p><div class="off-tags"><span class="off-tag g">A类电影节</span><span class="off-tag">金爵奖</span><span class="off-tag">奉俊昊评委</span></div><button class="off-btn" onclick="toast('上影节官网')">了解更多 →</button></div>
+    </div>
+    <div class="off-grid">
+      <div class="off-card" onclick="toast('北影节')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#1a0808,#220f10)"></div><div class="oci-ov"></div><div class="oci-title">北京国际<em>电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-soon"><span style="width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block;margin-right:3px"></span>4月19—26日</div><div class="ocb-meta"><span>北京</span><span>天坛奖</span></div><div class="ocb-desc">天坛奖面向国际长片，北京展映是中国最重要的艺术片展映平台。</div><div class="ocb-awards"><span class="ocb-aw">天坛奖</span><span class="ocb-aw">北京展映</span></div></div></div>
+      <div class="off-card" onclick="toast('港影节')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#0a1818,#101f20)"></div><div class="oci-ov"></div><div class="oci-title">香港国际<em>电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-active"><span class="live-dot" style="display:inline-block;margin-right:3px"></span>正在举办</div><div class="ocb-meta"><span>香港</span><span>第50届</span></div><div class="ocb-desc">亚洲最重要的电影节之一，2026年迎来50周年特别纪念版。</div><div class="ocb-awards"><span class="ocb-aw">火鸟奖</span><span class="ocb-aw">华语新导演</span></div></div></div>
+      <div class="off-card" onclick="toast('金马奖')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#18100a,#201808)"></div><div class="oci-ov"></div><div class="oci-title">台湾<em>金马奖</em></div></div><div class="off-card-body"><div class="ocb-status s-past">11月下旬 · 台湾</div><div class="ocb-meta"><span>1962年创立</span></div><div class="ocb-desc">华语影坛最权威的电影奖项，以独立精神和评审标准著称。</div><div class="ocb-awards"><span class="ocb-aw">金马奖</span></div></div></div>
+    </div>
+  </div>
+  <div class="off-panel" id="opanel-asia">
+    <div class="off-grid">
+      <div class="off-card" onclick="toast('釜山')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#180808,#200e10)"></div><div class="oci-ov"></div><div class="oci-title">釜山<em>国际电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-past">10月 · 韩国</div><div class="ocb-desc">亚洲最重要电影节，亚洲新导演最重要展映平台，新浪潮奖是重要发现奖项。</div><div class="ocb-awards"><span class="ocb-aw">新浪潮奖</span></div></div></div>
+      <div class="off-card" onclick="toast('东京')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#0a1018,#101428)"></div><div class="oci-ov"></div><div class="oci-title">东京<em>国际电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-past">10—11月 · 日本</div><div class="ocb-desc">亚洲A类电影节，东京樱花奖专注亚洲电影。</div><div class="ocb-awards"><span class="ocb-aw">东京樱花奖</span></div></div></div>
+      <div class="off-card" onclick="toast('新加坡')"><div class="off-card-img"><div class="oci-bg" style="background:linear-gradient(135deg,#081818,#0f2020)"></div><div class="oci-ov"></div><div class="oci-title">新加坡<em>国际电影节</em></div></div><div class="off-card-body"><div class="ocb-status s-past">11月 · 新加坡</div><div class="ocb-desc">东南亚最重要的电影节，重点关注东南亚及亚洲新兴电影人。</div><div class="ocb-awards"><span class="ocb-aw">银幕奖</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY STRIP -->
+<div class="hist-sec reveal">
+  <div class="sec-hd"><div class="sec-title">影史今天</div><span class="sec-more" onclick="nav('history')">完整日历 →</span></div>
+  <div class="h-strip">
+    <div class="h-date"><div class="h-date-big">4.29</div><div class="h-date-sub">April 29</div></div>
+    <div class="h-ev" onclick="nav('history')"><div class="h-ev-img"><div class="h-ev-img-bg" style="background:linear-gradient(135deg,#1a0808,#280f10)"></div><div class="h-ev-img-ov"></div><div class="h-ev-img-let">霸</div></div><div class="h-ev-body"><div class="h-ev-no">01 / 1993</div><div class="h-ev-title">《霸王别姬》戛纳世界首映</div><div class="h-ev-desc">全票夺金棕榈，华语唯一</div></div></div>
+    <div class="h-ev" onclick="nav('history')"><div class="h-ev-img"><div class="h-ev-img-bg" style="background:linear-gradient(135deg,#181208,#221808)"></div><div class="h-ev-img-ov"></div><div class="h-ev-img-let">赤</div></div><div class="h-ev-body"><div class="h-ev-no">02 / 1956</div><div class="h-ev-title">沟口健二完成最后作品</div><div class="h-ev-desc">同年因白血病在京都辞世</div></div></div>
+    <div class="h-ev" onclick="nav('history')"><div class="h-ev-img"><div class="h-ev-img-bg" style="background:linear-gradient(135deg,#0a1218,#101828)"></div><div class="h-ev-img-ov"></div><div class="h-ev-img-let">一</div></div><div class="h-ev-body"><div class="h-ev-no">03 / 2000</div><div class="h-ev-title">杨德昌《一一》戛纳首映</div><div class="h-ev-desc">荣获最佳导演，成为遗作</div></div></div>
+    <div class="h-ev" onclick="nav('history')"><div class="h-ev-img"><div class="h-ev-img-bg" style="background:linear-gradient(135deg,#0a1820,#101a28)"></div><div class="h-ev-img-ov"></div><div class="h-ev-img-let">启</div></div><div class="h-ev-body"><div class="h-ev-no">04 / 1979</div><div class="h-ev-title">《现代启示录》并列金棕榈</div><div class="h-ev-desc">戛纳史上最具争议的决定</div></div></div>
+  </div>
+</div>
+
+<!-- CREATOR -->
+<div class="cc-sec reveal">
+  <div class="sec-hd"><div class="sec-title">近期创作</div><span class="sec-more" onclick="nav('creator')">进入创作室 →</span></div>
+  <div class="cc-grid">
+    <div class="cc"><div class="cc-type">剧本 · 初稿</div><div class="cc-title">《候鸟》第一幕</div><div class="cc-body">两个陌生人在机场滞留18小时。灵感来自侯孝贤《咖啡时光》……</div><div class="cc-foot"><span class="cc-stat">34次反馈</span><span class="cc-link" onclick="nav('creator')">阅读 →</span></div></div>
+    <div class="cc"><div class="cc-type">灵感板 · 50帧</div><div class="cc-title">关于孤独的光影</div><div class="cc-body">从塔可夫斯基的水面倒影到阿彼察邦的丛林余晖……</div><div class="cc-foot"><span class="cc-stat">23人收藏</span><span class="cc-link" onclick="nav('creator')">查看 →</span></div></div>
+    <div class="cc" style="align-items:center;justify-content:center;text-align:center;min-height:140px" onclick="nav('creator')"><div style="font-size:20px;color:var(--ink4);margin-bottom:7px">+</div><div style="font-size:13px;color:var(--ink3)">分享你的创作</div><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink4);margin-top:5px">剧本 · 灵感 · 短片</div></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div><div class="footer-logo">Cine <em>Ours</em></div><p class="footer-desc">属于我们自己的电影空间。每个人都是策展人，每次观影都是一次相遇。</p></div>
+    <div class="footer-col"><div class="footer-col-t">平台</div><a onclick="nav('festivals')">电影节广场</a><a onclick="nav('map')">世界电影地图</a><a onclick="nav('creator')">创作空间</a><a onclick="nav('history')">影史今天</a></div>
+    <div class="footer-col"><div class="footer-col-t">影展</div><a onclick="toast('港影节')">香港国际电影节</a><a onclick="toast('北影节')">北京国际电影节</a><a onclick="toast('上影节')">上海国际电影节</a><a onclick="toast('金马')">台湾金马奖</a></div>
+    <div class="footer-col"><div class="footer-col-t">关于</div><a>关于我们</a><a>加入团队</a><a>联系我们</a></div>
+  </div>
+  <div class="footer-btm"><span>© 2026 Cine Ours · Cinema of Our Own</span><span>做属于我们的电影时光</span></div>
+</footer>
+
+<div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--bg3);border:1px solid var(--b2);padding:10px 22px;font-size:13px;color:var(--ink2);z-index:800;opacity:0;transition:all .25s;white-space:nowrap;pointer-events:none"></div>
+
+
+<script>
+function nav(p){if(window.parent&&window.parent!==window&&window.parent.navigate)window.parent.navigate(p);else window.parent.postMessage({type:'navigate',payload:{page:p}},'*')}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';clearTimeout(window._tt);window._tt=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(14px)'},2200)}
+// TEASER MAP
+(function(){
+  var el=document.getElementById('teaser-svg');if(!el)return;
+  var W=window.innerWidth,H=400;
+  var svg=d3.select('#teaser-svg').attr('width',W).attr('height',H);
+  svg.append('rect').attr('width',W).attr('height',H).attr('fill','#0C0B09');
+  var proj=d3.geoNaturalEarth1().scale(W/6.2).translate([W/2,H/2]);
+  var path=d3.geoPath().projection(proj);
+  var pins=[{lon:139.69,lat:35.68,t:'f'},{lon:114.17,lat:22.30,t:'f'},{lon:2.35,lat:48.85,t:'f'},
+    {lon:121.47,lat:31.22,t:'f'},{lon:116.39,lat:39.91,t:'f'},{lon:25.04,lat:121.53,t:'l'},
+    {lon:12.49,lat:41.89,t:'l'},{lon:37.62,lat:55.75,t:'l'},{lon:-118.24,lat:34.05,t:'l'},
+    {lon:23.73,lat:37.97,t:'l'},{lon:151.21,lat:-33.87,t:'l'},{lon:7.02,lat:43.55,t:'f'},
+    {lon:13.40,lat:52.52,t:'f'},{lon:-74.00,lat:40.71,t:'f'}];
+  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+    .then(r=>r.json()).then(w=>{
+      if(typeof topojson==='undefined'){setTimeout(()=>fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(r=>r.json()).then(w2=>renderMap(svg,w2,proj,path,pins)),500);return;}
+      renderMap(svg,w,proj,path,pins);
+    }).catch(()=>{});
+  function renderMap(svg,w,proj,path,pins){
+    if(typeof topojson==='undefined')return;
+    var countries=topojson.feature(w,w.objects.countries);
+    svg.selectAll('.tc').data(countries.features).join('path').attr('d',path).attr('fill','#191710').attr('stroke','#222018').attr('stroke-width',.4);
+    pins.forEach(p=>{
+      var xy=proj([p.lon,p.lat]);if(!xy[0])return;
+      var g=svg.append('g').attr('transform','translate('+xy[0]+','+xy[1]+')').style('cursor','pointer').on('click',()=>nav('map'));
+      if(p.t==='f'){
+        g.append('circle').attr('r',11).attr('fill','rgba(200,164,74,.1)').attr('class','mp');
+        g.append('path').attr('d','M0,-9C-5.5,-9 -9,-5 -9,0C-9,6.5 0,14 0,14S9,6.5 9,0C9,-5 5.5,-9 0,-9Z').attr('fill','#C8A44A').attr('opacity',.88);
+      }else{
+        g.append('circle').attr('r',6).attr('fill','none').attr('stroke','#7EC98E').attr('stroke-width',1.5).attr('opacity',.65);
+        g.append('circle').attr('r',2.5).attr('fill','#7EC98E').attr('opacity',.75);
+      }
+    });
+  }
+})();
+// FILM PICKER
+var FILMS={quiet:[{t:'晚春',y:'1949',d:'小津安二郎',bg:'linear-gradient(150deg,#0a1410,#101a14)',l:'春',r:'9.0'},{t:'绿光',y:'1986',d:'侯麦',bg:'linear-gradient(150deg,#0d1f16,#152d20)',l:'绿',r:'8.2'},{t:'镜子',y:'1975',d:'塔可夫斯基',bg:'linear-gradient(150deg,#141018,#1c1428)',l:'镜',r:'9.5'},{t:'东京物语',y:'1953',d:'小津安二郎',bg:'linear-gradient(150deg,#101814,#181e14)',l:'物',r:'9.3'},{t:'爱情万岁',y:'1994',d:'蔡明亮',bg:'linear-gradient(150deg,#0a1218,#101828)',l:'爱',r:'8.8'}],moved:[{t:'一一',y:'2000',d:'杨德昌',bg:'linear-gradient(150deg,#1a1a0d,#28280f)',l:'一',r:'9.1'},{t:'霸王别姬',y:'1993',d:'陈凯歌',bg:'linear-gradient(150deg,#1a0808,#280f10)',l:'霸',r:'9.5'},{t:'悲情城市',y:'1989',d:'侯孝贤',bg:'linear-gradient(150deg,#0a1814,#101e14)',l:'悲',r:'9.3'},{t:'大地之歌',y:'1955',d:'萨蒂亚吉特·雷伊',bg:'linear-gradient(150deg,#0a1618,#101e18)',l:'大',r:'9.1'},{t:'乡愁',y:'1983',d:'塔可夫斯基',bg:'linear-gradient(150deg,#141010,#1c1a10)',l:'乡',r:'9.4'}],shock:[{t:'七武士',y:'1954',d:'黑泽明',bg:'linear-gradient(150deg,#0f1a2e,#1a2840)',l:'七',r:'9.0'},{t:'现代启示录',y:'1979',d:'科波拉',bg:'linear-gradient(150deg,#0a1018,#101428)',l:'启',r:'8.9'},{t:'潜行者',y:'1979',d:'塔可夫斯基',bg:'linear-gradient(150deg,#101418,#181c20)',l:'潜',r:'9.5'},{t:'流浪艺人',y:'1975',d:'安哲罗普洛斯',bg:'linear-gradient(150deg,#0a1018,#101428)',l:'流',r:'9.3'},{t:'四百击',y:'1959',d:'特吕弗',bg:'linear-gradient(150deg,#181408,#201c10)',l:'四',r:'9.0'}],midnight:[{t:'花样年华',y:'2000',d:'王家卫',bg:'linear-gradient(150deg,#1e1028,#2e1840)',l:'花',r:'8.8'},{t:'重庆森林',y:'1994',d:'王家卫',bg:'linear-gradient(150deg,#1a0a08,#2a1210)',l:'重',r:'8.7'},{t:'安德烈·鲁布廖夫',y:'1966',d:'塔可夫斯基',bg:'linear-gradient(150deg,#0a1018,#101428)',l:'安',r:'9.5'},{t:'驾驶我的车',y:'2021',d:'滨口龙介',bg:'linear-gradient(150deg,#0a1018,#10181e)',l:'车',r:'9.1'},{t:'堕落天使',y:'1995',d:'王家卫',bg:'linear-gradient(150deg,#1a0a1a,#200f20)',l:'堕',r:'8.5'}],light:[{t:'咖啡时光',y:'2003',d:'侯孝贤',bg:'linear-gradient(150deg,#1a1408,#221c10)',l:'咖',r:'8.2'},{t:'玩乐时间',y:'1967',d:'雅克·塔蒂',bg:'linear-gradient(150deg,#0a1018,#101420)',l:'玩',r:'8.4'},{t:'偷自行车的人',y:'1948',d:'德·西卡',bg:'linear-gradient(150deg,#141010,#1c1614)',l:'偷',r:'9.2'},{t:'阳光灿烂的日子',y:'1994',d:'姜文',bg:'linear-gradient(150deg,#1a1208,#221a10)',l:'阳',r:'8.8'},{t:'牧神午后',y:'1956',d:'黑泽明',bg:'linear-gradient(150deg,#101a10,#181e14)',l:'牧',r:'7.9'}],random:null};
+var curMood='quiet';
+function setMood(el,mood){document.querySelectorAll('.mood-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');curMood=mood;loadFilms(mood)}
+function setCtx(btn){btn.classList.toggle('on');loadFilms(curMood)}
+function shuffleFilms(){loadFilms(curMood)}
+function loadFilms(mood){
+  var g=document.getElementById('films-grid');g.classList.add('loading');
+  setTimeout(()=>{
+    var films=mood==='random'?Object.values(FILMS).filter(Boolean).flat().sort(()=>Math.random()-.5).slice(0,5):[...FILMS[mood]||FILMS.quiet].sort(()=>Math.random()-.5).slice(0,5);
+    g.innerHTML=films.map(f=>'<div class="pf" onclick="toast(\'加入片单：'+f.t+'\')">'+'<div class="pf-poster"><div class="pf-bg" style="background:'+f.bg+'"></div><div class="pf-ov"></div><span class="pf-letter">'+f.l+'</span><div class="pf-action">加入片单</div></div>'+'<div class="pf-info"><div class="pf-title">'+f.t+'</div><div class="pf-meta">'+f.y+' · '+f.d+'</div><div class="pf-rating">★ '+f.r+'</div></div></div>').join('');
+    g.classList.remove('loading');
+  },280);
+}
+loadFilms('quiet');
+// OFFLINE TABS
+function switchOff(el,id){el.closest('.off-tabs').querySelectorAll('.off-tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');document.querySelectorAll('.off-panel').forEach(p=>p.classList.remove('on'));document.getElementById('opanel-'+id).classList.add('on')}
+// SCROLL REVEAL
+var ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');ro.unobserve(x.target)}})},{threshold:.07});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+// TMDB
+var TMDB_KEY='YOUR_API_KEY_HERE';
+var TMDB_BASE='https://api.themoviedb.org/3';
+var TMDB_IMG='https://image.tmdb.org/t/p/w500';
+async function loadTMDB(){
+  if(TMDB_KEY==='YOUR_API_KEY_HERE')return;
+  try{
+    var r=await fetch(TMDB_BASE+'/trending/movie/week?api_key='+TMDB_KEY+'&language=zh-CN');
+    var d=await r.json();
+    var movies=d.results||[];
+    if(!movies.length)return;
+    var g=document.getElementById('news-grid');
+    g.innerHTML=movies.slice(0,3).map(m=>{
+      var img=m.poster_path?TMDB_IMG+m.poster_path:null;
+      var bg=img?'background-image:url('+img+');background-size:cover;background-position:center':'background:linear-gradient(135deg,#0a1018,#101428)';
+      return '<div class="nc" onclick="toast(\''+m.title+'\')"><div class="nc-img"><div class="nc-img-bg" style="'+bg+'"></div><div class="nc-img-ov"></div>'+(img?'':'<div class="nc-img-let">'+(m.title[0]||'?')+'</div>')+'</div><div class="nc-body"><div class="nc-src">TMDB · 本周热门</div><div class="nc-title">'+m.title+'</div><div class="nc-desc">评分 '+(m.vote_average?m.vote_average.toFixed(1):'N/A')+' · '+(m.overview||'').slice(0,55)+'…</div></div></div>';
+    }).join('');
+    var tk=document.getElementById('ticker-inner');
+    var ti=movies.slice(0,6).map(m=>'<span class="ticker-item">'+m.title+' — '+(m.release_date||'').slice(0,4)+'</span><span class="ticker-item" style="color:var(--ink4)">·</span>').join('');
+    tk.innerHTML=ti+ti;
+    document.getElementById('tmdb-badge').innerHTML='<span class="tmdb-dot"></span>TMDB 已连接';
+    document.getElementById('tmdb-note').style.display='none';
+    // poster for main event
+    var r2=await fetch(TMDB_BASE+'/search/movie?api_key='+TMDB_KEY+'&query=%E9%9C%B8%E7%8E%8B%E5%88%AB%E5%A7%AC&language=zh-CN');
+    var d2=await r2.json();
+    var m2=d2.results?.[0];
+    if(m2&&m2.poster_path){document.getElementById('tme-img-bg').style.backgroundImage='url('+TMDB_IMG+m2.poster_path+')';document.getElementById('tme-img-bg').style.backgroundSize='cover';document.getElementById('tme-img-bg').style.backgroundPosition='center';document.getElementById('tme-letter').style.display='none';}
+  }catch(e){console.log('TMDB:',e)}
+}
+loadTMDB();
+// HERO ANIM
+document.querySelectorAll('.hero-l > div > *').forEach((el,i)=>{el.style.opacity='0';el.style.transform='translateY(14px)';el.style.transition='opacity .6s '+(i*.1)+'s ease,transform .6s '+(i*.1)+'s ease';setTimeout(()=>{el.style.opacity='1';el.style.transform='translateY(0)'},60)});
+</script>
+
+</html>

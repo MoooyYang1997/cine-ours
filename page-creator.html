@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>创作空间 — Cine Ours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C0B09;--bg1:#111009;--bg2:#161410;--bg3:#1C1A15;--bg4:#242018;
+  --ink:#EDE6D9;--ink2:#B5AC9E;--ink3:#7A7268;--ink4:#4A4540;
+  --gold:#C8A44A;--gold2:#9B7A2E;--gold3:#3D2E0E;
+  --b:rgba(237,230,217,.07);--b2:rgba(237,230,217,.13);--b3:rgba(237,230,217,.22);
+  --green:#5C9E6A;--red:#A05050;
+  --tr:all .2s cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden;min-height:100vh}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4)}
+button,input,textarea{font-family:'DM Sans',sans-serif;border:none;background:none;color:inherit;cursor:pointer}
+input,textarea{outline:none;resize:none}
+
+/* ── NAV ─────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  height:58px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;border-bottom:1px solid var(--b);
+  background:rgba(12,11,9,.94);backdrop-filter:blur(14px);
+}
+.logo{font-family:'Playfair Display',serif;font-size:18px;cursor:pointer}
+.logo em{font-style:italic;color:var(--gold)}
+.nav-tabs{display:flex;gap:2px}
+.ntab{
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+  padding:6px 16px;border-bottom:2px solid transparent;transition:var(--tr);cursor:pointer;
+}
+.ntab:hover{color:var(--ink)}
+.ntab.on{color:var(--ink);border-bottom-color:var(--gold)}
+.nav-r{display:flex;gap:8px;align-items:center}
+.nbtn{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 18px;transition:var(--tr)}
+.nbtn-ghost{border:1px solid var(--b2);color:var(--ink3)}
+.nbtn-ghost:hover{border-color:var(--b3);color:var(--ink)}
+.nbtn-gold{background:var(--gold);color:var(--bg);border:1px solid var(--gold)}
+.nbtn-gold:hover{background:#D4AE55}
+.nav-av{width:30px;height:30px;border-radius:50%;background:var(--gold3);border:1.5px solid var(--gold2);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:12px;color:var(--gold);cursor:pointer}
+
+/* ── PAGE ────────────────────────────────────── */
+.page{padding-top:58px;display:none}
+.page.on{display:block}
+
+/* ── SECTION HEADER ─────────────────────────── */
+.shead{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:28px 40px 22px;border-bottom:1px solid var(--b);
+  position:sticky;top:58px;z-index:100;
+  background:rgba(12,11,9,.96);backdrop-filter:blur(12px);
+}
+.shead-left{display:flex;align-items:baseline;gap:14px}
+.shead-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400}
+.shead-count{font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)}
+.shead-right{display:flex;gap:8px;align-items:center}
+.sort-btn{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:5px 12px;border:1px solid var(--b);transition:var(--tr)}
+.sort-btn:hover,.sort-btn.on{border-color:var(--b2);color:var(--ink)}
+.post-btn{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:7px 18px;background:var(--gold);color:var(--bg);border:1px solid var(--gold);transition:var(--tr)}
+.post-btn:hover{background:#D4AE55}
+
+/* ── COMPOSE BOX ────────────────────────────── */
+.compose{
+  margin:20px 40px;border:1px solid var(--b2);
+  transition:border-color .2s;
+}
+.compose:focus-within{border-color:var(--b3)}
+.compose-top{display:flex;gap:12px;padding:16px 18px 0}
+.c-av{width:32px;height:32px;border-radius:50%;background:var(--gold3);border:1.5px solid var(--gold2);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:12px;color:var(--gold);flex-shrink:0;margin-top:2px}
+.c-textarea{flex:1;font-size:13px;color:var(--ink);line-height:1.7;min-height:64px;padding:2px 0}
+.c-textarea::placeholder{color:var(--ink4)}
+.compose-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px 12px;border-top:1px solid var(--b);margin-top:10px;
+}
+.c-tags{display:flex;gap:6px}
+.ctag{font-size:11px;padding:4px 10px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr)}
+.ctag:hover,.ctag.on{border-color:var(--b2);color:var(--ink)}
+.ctag.on{background:var(--bg3)}
+.c-send{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:6px 16px;border:1px solid var(--gold);color:var(--gold);transition:var(--tr)}
+.c-send:hover:not(:disabled){background:var(--gold);color:var(--bg)}
+.c-send:disabled{opacity:.35;cursor:default}
+
+/* ── FEED ────────────────────────────────────── */
+.feed{padding:0 40px 60px}
+
+/* ── SCRIPT CARD ────────────────────────────── */
+.script-card{
+  border-bottom:1px solid var(--b);padding:28px 0;
+  animation:fadeUp .35s ease forwards;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sc-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.sc-av{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px}
+.sc-meta{flex:1}
+.sc-author{font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.sc-badge{font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border:1px solid var(--gold3);color:var(--gold)}
+.sc-time{font-size:11px;color:var(--ink3);font-family:'DM Mono',monospace}
+.sc-stage{font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border:1px solid var(--b2);color:var(--ink3);margin-left:auto}
+/* Script body */
+.sc-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;line-height:1.25;margin-bottom:6px}
+.sc-logline{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:12px}
+.sc-excerpt{
+  font-size:13px;color:var(--ink3);line-height:1.75;
+  border-left:2px solid var(--b2);padding-left:14px;margin-bottom:14px;
+  font-style:italic;
+}
+.sc-influences{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.sc-inf{font-size:11px;padding:3px 9px;border:1px solid var(--b);color:var(--ink3)}
+/* Actions */
+.sc-actions{display:flex;align-items:center;gap:0}
+.action-btn{
+  display:flex;align-items:center;gap:6px;
+  font-size:12px;color:var(--ink3);padding:6px 16px 6px 0;
+  transition:var(--tr);cursor:pointer;user-select:none;
+}
+.action-btn:hover{color:var(--ink)}
+.action-btn.liked{color:var(--gold)}
+.action-btn.bookmarked{color:var(--gold)}
+.action-btn svg{transition:transform .15s}
+.action-btn:hover svg{transform:scale(1.1)}
+.action-btn:active svg{transform:scale(.9)}
+.action-sep{width:1px;height:14px;background:var(--b2);margin:0 8px}
+/* Expand comments */
+.comments-wrap{
+  margin-top:16px;border-top:1px solid var(--b);padding-top:14px;
+  display:none;
+}
+.comments-wrap.open{display:block;animation:fadeUp .25s ease}
+.comment{display:flex;gap:10px;margin-bottom:12px}
+.comment:last-of-type{margin-bottom:14px}
+.cmt-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:10px}
+.cmt-body{flex:1}
+.cmt-author{font-size:12px;font-weight:500;display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.cmt-time{font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace;font-weight:400}
+.cmt-text{font-size:13px;color:var(--ink2);line-height:1.65}
+.cmt-like{font-size:11px;color:var(--ink3);cursor:pointer;margin-top:4px;display:inline-flex;align-items:center;gap:4px;transition:var(--tr)}
+.cmt-like:hover,.cmt-like.on{color:var(--gold)}
+/* Comment input */
+.cmt-compose{display:flex;gap:10px;align-items:flex-start;margin-top:4px}
+.cmt-input{flex:1;font-size:13px;color:var(--ink);border-bottom:1px solid var(--b2);padding:4px 0;transition:border-color .2s}
+.cmt-input:focus{border-bottom-color:var(--b3)}
+.cmt-input::placeholder{color:var(--ink4)}
+.cmt-submit{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border:1px solid var(--b2);color:var(--ink3);transition:var(--tr);flex-shrink:0;margin-top:2px}
+.cmt-submit:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── MOODBOARD CARD ─────────────────────────── */
+.mood-card{border-bottom:1px solid var(--b);padding:28px 0;animation:fadeUp .35s ease forwards}
+.mood-grid{
+  display:grid;gap:3px;margin:14px 0;
+  cursor:pointer;
+}
+.mood-grid.g3{grid-template-columns:repeat(3,1fr)}
+.mood-grid.g4{grid-template-columns:2fr 1fr 1fr}
+.mood-cell{
+  aspect-ratio:4/3;overflow:hidden;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-style:italic;font-size:28px;color:var(--ink4);
+  transition:opacity .2s;
+}
+.mood-cell.tall{aspect-ratio:3/4;grid-row:span 2}
+.mood-cell-label{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(12,11,9,.85));
+  padding:12px 10px 8px;
+  font-family:'DM Sans',sans-serif;font-size:10px;font-style:normal;
+  color:var(--ink2);letter-spacing:.06em;
+  opacity:0;transition:opacity .2s;
+}
+.mood-cell:hover .mood-cell-label{opacity:1}
+.mood-text-cell{
+  padding:16px;background:var(--bg2);
+  display:flex;align-items:center;
+}
+.mood-text-inner{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:var(--ink2);line-height:1.6}
+.mood-expand{
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink3);cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  transition:var(--tr);margin-bottom:14px;
+}
+.mood-expand:hover{color:var(--gold)}
+
+/* ── FILM CARD ───────────────────────────────── */
+.film-card{border-bottom:1px solid var(--b);padding:28px 0;animation:fadeUp .35s ease forwards}
+.film-preview{
+  display:grid;grid-template-columns:auto 1fr;gap:16px;
+  margin:14px 0;cursor:pointer;
+}
+.film-thumb{
+  width:120px;height:68px;flex-shrink:0;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:32px;font-style:italic;color:var(--ink4);
+  position:relative;
+}
+.film-play-btn{
+  position:absolute;inset:0;background:rgba(12,11,9,.5);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+}
+.film-thumb:hover .film-play-btn{opacity:1}
+.play-icon{width:32px;height:32px;border:1.5px solid var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.film-info{}
+.film-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:400;margin-bottom:4px}
+.film-meta{font-size:12px;color:var(--ink3);margin-bottom:6px;display:flex;gap:10px;flex-wrap:wrap}
+.film-desc{font-size:13px;color:var(--ink2);line-height:1.65}
+.film-festivals{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.film-fest-tag{font-size:10px;padding:2px 9px;border:1px solid var(--b);color:var(--ink3)}
+.film-fest-tag.live{border-color:var(--gold3);color:var(--gold)}
+
+/* ── UPLOAD SHEET ───────────────────────────── */
+.sheet-bg{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(12,11,9,.85);backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.sheet-bg.open{opacity:1;pointer-events:all}
+.sheet{
+  width:100%;max-width:680px;
+  background:var(--bg2);border:1px solid var(--b2);border-bottom:none;
+  padding:28px 32px 40px;
+  transform:translateY(40px);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  max-height:85vh;overflow-y:auto;
+}
+.sheet-bg.open .sheet{transform:translateY(0)}
+.sheet::-webkit-scrollbar{width:2px}
+.sheet-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.sheet-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:400}
+.sheet-close{width:26px;height:26px;border:1px solid var(--b2);color:var(--ink3);display:flex;align-items:center;justify-content:center;font-size:12px;transition:var(--tr)}
+.sheet-close:hover{border-color:var(--b3);color:var(--ink)}
+.sheet-type-row{display:flex;gap:6px;margin-bottom:20px}
+.stype{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:7px 16px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr)}
+.stype:hover{border-color:var(--b2);color:var(--ink)}
+.stype.on{border-color:var(--gold);color:var(--gold);background:rgba(200,164,74,.05)}
+.s-field{margin-bottom:16px}
+.s-label{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:7px}
+.s-input{width:100%;padding:11px 13px;border:1px solid var(--b2);font-size:13px;color:var(--ink);background:var(--bg1);transition:border-color .2s}
+.s-input:focus{border-color:var(--b3)}
+.s-input::placeholder{color:var(--ink4)}
+.s-textarea{width:100%;padding:11px 13px;border:1px solid var(--b2);font-size:13px;color:var(--ink);background:var(--bg1);min-height:80px;line-height:1.7;transition:border-color .2s}
+.s-textarea:focus{border-color:var(--b3)}
+.s-textarea::placeholder{color:var(--ink4)}
+.s-drop{
+  border:1px dashed var(--b2);padding:28px;text-align:center;
+  cursor:pointer;transition:var(--tr);position:relative;margin-bottom:16px;
+}
+.s-drop:hover{border-color:var(--gold2);background:rgba(200,164,74,.02)}
+.s-drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.s-drop-text{font-size:12px;color:var(--ink3)}
+.s-drop-sub{font-size:11px;color:var(--ink4);margin-top:4px;font-family:'DM Mono',monospace}
+.s-submit{width:100%;padding:13px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--bg);border:1px solid var(--gold);transition:var(--tr);margin-top:6px}
+.s-submit:hover{background:#D4AE55}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--bg3);border:1px solid var(--b2);padding:11px 22px;
+  font-size:13px;color:var(--ink2);z-index:800;
+  opacity:0;pointer-events:none;transition:all .25s;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo">Cine <em>Ours</em></div>
+  <div class="nav-tabs">
+    <div class="ntab on" id="nt-script" onclick="switchTab('script')">剧本</div>
+    <div class="ntab" id="nt-mood" onclick="switchTab('mood')">图文灵感</div>
+    <div class="ntab" id="nt-film" onclick="switchTab('film')">短片</div>
+  </div>
+  <div class="nav-r">
+    <button class="nbtn nbtn-ghost">我的创作</button>
+    <div class="nav-av">余</div>
+  </div>
+</nav>
+
+<!-- ══════════ SCRIPT TAB ══════════════════════ -->
+<div class="page on" id="page-script">
+  <div class="shead">
+    <div class="shead-left">
+      <div class="shead-title">剧本</div>
+      <div class="shead-count">24 部作品</div>
+    </div>
+    <div class="shead-right">
+      <button class="sort-btn on">最新</button>
+      <button class="sort-btn">热门</button>
+      <button class="sort-btn">寻求反馈</button>
+      <button class="post-btn" onclick="openSheet('script')">+ 上传剧本</button>
+    </div>
+  </div>
+
+  <!-- Compose -->
+  <div class="compose">
+    <div class="compose-top">
+      <div class="c-av">余</div>
+      <textarea class="c-textarea" placeholder="分享你正在写的剧本，或者一个刚冒出来的故事念头……" id="script-compose" oninput="updateSend('script-compose','script-send')"></textarea>
+    </div>
+    <div class="compose-foot">
+      <div class="c-tags">
+        <button class="ctag" onclick="toggleCtag(this)">初稿</button>
+        <button class="ctag" onclick="toggleCtag(this)">寻求反馈</button>
+        <button class="ctag" onclick="toggleCtag(this)">长片</button>
+        <button class="ctag" onclick="toggleCtag(this)">短片剧本</button>
+      </div>
+      <button class="c-send" id="script-send" disabled onclick="quickPost('script')">发布</button>
+    </div>
+  </div>
+
+  <div class="feed" id="feed-script">
+
+    <!-- Card 1 -->
+    <div class="script-card">
+      <div class="sc-head">
+        <div class="sc-av" style="background:#1a2030;color:#7A9EC8">月</div>
+        <div class="sc-meta">
+          <div class="sc-author">YueLiang <span class="sc-badge">策展人</span> <span class="sc-time">2小时前</span></div>
+          <div style="font-size:11px;color:var(--ink3)">上海</div>
+        </div>
+        <div class="sc-stage">初稿</div>
+      </div>
+      <div class="sc-title">《候鸟》第一幕</div>
+      <div class="sc-logline">两个陌生人在机场滞留18小时，一段本不该发生的对话，一种本不该存在的亲密。</div>
+      <div class="sc-excerpt">"她在登机口坐下来的时候，他就知道这趟航班不会准时起飞。不是因为她，而是因为那种感觉——一种让时间想多待一会儿的感觉。"</div>
+      <div class="sc-influences">
+        <span class="sc-inf">侯孝贤《咖啡时光》</span>
+        <span class="sc-inf">洪常秀《走到哪儿》</span>
+        <span class="sc-inf">克莱尔·德尼《35杯朗姆酒》</span>
+      </div>
+      <div class="sc-actions">
+        <span class="action-btn" onclick="toggleLike(this,'34')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S1.5 9 1.5 5A3 3 0 017.5 3 3 3 0 0113.5 5C13.5 9 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2"/></svg>34
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleComments(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 2h13v9H9l-3 2V11H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>8 条评论
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleBookmark(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 2h9v11l-4.5-3L3 13V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>收藏
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" style="margin-left:auto" onclick="showToast('链接已复制')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="3" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        </span>
+      </div>
+      <div class="comments-wrap" id="cw-0">
+        <div class="comment">
+          <div class="cmt-av" style="background:#201028;color:#C87AC8">R</div>
+          <div class="cmt-body">
+            <div class="cmt-author">Ruan_Xiao <span class="cmt-time">1小时前</span></div>
+            <div class="cmt-text">第12页到第18页的节奏是整个剧本最好的部分——那种用沉默推进对话的方式让我想起侯孝贤。但第8页的转折来得有点急，可以再铺垫一下。</div>
+            <div class="cmt-like" onclick="toggleCmtLike(this)"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 9.5S1 6.5 1 3.5A2.5 2.5 0 015.5 2 2.5 2.5 0 0110 3.5C10 6.5 5.5 9.5 5.5 9.5z" stroke="currentColor" stroke-width="1.2"/></svg>有帮助 · 5</div>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="cmt-av" style="background:#0a1814;color:#5C9E6A">C</div>
+          <div class="cmt-body">
+            <div class="cmt-author">CinemasHiro <span class="cmt-time">45分钟前</span></div>
+            <div class="cmt-text">主角在第20页的那句台词读了三遍。我觉得它可以是整部剧本最重的一句话，但放在那里的位置让它的重量没有充分释放——考虑用它来结束这一幕？</div>
+            <div class="cmt-like" onclick="toggleCmtLike(this)"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 9.5S1 6.5 1 3.5A2.5 2.5 0 015.5 2 2.5 2.5 0 0110 3.5C10 6.5 5.5 9.5 5.5 9.5z" stroke="currentColor" stroke-width="1.2"/></svg>有帮助 · 8</div>
+          </div>
+        </div>
+        <div class="cmt-compose">
+          <div class="c-av" style="width:26px;height:26px;font-size:10px">余</div>
+          <input class="cmt-input" placeholder="写下你的反馈……" onkeydown="submitComment(event,this,'0')">
+          <button class="cmt-submit" onclick="submitCommentBtn(this,'0')">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="script-card">
+      <div class="sc-head">
+        <div class="sc-av" style="background:#0a1218;color:#7AC8C8">W</div>
+        <div class="sc-meta">
+          <div class="sc-author">Wang_K <span class="sc-time">6小时前</span></div>
+          <div style="font-size:11px;color:var(--ink3)">北京</div>
+        </div>
+        <div class="sc-stage" style="border-color:var(--gold3);color:var(--gold)">寻求反馈</div>
+      </div>
+      <div class="sc-title">《拆迁记》</div>
+      <div class="sc-logline">一个老城区的最后一个冬天，几户人家面临搬迁，各自的告别方式。</div>
+      <div class="sc-excerpt">"他们拆掉了胡同，但没人知道去哪儿找那个打牌的傍晚。"</div>
+      <div class="sc-influences">
+        <span class="sc-inf">贾樟柯《三峡好人》</span>
+        <span class="sc-inf">王全安《团圆》</span>
+      </div>
+      <div class="sc-actions">
+        <span class="action-btn liked" onclick="toggleLike(this,'21')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S1.5 9 1.5 5A3 3 0 017.5 3 3 3 0 0113.5 5C13.5 9 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2" fill="currentColor" opacity=".25"/></svg>21
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleComments(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 2h13v9H9l-3 2V11H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>3 条评论
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleBookmark(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 2h9v11l-4.5-3L3 13V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>收藏
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" style="margin-left:auto" onclick="showToast('链接已复制')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="3" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        </span>
+      </div>
+      <div class="comments-wrap" id="cw-1">
+        <div class="comment">
+          <div class="cmt-av" style="background:#1a2030;color:#7A9EC8">月</div>
+          <div class="cmt-body">
+            <div class="cmt-author">YueLiang <span class="cmt-time">4小时前</span></div>
+            <div class="cmt-text">结构很扎实。"他们拆掉了胡同，但没人知道去哪儿找那个打牌的傍晚"这句话抵过整个开场。</div>
+            <div class="cmt-like" onclick="toggleCmtLike(this)"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 9.5S1 6.5 1 3.5A2.5 2.5 0 015.5 2 2.5 2.5 0 0110 3.5C10 6.5 5.5 9.5 5.5 9.5z" stroke="currentColor" stroke-width="1.2"/></svg>有帮助 · 12</div>
+          </div>
+        </div>
+        <div class="cmt-compose">
+          <div class="c-av" style="width:26px;height:26px;font-size:10px">余</div>
+          <input class="cmt-input" placeholder="写下你的反馈……" onkeydown="submitComment(event,this,'1')">
+          <button class="cmt-submit" onclick="submitCommentBtn(this,'1')">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="script-card">
+      <div class="sc-head">
+        <div class="sc-av" style="background:#1a1028;color:#C87AC8">M</div>
+        <div class="sc-meta">
+          <div class="sc-author">MingZhi <span class="sc-time">1天前</span></div>
+          <div style="font-size:11px;color:var(--ink3)">台北</div>
+        </div>
+        <div class="sc-stage">终稿</div>
+      </div>
+      <div class="sc-title">《重复》</div>
+      <div class="sc-logline">一个女人，每天早上醒来，发现自己在同一天里，但身边的人在变。</div>
+      <div class="sc-excerpt">"她不再感到绝望，因为她发现：每一个今天，都是第一次对某人说再见。"</div>
+      <div class="sc-influences">
+        <span class="sc-inf">洪常秀《这时对那时错》</span>
+        <span class="sc-inf">阿巴斯《樱桃的滋味》</span>
+      </div>
+      <div class="sc-actions">
+        <span class="action-btn" onclick="toggleLike(this,'56')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S1.5 9 1.5 5A3 3 0 017.5 3 3 3 0 0113.5 5C13.5 9 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2"/></svg>56
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleComments(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 2h13v9H9l-3 2V11H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>14 条评论
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn bookmarked" onclick="toggleBookmark(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 2h9v11l-4.5-3L3 13V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="currentColor" opacity=".25"/></svg>已收藏
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" style="margin-left:auto" onclick="showToast('链接已复制')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="3" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        </span>
+      </div>
+      <div class="comments-wrap" id="cw-2">
+        <div class="cmt-compose">
+          <div class="c-av" style="width:26px;height:26px;font-size:10px">余</div>
+          <input class="cmt-input" placeholder="写下你的反馈……" onkeydown="submitComment(event,this,'2')">
+          <button class="cmt-submit" onclick="submitCommentBtn(this,'2')">发送</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ MOOD TAB ════════════════════════ -->
+<div class="page" id="page-mood">
+  <div class="shead">
+    <div class="shead-left">
+      <div class="shead-title">图文灵感</div>
+      <div class="shead-count">38 个灵感板</div>
+    </div>
+    <div class="shead-right">
+      <button class="sort-btn on">最新</button>
+      <button class="sort-btn">热门</button>
+      <button class="sort-btn">影片参考</button>
+      <button class="post-btn" onclick="openSheet('mood')">+ 创建灵感板</button>
+    </div>
+  </div>
+
+  <div class="compose">
+    <div class="compose-top">
+      <div class="c-av">余</div>
+      <textarea class="c-textarea" placeholder="分享一个影像参考，一段文字，或者一个还没有名字的感觉……" id="mood-compose" oninput="updateSend('mood-compose','mood-send')"></textarea>
+    </div>
+    <div class="compose-foot">
+      <div class="c-tags">
+        <button class="ctag" onclick="toggleCtag(this)">影像参考</button>
+        <button class="ctag" onclick="toggleCtag(this)">导演手记</button>
+        <button class="ctag" onclick="toggleCtag(this)">摄影风格</button>
+        <button class="ctag" onclick="toggleCtag(this)">色调</button>
+      </div>
+      <button class="c-send" id="mood-send" disabled onclick="quickPost('mood')">发布</button>
+    </div>
+  </div>
+
+  <div class="feed" id="feed-mood">
+
+    <!-- Mood card 1 -->
+    <div class="mood-card">
+      <div class="sc-head">
+        <div class="sc-av" style="background:#1a2030;color:#7A9EC8">月</div>
+        <div class="sc-meta">
+          <div class="sc-author">YueLiang <span class="sc-time">3小时前</span></div>
+        </div>
+        <div class="sc-stage">50帧</div>
+      </div>
+      <div class="sc-title">关于孤独的光影</div>
+      <div class="sc-logline" style="margin-bottom:0">从塔可夫斯基的水面倒影到阿彼察邦的丛林余晖——思考"空"在电影语言中的重量</div>
+
+      <!-- Grid 4-up -->
+      <div class="mood-grid g4" style="grid-template-rows:auto auto">
+        <div class="mood-cell tall" style="background:linear-gradient(150deg,#0a1018,#141830)">安
+          <div class="mood-cell-label">《安德烈·鲁布廖夫》塔可夫斯基</div>
+        </div>
+        <div class="mood-cell" style="background:linear-gradient(150deg,#0d1a12,#081410)">绿
+          <div class="mood-cell-label">《绿光》侯麦</div>
+        </div>
+        <div class="mood-cell" style="background:linear-gradient(150deg,#1a0a1a,#100810)">镜
+          <div class="mood-cell-label">《镜子》塔可夫斯基</div>
+        </div>
+        <div class="mood-cell" style="background:var(--bg3)" class="mood-text-cell">
+          <div class="mood-text-inner">"孤独不是缺席了什么，<br>而是一种特定的<br>光线质感。"</div>
+        </div>
+        <div class="mood-cell" style="background:linear-gradient(150deg,#14100a,#1a1606)">塔
+          <div class="mood-cell-label">《潜行者》塔可夫斯基</div>
+        </div>
+      </div>
+
+      <div class="mood-expand" onclick="showToast('展开完整灵感板')">
+        查看全部 50 帧 →
+      </div>
+      <div class="sc-actions">
+        <span class="action-btn liked" onclick="toggleLike(this,'89')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S1.5 9 1.5 5A3 3 0 017.5 3 3 3 0 0113.5 5C13.5 9 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2" fill="currentColor" opacity=".25"/></svg>89
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleComments(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 2h13v9H9l-3 2V11H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>23 条评论
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn bookmarked" onclick="toggleBookmark(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 2h9v11l-4.5-3L3 13V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="currentColor" opacity=".25"/></svg>已收藏
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" style="margin-left:auto" onclick="showToast('链接已复制')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="3" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        </span>
+      </div>
+      <div class="comments-wrap" id="cw-m0">
+        <div class="comment">
+          <div class="cmt-av" style="background:#1a1028;color:#C87AC8">M</div>
+          <div class="cmt-body">
+            <div class="cmt-author">MingZhi <span class="cmt-time">2小时前</span></div>
+            <div class="cmt-text">塔可夫斯基那张和侯孝贤放在一起，对比很有力——一个湿润的室外，一个封闭的室内框架，说的是同一种被时间遗忘的感觉。</div>
+            <div class="cmt-like" onclick="toggleCmtLike(this)"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 9.5S1 6.5 1 3.5A2.5 2.5 0 015.5 2 2.5 2.5 0 0110 3.5C10 6.5 5.5 9.5 5.5 9.5z" stroke="currentColor" stroke-width="1.2"/></svg>有帮助 · 14</div>
+          </div>
+        </div>
+        <div class="cmt-compose">
+          <div class="c-av" style="width:26px;height:26px;font-size:10px">余</div>
+          <input class="cmt-input" placeholder="写下你的想法……" onkeydown="submitComment(event,this,'m0')">
+          <button class="cmt-submit" onclick="submitCommentBtn(this,'m0')">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mood card 2 -->
+    <div class="mood-card">
+      <div class="sc-head">
+        <div class="sc-av" style="background:#0a1814;color:#5C9E6A">C</div>
+        <div class="sc-meta">
+          <div class="sc-author">CinemasHiro <span class="sc-badge">策展人</span> <span class="sc-time">1天前</span></div>
+        </div>
+        <div class="sc-stage">导演手记</div>
+      </div>
+      <div class="sc-title">手持摄影的伦理：靠近还是侵入？</div>
+      <div class="sc-logline" style="margin-bottom:12px">达内兄弟的手持镜头是一种道德立场。我试图总结他们和帕纳西之间的差异。</div>
+
+      <div class="mood-grid g3">
+        <div class="mood-cell" style="background:linear-gradient(150deg,#141010,#1a1414)">达
+          <div class="mood-cell-label">《罗塞塔》达内兄弟</div>
+        </div>
+        <div class="mood-cell" style="background:var(--bg3)">
+          <div class="mood-text-inner" style="padding:14px;font-size:13px">"摄影机跟随，不是因为它想捕捉，而是因为它无法离开。"</div>
+        </div>
+        <div class="mood-cell" style="background:linear-gradient(150deg,#0a1018,#10141a)">帕
+          <div class="mood-cell-label">《这不是一部电影》帕纳西</div>
+        </div>
+      </div>
+
+      <div class="sc-actions">
+        <span class="action-btn" onclick="toggleLike(this,'44')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S1.5 9 1.5 5A3 3 0 017.5 3 3 3 0 0113.5 5C13.5 9 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2"/></svg>44
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleComments(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 2h13v9H9l-3 2V11H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>7 条评论
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleBookmark(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 2h9v11l-4.5-3L3 13V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>收藏
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" style="margin-left:auto" onclick="showToast('链接已复制')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="3" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        </span>
+      </div>
+      <div class="comments-wrap" id="cw-m1">
+        <div class="cmt-compose">
+          <div class="c-av" style="width:26px;height:26px;font-size:10px">余</div>
+          <input class="cmt-input" placeholder="写下你的想法……" onkeydown="submitComment(event,this,'m1')">
+          <button class="cmt-submit" onclick="submitCommentBtn(this,'m1')">发送</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ FILM TAB ════════════════════════ -->
+<div class="page" id="page-film">
+  <div class="shead">
+    <div class="shead-left">
+      <div class="shead-title">短片</div>
+      <div class="shead-count">16 部作品</div>
+    </div>
+    <div class="shead-right">
+      <button class="sort-btn on">最新</button>
+      <button class="sort-btn">热门</button>
+      <button class="sort-btn">电影节首映</button>
+      <button class="post-btn" onclick="openSheet('film')">+ 上传短片</button>
+    </div>
+  </div>
+
+  <div class="compose">
+    <div class="compose-top">
+      <div class="c-av">余</div>
+      <textarea class="c-textarea" placeholder="上传你的短片，或者分享一个拍摄中的片段……" id="film-compose" oninput="updateSend('film-compose','film-send')"></textarea>
+    </div>
+    <div class="compose-foot">
+      <div class="c-tags">
+        <button class="ctag" onclick="toggleCtag(this)">寻求首映电影节</button>
+        <button class="ctag" onclick="toggleCtag(this)">拍摄中</button>
+        <button class="ctag" onclick="toggleCtag(this)">后期中</button>
+      </div>
+      <button class="c-send" id="film-send" disabled onclick="quickPost('film')">发布</button>
+    </div>
+  </div>
+
+  <div class="feed" id="feed-film">
+
+    <!-- Film card 1 -->
+    <div class="film-card">
+      <div class="sc-head">
+        <div class="sc-av" style="background:#201028;color:#C87AC8">R</div>
+        <div class="sc-meta">
+          <div class="sc-author">Ruan_Xiao <span class="sc-time">2天前</span></div>
+          <div style="font-size:11px;color:var(--ink3)">上海</div>
+        </div>
+        <div class="sc-stage" style="border-color:var(--green2);color:var(--green)">已发布</div>
+      </div>
+
+      <div class="film-preview">
+        <div class="film-thumb" style="background:linear-gradient(135deg,#0a1018,#141830)">之
+          <div class="film-play-btn">
+            <div class="play-icon">
+              <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M1 1l8 5-8 5V1z" fill="white"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="film-info">
+          <div class="film-title">《之间》</div>
+          <div class="film-meta"><span>14分钟</span><span>2025</span><span>剧情</span></div>
+          <div class="film-desc">一个关于告别的短片。两个人在城市里最后一次相遇，什么也没说。在沉默里，一段关系悄悄结束，或者悄悄开始。</div>
+          <div class="film-festivals">
+            <span class="film-fest-tag live">华语独立短片展 首映中</span>
+            <span class="film-fest-tag">上海映画周</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-actions">
+        <span class="action-btn" onclick="toggleLike(this,'128')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S1.5 9 1.5 5A3 3 0 017.5 3 3 3 0 0113.5 5C13.5 9 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2"/></svg>128
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleComments(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 2h13v9H9l-3 2V11H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>28 条评论
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleBookmark(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 2h9v11l-4.5-3L3 13V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>收藏
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="showToast('推荐到电影节')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M13 7.5H2M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>推荐到电影节
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" style="margin-left:auto" onclick="showToast('链接已复制')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="3" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        </span>
+      </div>
+      <div class="comments-wrap" id="cw-f0">
+        <div class="comment">
+          <div class="cmt-av" style="background:#1a2030;color:#7A9EC8">月</div>
+          <div class="cmt-body">
+            <div class="cmt-author">YueLiang <span class="cmt-time">1天前</span></div>
+            <div class="cmt-text">最后那个长镜头，两个人背对着镜头，马路上的车流从他们中间穿过——那个构图是整部片最好的一帧。沉默用得很克制，没有滥用。</div>
+            <div class="cmt-like" onclick="toggleCmtLike(this)"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 9.5S1 6.5 1 3.5A2.5 2.5 0 015.5 2 2.5 2.5 0 0110 3.5C10 6.5 5.5 9.5 5.5 9.5z" stroke="currentColor" stroke-width="1.2"/></svg>有帮助 · 22</div>
+          </div>
+        </div>
+        <div class="cmt-compose">
+          <div class="c-av" style="width:26px;height:26px;font-size:10px">余</div>
+          <input class="cmt-input" placeholder="写下你的观后感……" onkeydown="submitComment(event,this,'f0')">
+          <button class="cmt-submit" onclick="submitCommentBtn(this,'f0')">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Film card 2 -->
+    <div class="film-card">
+      <div class="sc-head">
+        <div class="sc-av" style="background:#0a1814;color:#5C9E6A">C</div>
+        <div class="sc-meta">
+          <div class="sc-author">CinemasHiro <span class="sc-badge">策展人</span> <span class="sc-time">5天前</span></div>
+        </div>
+        <div class="sc-stage">拍摄中</div>
+      </div>
+
+      <div class="film-preview">
+        <div class="film-thumb" style="background:linear-gradient(135deg,#0a1410,#101a14)">林
+          <div class="film-play-btn">
+            <div class="play-icon">
+              <svg width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M1 1l8 5-8 5V1z" fill="white"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="film-info">
+          <div class="film-title">《林间》</div>
+          <div class="film-meta"><span>拍摄中</span><span>2025</span><span>纪录·实验</span></div>
+          <div class="film-desc">一个关于森林和时间的短片。摄影机架在同一个位置，从清晨到夜晚。没有人，只有光在移动。</div>
+          <div class="film-festivals">
+            <span class="film-fest-tag">寻求电影节首映</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-actions">
+        <span class="action-btn" onclick="toggleLike(this,'47')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S1.5 9 1.5 5A3 3 0 017.5 3 3 3 0 0113.5 5C13.5 9 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2"/></svg>47
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleComments(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 2h13v9H9l-3 2V11H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>9 条评论
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="toggleBookmark(this)">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 2h9v11l-4.5-3L3 13V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>收藏
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" onclick="showToast('已推荐到东京映画周')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M13 7.5H2M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>推荐到电影节
+        </span>
+        <div class="action-sep"></div>
+        <span class="action-btn" style="margin-left:auto" onclick="showToast('链接已复制')">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="3" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        </span>
+      </div>
+      <div class="comments-wrap" id="cw-f1">
+        <div class="cmt-compose">
+          <div class="c-av" style="width:26px;height:26px;font-size:10px">余</div>
+          <input class="cmt-input" placeholder="写下你的想法……" onkeydown="submitComment(event,this,'f1')">
+          <button class="cmt-submit" onclick="submitCommentBtn(this,'f1')">发送</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ UPLOAD SHEET ════════════════════ -->
+<div class="sheet-bg" id="sheet-bg" onclick="handleSheetBg(event)">
+  <div class="sheet" id="sheet">
+    <div class="sheet-header">
+      <div class="sheet-title" id="sheet-title">上传剧本</div>
+      <button class="sheet-close" onclick="closeSheet()">✕</button>
+    </div>
+    <div class="sheet-type-row" id="sheet-types">
+      <button class="stype on" onclick="setSheetType(this,'script')">剧本</button>
+      <button class="stype" onclick="setSheetType(this,'mood')">图文灵感</button>
+      <button class="stype" onclick="setSheetType(this,'film')">短片</button>
+    </div>
+
+    <!-- Script fields -->
+    <div id="sf-script">
+      <div class="s-field">
+        <div class="s-label">标题</div>
+        <input type="text" class="s-input" placeholder="《作品名》第X幕" id="sf-title">
+      </div>
+      <div class="s-field">
+        <div class="s-label">一句话简介</div>
+        <input type="text" class="s-input" placeholder="用一句话说清楚这个故事……" id="sf-logline">
+      </div>
+      <div class="s-field">
+        <div class="s-label">剧本文件</div>
+        <div class="s-drop">
+          <input type="file" accept=".pdf,.fdx,.txt,.docx" onchange="handleSheetFile(this)">
+          <div class="s-drop-text">拖拽或点击上传</div>
+          <div class="s-drop-sub">PDF · FDX · TXT · DOCX</div>
+        </div>
+      </div>
+      <div class="s-field">
+        <div class="s-label">灵感来源 <span style="font-size:10px;color:var(--ink4);text-transform:none;letter-spacing:0">（关联影片）</span></div>
+        <input type="text" class="s-input" placeholder="侯孝贤《咖啡时光》、洪常秀……" id="sf-inf">
+      </div>
+      <div class="s-field">
+        <div class="s-label">创作阶段</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="stype on" onclick="toggleStype(this)">初稿</button>
+          <button class="stype" onclick="toggleStype(this)">寻求反馈</button>
+          <button class="stype" onclick="toggleStype(this)">终稿</button>
+          <button class="stype" onclick="toggleStype(this)">已拍摄</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mood fields -->
+    <div id="sf-mood" style="display:none">
+      <div class="s-field">
+        <div class="s-label">标题</div>
+        <input type="text" class="s-input" placeholder="这组图像在说什么……">
+      </div>
+      <div class="s-field">
+        <div class="s-label">简介</div>
+        <textarea class="s-textarea" placeholder="描述这个灵感板的主题……" rows="2"></textarea>
+      </div>
+      <div class="s-field">
+        <div class="s-label">上传图片</div>
+        <div class="s-drop">
+          <input type="file" accept="image/*" multiple onchange="handleSheetFile(this)">
+          <div class="s-drop-text">拖拽多张图片到这里</div>
+          <div class="s-drop-sub">JPG · PNG · WEBP · 最多20张</div>
+        </div>
+      </div>
+      <div class="s-field">
+        <div class="s-label">关联影片</div>
+        <input type="text" class="s-input" placeholder="与这组图像相关的影片……">
+      </div>
+    </div>
+
+    <!-- Film fields -->
+    <div id="sf-film" style="display:none">
+      <div class="s-field">
+        <div class="s-label">片名</div>
+        <input type="text" class="s-input" placeholder="《作品名》">
+      </div>
+      <div class="s-field">
+        <div class="s-label">简介</div>
+        <textarea class="s-textarea" placeholder="一段话介绍这部短片……" rows="2"></textarea>
+      </div>
+      <div class="s-field">
+        <div class="s-label">视频文件</div>
+        <div class="s-drop">
+          <input type="file" accept="video/*" onchange="handleSheetFile(this)">
+          <div class="s-drop-text">拖拽视频到这里</div>
+          <div class="s-drop-sub">MP4 · MOV · 最大 4GB</div>
+        </div>
+      </div>
+      <div class="s-field">
+        <div class="s-label">关联电影节（选填）</div>
+        <input type="text" class="s-input" placeholder="选择电影节首映……">
+      </div>
+    </div>
+
+    <button class="s-submit" onclick="submitSheet()">发布</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── TABS ─────────────────────────────────────────
+function switchTab(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  document.getElementById('nt-'+id).classList.add('on');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+// ── COMPOSE ───────────────────────────────────────
+function updateSend(tid, bid){
+  var val=document.getElementById(tid).value.trim();
+  document.getElementById(bid).disabled=!val;
+}
+function toggleCtag(btn){ btn.classList.toggle('on'); }
+
+function quickPost(type){
+  var tid=type+'-compose';
+  var val=document.getElementById(tid).value.trim();
+  if(!val) return;
+  var feed=document.getElementById('feed-'+type);
+  var el=document.createElement('div');
+  el.className = type==='film' ? 'film-card' : type==='mood' ? 'mood-card' : 'script-card';
+  var id='cw-new-'+Date.now();
+  el.innerHTML=`
+    <div class="sc-head">
+      <div class="sc-av" style="background:var(--gold3);color:var(--gold)">余</div>
+      <div class="sc-meta">
+        <div class="sc-author">余小舟 <span class="sc-time">刚刚</span></div>
+      </div>
+    </div>
+    <div class="sc-logline">${val}</div>
+    <div class="sc-actions" style="margin-top:12px">
+      <span class="action-btn" onclick="toggleLike(this,'0')">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S1.5 9 1.5 5A3 3 0 017.5 3 3 3 0 0113.5 5C13.5 9 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2"/></svg>0
+      </span>
+      <div class="action-sep"></div>
+      <span class="action-btn" onclick="toggleComments(this)">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 2h13v9H9l-3 2V11H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>评论
+      </span>
+    </div>
+    <div class="comments-wrap" id="${id}">
+      <div class="cmt-compose">
+        <div class="c-av" style="width:26px;height:26px;font-size:10px">余</div>
+        <input class="cmt-input" placeholder="写下评论……" onkeydown="submitComment(event,this,'${id}')">
+        <button class="cmt-submit" onclick="submitCommentBtn(this,'${id}')">发送</button>
+      </div>
+    </div>`;
+  feed.insertBefore(el, feed.firstChild);
+  document.getElementById(tid).value='';
+  document.getElementById(type+'-send').disabled=true;
+  showToast('已发布');
+}
+
+// ── INTERACTIONS ──────────────────────────────────
+function toggleLike(btn, baseN){
+  var on=btn.classList.toggle('liked');
+  var n=parseInt(btn.textContent.replace(/\D/g,''))||parseInt(baseN)||0;
+  var newN=on?n+1:n-1;
+  btn.innerHTML=btn.innerHTML.replace(/\d+/, newN);
+  if(on){
+    btn.querySelector('svg path')?.setAttribute('fill','currentColor');
+    btn.querySelector('svg path')?.setAttribute('opacity','.25');
+  } else {
+    btn.querySelector('svg path')?.removeAttribute('fill');
+    btn.querySelector('svg path')?.removeAttribute('opacity');
+  }
+}
+function toggleBookmark(btn){
+  var on=btn.classList.toggle('bookmarked');
+  btn.innerHTML=btn.innerHTML.replace(on?'收藏':'已收藏', on?'已收藏':'收藏');
+  if(on){
+    btn.querySelector('svg path')?.setAttribute('fill','currentColor');
+    btn.querySelector('svg path')?.setAttribute('opacity','.25');
+  } else {
+    btn.querySelector('svg path')?.removeAttribute('fill');
+    btn.querySelector('svg path')?.removeAttribute('opacity');
+  }
+  showToast(on?'已收藏':'已取消收藏');
+}
+function toggleComments(btn){
+  var card=btn.closest('.script-card,.mood-card,.film-card');
+  if(!card) return;
+  var cw=card.querySelector('.comments-wrap');
+  if(!cw) return;
+  cw.classList.toggle('open');
+  if(cw.classList.contains('open')){
+    var input=cw.querySelector('.cmt-input');
+    if(input) setTimeout(()=>input.focus(),100);
+  }
+}
+function toggleCmtLike(btn){
+  btn.classList.toggle('on');
+  var m=btn.textContent.match(/\d+/);
+  if(m){
+    var n=parseInt(m[0]);
+    btn.innerHTML=btn.innerHTML.replace(/\d+/, btn.classList.contains('on')?n+1:n-1);
+  }
+}
+
+// ── COMMENTS ──────────────────────────────────────
+function submitComment(e, input, cwId){
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); doSubmitComment(input, cwId); }
+}
+function submitCommentBtn(btn, cwId){
+  var input=btn.previousElementSibling;
+  doSubmitComment(input, cwId);
+}
+function doSubmitComment(input, cwId){
+  var val=input.value.trim();
+  if(!val) return;
+  var cw=document.getElementById('cw-'+cwId)||input.closest('.comments-wrap');
+  if(!cw) return;
+  var compose=input.closest('.cmt-compose');
+  var cmt=document.createElement('div');
+  cmt.className='comment';
+  cmt.style.animation='fadeUp .25s ease forwards';
+  cmt.innerHTML=`
+    <div class="cmt-av" style="background:var(--gold3);color:var(--gold)">余</div>
+    <div class="cmt-body">
+      <div class="cmt-author">余小舟 <span class="cmt-time">刚刚</span></div>
+      <div class="cmt-text">${val}</div>
+      <div class="cmt-like" onclick="toggleCmtLike(this)"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 9.5S1 6.5 1 3.5A2.5 2.5 0 015.5 2 2.5 2.5 0 0110 3.5C10 6.5 5.5 9.5 5.5 9.5z" stroke="currentColor" stroke-width="1.2"/></svg>有帮助 · 0</div>
+    </div>`;
+  cw.insertBefore(cmt, compose);
+  input.value='';
+  // Update comment count in action btn
+  var card=cw.closest('.script-card,.mood-card,.film-card');
+  if(card){
+    var cmtBtn=card.querySelector('.action-btn:nth-child(3)');
+    if(cmtBtn){
+      var m=cmtBtn.textContent.match(/(\d+)/);
+      if(m) cmtBtn.innerHTML=cmtBtn.innerHTML.replace(/\d+/, parseInt(m[1])+1);
+    }
+  }
+}
+
+// ── UPLOAD SHEET ──────────────────────────────────
+var currentSheetType='script';
+function openSheet(type){
+  currentSheetType=type;
+  setSheetType(null, type);
+  document.getElementById('sheet-bg').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSheet(){
+  document.getElementById('sheet-bg').classList.remove('open');
+  document.body.style.overflow='';
+}
+function handleSheetBg(e){
+  if(e.target===document.getElementById('sheet-bg')) closeSheet();
+}
+function setSheetType(btn, type){
+  document.querySelectorAll('.sheet-type-row .stype').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  else {
+    var map={script:0,mood:1,film:2};
+    var btns=document.querySelectorAll('.sheet-type-row .stype');
+    if(btns[map[type]]) btns[map[type]].classList.add('on');
+  }
+  ['script','mood','film'].forEach(t=>{
+    var el=document.getElementById('sf-'+t);
+    if(el) el.style.display=t===type?'':'none';
+  });
+  var titles={script:'上传剧本',mood:'创建灵感板',film:'上传短片'};
+  document.getElementById('sheet-title').textContent=titles[type]||'上传';
+  currentSheetType=type;
+}
+function toggleStype(btn){
+  btn.closest('div').querySelectorAll('.stype').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function handleSheetFile(input){
+  if(input.files[0]) showToast('文件已选择：'+input.files[0].name.substring(0,20)+'…');
+}
+function submitSheet(){
+  closeSheet();
+  showToast('作品已发布 ✓');
+  // Inject a placeholder card into the appropriate feed
+  var type=currentSheetType;
+  var title=document.getElementById('sf-title')?.value||'新作品';
+  var feed=document.getElementById('feed-'+type)||document.getElementById('feed-script');
+  var el=document.createElement('div');
+  el.className=type==='film'?'film-card':type==='mood'?'mood-card':'script-card';
+  var id='cw-s-'+Date.now();
+  el.innerHTML=`
+    <div class="sc-head">
+      <div class="sc-av" style="background:var(--gold3);color:var(--gold)">余</div>
+      <div class="sc-meta">
+        <div class="sc-author">余小舟 <span class="sc-badge">你</span> <span class="sc-time">刚刚</span></div>
+      </div>
+      <div class="sc-stage">已发布</div>
+    </div>
+    <div class="sc-title">${title||'新作品'}</div>
+    <div class="sc-actions" style="margin-top:14px">
+      <span class="action-btn" onclick="toggleLike(this,'0')"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 13S1.5 9 1.5 5A3 3 0 017.5 3 3 3 0 0113.5 5C13.5 9 7.5 13 7.5 13z" stroke="currentColor" stroke-width="1.2"/></svg>0</span>
+      <div class="action-sep"></div>
+      <span class="action-btn" onclick="toggleComments(this)"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 2h13v9H9l-3 2V11H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>0 条评论</span>
+      <div class="action-sep"></div>
+      <span class="action-btn" onclick="toggleBookmark(this)"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 2h9v11l-4.5-3L3 13V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>收藏</span>
+    </div>
+    <div class="comments-wrap" id="${id}">
+      <div class="cmt-compose">
+        <div class="c-av" style="width:26px;height:26px;font-size:10px">余</div>
+        <input class="cmt-input" placeholder="写下评论……" onkeydown="submitComment(event,this,'${id}')">
+        <button class="cmt-submit" onclick="submitCommentBtn(this,'${id}')">发送</button>
+      </div>
+    </div>`;
+  feed.insertBefore(el, feed.firstChild);
+  if(type!==document.querySelector('.ntab.on')?.id.replace('nt-','')) switchTab(type);
+}
+
+// ── TOAST ─────────────────────────────────────────
+var toastTimer;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// ── KEYBOARD ──────────────────────────────────────
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeSheet(); });
+</script>
+<script>
+if(!window.shellNavigate){window.shellNavigate=function(p){if(window.parent&&window.parent.navigate)window.parent.navigate(p);else window.parent.postMessage({type:"navigate",payload:{page:p}},"*")};window.shellShowToast=function(m){if(window.parent&&window.parent.showToast)window.parent.showToast(m);else window.parent.postMessage({type:"toast",payload:{msg:m}},"*")}}
+</script>
+</body>
+</html>

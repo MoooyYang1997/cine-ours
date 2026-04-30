@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>电影节广场</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C0B09;--bg1:#111009;--bg2:#161410;--bg3:#1C1A15;--bg4:#252018;--ink:#EDE6D9;--ink2:#B5AC9E;--ink3:#7A7268;--ink4:#4A4540;--gold:#C8A44A;--gold2:#9B7A2E;--gold3:#3D2E0E;--green:#5C9E6A;--b:rgba(237,230,217,.07);--b2:rgba(237,230,217,.13);--b3:rgba(237,230,217,.22);--tr:all .22s cubic-bezier(.4,0,.2,1)}
+*{margin:0;padding:0;box-sizing:border-box}html{font-size:15px}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-y:auto;height:100vh}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4)}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:inherit}
+.page-hero{padding:52px 48px 44px;border-bottom:1px solid var(--b);position:relative;overflow:hidden}
+.page-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 50% 80% at 80% 50%,rgba(200,164,74,.04),transparent 60%);pointer-events:none}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
+.page-title{font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,58px);font-weight:400;margin-bottom:10px}
+.page-title em{font-style:italic;color:var(--gold)}
+.page-desc{font-size:14px;color:var(--ink2);max-width:520px;line-height:1.8;margin-bottom:28px}
+.cta-row{display:flex;gap:10px;margin-bottom:28px}
+.btn-gold{font-size:12px;letter-spacing:.09em;text-transform:uppercase;padding:12px 28px;background:var(--gold);color:var(--bg);border:1px solid var(--gold);transition:var(--tr)}
+.btn-gold:hover{background:#D4AE55}
+.btn-ghost{font-size:12px;letter-spacing:.09em;text-transform:uppercase;padding:12px 22px;border:1px solid var(--b2);color:var(--ink3);transition:var(--tr)}
+.btn-ghost:hover{border-color:var(--b3);color:var(--ink)}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr)}
+.filter-btn:hover{border-color:var(--b2);color:var(--ink)}
+.filter-btn.on{border-color:var(--gold);color:var(--gold)}
+.fest-list{border-top:1px solid var(--b)}
+.fli{display:grid;grid-template-columns:64px 1fr auto;border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s;min-height:88px}
+.fli:hover{background:var(--bg1)}
+.fli-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink4);padding:0 20px;border-right:1px solid var(--b);display:flex;align-items:center;justify-content:center}
+.fli-body{padding:18px 24px}
+.fli-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;margin-bottom:5px}
+.fli-title em{font-style:italic;color:var(--gold)}
+.fli-meta{font-size:12px;color:var(--ink3);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:lp 2s ease-in-out infinite}
+@keyframes lp{0%,100%{box-shadow:0 0 3px var(--green)}50%{box-shadow:0 0 9px var(--green)}}
+.status-live{color:var(--green);display:flex;align-items:center;gap:4px}
+.status-soon{color:var(--gold)}
+.fli-r{padding:0 24px;border-left:1px solid var(--b);display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:7px;min-width:140px}
+.fli-n{font-family:'Playfair Display',serif;font-size:22px;font-weight:400}
+.fli-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.join-btn{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--gold);color:var(--gold);transition:var(--tr)}
+.join-btn:hover{background:var(--gold);color:var(--bg)}
+</style>
+</head>
+<body>
+<div class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="eyebrow">线上电影节广场</div>
+  <h1 class="page-title">在这里，每个人<br>都是<em>策展人</em></h1>
+  <p class="page-desc">创建你的主题电影节，邀请全球影迷共同打卡观影。或者加入一个正在进行的电影节，与同频的人一起经历光影时刻。</p>
+  <div class="cta-row">
+    <button class="btn-gold" onclick="toast('创建电影节向导')">+ 创建电影节</button>
+    <button class="btn-ghost" onclick="toast('策展指南')">如何策展 →</button>
+  </div>
+  <div class="filters">
+    <button class="filter-btn on" onclick="toggleF(this)">全部</button>
+    <button class="filter-btn" onclick="toggleF(this)">进行中</button>
+    <button class="filter-btn" onclick="toggleF(this)">即将开始</button>
+    <button class="filter-btn" onclick="toggleF(this)">招募中</button>
+    <button class="filter-btn" onclick="toggleF(this)">日本电影</button>
+    <button class="filter-btn" onclick="toggleF(this)">华语电影</button>
+    <button class="filter-btn" onclick="toggleF(this)">女性导演</button>
+    <button class="filter-btn" onclick="toggleF(this)">实验影像</button>
+  </div>
+</div>
+<div class="fest-list">
+  <div class="fli" onclick="nav('festival-detail')">
+    <div class="fli-num">047</div>
+    <div class="fli-body">
+      <div class="fli-title">黑泽明与<em>日本新浪潮</em> — 东京映画周</div>
+      <div class="fli-meta"><span class="status-live"><span class="live-dot"></span>进行中 · 第4天</span><span>4月10日—4月17日</span><span>6部影片</span></div>
+    </div>
+    <div class="fli-r"><div class="fli-n">247</div><div class="fli-l">人打卡</div><button class="join-btn" onclick="event.stopPropagation();nav('festival-detail')">进入 →</button></div>
+  </div>
+  <div class="fli" onclick="toast('进入女性凝视电影周')">
+    <div class="fli-num">051</div>
+    <div class="fli-body">
+      <div class="fli-title">她在路上：<em>女性凝视</em>电影周</div>
+      <div class="fli-meta"><span class="status-soon">即将开始 · 3天后</span><span>5月2日—5月8日</span><span>7部影片</span></div>
+    </div>
+    <div class="fli-r"><div class="fli-n">89</div><div class="fli-l">人报名</div><button class="join-btn" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
+  </div>
+  <div class="fli" onclick="toast('进入港片重看')">
+    <div class="fli-num">055</div>
+    <div class="fli-body">
+      <div class="fli-title"><em>九十年代</em>港片重看</div>
+      <div class="fli-meta"><span class="status-soon">即将开始</span><span>5月5日起</span><span>8部影片</span></div>
+    </div>
+    <div class="fli-r"><div class="fli-n">156</div><div class="fli-l">人报名</div><button class="join-btn" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
+  </div>
+  <div class="fli" onclick="toast('进入深夜恐惧独立影展')">
+    <div class="fli-num">039</div>
+    <div class="fli-body">
+      <div class="fli-title">深夜恐惧<em>独立影展</em></div>
+      <div class="fli-meta"><span>招募中</span><span>5月15日起</span><span>5部影片</span></div>
+    </div>
+    <div class="fli-r"><div class="fli-n">32</div><div class="fli-l">人报名</div><button class="join-btn" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
+  </div>
+  <div class="fli" onclick="toast('进入法国电影大回顾')">
+    <div class="fli-num">058</div>
+    <div class="fli-body">
+      <div class="fli-title">新浪潮五十年：<em>法国电影</em>大回顾</div>
+      <div class="fli-meta"><span>招募中</span><span>5月20日起</span><span>10部影片</span></div>
+    </div>
+    <div class="fli-r"><div class="fli-n">74</div><div class="fli-l">人报名</div><button class="join-btn" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
+  </div>
+  <div class="fli" onclick="toast('进入塔可夫斯基全集')">
+    <div class="fli-num">060</div>
+    <div class="fli-body">
+      <div class="fli-title">塔可夫斯基<em>全集</em>观影周</div>
+      <div class="fli-meta"><span>招募中</span><span>6月1日起</span><span>7部影片</span></div>
+    </div>
+    <div class="fli-r"><div class="fli-n">118</div><div class="fli-l">人报名</div><button class="join-btn" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
+  </div>
+</div>
+<script>
+function nav(p){if(window.parent&&window.parent.navigate)window.parent.navigate(p);else window.parent.postMessage({type:'navigate',payload:{page:p}},'*')}
+function toast(m){if(window.parent&&window.parent.showToast)window.parent.showToast(m);else window.parent.postMessage({type:'toast',payload:{msg:m}},'*')}
+function toggleF(btn){btn.closest('.filters').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on')}
+</script>
+</body>
+</html>

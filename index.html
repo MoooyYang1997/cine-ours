@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cine Ours — Cinema of Our Own</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C0B09;--bg1:#111009;--bg2:#161410;--bg3:#1C1A15;--bg4:#252018;
+  --ink:#EDE6D9;--ink2:#B5AC9E;--ink3:#7A7268;--ink4:#4A4540;
+  --gold:#C8A44A;--gold2:#9B7A2E;--gold3:#3D2E0E;--green:#5C9E6A;
+  --b:rgba(237,230,217,.07);--b2:rgba(237,230,217,.13);--b3:rgba(237,230,217,.22);
+  --tr:all .22s cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;font-size:15px}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.28;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:var(--bg4)}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:inherit}
+.ticker{position:fixed;top:0;left:0;right:0;z-index:501;height:28px;
+  background:var(--gold);display:flex;align-items:center;overflow:hidden}
+.ticker-inner{display:flex;gap:32px;white-space:nowrap;
+  animation:tick 24s linear infinite;font-size:11px;letter-spacing:.05em;color:var(--bg);padding-left:20px}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.t-sep{opacity:.4;margin:0 4px}
+.nav{position:fixed;top:28px;left:0;right:0;z-index:500;height:62px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 44px;
+  border-bottom:1px solid var(--b);background:rgba(12,11,9,.94);backdrop-filter:blur(16px)}
+.logo{font-family:'Playfair Display',serif;font-size:19px;cursor:pointer;transition:opacity .2s}
+.logo:hover{opacity:.8}.logo em{font-style:italic;color:var(--gold)}
+.nav-links{display:flex;gap:2px}
+.nl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);
+  padding:7px 15px;border-bottom:2px solid transparent;transition:var(--tr);cursor:pointer;white-space:nowrap}
+.nl:hover{color:var(--ink)}.nl.on{color:var(--ink);border-bottom-color:var(--gold)}
+.tdot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);
+  margin-left:5px;vertical-align:middle;animation:tdp 2s ease-in-out infinite}
+@keyframes tdp{0%,100%{opacity:1}50%{opacity:.4}}
+.nav-r{display:flex;align-items:center;gap:8px}
+.nbtn{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 18px;transition:var(--tr)}
+.nbtn-g{border:1px solid var(--b2);color:var(--ink3)}.nbtn-g:hover{border-color:var(--b3);color:var(--ink)}
+.nbtn-gold{background:var(--gold);color:var(--bg);border:1px solid var(--gold)}.nbtn-gold:hover{background:#D4AE55}
+.nav-av{width:32px;height:32px;border-radius:50%;background:var(--gold3);border:1.5px solid var(--gold2);
+  display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;
+  font-size:13px;color:var(--gold);cursor:pointer;transition:var(--tr)}
+.nav-av:hover{box-shadow:0 0 0 3px rgba(200,164,74,.15)}
+.nav-icon-btn{width:32px;height:32px;border:1px solid var(--b2);display:flex;align-items:center;
+  justify-content:center;color:var(--ink3);transition:var(--tr);cursor:pointer}
+.nav-icon-btn:hover{border-color:var(--b3);color:var(--ink)}
+.bc{position:fixed;top:90px;left:0;right:0;z-index:200;height:34px;display:none;
+  align-items:center;padding:0 44px;gap:8px;background:var(--bg1);
+  border-bottom:1px solid var(--b);font-size:11px;color:var(--ink3)}
+.bc.show{display:flex}
+.bc a{cursor:pointer;transition:color .2s}.bc a:hover{color:var(--ink)}
+.shell{position:fixed;top:90px;left:0;right:0;bottom:0;overflow:hidden}
+.shell.with-bc{top:124px}
+.pframe{position:absolute;inset:0;border:none;width:100%;height:100%;
+  opacity:0;pointer-events:none;transition:opacity .28s ease}
+.pframe.on{opacity:1;pointer-events:all}
+.loader{position:absolute;inset:0;z-index:50;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;pointer-events:none;
+  opacity:0;transition:opacity .2s}
+.loader.show{opacity:1}
+.ll{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--gold);animation:lp 1.5s ease-in-out infinite}
+@keyframes lp{0%,100%{opacity:.3}50%{opacity:1}}
+.lb{width:160px;height:1px;background:var(--b2);overflow:hidden}
+.lf{height:1px;background:var(--gold);animation:lf 1.2s ease-in-out infinite}
+@keyframes lf{0%{width:0%;margin-left:0}60%{width:80%;margin-left:0}100%{width:0%;margin-left:100%}}
+.lt{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4)}
+.cover{position:absolute;inset:0;background:var(--bg);z-index:40;
+  opacity:0;pointer-events:none;transition:opacity .15s ease}
+.cover.on{opacity:1}
+.umenu{position:fixed;top:96px;right:44px;width:220px;background:var(--bg2);
+  border:1px solid var(--b2);z-index:600;opacity:0;pointer-events:none;
+  transform:translateY(-8px);transition:all .2s ease}
+.umenu.open{opacity:1;pointer-events:all;transform:translateY(0)}
+.um-hd{padding:16px 18px 12px;border-bottom:1px solid var(--b)}
+.um-name{font-family:'Playfair Display',serif;font-size:15px;margin-bottom:2px}
+.um-handle{font-size:11px;color:var(--ink3)}
+.um-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:13px;
+  color:var(--ink2);cursor:pointer;transition:var(--tr);border-bottom:1px solid var(--b)}
+.um-item:last-child{border-bottom:none}
+.um-item:hover{background:var(--bg1);color:var(--ink)}
+.search-ov{position:fixed;inset:0;z-index:700;background:rgba(12,11,9,.92);
+  backdrop-filter:blur(12px);display:flex;flex-direction:column;align-items:center;
+  padding-top:100px;opacity:0;pointer-events:none;transition:opacity .22s}
+.search-ov.open{opacity:1;pointer-events:all}
+.sbox{width:100%;max-width:600px;padding:0 24px}
+.si-wrap{display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--b2);
+  padding-bottom:16px;margin-bottom:20px}
+.si{flex:1;font-size:22px;font-family:'Playfair Display',serif;color:var(--ink);
+  background:none;border:none;outline:none}
+.si::placeholder{color:var(--ink4)}
+.sc{width:32px;height:32px;border:1px solid var(--b2);color:var(--ink3);
+  display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:var(--tr)}
+.sc:hover{border-color:var(--b3);color:var(--ink)}
+.shint{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);margin-bottom:16px}
+.sres{display:flex;flex-direction:column}
+.sr{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--b);
+  cursor:pointer;transition:var(--tr)}
+.sr:hover{padding-left:8px}.sr:hover .sr-t{color:var(--gold)}
+.sr-ty{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);min-width:60px}
+.sr-t{font-size:14px;color:var(--ink2);transition:color .2s;flex:1}
+.sr-m{font-size:11px;color:var(--ink3)}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(14px);
+  background:var(--bg3);border:1px solid var(--b2);padding:10px 24px;font-size:13px;
+  color:var(--ink2);z-index:800;opacity:0;transition:all .25s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.kb{position:fixed;bottom:20px;right:20px;z-index:100;display:flex;gap:12px;
+  font-size:10px;letter-spacing:.07em;color:var(--ink4);transition:opacity .5s}
+.kbk{background:var(--bg3);border:1px solid var(--b2);padding:1px 6px;
+  font-family:'DM Mono',monospace;font-size:10px;margin-right:3px}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>影史今天 · 1993年《霸王别姬》戛纳世界首映，全票夺金棕榈</span><span class="t-sep">·</span>
+    <span>东京映画周 进行中 · 247人打卡</span><span class="t-sep">·</span>
+    <span>香港国际电影节第50届 · 正在举办</span><span class="t-sep">·</span>
+    <span>她在路上：女性凝视电影周 · 3天后开始</span><span class="t-sep">·</span>
+    <span>上影节2026年评委会主席：奉俊昊</span><span class="t-sep">·</span>
+    <span>影史今天 · 1993年《霸王别姬》戛纳世界首映，全票夺金棕榈</span><span class="t-sep">·</span>
+    <span>东京映画周 进行中 · 247人打卡</span><span class="t-sep">·</span>
+    <span>香港国际电影节第50届 · 正在举办</span><span class="t-sep">·</span>
+    <span>她在路上：女性凝视电影周 · 3天后开始</span><span class="t-sep">·</span>
+    <span>上影节2026年评委会主席：奉俊昊</span><span class="t-sep">·</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="logo" onclick="go('home')">Cine <em>Ours</em></div>
+  <div class="nav-links">
+    <div class="nl on" id="nl-home"      onclick="go('home')">首页</div>
+    <div class="nl"    id="nl-map"       onclick="go('map')">世界地图</div>
+    <div class="nl"    id="nl-festivals" onclick="go('festivals')">电影节</div>
+    <div class="nl"    id="nl-creator"   onclick="go('creator')">创作</div>
+    <div class="nl"    id="nl-history"   onclick="go('history')">影史今天<span class="tdot"></span></div>
+  </div>
+  <div class="nav-r">
+    <div class="nav-icon-btn" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2"/><line x1="9.5" y1="9.5" x2="13" y2="13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    </div>
+    <button class="nbtn nbtn-g"    id="btn-login" onclick="go('auth')" style="display:none">登录</button>
+    <button class="nbtn nbtn-gold" id="btn-join"  onclick="go('auth')">加入 Cine Ours</button>
+    <div    class="nav-av"         id="nav-av"    onclick="toggleUmenu()" style="display:none">余</div>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="bc" id="bc">
+  <a id="bc-p" onclick="go('festivals')">电影节广场</a>
+  <span style="color:var(--ink4)">›</span>
+  <span id="bc-c" style="color:var(--ink2)">东京映画周</span>
+</div>
+
+<!-- SHELL -->
+<div class="shell" id="shell">
+  <div class="cover"  id="cover"></div>
+  <div class="loader" id="loader">
+    <div class="ll">Cine Ours</div>
+    <div class="lb"><div class="lf"></div></div>
+    <div class="lt" id="lt">loading</div>
+  </div>
+  <iframe class="pframe on" id="f-home"             src="page-home.html"             title="首页"></iframe>
+  <iframe class="pframe"    id="f-map"              src=""  data-src="page-map.html"              title="世界地图"></iframe>
+  <iframe class="pframe"    id="f-festivals"        src=""  data-src="page-festivals.html"        title="电影节广场"></iframe>
+  <iframe class="pframe"    id="f-festival-detail"  src=""  data-src="page-festival-detail.html"  title="电影节详情"></iframe>
+  <iframe class="pframe"    id="f-creator"          src=""  data-src="page-creator.html"          title="创作空间"></iframe>
+  <iframe class="pframe"    id="f-history"          src=""  data-src="page-history.html"          title="影史今天"></iframe>
+  <iframe class="pframe"    id="f-profile"          src=""  data-src="page-profile.html"          title="个人主页"></iframe>
+  <iframe class="pframe"    id="f-auth"             src=""  data-src="page-auth.html"             title="登录注册"></iframe>
+  <iframe class="pframe"    id="f-offline-festival" src=""  data-src="page-offline-festival.html" title="线下影展"></iframe>
+</div>
+
+<!-- USER MENU -->
+<div class="umenu" id="umenu">
+  <div class="um-hd"><div class="um-name">余小舟</div><div class="um-handle">@YuXiaozhou · 策展人</div></div>
+  <div class="um-item" onclick="go('profile');closeUmenu()">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M1 12c0-2.8 2.7-5 6-5s6 2.2 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    个人主页
+  </div>
+  <div class="um-item" onclick="go('festivals');closeUmenu()">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M1 6h12M5 2v4M9 2v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    我的电影节 <span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold)">3</span>
+  </div>
+  <div class="um-item" onclick="go('offline-festival');closeUmenu()">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2h10v10H2V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M5 7h4M7 5v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    线下影展记录
+  </div>
+  <div class="um-item" onclick="go('creator');closeUmenu()">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2h7l3 3v7H2V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M5 6h4M5 8.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    我的创作
+  </div>
+  <div class="um-item" style="color:var(--ink3)" onclick="logout()">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2H3a1 1 0 00-1 1v8a1 1 0 001 1h6M10 5l2 2-2 2M5 7h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    退出登录
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div class="search-ov" id="search-ov">
+  <div class="sbox">
+    <div class="si-wrap">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="color:var(--ink3);flex-shrink:0"><circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.3"/><line x1="13.5" y1="13.5" x2="18" y2="18" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <input class="si" id="si" placeholder="搜索电影、导演、影展…" oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
+      <button class="sc" onclick="closeSearch()">✕</button>
+    </div>
+    <div class="shint">试试：晚春 · 黑泽明 · 台湾新浪潮 · 港影节 · 戛纳</div>
+    <div class="sres" id="sres"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="kb" id="kb">
+  <span><span class="kbk">⌘K</span>搜索</span>
+  <span><span class="kbk">1-5</span>切换</span>
+  <span><span class="kbk">L</span>演示登录</span>
+</div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────────
+const PAGES = {
+  home:              {src:'page-home.html',             nav:'nl-home',      label:'首页',         bc:null},
+  map:               {src:'page-map.html',               nav:'nl-map',       label:'世界地图',     bc:null},
+  festivals:         {src:'page-festivals.html',         nav:'nl-festivals', label:'电影节广场',   bc:null},
+  'festival-detail': {src:'page-festival-detail.html',  nav:'nl-festivals', label:'电影节详情',   bc:{p:'festivals',pl:'电影节广场',l:'东京映画周'}},
+  creator:           {src:'page-creator.html',           nav:'nl-creator',   label:'创作空间',     bc:null},
+  history:           {src:'page-history.html',           nav:'nl-history',   label:'影史今天',     bc:null},
+  profile:           {src:'page-profile.html',           nav:null,           label:'个人主页',     bc:null},
+  auth:              {src:'page-auth.html',               nav:null,           label:'加入',         bc:null},
+  'offline-festival':{src:'page-offline-festival.html', nav:null,           label:'线下影展',     bc:{p:'festivals',pl:'电影节广场',l:'香港国际电影节'}},
+};
+
+const SEARCH = [
+  {ty:'线上影展',t:'黑泽明与日本新浪潮 · 东京映画周',  m:'进行中',   pg:'festival-detail'},
+  {ty:'线上影展',t:'她在路上：女性凝视电影周',          m:'3天后',    pg:'festivals'},
+  {ty:'线上影展',t:'上海华语独立短片展',               m:'进行中',   pg:'festivals'},
+  {ty:'线下影展',t:'香港国际电影节 · 第50届 HKIFF',    m:'正在举办', pg:'offline-festival'},
+  {ty:'线下影展',t:'北京国际电影节 · 天坛奖',          m:'4月19日',  pg:'festivals'},
+  {ty:'线下影展',t:'戛纳国际电影节 · 金棕榈',          m:'5月13日',  pg:'festivals'},
+  {ty:'线下影展',t:'上海国际电影节 · 金爵奖',          m:'6月14日',  pg:'festivals'},
+  {ty:'影史',    t:'《霸王别姬》1993年戛纳首映',        m:'4月29日',  pg:'history'},
+  {ty:'影史',    t:'杨德昌《一一》2000年戛纳首映',      m:'4月29日',  pg:'history'},
+  {ty:'影史',    t:'《流浪艺人》1975年安哲罗普洛斯',    m:'影史',     pg:'history'},
+  {ty:'取景地',  t:'东京 · 小津安二郎取景地',          m:'世界地图', pg:'map'},
+  {ty:'取景地',  t:'香港 · 王家卫宇宙',               m:'世界地图', pg:'map'},
+  {ty:'取景地',  t:'台北 · 台湾新浪潮地景',            m:'世界地图', pg:'map'},
+  {ty:'取景地',  t:'巴黎 · 法国新浪潮地标',            m:'世界地图', pg:'map'},
+  {ty:'创作',    t:'《候鸟》第一幕 — YueLiang',        m:'剧本',     pg:'creator'},
+  {ty:'创作',    t:'关于孤独的光影灵感板',              m:'图文',     pg:'creator'},
+  {ty:'导演',    t:'黑泽明 · 日本',                   m:'世界地图', pg:'map'},
+  {ty:'导演',    t:'侯孝贤 · 台湾',                   m:'世界地图', pg:'map'},
+  {ty:'导演',    t:'安哲罗普洛斯 · 希腊',              m:'世界地图', pg:'map'},
+];
+
+// ── STATE ─────────────────────────────────────────────────────
+let cur = 'home';
+let loggedIn = false;
+const loaded = new Set(['home']);
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function go(page, force=false) {
+  if (page === cur && !force) return;
+  const cfg = PAGES[page];
+  if (!cfg) return showToast('页面未找到');
+
+  const cover = document.getElementById('cover');
+  cover.classList.add('on');
+
+  setTimeout(() => {
+    document.querySelectorAll('.pframe').forEach(f => f.classList.remove('on'));
+
+    const frame = document.getElementById('f-' + page);
+    if (!frame) { cover.classList.remove('on'); return; }
+
+    if (!loaded.has(page)) {
+      const loader = document.getElementById('loader');
+      document.getElementById('lt').textContent = cfg.label;
+      loader.classList.add('show');
+      frame.src = frame.dataset.src || cfg.src;
+      loaded.add(page);
+      frame.onload = () => {
+        loader.classList.remove('show');
+        frame.classList.add('on');
+        wireFrame(frame);
+      };
+    } else {
+      frame.classList.add('on');
+    }
+
+    // Nav
+    document.querySelectorAll('.nl').forEach(l => l.classList.remove('on'));
+    if (cfg.nav) document.getElementById(cfg.nav)?.classList.add('on');
+
+    // Breadcrumb
+    const bc = document.getElementById('bc');
+    const shell = document.getElementById('shell');
+    if (cfg.bc) {
+      document.getElementById('bc-p').textContent = cfg.bc.pl;
+      document.getElementById('bc-p').onclick = () => go(cfg.bc.p);
+      document.getElementById('bc-c').textContent = cfg.bc.l;
+      bc.classList.add('show');
+      shell.classList.add('with-bc');
+    } else {
+      bc.classList.remove('show');
+      shell.classList.remove('with-bc');
+    }
+
+    cur = page;
+    document.title = cfg.label + ' — Cine Ours';
+    cover.classList.remove('on');
+    closeUmenu(); closeSearch();
+  }, 150);
+}
+
+function wireFrame(frame) {
+  try {
+    frame.contentWindow.shellGo = go;
+    frame.contentWindow.shellToast = showToast;
+    frame.contentWindow.shellLoggedIn = () => loggedIn;
+  } catch(e) {}
+}
+
+// ── AUTH ──────────────────────────────────────────────────────
+function setAuth(on) {
+  loggedIn = on;
+  document.getElementById('btn-login').style.display  = on ? 'none' : '';
+  document.getElementById('btn-join').style.display   = on ? 'none' : '';
+  document.getElementById('nav-av').style.display     = on ? 'flex' : 'none';
+}
+function logout() {
+  setAuth(false); closeUmenu(); go('home'); showToast('已退出登录');
+}
+document.getElementById('btn-login').style.display = '';
+
+// ── MENUS ─────────────────────────────────────────────────────
+function toggleUmenu() { document.getElementById('umenu').classList.toggle('open'); }
+function closeUmenu()  { document.getElementById('umenu').classList.remove('open'); }
+document.addEventListener('click', e => {
+  const m = document.getElementById('umenu');
+  const av = document.getElementById('nav-av');
+  if (!m.contains(e.target) && !av.contains(e.target)) closeUmenu();
+});
+
+// ── SEARCH ────────────────────────────────────────────────────
+function openSearch() {
+  document.getElementById('search-ov').classList.add('open');
+  setTimeout(() => document.getElementById('si').focus(), 80);
+  renderSearch([]);
+}
+function closeSearch() {
+  document.getElementById('search-ov').classList.remove('open');
+  document.getElementById('si').value = '';
+}
+function doSearch(val) {
+  if (!val.trim()) { renderSearch([]); return; }
+  const q = val.toLowerCase();
+  renderSearch(SEARCH.filter(d =>
+    d.t.toLowerCase().includes(q)||d.ty.includes(q)||d.m.includes(q)
+  ).slice(0,7));
+}
+function renderSearch(res) {
+  const el = document.getElementById('sres');
+  const defaults = [
+    {ty:'线上影展',t:'黑泽明与日本新浪潮 · 东京映画周',m:'进行中',   pg:'festival-detail'},
+    {ty:'线下影展',t:'香港国际电影节第50届',            m:'正在举办', pg:'offline-festival'},
+    {ty:'影史',    t:'《霸王别姬》1993年戛纳首映',      m:'4月29日',  pg:'history'},
+    {ty:'取景地',  t:'东京 · 小津安二郎取景地',        m:'世界地图', pg:'map'},
+    {ty:'创作',    t:'《候鸟》第一幕 — YueLiang',      m:'剧本',     pg:'creator'},
+  ];
+  (res.length ? res : defaults).forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'sr';
+    d.innerHTML = `<span class="sr-ty">${r.ty}</span><span class="sr-t">${r.t}</span><span class="sr-m">${r.m}</span>`;
+    d.onclick = () => { go(r.pg); closeSearch(); };
+    el.appendChild(d);
+  });
+  if (!res.length) return; // keep defaults
+  el.innerHTML = '';
+  res.forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'sr';
+    d.innerHTML = `<span class="sr-ty">${r.ty}</span><span class="sr-t">${r.t}</span><span class="sr-m">${r.m}</span>`;
+    d.onclick = () => { go(r.pg); closeSearch(); };
+    el.appendChild(d);
+  });
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+let toastT;
+function showToast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── MESSAGE BRIDGE ────────────────────────────────────────────
+window.addEventListener('message', e => {
+  const { type, payload } = e.data || {};
+  if (type === 'navigate') go(payload.page);
+  if (type === 'toast')    showToast(payload.msg);
+  if (type === 'login')    { setAuth(true); go('home'); showToast('欢迎回来 余小舟'); }
+  if (type === 'logout')   logout();
+});
+
+// ── KEYBOARD ─────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.metaKey||e.ctrlKey) && e.key==='k') { e.preventDefault(); openSearch(); }
+  if (e.key==='Escape') { closeSearch(); closeUmenu(); }
+  if (!e.metaKey&&!e.ctrlKey&&!e.altKey&&document.activeElement.tagName!=='INPUT') {
+    const map={'1':'home','2':'map','3':'festivals','4':'creator','5':'history'};
+    if (map[e.key]) go(map[e.key]);
+    if (e.key==='l'||e.key==='L') {
+      if (loggedIn) logout(); else { setAuth(true); showToast('已登录：余小舟'); }
+    }
+  }
+});
+
+// ── INIT ─────────────────────────────────────────────────────
+document.getElementById('f-home').addEventListener('load', function(){ wireFrame(this); });
+renderSearch([]);
+setTimeout(() => {
+  showToast('⌘K 全局搜索 · 1-5 切换页面 · L 演示登录');
+  setTimeout(() => document.getElementById('kb').style.opacity='0', 6000);
+}, 1200);
+</script>
+</body>
+</html>

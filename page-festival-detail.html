@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>东京映画周 — Cine Ours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ───────────────────────────────────── */
+:root{
+  --bg:#0C0B09;--bg1:#111009;--bg2:#171510;--bg3:#1E1C16;--bg4:#26231C;--bg5:#302D24;
+  --ink:#EDE6D9;--ink2:#B5AC9E;--ink3:#7A7268;--ink4:#4A4540;
+  --gold:#C8A44A;--gold2:#9B7A2E;--gold3:#5C4518;
+  --green:#5C9E6A;--green2:#3D6B4A;
+  --b:rgba(237,230,217,.07);--b2:rgba(237,230,217,.12);--b3:rgba(237,230,217,.22);
+  --tr:all .22s cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.03'/%3E%3C/svg%3E");opacity:.4}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4)}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:inherit}
+textarea,input{font-family:'DM Sans',sans-serif;background:none;border:none;outline:none;color:var(--ink);resize:none}
+
+/* ── NAV ──────────────────────────────────────── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:400;height:62px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 48px;
+  border-bottom:1px solid var(--b);background:rgba(12,11,9,.92);backdrop-filter:blur(16px)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:19px;cursor:pointer}
+.nav-logo em{font-style:italic;color:var(--gold)}
+.nav-back{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);
+  display:flex;align-items:center;gap:8px;cursor:pointer;transition:var(--tr)}
+.nav-back:hover{color:var(--ink)}
+.nav-right{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.07em;
+  text-transform:uppercase;padding:8px 20px;transition:var(--tr);cursor:pointer}
+.btn-outline{border:1px solid var(--b2);color:var(--ink3)}
+.btn-outline:hover{border-color:var(--b3);color:var(--ink)}
+.btn-gold{background:var(--gold);color:var(--bg);border:1px solid var(--gold)}
+.btn-gold:hover{background:#D9B55A}
+.btn-green{background:rgba(92,158,106,.15);color:var(--green);border:1px solid var(--green2)}
+.btn-green:hover{background:rgba(92,158,106,.25)}
+
+/* ── LAYOUT ───────────────────────────────────── */
+.page-wrap{padding-top:62px;display:grid;grid-template-columns:1fr 340px;min-height:100vh}
+.main{border-right:1px solid var(--b);min-height:100%}
+.aside{position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;display:flex;flex-direction:column}
+.aside::-webkit-scrollbar{width:2px}
+
+/* ── FESTIVAL HERO ────────────────────────────── */
+.fest-hero{
+  padding:48px 48px 0;
+  border-bottom:1px solid var(--b);
+  position:relative;overflow:hidden;
+}
+.fest-hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 100% 0%,rgba(200,164,74,.05),transparent 60%),
+             radial-gradient(ellipse 40% 40% at 0% 100%,rgba(92,158,106,.03),transparent 50%);
+}
+.fest-eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--green);display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px var(--green);animation:livepulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes livepulse{0%,100%{box-shadow:0 0 4px var(--green)}50%{box-shadow:0 0 12px var(--green)}}
+.fest-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.tag{font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  padding:3px 10px;border:1px solid var(--b2);color:var(--ink3)}
+.tag.gold{border-color:var(--gold3);color:var(--gold)}
+.fest-title{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);
+  font-weight:400;line-height:1.1;margin-bottom:10px}
+.fest-title em{font-style:italic;color:var(--gold)}
+.fest-period{font-size:13px;color:var(--ink2);display:flex;gap:20px;flex-wrap:wrap;
+  margin-bottom:20px}
+.fest-desc{font-size:14px;color:var(--ink2);line-height:1.8;max-width:660px;
+  margin-bottom:28px}
+.fest-stat-row{display:flex;gap:0;border-top:1px solid var(--b);margin:0 -48px;
+  padding:0 48px}
+.fest-stat{padding:16px 0;margin-right:40px;display:flex;flex-direction:column;gap:3px}
+.fest-stat-n{font-family:'Playfair Display',serif;font-size:24px;font-weight:400}
+.fest-stat-l{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+
+/* ── INNER TABS ───────────────────────────────── */
+.inner-tabs{
+  display:flex;border-bottom:1px solid var(--b);
+  position:sticky;top:62px;z-index:100;
+  background:rgba(12,11,9,.96);backdrop-filter:blur(12px);
+}
+.itab{font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:14px 24px;color:var(--ink3);cursor:pointer;
+  border-bottom:2px solid transparent;transition:var(--tr);background:none}
+.itab:hover{color:var(--ink)}
+.itab.on{color:var(--ink);border-bottom-color:var(--gold)}
+.tab-panel{display:none}
+.tab-panel.on{display:block}
+
+/* ── SCHEDULE ─────────────────────────────────── */
+.schedule-wrap{padding:32px 48px}
+.schedule-intro{font-size:13px;color:var(--ink3);margin-bottom:24px;
+  display:flex;align-items:center;justify-content:space-between}
+.schedule-item{
+  display:grid;grid-template-columns:52px 1fr;
+  border-bottom:1px solid var(--b);
+  transition:background .2s;
+}
+.schedule-item:hover{background:var(--bg1)}
+.schedule-item.today{background:var(--bg1);border-left:2px solid var(--gold)}
+.schedule-item.done{opacity:.65}
+.si-num{
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--ink4);
+  border-right:1px solid var(--b);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.si-body{padding:20px 24px;display:flex;align-items:center;gap:20px}
+.si-poster{
+  width:44px;height:64px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:18px;font-style:italic;color:var(--ink4);
+}
+.si-info{flex:1;min-width:0}
+.si-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:400;
+  margin-bottom:4px;line-height:1.2}
+.si-meta{font-size:12px;color:var(--ink3);display:flex;gap:12px;flex-wrap:wrap;
+  margin-bottom:8px}
+.si-tags{display:flex;gap:5px;flex-wrap:wrap}
+.si-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;
+  flex-shrink:0;min-width:130px}
+.si-date{font-size:12px;color:var(--ink2);text-align:right}
+.si-date-today{font-size:11px;font-weight:500;color:var(--gold)}
+.checkin-btn{
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 16px;border:1px solid;transition:var(--tr);white-space:nowrap;
+}
+.checkin-btn.done{border-color:var(--green2);color:var(--green)}
+.checkin-btn.now{border-color:var(--gold);color:var(--gold)}
+.checkin-btn.now:hover{background:var(--gold);color:var(--bg)}
+.checkin-btn.locked{border-color:var(--b);color:var(--ink4);cursor:default}
+.si-checkin-count{font-size:11px;color:var(--ink3);font-family:'DM Mono',monospace}
+
+/* ── DISCUSSION ───────────────────────────────── */
+.discussion-wrap{padding:32px 48px}
+.disc-film-filter{
+  display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;
+  padding-bottom:20px;border-bottom:1px solid var(--b);
+}
+.disc-filter-btn{
+  font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+  padding:6px 14px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr);
+}
+.disc-filter-btn:hover{border-color:var(--b3);color:var(--ink)}
+.disc-filter-btn.on{border-color:var(--gold);color:var(--gold)}
+/* Compose */
+.disc-compose{
+  border:1px solid var(--b2);margin-bottom:28px;
+  transition:border-color .2s;
+}
+.disc-compose:focus-within{border-color:var(--b3)}
+.disc-compose-top{display:flex;gap:12px;padding:16px 18px 0;align-items:flex-start}
+.disc-av{width:32px;height:32px;border-radius:50%;background:var(--gold3);
+  border:1px solid var(--gold2);display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:12px;color:var(--gold);flex-shrink:0}
+.disc-textarea{flex:1;font-size:14px;color:var(--ink);line-height:1.65;
+  min-height:72px;padding:4px 0;
+  background:transparent;}
+.disc-textarea::placeholder{color:var(--ink4)}
+.disc-compose-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px 14px;border-top:1px solid var(--b);margin-top:10px;
+}
+.disc-foot-left{display:flex;gap:8px;align-items:center}
+.disc-tag-btn{
+  font-size:11px;padding:4px 10px;border:1px solid var(--b);color:var(--ink3);
+  transition:var(--tr);display:flex;align-items:center;gap:5px;
+}
+.disc-tag-btn:hover{border-color:var(--b3);color:var(--ink)}
+.disc-tag-btn.selected{border-color:var(--gold3);color:var(--gold);background:rgba(200,164,74,.06)}
+.spoiler-toggle{
+  display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink3);cursor:pointer;
+  padding:4px 10px;border:1px solid var(--b);transition:var(--tr);
+}
+.spoiler-toggle:hover{border-color:var(--b3);color:var(--ink)}
+.spoiler-toggle.on{border-color:var(--red,#9B4040);color:#9B4040}
+.submit-btn{
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:7px 18px;border:1px solid var(--gold);color:var(--gold);transition:var(--tr);
+}
+.submit-btn:hover{background:var(--gold);color:var(--bg)}
+/* Thread */
+.disc-threads{display:flex;flex-direction:column;gap:0}
+.thread{border-bottom:1px solid var(--b);padding:24px 0}
+.thread:last-child{border-bottom:none}
+.thread-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.thread-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:13px;}
+.thread-meta{flex:1}
+.thread-author{font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
+.thread-badge{font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 8px;border:1px solid var(--gold3);color:var(--gold)}
+.thread-time{font-size:11px;color:var(--ink3);font-family:'DM Mono',monospace}
+.thread-film-tag{font-size:10px;padding:2px 8px;border:1px solid var(--b);color:var(--ink3);
+  margin-left:auto;white-space:nowrap}
+.thread-body{font-size:14px;color:var(--ink2);line-height:1.8;margin-bottom:14px;
+  padding-left:46px}
+.thread-body.spoiler-hidden{
+  position:relative;overflow:hidden;
+}
+.thread-body.spoiler-hidden::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(12,11,9,.95);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+}
+.spoiler-reveal{
+  position:relative;z-index:1;
+  display:flex;align-items:center;justify-content:center;
+  padding:14px;
+}
+.spoiler-reveal button{
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 16px;border:1px solid rgba(155,64,64,.5);color:#C87A7A;
+  transition:var(--tr);
+}
+.spoiler-reveal button:hover{border-color:#9B4040;color:#E09090}
+.thread-actions{display:flex;gap:16px;align-items:center;padding-left:46px}
+.thread-action-btn{font-size:12px;color:var(--ink3);display:flex;align-items:center;
+  gap:5px;transition:var(--tr);cursor:pointer}
+.thread-action-btn:hover{color:var(--ink)}
+.thread-action-btn.liked{color:var(--gold)}
+.thread-action-btn svg{transition:transform .15s}
+.thread-action-btn:hover svg{transform:scale(1.15)}
+/* Replies */
+.thread-replies{
+  margin-left:46px;margin-top:14px;
+  border-left:1px solid var(--b);padding-left:16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.reply{display:flex;gap:10px;align-items:flex-start}
+.reply-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-family:'Playfair Display',serif;}
+.reply-body{flex:1}
+.reply-author{font-size:12px;font-weight:500;margin-bottom:3px;
+  display:flex;align-items:center;gap:8px}
+.reply-text{font-size:13px;color:var(--ink2);line-height:1.7}
+.reply-time{font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace}
+.show-more-replies{font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink3);cursor:pointer;margin-top:8px;transition:var(--tr)}
+.show-more-replies:hover{color:var(--gold)}
+
+/* ── CURATOR GUIDE ────────────────────────────── */
+.guide-wrap{padding:32px 48px}
+.guide-film-nav{
+  display:flex;gap:0;border-bottom:1px solid var(--b);margin-bottom:32px;
+  overflow-x:auto;
+}
+.guide-film-nav::-webkit-scrollbar{height:2px}
+.gfn-item{
+  padding:12px 20px;font-size:12px;color:var(--ink3);cursor:pointer;
+  border-bottom:2px solid transparent;transition:var(--tr);white-space:nowrap;
+  flex-shrink:0;
+}
+.gfn-item:hover{color:var(--ink)}
+.gfn-item.on{color:var(--ink);border-bottom-color:var(--gold)}
+.guide-article{max-width:680px}
+.guide-eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.guide-eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
+.guide-film-title{font-family:'Playfair Display',serif;font-size:clamp(22px,3vw,34px);
+  font-weight:400;line-height:1.15;margin-bottom:8px}
+.guide-film-title em{font-style:italic;color:var(--gold)}
+.guide-film-meta{font-size:13px;color:var(--ink3);margin-bottom:24px;
+  display:flex;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--b)}
+.guide-body{font-size:14px;color:var(--ink2);line-height:1.9}
+.guide-body p{margin-bottom:18px}
+.guide-body p:last-child{margin-bottom:0}
+.guide-body strong{color:var(--ink);font-weight:500}
+.guide-pull{
+  border-left:2px solid var(--gold);padding:4px 0 4px 20px;
+  margin:24px 0;
+}
+.guide-pull-text{font-family:'Playfair Display',serif;font-size:18px;font-style:italic;
+  color:var(--ink);line-height:1.5}
+.guide-section-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;
+  margin:28px 0 12px;color:var(--ink)}
+.guide-watch-notes{
+  background:var(--bg2);border:1px solid var(--b);padding:20px 22px;
+  margin:24px 0;
+}
+.guide-watch-notes-title{font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:10px}
+.guide-watch-note{
+  display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--b);
+  font-size:13px;color:var(--ink2);
+}
+.guide-watch-note:last-child{border-bottom:none}
+.guide-watch-note-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);
+  min-width:48px;flex-shrink:0;padding-top:1px}
+.guide-next{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 0;border-top:1px solid var(--b);margin-top:32px;cursor:pointer;
+  transition:var(--tr);
+}
+.guide-next:hover .guide-next-title{color:var(--gold)}
+.guide-next-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:6px}
+.guide-next-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:400;
+  transition:color .2s}
+
+/* ── ASIDE ────────────────────────────────────── */
+.aside-section{padding:22px 24px;border-bottom:1px solid var(--b)}
+.aside-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:12px}
+/* Progress */
+.prog-label{display:flex;justify-content:space-between;font-size:12px;
+  color:var(--ink2);margin-bottom:7px}
+.pbar{height:2px;background:var(--bg4);overflow:hidden}
+.pbar-fill{height:2px;background:var(--gold);transition:width .5s ease}
+/* Host */
+.host-card{display:flex;gap:12px;align-items:flex-start}
+.host-av{width:40px;height:40px;border-radius:50%;background:var(--bg3);
+  border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:15px;color:var(--ink2);flex-shrink:0}
+.host-name{font-size:14px;font-weight:500;margin-bottom:3px}
+.host-meta{font-size:12px;color:var(--ink3);line-height:1.5}
+/* Participants */
+.participants-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.part-av{width:28px;height:28px;border-radius:50%;background:var(--bg3);
+  border:1px solid var(--b);display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-family:'Playfair Display',serif;color:var(--ink2)}
+/* Today film highlight */
+.today-film-card{
+  border:1px solid var(--gold3);padding:16px;cursor:pointer;
+  transition:var(--tr);
+}
+.today-film-card:hover{border-color:var(--gold2);background:rgba(200,164,74,.04)}
+.tfc-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:8px}
+.tfc-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;
+  margin-bottom:4px}
+.tfc-meta{font-size:12px;color:var(--ink3);margin-bottom:14px}
+.tfc-btn{
+  width:100%;padding:11px;text-align:center;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--gold);color:var(--bg);transition:var(--tr);cursor:pointer;
+  display:block;
+}
+.tfc-btn:hover{background:#D9B55A}
+/* Related festivals */
+.related-list{display:flex;flex-direction:column;gap:0}
+.related-item{
+  padding:12px 0;border-bottom:1px solid var(--b);cursor:pointer;transition:var(--tr);
+}
+.related-item:last-child{border-bottom:none}
+.related-item:hover .related-title{color:var(--gold)}
+.related-title{font-family:'Playfair Display',serif;font-size:13px;
+  margin-bottom:3px;transition:color .2s}
+.related-meta{font-size:11px;color:var(--ink3)}
+
+/* ── CHECKIN MODAL ────────────────────────────── */
+.modal-bg{
+  position:fixed;inset:0;z-index:600;
+  background:rgba(12,11,9,.88);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--bg2);border:1px solid var(--b2);
+  width:520px;max-width:90vw;max-height:85vh;overflow-y:auto;
+  transform:translateY(16px);transition:transform .3s ease;
+}
+.modal-bg.open .modal{transform:translateY(0)}
+.modal::-webkit-scrollbar{width:2px}
+.modal-header{
+  padding:22px 26px 18px;border-bottom:1px solid var(--b);
+  display:flex;align-items:flex-start;justify-content:space-between;
+  position:sticky;top:0;background:var(--bg2);z-index:1;
+}
+.modal-close{width:28px;height:28px;border:1px solid var(--b2);color:var(--ink3);
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  flex-shrink:0;margin-left:12px;transition:var(--tr)}
+.modal-close:hover{border-color:var(--ink3);color:var(--ink)}
+.modal-body{padding:24px 26px}
+/* Film info in modal */
+.ci-film{display:flex;gap:14px;align-items:center;margin-bottom:24px;
+  padding-bottom:20px;border-bottom:1px solid var(--b)}
+.ci-poster{width:52px;height:76px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--ink4)}
+.ci-film-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;
+  margin-bottom:4px}
+.ci-film-meta{font-size:12px;color:var(--ink3)}
+/* Rating */
+.ci-rating-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:10px}
+.ci-stars{display:flex;gap:6px;margin-bottom:24px}
+.ci-star{font-size:28px;cursor:pointer;transition:var(--tr);color:var(--ink4);
+  line-height:1}
+.ci-star:hover,.ci-star.on{color:var(--gold)}
+.ci-star:hover ~ .ci-star{color:var(--ink4) !important}
+/* Review */
+.ci-review-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:10px}
+.ci-review-wrap{
+  border:1px solid var(--b2);padding:14px 16px;margin-bottom:18px;
+  transition:border-color .2s;
+}
+.ci-review-wrap:focus-within{border-color:var(--b3)}
+.ci-review{width:100%;font-size:13px;line-height:1.7;min-height:80px;
+  color:var(--ink)}
+.ci-review::placeholder{color:var(--ink4)}
+.ci-review-foot{display:flex;justify-content:space-between;
+  padding-top:8px;border-top:1px solid var(--b);font-size:11px;color:var(--ink3)}
+/* Mood tags */
+.ci-moods{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.ci-mood{font-size:11px;padding:5px 12px;border:1px solid var(--b);
+  color:var(--ink3);cursor:pointer;transition:var(--tr)}
+.ci-mood:hover{border-color:var(--b3);color:var(--ink)}
+.ci-mood.on{border-color:var(--gold3);color:var(--gold);background:rgba(200,164,74,.06)}
+/* Checkin options */
+.ci-options{display:flex;gap:8px;margin-bottom:20px}
+.ci-opt{flex:1;padding:10px;border:1px solid var(--b);text-align:center;
+  cursor:pointer;transition:var(--tr)}
+.ci-opt:hover{border-color:var(--b3)}
+.ci-opt.on{border-color:var(--gold);background:rgba(200,164,74,.06)}
+.ci-opt-icon{font-size:18px;margin-bottom:4px}
+.ci-opt-label{font-size:11px;color:var(--ink2)}
+/* Submit */
+.ci-submit{
+  width:100%;padding:14px;text-align:center;
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--gold);color:var(--bg);cursor:pointer;transition:var(--tr);
+}
+.ci-submit:hover{background:#D9B55A}
+.ci-submit:disabled{background:var(--bg4);color:var(--ink4);cursor:default}
+/* Success state */
+.ci-success{
+  text-align:center;padding:16px 0;
+  display:none;
+}
+.ci-success-icon{
+  width:56px;height:56px;border:1px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+}
+.ci-success-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;
+  margin-bottom:8px}
+.ci-success-desc{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:20px}
+.ci-success-badges{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.ci-success-badge{font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 12px;border:1px solid var(--gold3);color:var(--gold)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .4s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Cine <em>Ours</em></div>
+  <div class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    电影节广场
+  </div>
+  <div class="nav-right">
+    <button class="btn btn-outline">分享</button>
+    <button class="btn btn-green" onclick="openCheckin('晚春',4)">
+      <span class="live-dot" style="animation:none;box-shadow:none;background:var(--green)"></span>
+      今日打卡
+    </button>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+<!-- ══ MAIN ══════════════════════════════════════ -->
+<div class="main">
+
+  <!-- Festival Hero -->
+  <div class="fest-hero">
+    <div class="fest-hero-bg"></div>
+    <div class="fest-eyebrow">
+      <span class="live-dot"></span>
+      进行中 · 第4天 / 共7天
+    </div>
+    <div class="fest-tags">
+      <span class="tag gold">精选</span>
+      <span class="tag">日本电影</span>
+      <span class="tag">黑白影像</span>
+      <span class="tag">大师回顾</span>
+      <span class="tag">每日解锁</span>
+    </div>
+    <h1 class="fest-title">黑泽明与<em>日本新浪潮</em><br>东京映画周</h1>
+    <div class="fest-period">
+      <span>4月10日 — 4月17日</span>
+      <span>6部影片</span>
+      <span>每日 10:00 解锁</span>
+      <span>主办：@CinemasHiro</span>
+    </div>
+    <p class="fest-desc">从《七武士》到《晚春》，沿着东京电影的脉络，重走那段黑白光影的黄金时代。每日一部，附策展人导赏文章，观后共同讨论。这届电影节试图回答一个问题：黑泽明与小津的世界观，如何在同一座城市、同一个时代里如此截然相反又相互成就？</p>
+    <div class="fest-stat-row">
+      <div class="fest-stat"><div class="fest-stat-n">247</div><div class="fest-stat-l">参与人数</div></div>
+      <div class="fest-stat"><div class="fest-stat-n">6</div><div class="fest-stat-l">精选影片</div></div>
+      <div class="fest-stat"><div class="fest-stat-n">1.2k</div><div class="fest-stat-l">讨论条数</div></div>
+      <div class="fest-stat"><div class="fest-stat-n">55%</div><div class="fest-stat-l">整体进度</div></div>
+    </div>
+  </div>
+
+  <!-- Inner tabs -->
+  <div class="inner-tabs">
+    <button class="itab on" onclick="switchTab('schedule',this)">排片表</button>
+    <button class="itab" onclick="switchTab('discussion',this)">讨论区 <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3)">1.2k</span></button>
+    <button class="itab" onclick="switchTab('guide',this)">策展人导赏</button>
+  </div>
+
+  <!-- ── TAB: SCHEDULE ── -->
+  <div class="tab-panel on" id="tab-schedule">
+    <div class="schedule-wrap">
+      <div class="schedule-intro">
+        <span>共6部影片，每日10:00解锁</span>
+        <span style="font-family:'DM Mono',monospace;font-size:11px">已打卡 3/6</span>
+      </div>
+
+      <!-- Film 1: done -->
+      <div class="schedule-item done">
+        <div class="si-num">01</div>
+        <div class="si-body">
+          <div class="si-poster" style="background:#0f1a2e">七</div>
+          <div class="si-info">
+            <div class="si-title">七武士</div>
+            <div class="si-meta"><span>1954</span><span>黑泽明</span><span>207分钟</span></div>
+            <div class="si-tags"><span class="tag">武士片</span><span class="tag">史诗</span></div>
+          </div>
+          <div class="si-right">
+            <div class="si-date">4月10日（周三）</div>
+            <button class="checkin-btn done">✓ 已打卡</button>
+            <div class="si-checkin-count">189 人打卡</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Film 2: done -->
+      <div class="schedule-item done">
+        <div class="si-num">02</div>
+        <div class="si-body">
+          <div class="si-poster" style="background:#1a0a18">罗</div>
+          <div class="si-info">
+            <div class="si-title">罗生门</div>
+            <div class="si-meta"><span>1950</span><span>黑泽明</span><span>88分钟</span></div>
+            <div class="si-tags"><span class="tag">悬疑</span><span class="tag">哲学</span></div>
+          </div>
+          <div class="si-right">
+            <div class="si-date">4月11日（周四）</div>
+            <button class="checkin-btn done">✓ 已打卡</button>
+            <div class="si-checkin-count">174 人打卡</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Film 3: done -->
+      <div class="schedule-item done">
+        <div class="si-num">03</div>
+        <div class="si-body">
+          <div class="si-poster" style="background:#101814">物</div>
+          <div class="si-info">
+            <div class="si-title">东京物语</div>
+            <div class="si-meta"><span>1953</span><span>小津安二郎</span><span>136分钟</span></div>
+            <div class="si-tags"><span class="tag">家庭</span><span class="tag">慢电影</span></div>
+          </div>
+          <div class="si-right">
+            <div class="si-date">4月13日（周六）</div>
+            <button class="checkin-btn done">✓ 已打卡</button>
+            <div class="si-checkin-count">162 人打卡</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Film 4: TODAY -->
+      <div class="schedule-item today" id="today-film">
+        <div class="si-num">04</div>
+        <div class="si-body">
+          <div class="si-poster" style="background:#0a1410">春</div>
+          <div class="si-info">
+            <div class="si-title">晚春</div>
+            <div class="si-meta"><span>1949</span><span>小津安二郎</span><span>108分钟</span></div>
+            <div class="si-tags"><span class="tag gold">今日放映</span><span class="tag">家庭</span><span class="tag">父女</span></div>
+          </div>
+          <div class="si-right">
+            <div class="si-date-today">今天 · 已解锁</div>
+            <button class="checkin-btn now" onclick="openCheckin('晚春',4)">立即打卡</button>
+            <div class="si-checkin-count">143 人打卡</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Film 5: locked -->
+      <div class="schedule-item">
+        <div class="si-num">05</div>
+        <div class="si-body">
+          <div class="si-poster" style="background:#181208;opacity:.5">切</div>
+          <div class="si-info">
+            <div class="si-title" style="color:var(--ink3)">切腹</div>
+            <div class="si-meta"><span>1962</span><span>小林正树</span><span>133分钟</span></div>
+            <div class="si-tags"><span class="tag">4月15日解锁</span></div>
+          </div>
+          <div class="si-right">
+            <div class="si-date" style="color:var(--ink4)">4月15日（周一）</div>
+            <button class="checkin-btn locked" disabled>4月15日</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Film 6: locked -->
+      <div class="schedule-item">
+        <div class="si-num">06</div>
+        <div class="si-body">
+          <div class="si-poster" style="background:#0d1214;opacity:.5">欲</div>
+          <div class="si-info">
+            <div class="si-title" style="color:var(--ink3)">生之欲</div>
+            <div class="si-meta"><span>1952</span><span>黑泽明</span><span>143分钟</span></div>
+            <div class="si-tags"><span class="tag">4月17日解锁</span></div>
+          </div>
+          <div class="si-right">
+            <div class="si-date" style="color:var(--ink4)">4月17日（周三）</div>
+            <button class="checkin-btn locked" disabled>4月17日</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── TAB: DISCUSSION ── -->
+  <div class="tab-panel" id="tab-discussion">
+    <div class="discussion-wrap">
+
+      <!-- Film filter -->
+      <div class="disc-film-filter">
+        <button class="disc-filter-btn on" onclick="setDiscFilter(this)">全部</button>
+        <button class="disc-filter-btn" onclick="setDiscFilter(this)">七武士</button>
+        <button class="disc-filter-btn" onclick="setDiscFilter(this)">罗生门</button>
+        <button class="disc-filter-btn" onclick="setDiscFilter(this)">东京物语</button>
+        <button class="disc-filter-btn" onclick="setDiscFilter(this)">晚春 · 今日</button>
+      </div>
+
+      <!-- Compose -->
+      <div class="disc-compose">
+        <div class="disc-compose-top">
+          <div class="disc-av">余</div>
+          <textarea class="disc-textarea" placeholder="写下你的观影感受、问题、或者任何想说的…" id="disc-input" oninput="updateSubmit()"></textarea>
+        </div>
+        <div class="disc-compose-foot">
+          <div class="disc-foot-left">
+            <button class="disc-tag-btn" id="dtag-春" onclick="toggleDiscTag('春','晚春')">晚春</button>
+            <button class="disc-tag-btn" id="dtag-七" onclick="toggleDiscTag('七','七武士')">七武士</button>
+            <button class="disc-tag-btn" id="dtag-罗" onclick="toggleDiscTag('罗','罗生门')">罗生门</button>
+            <button class="spoiler-toggle" id="spoiler-btn" onclick="toggleSpoiler()">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              含剧透
+            </button>
+          </div>
+          <button class="submit-btn" id="disc-submit" onclick="submitDisc()" disabled>发布</button>
+        </div>
+      </div>
+
+      <!-- Threads -->
+      <div class="disc-threads">
+
+        <!-- Thread 1 -->
+        <div class="thread">
+          <div class="thread-head">
+            <div class="thread-av" style="background:#1a2030;color:#7A9EC8">月</div>
+            <div class="thread-meta">
+              <div class="thread-author">
+                YueLiang
+                <span class="thread-badge">策展人</span>
+                <span class="thread-time">2小时前</span>
+              </div>
+            </div>
+            <div class="thread-film-tag">晚春</div>
+          </div>
+          <div class="thread-body">
+            小津用那把折扇做了什么，我反复想了很久。父亲在能剧结束后，把折扇转啊转，镜头切到纪子的脸，她的表情微微一变——那一刻你知道她明白了什么，但你说不清楚她明白了什么。这就是小津，他从来不告诉你答案，但你知道答案就在那里。
+          </div>
+          <div class="thread-actions">
+            <span class="thread-action-btn liked" onclick="toggleLike(this)">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12S1 8.5 1 4.5A3 3 0 017 3a3 3 0 016 1.5C13 8.5 7 12 7 12z" stroke="currentColor" stroke-width="1.2" fill="currentColor" opacity=".3"/></svg>
+              34
+            </span>
+            <span class="thread-action-btn" onclick="showReply(this)">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 2h12v8H8l-3 2V10H1V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              回复
+            </span>
+            <span class="thread-action-btn">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="2.5" cy="7" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="11.5" cy="7" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+            </span>
+          </div>
+          <div class="thread-replies">
+            <div class="reply">
+              <div class="reply-av" style="background:#1a1028;color:#A87AC8">J</div>
+              <div class="reply-body">
+                <div class="reply-author">Jiao_Meng <span class="reply-time">1小时前</span></div>
+                <div class="reply-text">折扇那场戏是整部影片的核心，我觉得小津在说的是"知道"和"接受"之间的距离。纪子知道父亲会再婚，但她那一刻才真的接受了。</div>
+              </div>
+            </div>
+            <div class="reply">
+              <div class="reply-av" style="background:#0a1814;color:#5C9E6A">C</div>
+              <div class="reply-body">
+                <div class="reply-author">CinemasHiro <span class="thread-badge" style="font-size:9px;padding:1px 6px;border-width:1px;border-color:var(--gold3);color:var(--gold)">策展人</span> <span class="reply-time">45分钟前</span></div>
+                <div class="reply-text">@Jiao_Meng 说得很好。值得注意的是，小津在这里用了他标志性的"枕头镜头"——切到花瓶，再切到纪子的脸。那个花瓶是这部影片最著名的谜题之一。</div>
+              </div>
+            </div>
+            <div class="show-more-replies" onclick="alert('展开更多回复')">+ 查看 8 条回复</div>
+          </div>
+        </div>
+
+        <!-- Thread 2: spoiler -->
+        <div class="thread">
+          <div class="thread-head">
+            <div class="thread-av" style="background:#201028;color:#C87AC8">R</div>
+            <div class="thread-meta">
+              <div class="thread-author">
+                Ruan_Xiao
+                <span class="thread-time">4小时前</span>
+              </div>
+            </div>
+            <div class="thread-film-tag">七武士</div>
+          </div>
+          <div class="thread-body spoiler-hidden" id="spoiler-1">
+            <div class="spoiler-reveal">
+              <button onclick="revealSpoiler('spoiler-1')">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="display:inline;margin-right:6px"><path d="M1 6.5C1 6.5 3 2 6.5 2S12 6.5 12 6.5 10 11 6.5 11 1 6.5 1 6.5z" stroke="currentColor" stroke-width="1.2"/><circle cx="6.5" cy="6.5" r="2" stroke="currentColor" stroke-width="1.2"/></svg>
+                含剧透 · 点击展开
+              </button>
+            </div>
+            这是一段关于《七武士》结尾的深度讨论，包含剧情细节……勘兵卫最后站在山丘上的那句话，是整个武士道叙事的终结宣言。黑泽明在用武士的失败来宣告一个时代的结束，而那些农民才是真正的胜利者——但胜利也不过如此。
+          </div>
+          <div class="thread-actions">
+            <span class="thread-action-btn" onclick="toggleLike(this)">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12S1 8.5 1 4.5A3 3 0 017 3a3 3 0 016 1.5C13 8.5 7 12 7 12z" stroke="currentColor" stroke-width="1.2"/></svg>
+              18
+            </span>
+            <span class="thread-action-btn" onclick="showReply(this)">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 2h12v8H8l-3 2V10H1V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              回复
+            </span>
+          </div>
+        </div>
+
+        <!-- Thread 3 -->
+        <div class="thread">
+          <div class="thread-head">
+            <div class="thread-av" style="background:#0a1218;color:#7AC8C8">W</div>
+            <div class="thread-meta">
+              <div class="thread-author">
+                Wang_K
+                <span class="thread-time">6小时前</span>
+              </div>
+            </div>
+            <div class="thread-film-tag">东京物语</div>
+          </div>
+          <div class="thread-body">
+            第一次看《东京物语》，我以为我会哭，但我没有。只是在看完后一个人坐了很久。这部电影的悲伤不是眼泪能解决的那种。它更像是一种关于时间的认识——你终于明白了某些事情，但那个明白来得太晚了，也没有用了。
+          </div>
+          <div class="thread-actions">
+            <span class="thread-action-btn" onclick="toggleLike(this)">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12S1 8.5 1 4.5A3 3 0 017 3a3 3 0 016 1.5C13 8.5 7 12 7 12z" stroke="currentColor" stroke-width="1.2"/></svg>
+              56
+            </span>
+            <span class="thread-action-btn" onclick="showReply(this)">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 2h12v8H8l-3 2V10H1V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              回复
+            </span>
+          </div>
+          <div class="thread-replies">
+            <div class="reply">
+              <div class="reply-av" style="background:#1a1028;color:#A87AC8">M</div>
+              <div class="reply-body">
+                <div class="reply-author">MingZhi <span class="reply-time">5小时前</span></div>
+                <div class="reply-text">完全理解你说的那种坐着不动的感觉。我觉得小津给了你一个你本来不想要的答案——生活就是这样，而且还会继续。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: CURATOR GUIDE ── -->
+  <div class="tab-panel" id="tab-guide">
+    <div class="guide-wrap">
+
+      <!-- Film nav -->
+      <div class="guide-film-nav">
+        <div class="gfn-item on" onclick="setGuideFilm(this,'春')">晚春 · 今日</div>
+        <div class="gfn-item" onclick="setGuideFilm(this,'七')">七武士</div>
+        <div class="gfn-item" onclick="setGuideFilm(this,'罗')">罗生门</div>
+        <div class="gfn-item" onclick="setGuideFilm(this,'物')">东京物语</div>
+        <div class="gfn-item" style="color:var(--ink4)">切腹 · 待解锁</div>
+        <div class="gfn-item" style="color:var(--ink4)">生之欲 · 待解锁</div>
+      </div>
+
+      <!-- Article -->
+      <div class="guide-article" id="guide-article">
+        <div class="guide-eyebrow">策展人导赏 · 第4部</div>
+        <h2 class="guide-film-title">晚春：<em>一把折扇与无法说出的告别</em></h2>
+        <div class="guide-film-meta">
+          <span>1949 · 小津安二郎</span>
+          <span>108分钟</span>
+          <span>策展人：@CinemasHiro</span>
+        </div>
+        <div class="guide-body">
+          <p>在这届电影节的六部影片中，《晚春》是最安静的一部，也是我最想和你们一起重看的一部。</p>
+          <p>1949年，黑泽明已经用《罗生门》震惊了世界，而他的对立面小津安二郎，正在用一种截然不同的方式讲述同样的战后日本。如果说黑泽明的电影是一把刀，小津的电影就是一个长镜头——它不刺穿你，它只是在那里，看着你，等你自己感受到什么。</p>
+
+          <div class="guide-pull">
+            <div class="guide-pull-text">小津不让他的角色哭泣。他让他们坐着，看着窗外，然后镜头切走。</div>
+          </div>
+
+          <p><strong>关于小津的"榻榻米镜头"</strong>——他的摄影机始终放在距地面约35厘米的高度，这是一个人跪坐在榻榻米上的视线高度。这不只是一种风格，这是一种伦理姿态：导演和人物处于同等高度，没有俯视，没有审判。</p>
+
+          <div class="guide-section-title">这部影片在说什么</div>
+          <p>表面上，这是一个父亲送走女儿出嫁的故事。父亲周吉（笠智众饰）是鳏夫，女儿纪子（原节子饰）已经27岁，还留在父亲身边照顾他。父亲为了让女儿放手离开，谎称自己将要再婚。</p>
+          <p>但小津真正在说的，是"放手"这件事有多难——以及为了让对方放手，你愿意付出什么代价。父亲用了一个谎言，而那个谎言的代价，是他最后一个人剥橘子，泪水滑落。</p>
+
+          <div class="guide-watch-notes">
+            <div class="guide-watch-notes-title">观影时注意</div>
+            <div class="guide-watch-note">
+              <div class="guide-watch-note-time">14:30</div>
+              <div>能剧那场戏——注意父亲和纪子之间的视线交换，以及那把折扇。这是整部影片的核心时刻。</div>
+            </div>
+            <div class="guide-watch-note">
+              <div class="guide-watch-note-time">52:00</div>
+              <div>骑车那场戏。注意两人的对话是如何用剪辑而不是镜头运动来表现的。</div>
+            </div>
+            <div class="guide-watch-note">
+              <div class="guide-watch-note-time">1:38:00</div>
+              <div>父亲剥橘子的最后一个镜头。小津在这里做了什么，你们看完来讨论。</div>
+            </div>
+          </div>
+
+          <div class="guide-section-title">为什么把它排在黑泽明之后</div>
+          <p>我有意把小津的两部影片穿插在黑泽明之间。看完《七武士》和《罗生门》之后再看小津，你会感受到一种强烈的对比：同一个国家，同一个时代，两个导演对"人"的理解，是如此不同。</p>
+          <p>黑泽明相信英雄，相信意志，相信悲剧的崇高。小津相信的是——什么也不相信，但依然生活着。这两种信念，构成了日本电影黄金时代的两极。</p>
+        </div>
+
+        <div class="guide-next" onclick="setGuideFilm(document.querySelector('.gfn-item:nth-child(2)'),'七')">
+          <div>
+            <div class="guide-next-label">下一篇导赏</div>
+            <div class="guide-next-title">七武士：英雄的代价与时代的终结</div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 10h10M11 6l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- main -->
+
+<!-- ══ ASIDE ══════════════════════════════════════ -->
+<aside class="aside">
+
+  <!-- Today film CTA -->
+  <div class="aside-section">
+    <div class="today-film-card" onclick="openCheckin('晚春',4)">
+      <div class="tfc-label">今日放映 · 已解锁</div>
+      <div class="tfc-title">晚春</div>
+      <div class="tfc-meta">1949 · 小津安二郎 · 108分钟</div>
+      <button class="tfc-btn">打卡这部影片 →</button>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="aside-section">
+    <div class="aside-label">你的打卡进度</div>
+    <div class="prog-label"><span>已完成 3 / 6 部</span><span style="color:var(--gold)">50%</span></div>
+    <div class="pbar"><div class="pbar-fill" style="width:50%"></div></div>
+    <div style="font-size:11px;color:var(--ink3);margin-top:8px">还差 3 部完成全勤</div>
+  </div>
+
+  <!-- Host -->
+  <div class="aside-section">
+    <div class="aside-label">策展人</div>
+    <div class="host-card">
+      <div class="host-av">CH</div>
+      <div>
+        <div class="host-name">CinemasHiro</div>
+        <div class="host-meta">已举办 12 届电影节<br>2.4k 关注者 · 影史研究者</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Participants -->
+  <div class="aside-section">
+    <div class="aside-label" style="margin-bottom:10px">247 人正在参与</div>
+    <div class="participants-row">
+      <div class="part-av">余</div><div class="part-av" style="background:#1a2030;color:#7A9EC8">月</div>
+      <div class="part-av" style="background:#201028;color:#C87AC8">R</div><div class="part-av" style="background:#0a1218;color:#7AC8C8">W</div>
+      <div class="part-av" style="background:#1a1028;color:#A87AC8">M</div><div class="part-av" style="background:#0a1814;color:#5C9E6A">C</div>
+      <div class="part-av" style="background:#181208;color:#C8A44A">K</div><div class="part-av" style="background:#101418;color:#7A9EC8">L</div>
+      <div class="part-av" style="background:var(--bg4);color:var(--ink3);font-family:'DM Mono',monospace;font-size:9px">+239</div>
+    </div>
+    <div style="font-size:11px;color:var(--ink3);margin-top:8px">其中 143 人已打卡今日影片</div>
+  </div>
+
+  <!-- Related -->
+  <div class="aside-section">
+    <div class="aside-label">相关电影节</div>
+    <div class="related-list">
+      <div class="related-item">
+        <div class="related-title">小津安二郎全集观影</div>
+        <div class="related-meta">招募中 · 54部 · @OzuFan</div>
+      </div>
+      <div class="related-item">
+        <div class="related-title">侯孝贤三部曲：城市的背面</div>
+        <div class="related-meta">即将开始 · 3部 · @CinemasHiro</div>
+      </div>
+      <div class="related-item">
+        <div class="related-title">台湾新浪潮大回顾</div>
+        <div class="related-meta">招募中 · 8部 · @TaiwanCinema</div>
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+</div><!-- page-wrap -->
+
+<!-- ══════════════════════════════════════════════
+     CHECKIN MODAL
+══════════════════════════════════════════════ -->
+<div class="modal-bg" id="modal-bg" onclick="handleModalBgClick(event)">
+  <div class="modal" id="modal">
+
+    <div class="modal-header">
+      <div>
+        <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:5px">打卡观影记录</div>
+        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:400" id="modal-film-name">晚春</div>
+      </div>
+      <button class="modal-close" onclick="closeCheckin()">✕</button>
+    </div>
+
+    <div class="modal-body" id="modal-body">
+
+      <!-- Film info -->
+      <div class="ci-film">
+        <div class="ci-poster" id="ci-poster" style="background:#0a1410">春</div>
+        <div>
+          <div class="ci-film-title" id="ci-title">晚春</div>
+          <div class="ci-film-meta">1949 · 小津安二郎 · 108分钟</div>
+          <div style="margin-top:6px;font-size:11px;color:var(--green);display:flex;align-items:center;gap:5px">
+            <span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block"></span>
+            143 人已打卡今天这部
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating -->
+      <div class="ci-rating-label">你的评分</div>
+      <div class="ci-stars" id="ci-stars">
+        <span class="ci-star" onclick="setRating(1)" onmouseover="hoverRating(1)" onmouseout="unhoverRating()">★</span>
+        <span class="ci-star" onclick="setRating(2)" onmouseover="hoverRating(2)" onmouseout="unhoverRating()">★</span>
+        <span class="ci-star" onclick="setRating(3)" onmouseover="hoverRating(3)" onmouseout="unhoverRating()">★</span>
+        <span class="ci-star" onclick="setRating(4)" onmouseover="hoverRating(4)" onmouseout="unhoverRating()">★</span>
+        <span class="ci-star" onclick="setRating(5)" onmouseover="hoverRating(5)" onmouseout="unhoverRating()">★</span>
+      </div>
+
+      <!-- Mood -->
+      <div class="ci-rating-label">观影心情</div>
+      <div class="ci-moods">
+        <button class="ci-mood" onclick="toggleMood(this)">被打动了</button>
+        <button class="ci-mood" onclick="toggleMood(this)">沉默了很久</button>
+        <button class="ci-mood" onclick="toggleMood(this)">想二刷</button>
+        <button class="ci-mood" onclick="toggleMood(this)">需要消化</button>
+        <button class="ci-mood" onclick="toggleMood(this)">没看懂但喜欢</button>
+        <button class="ci-mood" onclick="toggleMood(this)">哭了</button>
+      </div>
+
+      <!-- Review -->
+      <div class="ci-review-label">写点什么（选填）</div>
+      <div class="ci-review-wrap">
+        <textarea class="ci-review" id="ci-review" placeholder="一句话、一个细节、或者一个问题都可以……" rows="3"></textarea>
+        <div class="ci-review-foot">
+          <span>可以在讨论区继续展开</span>
+          <span id="ci-char-count">0 / 200</span>
+        </div>
+      </div>
+
+      <!-- Share options -->
+      <div class="ci-rating-label">打卡后</div>
+      <div class="ci-options">
+        <div class="ci-opt on" onclick="toggleCiOpt(this)" id="opt-discuss">
+          <div class="ci-opt-icon">💬</div>
+          <div class="ci-opt-label">发到讨论区</div>
+        </div>
+        <div class="ci-opt" onclick="toggleCiOpt(this)" id="opt-private">
+          <div class="ci-opt-icon">🔒</div>
+          <div class="ci-opt-label">仅自己可见</div>
+        </div>
+        <div class="ci-opt" onclick="toggleCiOpt(this)" id="opt-profile">
+          <div class="ci-opt-icon">👤</div>
+          <div class="ci-opt-label">显示在主页</div>
+        </div>
+      </div>
+
+      <button class="ci-submit" id="ci-submit" onclick="submitCheckin()">确认打卡</button>
+
+      <!-- Success -->
+      <div class="ci-success" id="ci-success">
+        <div class="ci-success-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M5 14l7 7L23 8" stroke="#5C9E6A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="ci-success-title">打卡成功</div>
+        <div class="ci-success-desc" id="ci-success-desc">你完成了这届电影节的第4部影片<br>还差2部即可获得全勤勋章</div>
+        <div class="ci-success-badges" id="ci-success-badges">
+          <span class="ci-success-badge">50% 进度</span>
+          <span class="ci-success-badge">日本电影 · 4部</span>
+        </div>
+        <button class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:8px" onclick="switchTab('discussion',document.querySelector('.itab:nth-child(2)'));closeCheckin()">去讨论区聊聊 →</button>
+        <button class="btn btn-gold" style="width:100%;justify-content:center" onclick="closeCheckin()">关闭</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── TABS ────────────────────────────────────────
+function switchTab(id, btn){
+  document.querySelectorAll('.itab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  document.getElementById('tab-'+id).classList.add('on');
+}
+
+// ── DISC ────────────────────────────────────────
+var selectedDiscTag = '';
+var hasSpoiler = false;
+function setDiscFilter(btn){
+  document.querySelectorAll('.disc-filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function toggleDiscTag(key, name){
+  var btn = document.getElementById('dtag-'+key);
+  if(selectedDiscTag===key){ selectedDiscTag=''; btn.classList.remove('selected'); }
+  else{
+    document.querySelectorAll('.disc-tag-btn').forEach(b=>b.classList.remove('selected'));
+    selectedDiscTag=key; btn.classList.add('selected');
+  }
+}
+function toggleSpoiler(){
+  hasSpoiler=!hasSpoiler;
+  document.getElementById('spoiler-btn').classList.toggle('on',hasSpoiler);
+}
+function updateSubmit(){
+  var val=document.getElementById('disc-input').value.trim();
+  document.getElementById('disc-submit').disabled = !val;
+}
+function submitDisc(){
+  var val=document.getElementById('disc-input').value.trim();
+  if(!val) return;
+  // Inject new thread at top
+  var threads = document.querySelector('.disc-threads');
+  var d=new Date();
+  var time='刚刚';
+  var newThread=document.createElement('div');
+  newThread.className='thread fade-up';
+  newThread.style.borderTop='1px solid var(--b)';
+  newThread.innerHTML=`
+    <div class="thread-head">
+      <div class="thread-av" style="background:var(--gold3);color:var(--gold)">余</div>
+      <div class="thread-meta">
+        <div class="thread-author">余小舟 <span class="thread-time">${time}</span></div>
+      </div>
+      ${selectedDiscTag?`<div class="thread-film-tag">${selectedDiscTag==='春'?'晚春':selectedDiscTag==='七'?'七武士':'罗生门'}</div>`:''}
+    </div>
+    <div class="thread-body ${hasSpoiler?'spoiler-hidden':''}" ${hasSpoiler?`id="spoiler-new"`:''}>${hasSpoiler?`<div class="spoiler-reveal"><button onclick="revealSpoiler('spoiler-new')"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="display:inline;margin-right:6px"><path d="M1 6.5C1 6.5 3 2 6.5 2S12 6.5 12 6.5 10 11 6.5 11 1 6.5 1 6.5z" stroke="currentColor" stroke-width="1.2"/><circle cx="6.5" cy="6.5" r="2" stroke="currentColor" stroke-width="1.2"/></svg>含剧透 · 点击展开</button></div>`:''}${val}</div>
+    <div class="thread-actions">
+      <span class="thread-action-btn" onclick="toggleLike(this)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 12S1 8.5 1 4.5A3 3 0 017 3a3 3 0 016 1.5C13 8.5 7 12 7 12z" stroke="currentColor" stroke-width="1.2"/></svg>0
+      </span>
+      <span class="thread-action-btn" onclick="showReply(this)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 2h12v8H8l-3 2V10H1V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>回复
+      </span>
+    </div>`;
+  threads.insertBefore(newThread, threads.firstChild);
+  document.getElementById('disc-input').value='';
+  document.getElementById('disc-submit').disabled=true;
+  selectedDiscTag=''; hasSpoiler=false;
+  document.querySelectorAll('.disc-tag-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('spoiler-btn').classList.remove('on');
+}
+
+// Spoiler reveal
+function revealSpoiler(id){
+  var el=document.getElementById(id);
+  if(!el) return;
+  el.classList.remove('spoiler-hidden');
+  var sr=el.querySelector('.spoiler-reveal');
+  if(sr) sr.style.display='none';
+}
+
+// Like
+function toggleLike(btn){
+  btn.classList.toggle('liked');
+  var n=parseInt(btn.textContent.trim())||0;
+  btn.innerHTML=btn.innerHTML.replace(/\d+/, btn.classList.contains('liked')?n+1:n-1);
+}
+
+// Reply
+function showReply(btn){
+  var thread=btn.closest('.thread');
+  var existing=thread.querySelector('.reply-input-row');
+  if(existing){ existing.remove(); return; }
+  var row=document.createElement('div');
+  row.className='reply-input-row';
+  row.style.cssText='display:flex;gap:10px;align-items:flex-start;padding-left:46px;margin-top:10px';
+  row.innerHTML=`
+    <div class="reply-av" style="background:var(--gold3);color:var(--gold)">余</div>
+    <div style="flex:1;border:1px solid var(--b2);padding:8px 12px;transition:border-color .2s" onfocusin="this.style.borderColor='var(--b3)'" onfocusout="this.style.borderColor='var(--b2)'">
+      <input type="text" placeholder="回复…" style="width:100%;font-size:13px;color:var(--ink);background:none;border:none;outline:none" onkeydown="if(event.key==='Enter'&&this.value.trim()){submitReply(this)}">
+    </div>`;
+  var replies=thread.querySelector('.thread-replies');
+  if(replies) thread.insertBefore(row,replies);
+  else thread.appendChild(row);
+  row.querySelector('input').focus();
+}
+
+function submitReply(input){
+  var val=input.value.trim();
+  if(!val) return;
+  var row=input.closest('.reply-input-row');
+  var thread=row.closest('.thread');
+  var replies=thread.querySelector('.thread-replies');
+  if(!replies){
+    replies=document.createElement('div');
+    replies.className='thread-replies';
+    thread.appendChild(replies);
+  }
+  var reply=document.createElement('div');
+  reply.className='reply fade-up';
+  reply.innerHTML=`
+    <div class="reply-av" style="background:var(--gold3);color:var(--gold)">余</div>
+    <div class="reply-body">
+      <div class="reply-author">余小舟 <span class="reply-time">刚刚</span></div>
+      <div class="reply-text">${val}</div>
+    </div>`;
+  replies.appendChild(reply);
+  row.remove();
+}
+
+// Guide film nav
+function setGuideFilm(btn, char){
+  document.querySelectorAll('.gfn-item').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+}
+
+// ── CHECKIN MODAL ────────────────────────────────
+var currentRating = 0;
+var filmData = {
+  '晚春':{char:'春',bg:'#0a1410',year:'1949',dir:'小津安二郎',duration:'108分钟'},
+  '七武士':{char:'七',bg:'#0f1a2e',year:'1954',dir:'黑泽明',duration:'207分钟'},
+  '罗生门':{char:'罗',bg:'#1a0a18',year:'1950',dir:'黑泽明',duration:'88分钟'},
+};
+
+function openCheckin(filmName, filmNum){
+  currentRating=0;
+  var fd=filmData[filmName]||{char:filmName[0],bg:'#141210',year:'',dir:'',duration:''};
+  document.getElementById('modal-film-name').textContent=filmName;
+  document.getElementById('ci-title').textContent=filmName;
+  document.getElementById('ci-poster').textContent=fd.char;
+  document.getElementById('ci-poster').style.background=fd.bg;
+  document.getElementById('ci-review').value='';
+  document.getElementById('ci-char-count').textContent='0 / 200';
+  document.getElementById('ci-success').style.display='none';
+  document.getElementById('ci-submit').style.display='block';
+  document.querySelectorAll('.ci-star').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.ci-mood').forEach(m=>m.classList.remove('on'));
+  document.querySelectorAll('.ci-opt').forEach(o=>o.classList.remove('on'));
+  document.getElementById('opt-discuss').classList.add('on');
+  document.getElementById('modal-bg').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeCheckin(){
+  document.getElementById('modal-bg').classList.remove('open');
+  document.body.style.overflow='';
+}
+function handleModalBgClick(e){
+  if(e.target===e.currentTarget) closeCheckin();
+}
+
+function setRating(n){
+  currentRating=n;
+  document.querySelectorAll('.ci-star').forEach((s,i)=>s.classList.toggle('on',i<n));
+}
+function hoverRating(n){
+  document.querySelectorAll('.ci-star').forEach((s,i)=>{
+    s.style.color=i<n?'var(--gold)':'var(--ink4)';
+  });
+}
+function unhoverRating(){
+  document.querySelectorAll('.ci-star').forEach((s,i)=>{
+    s.style.color=i<currentRating?'var(--gold)':'var(--ink4)';
+  });
+}
+
+function toggleMood(btn){ btn.classList.toggle('on'); }
+
+function toggleCiOpt(btn){
+  document.querySelectorAll('.ci-opt').forEach(o=>o.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+document.getElementById('ci-review').addEventListener('input',function(){
+  var len=this.value.length;
+  if(len>200) this.value=this.value.substring(0,200);
+  document.getElementById('ci-char-count').textContent=Math.min(len,200)+' / 200';
+});
+
+function submitCheckin(){
+  // Show success
+  var body=document.getElementById('ci-submit');
+  body.disabled=true;
+  body.textContent='打卡中…';
+  setTimeout(function(){
+    document.getElementById('ci-submit').style.display='none';
+    document.getElementById('ci-success').style.display='block';
+    // Update schedule row
+    var btn=document.querySelector('#today-film .checkin-btn');
+    if(btn){ btn.className='checkin-btn done'; btn.textContent='✓ 已打卡'; btn.onclick=null; }
+    var countEl=document.querySelector('#today-film .si-checkin-count');
+    if(countEl) countEl.textContent='144 人打卡';
+    // Update aside progress
+    document.querySelector('.pbar-fill').style.width='67%';
+    document.querySelector('.prog-label span:first-child').textContent='已完成 4 / 6 部';
+    document.querySelector('.prog-label span:last-child').textContent='67%';
+  },800);
+}
+
+// Keyboard close
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape') closeCheckin();
+});
+</script>
+<script>
+if(!window.shellNavigate){window.shellNavigate=function(p){if(window.parent&&window.parent.navigate)window.parent.navigate(p);else window.parent.postMessage({type:"navigate",payload:{page:p}},"*")};window.shellShowToast=function(m){if(window.parent&&window.parent.showToast)window.parent.showToast(m);else window.parent.postMessage({type:"toast",payload:{msg:m}},"*")}}
+</script>
+</body>
+</html>
