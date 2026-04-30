@@ -4,1186 +4,285 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>加入 Cine Ours</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0C0B09;--bg1:#111009;--bg2:#161410;--bg3:#1C1A15;--bg4:#252018;
+  --bg:#0C0B09;--bg1:#111009;--bg2:#161410;
   --ink:#EDE6D9;--ink2:#B5AC9E;--ink3:#7A7268;--ink4:#4A4540;
-  --gold:#C8A44A;--gold2:#9B7A2E;--gold3:#3D2E0E;
-  --green:#5C9E6A;--red:#9B4040;
+  --gold:#C8A44A;--green:#5C9E6A;--red:#9B4040;
   --b:rgba(237,230,217,.07);--b2:rgba(237,230,217,.13);--b3:rgba(237,230,217,.24);
-  --tr:all .22s cubic-bezier(.4,0,.2,1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{font-size:15px}
-body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden;min-height:100vh}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.35;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
-::-webkit-scrollbar{width:2px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4)}
+html,body{height:100%;font-size:15px}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;
+  display:flex;align-items:center;justify-content:center;min-height:100vh}
 button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:inherit}
 input{font-family:'DM Sans',sans-serif;background:none;border:none;outline:none;color:var(--ink)}
-
-/* ── SCREEN SYSTEM ──────────────────────────── */
-.screen{display:none;min-height:100vh}
-.screen.on{display:flex}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.a1{animation:fadeUp .55s .05s both}
-.a2{animation:fadeUp .55s .15s both}
-.a3{animation:fadeUp .55s .25s both}
-.a4{animation:fadeUp .55s .35s both}
-.a5{animation:fadeUp .55s .45s both}
-.a6{animation:fadeUp .55s .55s both}
-
-/* ── SPLIT LAYOUT ───────────────────────────── */
-.split{width:100%;display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
-.panel-l{
-  position:relative;overflow:hidden;
-  display:flex;flex-direction:column;justify-content:space-between;
-  padding:48px;background:var(--bg1);border-right:1px solid var(--b);
-}
-.panel-l-bg{position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse 80% 70% at 20% 30%,rgba(200,164,74,.06),transparent 55%),
-             radial-gradient(ellipse 50% 60% at 80% 80%,rgba(92,158,106,.03),transparent 50%)}
-/* Film grain on left panel */
-.panel-l-grain{position:absolute;inset:0;pointer-events:none;opacity:.06;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.1'/%3E%3C/svg%3E")}
-/* Filmstrip right edge */
-.filmstrip{position:absolute;right:0;top:0;bottom:0;width:32px;
-  border-left:1px solid rgba(237,230,217,.06);display:flex;flex-direction:column;opacity:.5}
-.fs-f{flex:1;border-bottom:1px solid rgba(237,230,217,.06);
-  display:flex;align-items:center;justify-content:center}
-.fs-h{width:8px;height:8px;border-radius:50%;border:1px solid rgba(237,230,217,.12)}
-/* Quote area */
-.quote-area{flex:1;display:flex;flex-direction:column;justify-content:center;padding-right:32px;position:relative;z-index:1}
-.q-reel{position:relative;min-height:200px}
-.q-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;display:flex;flex-direction:column;justify-content:center}
-.q-slide.on{opacity:1}
-.q-n{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink4);letter-spacing:.12em;margin-bottom:28px}
-.q-text{font-family:'Playfair Display',serif;font-size:clamp(18px,2.2vw,26px);font-style:italic;color:var(--ink2);line-height:1.55;margin-bottom:18px}
-.q-src{font-size:12px;color:var(--ink3)}.q-src strong{color:var(--ink2);font-weight:400}
-/* Left bottom */
-.panel-l-btm{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:'Playfair Display',serif;font-size:19px}
+.wrap{width:100%;max-width:400px;padding:40px 24px}
+.logo{font-family:'Playfair Display',serif;font-size:22px;text-align:center;margin-bottom:32px}
 .logo em{font-style:italic;color:var(--gold)}
-.q-dots{display:flex;gap:6px}
-.q-dot{width:5px;height:5px;border-radius:50%;background:var(--b2);transition:var(--tr)}
-.q-dot.on{background:var(--gold)}
-
-/* ── FORM PANEL ─────────────────────────────── */
-.panel-r{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 64px;overflow-y:auto}
-.fbox{width:100%;max-width:400px}
-.feyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);
-  margin-bottom:18px;display:flex;align-items:center;gap:10px}
-.feyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
-.ftitle{font-family:'Playfair Display',serif;font-size:clamp(26px,3vw,36px);font-weight:400;
-  line-height:1.1;margin-bottom:10px}
-.ftitle em{font-style:italic;color:var(--gold)}
-.fsub{font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:32px}
-
-/* ── INPUT STYLES ───────────────────────────── */
-.igroup{margin-bottom:14px}
-.ilabel{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);
-  margin-bottom:7px;display:flex;justify-content:space-between;align-items:center}
-.ilabel a{color:var(--gold);cursor:pointer;font-size:11px;text-transform:none;letter-spacing:0;transition:opacity .2s}
-.ilabel a:hover{opacity:.7}
-.ifield{width:100%;padding:12px 14px;border:1px solid var(--b2);font-size:14px;
-  color:var(--ink);background:var(--bg1);transition:border-color .2s}
-.ifield:focus{border-color:var(--b3)}
-.ifield::placeholder{color:var(--ink4)}
-.ifield.err{border-color:var(--red)}
-.ifield.ok{border-color:var(--green)}
-.ifield-wrap{position:relative}
-.ifield-suf{position:absolute;right:13px;top:50%;transform:translateY(-50%);
-  cursor:pointer;color:var(--ink4);transition:var(--tr)}
-.ifield-suf:hover{color:var(--ink3)}
-.ifield-suf.ok{color:var(--green)}
-/* Send code */
-.send-code{
-  position:absolute;right:13px;top:50%;transform:translateY(-50%);
-  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--gold);cursor:pointer;transition:opacity .2s;white-space:nowrap;
-  border:none;background:none;
-}
-.send-code:hover{opacity:.7}
-.send-code:disabled{color:var(--ink3);cursor:default;opacity:1}
-/* Error hint */
-.ihint{font-size:11px;color:var(--red);margin-top:5px;display:none}
-.ihint.show{display:block}
-.ihint.ok{color:var(--green)}
-/* Password strength */
-.pw-str{margin-top:6px;display:none}
-.pw-str.show{display:block}
-.pw-bars{display:flex;gap:3px;margin-bottom:3px}
-.pw-bar{flex:1;height:2px;background:var(--bg4);border-radius:1px;transition:background .3s}
-.pw-bar.w{background:var(--red)}.pw-bar.m{background:var(--gold)}.pw-bar.s{background:var(--green)}
-.pw-lbl{font-size:10px;color:var(--ink3)}
-
-/* ── LOGIN METHOD TABS ───────────────────────── */
-.method-tabs{display:flex;gap:0;border:1px solid var(--b2);margin-bottom:24px}
-.mtab{flex:1;padding:9px;text-align:center;font-size:12px;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--ink3);cursor:pointer;transition:var(--tr);
-  border-right:1px solid var(--b2);}
+.mode-tabs{display:flex;border:1px solid var(--b2);margin-bottom:24px}
+.mtab{flex:1;padding:10px;text-align:center;font-size:12px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink3);cursor:pointer;border-right:1px solid var(--b2)}
 .mtab:last-child{border-right:none}
-.mtab:hover{color:var(--ink)}
 .mtab.on{background:var(--bg2);color:var(--ink)}
-.method-form{display:none}.method-form.on{display:block}
-
-/* ── SOCIAL BUTTON ──────────────────────────── */
-.social-btn{width:100%;padding:12px;border:1px solid var(--b2);color:var(--ink2);
-  font-size:13px;display:flex;align-items:center;justify-content:center;gap:10px;
-  transition:var(--tr);margin-bottom:8px;background:var(--bg1)}
-.social-btn:hover{border-color:var(--b3);color:var(--ink);background:var(--bg2)}
-.or-div{display:flex;align-items:center;gap:14px;margin:18px 0;
-  font-size:11px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase}
-.or-div::before,.or-div::after{content:'';flex:1;height:1px;background:var(--b)}
-
-/* ── SUBMIT / SWITCH ─────────────────────────── */
+.method-tabs{display:flex;gap:6px;margin-bottom:18px}
+.method-tab{font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 14px;border:1px solid var(--b);color:var(--ink3);cursor:pointer}
+.method-tab.on{border-color:var(--gold);color:var(--gold)}
+.fsec{display:none}.fsec.on{display:block}
+.sub-form{display:none}.sub-form.on{display:block}
+.field{margin-bottom:13px}
+.flabel{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.finput{width:100%;padding:12px 14px;border:1px solid var(--b2);font-size:14px;
+  color:var(--ink);background:var(--bg1);transition:border-color .2s}
+.finput:focus{border-color:var(--b3)}
+.finput::placeholder{color:var(--ink4)}
+.fwrap{position:relative}
+.send-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);
+  cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.send-btn:disabled{color:var(--ink3);cursor:default}
 .sbtn{width:100%;padding:13px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
-  background:var(--gold);color:var(--bg);border:1px solid var(--gold);transition:var(--tr);margin-top:6px}
+  background:var(--gold);color:var(--bg);cursor:pointer;margin-top:6px;
+  font-family:'DM Sans',sans-serif;border:1px solid var(--gold);transition:background .2s}
 .sbtn:hover{background:#D4AE55}
-.sbtn:disabled{background:var(--bg4);border-color:var(--bg4);color:var(--ink4);cursor:default}
-.fswitch{text-align:center;font-size:13px;color:var(--ink3);margin-top:18px}
-.fswitch a{color:var(--gold);cursor:pointer;transition:opacity .2s}
-.fswitch a:hover{opacity:.7}
-.terms{font-size:11px;color:var(--ink4);text-align:center;margin-top:14px;line-height:1.6}
-.terms a{color:var(--ink3);cursor:pointer}
-
-/* ── ONBOARD LAYOUT ─────────────────────────── */
-.ob-root{
-  width:100%;flex-direction:column;align-items:center;
-  padding:80px 24px 48px;min-height:100vh;
-}
-.ob-topbar{
-  position:fixed;top:0;left:0;right:0;height:56px;z-index:200;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 40px;border-bottom:1px solid var(--b);
-  background:rgba(12,11,9,.96);backdrop-filter:blur(12px);
-}
-.ob-progbar{position:fixed;top:0;left:0;z-index:201;height:2px;background:var(--gold);transition:width .4s ease}
-.ob-skip{font-size:12px;color:var(--ink3);cursor:pointer;transition:var(--tr)}
-.ob-skip:hover{color:var(--ink)}
-.ob-wrap{width:100%;max-width:660px}
-.ob-step{display:none}
-.ob-step.on{display:block;animation:fadeUp .4s ease both}
-.ob-dots{display:flex;align-items:center;gap:6px;margin-bottom:44px}
-.od{width:6px;height:6px;border-radius:50%;background:var(--bg4);transition:var(--tr)}
-.od.done{background:var(--gold2)}
-.od.on{background:var(--gold);box-shadow:0 0 8px rgba(200,164,74,.5)}
-.ol{flex:1;height:1px;background:var(--b);transition:background .3s}
-.ol.done{background:var(--gold2)}
-.ob-n{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);margin-left:4px}
-.ob-ey{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);
-  margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.ob-ey::before{content:'';width:20px;height:1px;background:var(--gold)}
-.ob-title{font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,40px);font-weight:400;
-  line-height:1.1;margin-bottom:10px}
-.ob-title em{font-style:italic;color:var(--gold)}
-.ob-desc{font-size:14px;color:var(--ink2);line-height:1.8;margin-bottom:32px}
-.ob-nav{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
-.ob-back{font-size:12px;color:var(--ink3);cursor:pointer;display:flex;align-items:center;gap:5px;transition:var(--tr)}
-.ob-back:hover{color:var(--ink)}
-.ob-next{font-size:12px;letter-spacing:.1em;text-transform:uppercase;
-  padding:11px 28px;background:var(--gold);color:var(--bg);border:1px solid var(--gold);transition:var(--tr)}
-.ob-next:hover{background:#D4AE55}
-
-/* ── MOVEMENT GRID (regions) ─────────────────── */
-.mov-grid{display:flex;flex-direction:column;gap:2px;margin-bottom:28px}
-.mov-item{
-  display:flex;align-items:flex-start;gap:0;
-  border:1px solid var(--b);cursor:pointer;transition:var(--tr);
-  overflow:hidden;
-}
-.mov-item:hover{border-color:var(--b2);background:var(--bg1)}
-.mov-item.on{border-color:var(--gold);background:rgba(200,164,74,.04)}
-.mov-era{
-  font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);
-  padding:14px 14px;border-right:1px solid var(--b);
-  min-width:60px;text-align:center;flex-shrink:0;
-  letter-spacing:.06em;line-height:1.4;
-}
-.mov-item.on .mov-era{color:var(--gold2);border-right-color:var(--gold3)}
-.mov-body{padding:12px 16px;flex:1}
-.mov-name{font-size:13px;font-weight:500;margin-bottom:3px;transition:color .2s}
-.mov-item.on .mov-name{color:var(--gold)}
-.mov-rep{font-size:11px;color:var(--ink3);line-height:1.5}
-.mov-rep strong{color:var(--ink3);font-weight:400}
-.mov-tick{
-  padding:14px 14px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--ink4);transition:var(--tr);
-}
-.mov-item.on .mov-tick{color:var(--gold)}
-
-/* ── STYLE TAGS (cinephile language) ────────── */
-.style-section{margin-bottom:28px}
-.style-sec-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ink3);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--b)}
-.style-tags{display:flex;flex-wrap:wrap;gap:6px}
-.stag{
-  font-size:12px;padding:7px 14px;border:1px solid var(--b);
-  color:var(--ink3);cursor:pointer;transition:var(--tr);line-height:1.3;
-}
-.stag:hover{border-color:var(--b2);color:var(--ink)}
-.stag.on{border-color:var(--gold2);color:var(--gold);background:rgba(200,164,74,.05)}
-.stag.lg{font-size:13px;padding:8px 16px}
-
-/* ── DIRECTOR GRID ───────────────────────────── */
-.dir-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:28px}
-.dir-item{
-  padding:14px 10px;border:1px solid var(--b);
-  cursor:pointer;transition:var(--tr);text-align:center;
-}
-.dir-item:hover{border-color:var(--b2);background:var(--bg1)}
-.dir-item.on{border-color:var(--gold);background:rgba(200,164,74,.04)}
-.dir-av{
-  width:44px;height:44px;border-radius:50%;margin:0 auto 8px;
-  border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-size:16px;font-style:italic;
-  color:var(--ink3);transition:var(--tr);
-}
-.dir-item.on .dir-av{border-color:var(--gold2);color:var(--gold)}
-.dir-name{font-size:11px;color:var(--ink2);line-height:1.3;margin-bottom:2px}
-.dir-org{font-size:10px;color:var(--ink4)}
-
-/* ── WELCOME / LANDING ───────────────────────── */
-.welcome-root{
-  flex-direction:column;min-height:100vh;
-  background:var(--bg);
-}
-.welcome-nav{
-  height:58px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 48px;border-bottom:1px solid var(--b);
-  background:rgba(12,11,9,.96);
-}
-.welcome-hero{
-  padding:64px 48px 48px;
-  border-bottom:1px solid var(--b);
-  position:relative;overflow:hidden;
-}
-.wh-bg{position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(200,164,74,.05),transparent 60%)}
-.welcome-av{
-  width:72px;height:72px;border-radius:50%;
-  background:var(--gold3);border:2px solid var(--gold2);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);
-  margin-bottom:20px;position:relative;z-index:1;
-  box-shadow:0 0 0 6px rgba(200,164,74,.07);
-}
-.welcome-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(28px,5vw,52px);font-weight:400;line-height:1.05;
-  margin-bottom:12px;position:relative;z-index:1;
-}
-.welcome-title em{font-style:italic;color:var(--gold)}
-.welcome-sub{font-size:14px;color:var(--ink2);line-height:1.8;max-width:560px;
-  margin-bottom:28px;position:relative;z-index:1;}
-.identity-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0;position:relative;z-index:1}
-.itag{font-size:10px;letter-spacing:.09em;text-transform:uppercase;
-  padding:5px 14px;border:1px solid var(--gold3);color:var(--gold)}
-
-/* Festival recs */
-.recs-section{padding:40px 48px 60px}
-.recs-header{
-  display:flex;align-items:baseline;justify-content:space-between;
-  margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--b);
-}
-.recs-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400}
-.recs-sub{font-size:12px;color:var(--ink3)}
-.recs-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:1px;background:var(--b)}
-.rec-card{
-  background:var(--bg);padding:26px 24px;cursor:pointer;transition:background .2s;
-}
-.rec-card:hover{background:var(--bg1)}
-.rec-card.featured{background:var(--bg1)}
-.rec-card.featured:hover{background:var(--bg2)}
-.rc-status{font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-  margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.rc-live{color:#7EC98E}.rc-dot{width:5px;height:5px;border-radius:50%;background:#7EC98E;
-  box-shadow:0 0 6px #5aac6e;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{box-shadow:0 0 3px #5aac6e}50%{box-shadow:0 0 9px #5aac6e}}
-.rc-soon{color:var(--gold)}.rc-dot-gold{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0}
-.rc-match{
-  font-size:10px;letter-spacing:.08em;text-transform:uppercase;
-  padding:2px 8px;border:1px solid var(--gold3);color:var(--gold);
-  margin-left:auto;white-space:nowrap;
-}
-.rc-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;
-  line-height:1.25;margin-bottom:7px}
-.rec-card.featured .rc-title{font-size:22px}
-.rc-title em{font-style:italic;color:var(--gold)}
-.rc-meta{font-size:12px;color:var(--ink3);margin-bottom:14px;display:flex;gap:12px;flex-wrap:wrap}
-.rc-desc{font-size:12px;color:var(--ink2);line-height:1.7;margin-bottom:16px}
-.rc-foot{display:flex;align-items:center;justify-content:space-between;
-  padding-top:12px;border-top:1px solid var(--b)}
-.rc-host{font-size:11px;color:var(--ink3)}
-.rc-count{font-size:11px;color:var(--ink3)}
-.rc-join{
-  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  padding:6px 14px;border:1px solid var(--gold);color:var(--gold);transition:var(--tr);
-}
-.rc-join:hover{background:var(--gold);color:var(--bg)}
-.rec-card.featured .rc-foot{flex-direction:column;align-items:flex-start;gap:12px}
-.rc-progress{height:2px;background:var(--bg4);margin-top:8px;overflow:hidden;width:100%}
-.rc-pbar{height:2px;background:var(--gold)}
-
-/* Toast */
+.sbtn:disabled{background:var(--bg2);border-color:var(--b2);color:var(--ink4);cursor:default}
+.sw{text-align:center;font-size:13px;color:var(--ink3);margin-top:16px}
+.sw a{color:var(--gold);cursor:pointer}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(14px);
-  background:var(--bg3);border:1px solid var(--b2);padding:10px 22px;
-  font-size:13px;color:var(--ink2);z-index:900;
-  opacity:0;transition:all .25s;white-space:nowrap;pointer-events:none}
+  padding:10px 22px;font-size:13px;border:1px solid var(--b2);background:var(--bg2);
+  color:var(--ink2);opacity:0;transition:all .25s;white-space:nowrap;z-index:999;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:var(--red);color:#C87878}
+.toast.ok{border-color:var(--green);color:#7EC98E}
 </style>
 </head>
 <body>
+<div class="wrap">
+  <div class="logo">Cine <em>Ours</em></div>
 
-<!-- ══════════════════════════════════════════
-     REGISTER
-══════════════════════════════════════════ -->
-<div class="screen on" id="s-register">
-<div class="split">
-  <div class="panel-l">
-    <div class="panel-l-bg"></div><div class="panel-l-grain"></div>
-    <div class="filmstrip" id="fs-r"></div>
-    <div class="quote-area">
-      <div class="q-reel">
-        <div class="q-slide on"><div class="q-n">01 / 04</div>
-          <div class="q-text">"电影是一种语言，可以让我们交流情感和经验。"</div>
-          <div class="q-src"><strong>英格玛·伯格曼</strong></div></div>
-        <div class="q-slide"><div class="q-n">02 / 04</div>
-          <div class="q-text">"我相信，银幕上的时间和真实时间是不同的——但两者同样真实。"</div>
-          <div class="q-src"><strong>安德烈·塔可夫斯基</strong> · 《雕刻时光》</div></div>
-        <div class="q-slide"><div class="q-n">03 / 04</div>
-          <div class="q-text">"每一次放映，都是一次首映式。"</div>
-          <div class="q-src"><strong>让-吕克·戈达尔</strong></div></div>
-        <div class="q-slide"><div class="q-n">04 / 04</div>
-          <div class="q-text">"摄影机放在那里，不是为了记录，而是为了见证。"</div>
-          <div class="q-src"><strong>侯孝贤</strong></div></div>
-      </div>
-    </div>
-    <div class="panel-l-btm">
-      <div class="logo">Cine <em>Ours</em></div>
-      <div class="q-dots">
-        <div class="q-dot on" id="qd-0"></div><div class="q-dot" id="qd-1"></div>
-        <div class="q-dot" id="qd-2"></div><div class="q-dot" id="qd-3"></div>
-      </div>
-    </div>
+  <div class="mode-tabs">
+    <div class="mtab on" id="tab-reg"   onclick="switchMode('reg')">注册</div>
+    <div class="mtab"    id="tab-login" onclick="switchMode('login')">登录</div>
   </div>
 
-  <div class="panel-r">
-    <div class="fbox">
-      <div class="feyebrow a1">Cinema of Our Own</div>
-      <h1 class="ftitle a2">创建你的<br><em>电影身份</em></h1>
-      <p class="fsub a3">注册后即可举办电影节、分享创作、建立你的观影档案。</p>
-
-      <!-- Login method tabs -->
-      <div class="method-tabs a3">
-        <div class="mtab on" onclick="switchMethod('wechat')">微信</div>
-        <div class="mtab" onclick="switchMethod('phone')">手机号</div>
-        <div class="mtab" onclick="switchMethod('email')">邮箱</div>
-      </div>
-
-      <!-- WeChat -->
-      <div class="method-form on" id="mf-wechat">
-        <button class="social-btn a4" onclick="showToast('正在唤起微信授权…')">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M7.5 12.5C4.46 12.5 2 10.71 2 8.5c0-2.21 2.46-4 5.5-4s5.5 1.79 5.5 4c0 .74-.25 1.44-.69 2.04l.19 1.96-1.87-.62C9.92 12.27 9 12.5 8 12.5H7.5z" stroke="currentColor" stroke-width="1.3"/>
-            <path d="M12.5 11c.83.32 1.76.5 2.75.5h.25l1.5.5-.15-1.57C18 9.85 18 9.19 18 8.5c0-1.93-1.79-3.5-4-3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-          </svg>
-          使用微信扫码登录
-        </button>
-        <div class="fswitch a5">已有账号？<a onclick="goLogin()">登录</a></div>
-      </div>
-
-      <!-- Phone -->
-      <div class="method-form" id="mf-phone">
-        <div class="a4">
-          <div class="igroup">
-            <div class="ilabel">手机号</div>
-            <div class="ifield-wrap">
-              <input type="tel" class="ifield" id="reg-phone" placeholder="+86 186 0000 0000" style="padding-right:90px">
-              <button class="send-code" id="send-code-btn" onclick="sendCode()">发送验证码</button>
-            </div>
-          </div>
-          <div class="igroup" id="code-group" style="display:none">
-            <div class="ilabel">验证码</div>
-            <input type="text" class="ifield" id="reg-code" placeholder="6位验证码" maxlength="6" oninput="checkCodeInput()">
-            <div class="ihint ok" id="code-hint" style="display:none">验证码已发送</div>
-          </div>
-          <div class="igroup" id="pw-group-phone" style="display:none">
-            <div class="ilabel">设置密码</div>
-            <div class="ifield-wrap">
-              <input type="password" class="ifield" id="reg-pw-phone" placeholder="至少8位" oninput="validatePw('reg-pw-phone','pws-phone')" style="padding-right:36px">
-              <div class="ifield-suf" onclick="togglePw('reg-pw-phone',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7s2.5-4.5 6-4.5S13 7 13 7s-2.5 4.5-6 4.5S1 7 1 7z" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="1.8" stroke="currentColor" stroke-width="1.2"/></svg></div>
-            </div>
-            <div class="pw-str" id="pws-phone"><div class="pw-bars"><div class="pw-bar" id="pb-p1"></div><div class="pw-bar" id="pb-p2"></div><div class="pw-bar" id="pb-p3"></div><div class="pw-bar" id="pb-p4"></div></div><div class="pw-lbl" id="pwl-phone"></div></div>
-          </div>
-          <button class="sbtn" id="phone-submit" onclick="submitPhone()" disabled>创建账号</button>
-        </div>
-        <div class="fswitch a5" style="margin-top:14px">已有账号？<a onclick="goLogin()">登录</a></div>
-      </div>
-
-      <!-- Email -->
-      <div class="method-form" id="mf-email">
-        <div class="a4">
-          <div class="igroup">
-            <div class="ilabel">昵称</div>
-            <div class="ifield-wrap">
-              <input type="text" class="ifield" id="reg-name" placeholder="你的电影人名字" oninput="validateName()" maxlength="20">
-              <div class="ifield-suf" id="name-suf"></div>
-            </div>
-            <div class="ihint" id="name-hint"></div>
-          </div>
-          <div class="igroup">
-            <div class="ilabel">邮箱</div>
-            <div class="ifield-wrap">
-              <input type="email" class="ifield" id="reg-email" placeholder="your@email.com" oninput="validateEmail()">
-              <div class="ifield-suf" id="email-suf"></div>
-            </div>
-            <div class="ihint" id="email-hint"></div>
-          </div>
-          <div class="igroup">
-            <div class="ilabel">密码</div>
-            <div class="ifield-wrap">
-              <input type="password" class="ifield" id="reg-pw" placeholder="至少8位" oninput="validatePw('reg-pw','pws-email')" style="padding-right:36px">
-              <div class="ifield-suf" onclick="togglePw('reg-pw',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7s2.5-4.5 6-4.5S13 7 13 7s-2.5 4.5-6 4.5S1 7 1 7z" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="1.8" stroke="currentColor" stroke-width="1.2"/></svg></div>
-            </div>
-            <div class="pw-str" id="pws-email"><div class="pw-bars"><div class="pw-bar" id="pb-e1"></div><div class="pw-bar" id="pb-e2"></div><div class="pw-bar" id="pb-e3"></div><div class="pw-bar" id="pb-e4"></div></div><div class="pw-lbl" id="pwl-email"></div></div>
-          </div>
-          <button class="sbtn" id="email-submit" onclick="submitEmail()">创建账号</button>
-          <div class="terms a5">注册即表示同意 <a onclick="showToast('服务条款')">服务条款</a> 与 <a onclick="showToast('隐私政策')">隐私政策</a></div>
-        </div>
-        <div class="fswitch a5">已有账号？<a onclick="goLogin()">登录</a></div>
-      </div>
-
+  <!-- 注册 -->
+  <div class="fsec on" id="fsec-reg">
+    <div class="method-tabs">
+      <div class="method-tab on" id="mt-reg-email" onclick="switchMethod('reg','email')">邮箱</div>
+      <div class="method-tab"    id="mt-reg-phone" onclick="switchMethod('reg','phone')">手机号</div>
     </div>
-  </div>
-</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     LOGIN
-══════════════════════════════════════════ -->
-<div class="screen" id="s-login">
-<div class="split">
-  <div class="panel-l">
-    <div class="panel-l-bg"></div><div class="panel-l-grain"></div>
-    <div class="filmstrip" id="fs-l"></div>
-    <div class="quote-area">
-      <div class="q-reel"><div class="q-slide on">
-        <div class="q-n">欢迎回来</div>
-        <div class="q-text">"一部真正的好电影，你永远无法把它从记忆里抹去。"</div>
-        <div class="q-src"><strong>弗朗索瓦·特吕弗</strong></div>
-      </div></div>
+    <div class="sub-form on" id="reg-email">
+      <div class="field"><div class="flabel">昵称</div><input class="finput" id="r-name" placeholder="你的电影人名字"></div>
+      <div class="field"><div class="flabel">邮箱</div><input class="finput" id="r-email" type="email" placeholder="your@email.com"></div>
+      <div class="field"><div class="flabel">密码（至少8位）</div><input class="finput" id="r-pw" type="password" placeholder="设置密码"></div>
+      <button class="sbtn" id="r-email-btn" onclick="doRegEmail()">创建账号</button>
     </div>
-    <div class="panel-l-btm"><div class="logo">Cine <em>Ours</em></div></div>
-  </div>
-  <div class="panel-r">
-    <div class="fbox">
-      <div class="feyebrow a1">欢迎回来</div>
-      <h1 class="ftitle a2">登录<em>Cine Ours</em></h1>
-      <p class="fsub a3">你的电影节、观影记录、创作，都在这里等你。</p>
-
-      <div class="method-tabs a3">
-        <div class="mtab on" onclick="switchLoginMethod('wechat')">微信</div>
-        <div class="mtab" onclick="switchLoginMethod('phone')">手机号</div>
-        <div class="mtab" onclick="switchLoginMethod('email')">邮箱</div>
+    <div class="sub-form" id="reg-phone">
+      <div class="field"><div class="flabel">手机号</div>
+        <div class="fwrap"><input class="finput" id="r-phone" type="tel" placeholder="+86 13800000000" style="padding-right:96px">
+        <button class="send-btn" id="r-send-btn" onclick="doSendReg()">发送验证码</button></div>
       </div>
-
-      <div class="method-form on" id="lmf-wechat">
-        <button class="social-btn a4" onclick="goOnboard()">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 12.5C4.46 12.5 2 10.71 2 8.5c0-2.21 2.46-4 5.5-4s5.5 1.79 5.5 4c0 .74-.25 1.44-.69 2.04l.19 1.96-1.87-.62C9.92 12.27 9 12.5 8 12.5H7.5z" stroke="currentColor" stroke-width="1.3"/><path d="M12.5 11c.83.32 1.76.5 2.75.5h.25l1.5.5-.15-1.57C18 9.85 18 9.19 18 8.5c0-1.93-1.79-3.5-4-3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-          微信扫码登录
-        </button>
-        <div class="fswitch a5">没有账号？<a onclick="goRegister()">免费注册</a></div>
-      </div>
-
-      <div class="method-form" id="lmf-phone">
-        <div class="a4">
-          <div class="igroup">
-            <div class="ilabel">手机号</div>
-            <div class="ifield-wrap">
-              <input type="tel" class="ifield" placeholder="+86 186 0000 0000" style="padding-right:90px">
-              <button class="send-code" onclick="showToast('验证码已发送')">发送验证码</button>
-            </div>
-          </div>
-          <div class="igroup">
-            <div class="ilabel">验证码</div>
-            <input type="text" class="ifield" placeholder="6位验证码" maxlength="6">
-          </div>
-          <button class="sbtn" onclick="goOnboard()">登录</button>
-        </div>
-        <div class="fswitch a5">没有账号？<a onclick="goRegister()">免费注册</a></div>
-      </div>
-
-      <div class="method-form" id="lmf-email">
-        <div class="a4">
-          <div class="igroup">
-            <div class="ilabel">邮箱</div>
-            <input type="email" class="ifield" placeholder="your@email.com">
-          </div>
-          <div class="igroup">
-            <div class="ilabel">密码 <a onclick="showToast('重置邮件已发送')">忘记密码？</a></div>
-            <div class="ifield-wrap">
-              <input type="password" class="ifield" placeholder="输入密码" style="padding-right:36px" onkeydown="if(event.key==='Enter')goOnboard()">
-              <div class="ifield-suf" onclick="togglePw(this.previousElementSibling.id||'',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7s2.5-4.5 6-4.5S13 7 13 7s-2.5 4.5-6 4.5S1 7 1 7z" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="1.8" stroke="currentColor" stroke-width="1.2"/></svg></div>
-            </div>
-          </div>
-          <button class="sbtn" onclick="goOnboard()">登录</button>
-        </div>
-        <div class="fswitch a5">没有账号？<a onclick="goRegister()">免费注册</a></div>
-      </div>
+      <div class="field" id="r-code-wrap" style="display:none"><div class="flabel">验证码</div><input class="finput" id="r-code" type="text" placeholder="6位验证码" maxlength="6"></div>
+      <button class="sbtn" id="r-phone-btn" onclick="doVerifyReg()" style="display:none">验证并注册</button>
     </div>
-  </div>
-</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ONBOARDING
-══════════════════════════════════════════ -->
-<div class="screen" id="s-onboard">
-<div class="ob-root">
-  <div class="ob-progbar" id="ob-bar" style="width:0%"></div>
-  <div class="ob-topbar">
-    <div class="logo" style="font-size:17px">Cine <em>Ours</em></div>
-    <button class="ob-skip" onclick="skipTo('welcome')">跳过，直接进入 →</button>
+    <div class="sw">已有账号？<a onclick="switchMode('login')">登录</a></div>
   </div>
 
-  <div class="ob-wrap">
-
-    <!-- Step 1: Role -->
-    <div class="ob-step on" id="ob1">
-      <div class="ob-dots">
-        <div class="od on"></div><div class="ol"></div>
-        <div class="od"></div><div class="ol"></div>
-        <div class="od"></div><div class="ol"></div>
-        <div class="od"></div><div class="ob-n">1 / 4</div>
-      </div>
-      <div class="ob-ey">建立你的电影身份</div>
-      <h2 class="ob-title">你在电影世界里<br>扮演什么<em>角色</em>？</h2>
-      <p class="ob-desc">可以多选。帮助我们为你推荐合适的内容和社群。</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:28px">
-        <div class="mov-item" onclick="toggleMov(this)" style="flex-direction:column;align-items:flex-start;padding:16px">
-          <div style="font-size:22px;margin-bottom:8px;font-family:'Playfair Display',serif;font-style:italic;color:var(--ink3)">观</div>
-          <div style="font-size:13px;font-weight:500;margin-bottom:3px">影迷 / 观众</div>
-          <div style="font-size:11px;color:var(--ink3)">热爱看电影，喜欢讨论和分享</div>
-        </div>
-        <div class="mov-item on" onclick="toggleMov(this)" style="flex-direction:column;align-items:flex-start;padding:16px">
-          <div style="font-size:22px;margin-bottom:8px;font-family:'Playfair Display',serif;font-style:italic;color:var(--ink3)">策</div>
-          <div style="font-size:13px;font-weight:500;margin-bottom:3px">策展人</div>
-          <div style="font-size:11px;color:var(--ink3)">想举办自己的线上电影节</div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)" style="flex-direction:column;align-items:flex-start;padding:16px">
-          <div style="font-size:22px;margin-bottom:8px;font-family:'Playfair Display',serif;font-style:italic;color:var(--ink3)">写</div>
-          <div style="font-size:13px;font-weight:500;margin-bottom:3px">编剧 / 写作者</div>
-          <div style="font-size:11px;color:var(--ink3)">正在写剧本，想获得反馈</div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)" style="flex-direction:column;align-items:flex-start;padding:16px">
-          <div style="font-size:22px;margin-bottom:8px;font-family:'Playfair Display',serif;font-style:italic;color:var(--ink3)">导</div>
-          <div style="font-size:13px;font-weight:500;margin-bottom:3px">独立导演 / 创作者</div>
-          <div style="font-size:11px;color:var(--ink3)">在拍或想拍独立短片</div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)" style="flex-direction:column;align-items:flex-start;padding:16px">
-          <div style="font-size:22px;margin-bottom:8px;font-family:'Playfair Display',serif;font-style:italic;color:var(--ink3)">评</div>
-          <div style="font-size:13px;font-weight:500;margin-bottom:3px">影评人 / 研究者</div>
-          <div style="font-size:11px;color:var(--ink3)">写影评，研究电影史</div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)" style="flex-direction:column;align-items:flex-start;padding:16px">
-          <div style="font-size:22px;margin-bottom:8px;font-family:'Playfair Display',serif;font-style:italic;color:var(--ink3)">学</div>
-          <div style="font-size:13px;font-weight:500;margin-bottom:3px">学生 / 在读</div>
-          <div style="font-size:11px;color:var(--ink3)">电影相关专业，或自学中</div>
-        </div>
-      </div>
-      <div class="ob-nav"><div></div><button class="ob-next" onclick="goOb(2)">下一步 →</button></div>
+  <!-- 登录 -->
+  <div class="fsec" id="fsec-login">
+    <div class="method-tabs">
+      <div class="method-tab on" id="mt-login-email" onclick="switchMethod('login','email')">邮箱</div>
+      <div class="method-tab"    id="mt-login-phone" onclick="switchMethod('login','phone')">手机号</div>
     </div>
-
-    <!-- Step 2: Film Movements -->
-    <div class="ob-step" id="ob2">
-      <div class="ob-dots">
-        <div class="od done"></div><div class="ol done"></div>
-        <div class="od on"></div><div class="ol"></div>
-        <div class="od"></div><div class="ol"></div>
-        <div class="od"></div><div class="ob-n">2 / 4</div>
-      </div>
-      <div class="ob-ey">电影版图</div>
-      <h2 class="ob-title">你被哪些<em>电影运动</em><br>击中过？</h2>
-      <p class="ob-desc">按流派和运动来选，而不是国家。可以多选，没有标准答案。</p>
-      <div class="mov-grid">
-        <div class="mov-item on" onclick="toggleMov(this)">
-          <div class="mov-era">台湾<br>80-00s</div>
-          <div class="mov-body">
-            <div class="mov-name">台湾新浪潮</div>
-            <div class="mov-rep">侯孝贤、杨德昌、蔡明亮 · <em>《悲情城市》《一一》《爱情万岁》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item on" onclick="toggleMov(this)">
-          <div class="mov-era">日本<br>50-60s</div>
-          <div class="mov-body">
-            <div class="mov-name">日本松竹黄金时代</div>
-            <div class="mov-rep">小津安二郎、成濑巳喜男 · <em>《东京物语》《浮云》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">日本<br>50-65s</div>
-          <div class="mov-body">
-            <div class="mov-name">黑泽明 · 大映武士片</div>
-            <div class="mov-rep">黑泽明、木下惠介 · <em>《七武士》《切腹》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">法国<br>58-68s</div>
-          <div class="mov-body">
-            <div class="mov-name">法国新浪潮</div>
-            <div class="mov-rep">戈达尔、特吕弗、侯麦 · <em>《精疲力竭》《四百击》《绿光》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">意大利<br>45-55s</div>
-          <div class="mov-body">
-            <div class="mov-name">意大利新现实主义</div>
-            <div class="mov-rep">德·西卡、罗西里尼、维斯康蒂 · <em>《偷自行车的人》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">苏联<br>60-80s</div>
-          <div class="mov-body">
-            <div class="mov-name">塔可夫斯基 · 苏联诗意电影</div>
-            <div class="mov-rep">塔可夫斯基、帕拉杰诺夫 · <em>《镜子》《石榴的颜色》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">香港<br>80-00s</div>
-          <div class="mov-body">
-            <div class="mov-name">香港新浪潮 · 王家卫宇宙</div>
-            <div class="mov-rep">王家卫、许鞍华、陈果 · <em>《花样年华》《重庆森林》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">伊朗<br>90s-</div>
-          <div class="mov-body">
-            <div class="mov-name">伊朗诗意电影</div>
-            <div class="mov-rep">基亚罗斯塔米、帕纳西、马基德 · <em>《樱桃的滋味》《白气球》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">德国<br>70-80s</div>
-          <div class="mov-body">
-            <div class="mov-name">德国新电影</div>
-            <div class="mov-rep">法斯宾德、文德斯、赫尔佐格 · <em>《玛利亚·布劳恩》《公路之王》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">希腊<br>75-00s</div>
-          <div class="mov-body">
-            <div class="mov-name">安哲罗普洛斯 · 巴尔干史诗</div>
-            <div class="mov-rep">安哲罗普洛斯 · <em>《流浪艺人》《雾中风景》《永恒与一日》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">东欧<br>60-80s</div>
-          <div class="mov-body">
-            <div class="mov-name">东欧荒诞与政治寓言</div>
-            <div class="mov-rep">基耶斯洛夫斯基、福尔曼 · <em>《蓝》《飞越疯人院》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">大陆<br>84s-</div>
-          <div class="mov-body">
-            <div class="mov-name">中国第五代 · 第六代</div>
-            <div class="mov-rep">贾樟柯、张艺谋、陈凯歌 · <em>《站台》《霸王别姬》《活着》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">泰国<br>00s-</div>
-          <div class="mov-body">
-            <div class="mov-name">阿彼察邦 · 东南亚缓慢电影</div>
-            <div class="mov-rep">阿彼察邦、拉夫·迪亚兹 · <em>《热带疾病》《翁达》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">美国<br>70s-</div>
-          <div class="mov-body">
-            <div class="mov-name">美国新好莱坞 · 独立电影</div>
-            <div class="mov-rep">卡萨维茨、贾木许、科波拉 · <em>《阴影》《陌生天堂》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-        <div class="mov-item" onclick="toggleMov(this)">
-          <div class="mov-era">罗马尼亚<br>00s-</div>
-          <div class="mov-body">
-            <div class="mov-name">罗马尼亚新浪潮</div>
-            <div class="mov-rep">蒙吉、波兰波胡 · <em>《四月三周两天》《无医可靠》</em></div>
-          </div>
-          <div class="mov-tick"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        </div>
-      </div>
-      <div class="ob-nav">
-        <button class="ob-back" onclick="goOb(1)">← 上一步</button>
-        <button class="ob-next" onclick="goOb(3)">下一步 →</button>
-      </div>
+    <div class="sub-form on" id="login-email">
+      <div class="field"><div class="flabel">邮箱</div><input class="finput" id="l-email" type="email" placeholder="your@email.com"></div>
+      <div class="field"><div class="flabel">密码</div><input class="finput" id="l-pw" type="password" placeholder="输入密码" onkeydown="if(event.key==='Enter')doLoginEmail()"></div>
+      <button class="sbtn" id="l-email-btn" onclick="doLoginEmail()">登录</button>
     </div>
-
-    <!-- Step 3: Style (cinephile language) -->
-    <div class="ob-step" id="ob3">
-      <div class="ob-dots">
-        <div class="od done"></div><div class="ol done"></div>
-        <div class="od done"></div><div class="ol done"></div>
-        <div class="od on"></div><div class="ol"></div>
-        <div class="od"></div><div class="ob-n">3 / 4</div>
+    <div class="sub-form" id="login-phone">
+      <div class="field"><div class="flabel">手机号</div>
+        <div class="fwrap"><input class="finput" id="l-phone" type="tel" placeholder="+86 13800000000" style="padding-right:96px">
+        <button class="send-btn" id="l-send-btn" onclick="doSendLogin()">发送验证码</button></div>
       </div>
-      <div class="ob-ey">观影口味</div>
-      <h2 class="ob-title">你喜欢什么<em>感觉</em><br>的电影？</h2>
-      <p class="ob-desc">用影迷的语言选，不是类型标签。可以多选。</p>
-
-      <div class="style-section">
-        <div class="style-sec-label">形态 / 流派</div>
-        <div class="style-tags">
-          <span class="stag on" onclick="toggleStag(this)">闷片</span>
-          <span class="stag on" onclick="toggleStag(this)">慢电影</span>
-          <span class="stag" onclick="toggleStag(this)">私电影</span>
-          <span class="stag on" onclick="toggleStag(this)">散文电影</span>
-          <span class="stag" onclick="toggleStag(this)">公路片</span>
-          <span class="stag" onclick="toggleStag(this)">纪录片式剧情片</span>
-          <span class="stag" onclick="toggleStag(this)">伪纪录片</span>
-          <span class="stag" onclick="toggleStag(this)">最小叙事</span>
-          <span class="stag" onclick="toggleStag(this)">史诗长片</span>
-          <span class="stag" onclick="toggleStag(this)">短片</span>
-          <span class="stag" onclick="toggleStag(this)">实验影像</span>
-          <span class="stag" onclick="toggleStag(this)">剧场电影</span>
-        </div>
-      </div>
-
-      <div class="style-section">
-        <div class="style-sec-label">感受 / 状态</div>
-        <div class="style-tags">
-          <span class="stag on" onclick="toggleStag(this)">看完需要安静一会儿</span>
-          <span class="stag" onclick="toggleStag(this)">那种说不清楚的难受</span>
-          <span class="stag on" onclick="toggleStag(this)">被一个镜头击中</span>
-          <span class="stag" onclick="toggleStag(this)">越看越孤独但停不下来</span>
-          <span class="stag" onclick="toggleStag(this)">适合凌晨独自看</span>
-          <span class="stag" onclick="toggleStag(this)">看完想给某人发消息</span>
-          <span class="stag" onclick="toggleStag(this)">喜欢没有答案的结局</span>
-          <span class="stag" onclick="toggleStag(this)">什么都没发生但什么都发生了</span>
-          <span class="stag" onclick="toggleStag(this)">不知道哭什么但眼眶热了</span>
-          <span class="stag" onclick="toggleStag(this)">看完想写点什么</span>
-        </div>
-      </div>
-
-      <div class="style-section">
-        <div class="style-sec-label">镜头 / 影像偏好</div>
-        <div class="style-tags">
-          <span class="stag on" onclick="toggleStag(this)">长镜头</span>
-          <span class="stag on" onclick="toggleStag(this)">黑白影像</span>
-          <span class="stag" onclick="toggleStag(this)">胶片质感</span>
-          <span class="stag" onclick="toggleStag(this)">固定机位</span>
-          <span class="stag" onclick="toggleStag(this)">不用配乐</span>
-          <span class="stag" onclick="toggleStag(this)">大量留白</span>
-          <span class="stag" onclick="toggleStag(this)">窗框构图</span>
-          <span class="stag" onclick="toggleStag(this)">自然光</span>
-          <span class="stag" onclick="toggleStag(this)">素人演员</span>
-          <span class="stag" onclick="toggleStag(this)">实地取景</span>
-        </div>
-      </div>
-
-      <div class="ob-nav">
-        <button class="ob-back" onclick="goOb(2)">← 上一步</button>
-        <button class="ob-next" onclick="goOb(4)">下一步 →</button>
-      </div>
+      <div class="field" id="l-code-wrap" style="display:none"><div class="flabel">验证码</div><input class="finput" id="l-code" type="text" placeholder="6位验证码" maxlength="6"></div>
+      <button class="sbtn" id="l-phone-btn" onclick="doVerifyLogin()" style="display:none">验证登录</button>
     </div>
-
-    <!-- Step 4: Directors -->
-    <div class="ob-step" id="ob4">
-      <div class="ob-dots">
-        <div class="od done"></div><div class="ol done"></div>
-        <div class="od done"></div><div class="ol done"></div>
-        <div class="od done"></div><div class="ol done"></div>
-        <div class="od on"></div><div class="ob-n">4 / 4</div>
-      </div>
-      <div class="ob-ey">最后一步</div>
-      <h2 class="ob-title">选几位你喜欢的<em>导演</em></h2>
-      <p class="ob-desc">帮我们找到与你品味相近的影迷。随时可在主页修改。</p>
-      <div class="dir-grid">
-        <div class="dir-item on" onclick="toggleDir(this)"><div class="dir-av">侯</div><div class="dir-name">侯孝贤</div><div class="dir-org">台湾</div></div>
-        <div class="dir-item on" onclick="toggleDir(this)"><div class="dir-av">小</div><div class="dir-name">小津安二郎</div><div class="dir-org">日本</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">黑</div><div class="dir-name">黑泽明</div><div class="dir-org">日本</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">塔</div><div class="dir-name">塔可夫斯基</div><div class="dir-org">苏联</div></div>
-        <div class="dir-item on" onclick="toggleDir(this)"><div class="dir-av">杨</div><div class="dir-name">杨德昌</div><div class="dir-org">台湾</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">贾</div><div class="dir-name">贾樟柯</div><div class="dir-org">中国</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">王</div><div class="dir-name">王家卫</div><div class="dir-org">香港</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">阿</div><div class="dir-name">阿彼察邦</div><div class="dir-org">泰国</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">基</div><div class="dir-name">基亚罗斯塔米</div><div class="dir-org">伊朗</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">戈</div><div class="dir-name">戈达尔</div><div class="dir-org">法国</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">安</div><div class="dir-name">安哲罗普洛斯</div><div class="dir-org">希腊</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">蔡</div><div class="dir-name">蔡明亮</div><div class="dir-org">台湾</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">伯</div><div class="dir-name">伯格曼</div><div class="dir-org">瑞典</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">法</div><div class="dir-name">法斯宾德</div><div class="dir-org">德国</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">贝</div><div class="dir-name">贝拉·塔尔</div><div class="dir-org">匈牙利</div></div>
-        <div class="dir-item" onclick="toggleDir(this)"><div class="dir-av">成</div><div class="dir-name">成濑巳喜男</div><div class="dir-org">日本</div></div>
-      </div>
-      <div class="ob-nav">
-        <button class="ob-back" onclick="goOb(3)">← 上一步</button>
-        <button class="ob-next" onclick="finishOnboard()">完成，进入 Cine Ours →</button>
-      </div>
-    </div>
-
+    <div class="sw">没有账号？<a onclick="switchMode('reg')">注册</a></div>
   </div>
-</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     WELCOME / LANDING
-══════════════════════════════════════════ -->
-<div class="screen" id="s-welcome">
-<div class="welcome-root">
-  <div class="welcome-nav">
-    <div class="logo">Cine <em>Ours</em></div>
-    <div style="display:flex;gap:10px">
-      <button style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:7px 18px;border:1px solid var(--b2);color:var(--ink3);transition:var(--tr)" onclick="showToast('前往个人主页')">完善主页</button>
-    </div>
-  </div>
-
-  <!-- Hero -->
-  <div class="welcome-hero">
-    <div class="wh-bg"></div>
-    <div class="welcome-av a1">余</div>
-    <h1 class="welcome-title a2">欢迎，<em>余小舟</em></h1>
-    <p class="welcome-sub a3">你的电影身份已经建立。基于你的品味，我们为你找到了几个正在举办的电影节。</p>
-    <div class="identity-tags a4" id="identity-tags">
-      <div class="itag">台湾新浪潮</div>
-      <div class="itag">日本松竹</div>
-      <div class="itag">闷片爱好者</div>
-      <div class="itag">散文电影</div>
-      <div class="itag">侯孝贤 · 杨德昌</div>
-    </div>
-  </div>
-
-  <!-- Festival recommendations -->
-  <div class="recs-section">
-    <div class="recs-header">
-      <div>
-        <div class="recs-title">为你推荐的电影节</div>
-        <div class="recs-sub" id="recs-sub">基于你选择的台湾新浪潮、散文电影偏好</div>
-      </div>
-      <a style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:opacity .2s" onclick="showToast('查看全部电影节')">查看全部 →</a>
-    </div>
-
-    <div class="recs-grid">
-
-      <!-- Featured rec — matched -->
-      <div class="rec-card featured">
-        <div class="rc-status">
-          <span class="rc-dot"></span>
-          <span class="rc-live">进行中 · 第4天</span>
-          <div class="rc-match">品味匹配 96%</div>
-        </div>
-        <div class="rc-title">黑泽明与<em>日本新浪潮</em><br>东京映画周</div>
-        <div class="rc-meta"><span>4月10日 — 4月17日</span><span>6部影片</span><span>每日解锁</span></div>
-        <div class="rc-desc">从《七武士》到《晚春》，重走那段黑白光影的黄金时代。今日放映：小津安二郎《晚春》——正好符合你的松竹偏好。</div>
-        <div class="rc-foot">
-          <div>
-            <div style="font-size:11px;color:var(--ink3);margin-bottom:6px">@CinemasHiro · 247人参与</div>
-            <div class="rc-progress"><div class="rc-pbar" style="width:55%"></div></div>
-            <div style="font-size:10px;color:var(--ink3);margin-top:4px">整体进度 55%</div>
-          </div>
-          <button class="rc-join" onclick="showToast('加入东京映画周')">立即参加 →</button>
-        </div>
-      </div>
-
-      <!-- Rec 2 -->
-      <div class="rec-card">
-        <div class="rc-status">
-          <span class="rc-dot-gold"></span>
-          <span class="rc-soon">即将开始 · 3天后</span>
-        </div>
-        <div class="rc-title">她在路上：<em>女性凝视</em>电影周</div>
-        <div class="rc-meta"><span>5月2日 — 5月8日</span><span>7部影片</span></div>
-        <div class="rc-desc">克莱尔·德尼、香特尔·阿克曼、阿涅斯·瓦尔达——散文电影的另一条脉络。</div>
-        <div class="rc-foot">
-          <div class="rc-host">@LunaWatch · 89人报名</div>
-          <button class="rc-join" onclick="showToast('报名女性凝视电影周')">报名</button>
-        </div>
-      </div>
-
-      <!-- Rec 3 -->
-      <div class="rec-card">
-        <div class="rc-status">
-          <span class="rc-dot-gold"></span>
-          <span class="rc-soon">即将开始</span>
-        </div>
-        <div class="rc-title">贝拉·塔尔<em>全集</em><br>缓慢观影周</div>
-        <div class="rc-meta"><span>5月10日起</span><span>7部影片</span></div>
-        <div class="rc-desc">《撒旦探戈》《都灵之马》——专为闷片爱好者设计的极限观影体验。</div>
-        <div class="rc-foot">
-          <div class="rc-host">@SlowCinema · 64人报名</div>
-          <button class="rc-join" onclick="showToast('报名贝拉·塔尔全集')">报名</button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Default recs (no taste data) — shown when skipped -->
-    <div id="default-recs" style="display:none;margin-top:32px;border-top:1px solid var(--b);padding-top:28px">
-      <div style="font-size:12px;color:var(--ink3);margin-bottom:16px;letter-spacing:.06em">当前最热门的电影节</div>
-      <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--b)">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s" onmouseover="this.style.background='var(--bg1)'" onmouseout="this.style.background=''">
-          <div>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span class="rc-dot"></span><span style="font-size:11px;color:#7EC98E;letter-spacing:.08em;text-transform:uppercase">进行中</span></div>
-            <div style="font-family:'Playfair Display',serif;font-size:15px">黑泽明与日本新浪潮 · 东京映画周</div>
-          </div>
-          <div style="text-align:right"><div style="font-family:'Playfair Display',serif;font-size:20px">247</div><div style="font-size:10px;color:var(--ink3)">人参与</div></div>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s" onmouseover="this.style.background='var(--bg1)'" onmouseout="this.style.background=''">
-          <div>
-            <div style="font-family:'Playfair Display',serif;font-size:15px;margin-bottom:4px">上海华语独立短片展</div>
-            <div style="font-size:11px;color:var(--ink3)">进行中 · 4月25日—5月5日</div>
-          </div>
-          <div style="text-align:right"><div style="font-family:'Playfair Display',serif;font-size:20px">203</div><div style="font-size:10px;color:var(--ink3)">人参与</div></div>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;transition:background .2s" onmouseover="this.style.background='var(--bg1)'" onmouseout="this.style.background=''">
-          <div>
-            <div style="font-family:'Playfair Display',serif;font-size:15px;margin-bottom:4px">九十年代港片重看</div>
-            <div style="font-size:11px;color:var(--ink3)">即将开始 · 5月5日起</div>
-          </div>
-          <div style="text-align:right"><div style="font-family:'Playfair Display',serif;font-size:20px">156</div><div style="font-size:10px;color:var(--ink3)">人报名</div></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── SCREENS ──────────────────────────────────────
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
-  document.getElementById('s-'+id).classList.add('on');
-  window.scrollTo(0,0);
-}
-function goLogin(){ showScreen('login'); }
-function goRegister(){ showScreen('register'); }
-function goOnboard(){ showScreen('onboard'); updateObBar(1); }
-function skipTo(id){
-  // Show default recs when skipping
-  document.getElementById('default-recs').style.display='block';
-  document.getElementById('identity-tags').innerHTML='';
-  document.querySelector('#s-welcome .welcome-sub').textContent='欢迎来到 Cine Ours。这里是目前最热门的电影节，你可以随时完善自己的品味偏好。';
-  document.getElementById('recs-sub').textContent='当前正在举办 / 最热门';
-  showScreen('welcome');
-}
-
-// ── FILMSTRIP ─────────────────────────────────────
-['fs-r','fs-l'].forEach(id=>{
-  var el=document.getElementById(id);
-  if(!el) return;
-  var h='';for(var i=0;i<36;i++) h+=`<div class="fs-f"><div class="fs-h"></div></div>`;
-  el.innerHTML=h;
-});
-
-// ── QUOTE ROTATION ────────────────────────────────
-var qi=0;
-var qs=document.querySelectorAll('#s-register .q-slide');
-var qd=[0,1,2,3].map(i=>document.getElementById('qd-'+i));
-setInterval(()=>{
-  qs[qi].classList.remove('on'); qd[qi]?.classList.remove('on');
-  qi=(qi+1)%qs.length;
-  qs[qi].classList.add('on'); qd[qi]?.classList.add('on');
-},4000);
-
-// ── METHOD TABS ───────────────────────────────────
-function switchMethod(type){
-  document.querySelectorAll('#s-register .mtab').forEach(t=>t.classList.remove('on'));
-  document.querySelectorAll('#s-register .method-form').forEach(f=>f.classList.remove('on'));
-  var tabs=document.querySelectorAll('#s-register .mtab');
-  var idx={wechat:0,phone:1,email:2}[type];
-  tabs[idx].classList.add('on');
-  document.getElementById('mf-'+type).classList.add('on');
-}
-function switchLoginMethod(type){
-  document.querySelectorAll('#s-login .mtab').forEach(t=>t.classList.remove('on'));
-  document.querySelectorAll('#s-login .method-form').forEach(f=>f.classList.remove('on'));
-  var tabs=document.querySelectorAll('#s-login .mtab');
-  var idx={wechat:0,phone:1,email:2}[type];
-  tabs[idx].classList.add('on');
-  document.getElementById('lmf-'+type).classList.add('on');
-}
-
-// ── PHONE / CODE ──────────────────────────────────
-var codeTimer=null;
-function sendCode(){
-  var phone=document.getElementById('reg-phone').value.trim();
-  if(!phone){showToast('请输入手机号');return;}
-  var btn=document.getElementById('send-code-btn');
-  btn.disabled=true;
-  document.getElementById('code-group').style.display='block';
-  document.getElementById('code-hint').style.display='block';
-  var sec=60;
-  btn.textContent=sec+'s 后重发';
-  codeTimer=setInterval(()=>{
-    sec--;
-    if(sec<=0){clearInterval(codeTimer);btn.disabled=false;btn.textContent='重新发送';}
-    else btn.textContent=sec+'s 后重发';
-  },1000);
-  showToast('验证码已发送至 '+phone);
-}
-function checkCodeInput(){
-  var v=document.getElementById('reg-code').value;
-  if(v.length===6){
-    document.getElementById('pw-group-phone').style.display='block';
-    document.getElementById('phone-submit').disabled=false;
-  }
-}
-function submitPhone(){ showToast('账号创建成功'); setTimeout(()=>goOnboard(),600); }
-
-// ── EMAIL VALIDATION ──────────────────────────────
-function validateName(){
-  var v=document.getElementById('reg-name').value.trim();
-  var h=document.getElementById('name-hint');
-  var f=document.getElementById('reg-name');
-  var s=document.getElementById('name-suf');
-  if(!v){f.className='ifield';h.className='ihint';return false}
-  if(v.length<2){f.className='ifield err';h.textContent='至少2个字符';h.className='ihint show';s.innerHTML='';return false}
-  f.className='ifield ok';h.className='ihint';
-  s.innerHTML='<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-5.5" stroke="#5C9E6A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  s.className='ifield-suf ok';return true;
-}
-function validateEmail(){
-  var v=document.getElementById('reg-email').value.trim();
-  var h=document.getElementById('email-hint');
-  var f=document.getElementById('reg-email');
-  var s=document.getElementById('email-suf');
-  if(!v){f.className='ifield';h.className='ihint';return false}
-  var ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  if(!ok){f.className='ifield err';h.textContent='请输入有效邮箱';h.className='ihint show';s.innerHTML='';return false}
-  f.className='ifield ok';h.className='ihint';
-  s.innerHTML='<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l4 4 5-5.5" stroke="#5C9E6A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  s.className='ifield-suf ok';return true;
-}
-function validatePw(inputId, strId){
-  var v=document.getElementById(inputId).value;
-  var str=document.getElementById(strId);
-  str.classList.toggle('show',v.length>0);
-  if(!v.length) return false;
-  var score=0;
-  if(v.length>=8)score++;if(/[A-Z]/.test(v))score++;
-  if(/[0-9]/.test(v))score++;if(/[^A-Za-z0-9]/.test(v))score++;
-  var prefix=strId==='pws-email'?'pb-e':'pb-p';
-  var lblId=strId==='pws-email'?'pwl-email':'pwl-phone';
-  var cls=score<=1?'w':score<=2?'m':'s';
-  [1,2,3,4].forEach(i=>{
-    var b=document.getElementById(prefix+i);
-    if(b) b.className='pw-bar'+(i<=score?' '+cls:'');
-  });
-  document.getElementById(lblId).textContent='强度：'+['','弱','一般','强','非常强'][score];
-  return score>=2;
-}
-function togglePw(inputId,btn){
-  var el=document.getElementById(inputId);
-  if(!el){// login pw field - find sibling
-    el=btn.previousElementSibling;
-  }
-  if(!el) return;
-  el.type=el.type==='text'?'password':'text';
-  btn.style.opacity=el.type==='text'?'.5':'1';
-}
-function submitEmail(){
-  if(!validateName()||!validateEmail()){showToast('请检查填写内容');return;}
-  showToast('创建中…');
-  setTimeout(()=>goOnboard(),700);
-}
-
-// ── ONBOARDING ────────────────────────────────────
-var obCur=1;
-function updateObBar(n){
-  document.getElementById('ob-bar').style.width=((n-1)/4*100)+'%';
-}
-function goOb(n){
-  document.getElementById('ob'+obCur).classList.remove('on');
-  obCur=n;
-  document.getElementById('ob'+obCur).classList.add('on');
-  updateObBar(n);
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function finishOnboard(){
-  document.getElementById('ob-bar').style.width='100%';
-  setTimeout(()=>showScreen('welcome'),350);
-}
-function toggleMov(el){el.classList.toggle('on')}
-function toggleStag(el){el.classList.toggle('on')}
-function toggleDir(el){el.classList.toggle('on')}
-
-// ── TOAST ─────────────────────────────────────────
-var toastT;
-function showToast(msg){
-  var t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200);
-}
-// ── KEYS ──────────────────────────────────────────
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'){
-    if(document.getElementById('s-register').classList.contains('on')) submitEmail();
-    if(document.getElementById('s-login').classList.contains('on')) goOnboard();
-  }
-});
-</script>
-<script>
-if(!window.shellNavigate){window.shellNavigate=function(p){if(window.parent&&window.parent.navigate)window.parent.navigate(p);else window.parent.postMessage({type:"navigate",payload:{page:p}},"*")};window.shellShowToast=function(m){if(window.parent&&window.parent.showToast)window.parent.showToast(m);else window.parent.postMessage({type:"toast",payload:{msg:m}},"*")}}
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
+// ── Init ─────────────────────────────────────────────
 const _sb = supabase.createClient(
   'https://dirrnojiybbwotuqeqww.supabase.co',
   'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP'
 );
 
-async function submitRegister() {
-  var name  = document.getElementById('reg-name')?.value.trim();
-  var email = document.getElementById('reg-email')?.value.trim();
-  var pw    = document.getElementById('reg-pw')?.value;
-  if (!name||!email||!pw) { alert('请填写所有必填项'); return; }
-  if (pw.length < 8) { alert('密码至少8位'); return; }
-  var btn = document.getElementById('email-submit');
-  if (btn) { btn.textContent='注册中…'; btn.disabled=true; }
+// ── Toast ─────────────────────────────────────────────
+let _tt;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+// ── Switch ────────────────────────────────────────────
+function switchMode(mode) {
+  ['reg','login'].forEach(m => {
+    document.getElementById('tab-' + m).classList.toggle('on', m === mode);
+    document.getElementById('fsec-' + m).classList.toggle('on', m === mode);
+  });
+}
+
+function switchMethod(mode, method) {
+  ['email','phone'].forEach(m => {
+    document.getElementById('mt-' + mode + '-' + m).classList.toggle('on', m === method);
+    const prefix = mode === 'reg' ? 'reg' : 'login';
+    document.getElementById(prefix + '-' + m).classList.toggle('on', m === method);
+  });
+}
+
+// ── On success ────────────────────────────────────────
+function onAuthSuccess(name) {
+  showToast('欢迎，' + (name || '影迷') + '！', 'ok');
+  setTimeout(() => {
+    try { window.parent.postMessage({ type: 'login' }, '*'); } catch(e) {}
+    try { if (window.parent.navigate) window.parent.navigate('home'); } catch(e) {}
+  }, 1200);
+}
+
+// ── 邮箱注册 ──────────────────────────────────────────
+async function doRegEmail() {
+  const name  = document.getElementById('r-name').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const pw    = document.getElementById('r-pw').value;
+  if (!name)  return showToast('请填写昵称', 'err');
+  if (!email) return showToast('请填写邮箱', 'err');
+  if (pw.length < 8) return showToast('密码至少8位', 'err');
+  const btn = document.getElementById('r-email-btn');
+  btn.textContent = '注册中…'; btn.disabled = true;
   try {
-    const { error } = await _sb.auth.signUp({ email, password: pw, options:{ data:{ username: name, display_name: name }}});
+    const { error } = await _sb.auth.signUp({
+      email, password: pw,
+      options: { data: { username: name, display_name: name } }
+    });
     if (error) throw error;
-    alert('注册成功！');
-    window.parent.postMessage({ type:'login' }, '*');
+    onAuthSuccess(name);
   } catch(e) {
-    alert('注册失败：' + e.message);
-    if (btn) { btn.textContent='创建账号'; btn.disabled=false; }
+    let msg = e.message || '注册失败';
+    if (msg.includes('already')) msg = '该邮箱已注册，请直接登录';
+    showToast(msg, 'err');
+    btn.textContent = '创建账号'; btn.disabled = false;
   }
 }
 
-async function submitLogin() {
-  var email = document.querySelector('#lmf-email input[type=email]')?.value.trim();
-  var pw    = document.querySelector('#lmf-email input[type=password]')?.value;
-  if (!email||!pw) { alert('请填写邮箱和密码'); return; }
+// ── 邮箱登录 ──────────────────────────────────────────
+async function doLoginEmail() {
+  const email = document.getElementById('l-email').value.trim();
+  const pw    = document.getElementById('l-pw').value;
+  if (!email || !pw) return showToast('请填写邮箱和密码', 'err');
+  const btn = document.getElementById('l-email-btn');
+  btn.textContent = '登录中…'; btn.disabled = true;
   try {
-    const { error } = await _sb.auth.signInWithPassword({ email, password: pw });
+    const { data, error } = await _sb.auth.signInWithPassword({ email, password: pw });
     if (error) throw error;
-    alert('登录成功');
-    window.parent.postMessage({ type:'login' }, '*');
-  } catch(e) { alert('邮箱或密码不正确'); }
+    onAuthSuccess(data.user?.user_metadata?.display_name);
+  } catch(e) {
+    showToast('邮箱或密码不正确', 'err');
+    btn.textContent = '登录'; btn.disabled = false;
+  }
+}
+
+// ── 手机号注册发码 ────────────────────────────────────
+async function doSendReg() {
+  let phone = document.getElementById('r-phone').value.trim().replace(/\s/g,'');
+  if (!phone) return showToast('请输入手机号', 'err');
+  if (!phone.startsWith('+')) phone = '+86' + phone;
+  const btn = document.getElementById('r-send-btn');
+  btn.disabled = true; btn.textContent = '发送中…';
+  try {
+    const { error } = await _sb.auth.signInWithOtp({ phone });
+    if (error) throw error;
+    showToast('验证码已发送', 'ok');
+    document.getElementById('r-code-wrap').style.display = '';
+    document.getElementById('r-phone-btn').style.display = '';
+    countdown(btn);
+  } catch(e) {
+    showToast('发送失败：' + (e.message || ''), 'err');
+    btn.disabled = false; btn.textContent = '发送验证码';
+  }
+}
+
+// ── 手机号注册验证 ────────────────────────────────────
+async function doVerifyReg() {
+  let phone = document.getElementById('r-phone').value.trim().replace(/\s/g,'');
+  const code = document.getElementById('r-code').value.trim();
+  if (!phone.startsWith('+')) phone = '+86' + phone;
+  if (!code) return showToast('请输入验证码', 'err');
+  const btn = document.getElementById('r-phone-btn');
+  btn.textContent = '验证中…'; btn.disabled = true;
+  try {
+    const { error } = await _sb.auth.verifyOtp({ phone, token: code, type: 'sms' });
+    if (error) throw error;
+    onAuthSuccess('影迷');
+  } catch(e) {
+    showToast('验证码不正确', 'err');
+    btn.textContent = '验证并注册'; btn.disabled = false;
+  }
+}
+
+// ── 手机号登录发码 ────────────────────────────────────
+async function doSendLogin() {
+  let phone = document.getElementById('l-phone').value.trim().replace(/\s/g,'');
+  if (!phone) return showToast('请输入手机号', 'err');
+  if (!phone.startsWith('+')) phone = '+86' + phone;
+  const btn = document.getElementById('l-send-btn');
+  btn.disabled = true; btn.textContent = '发送中…';
+  try {
+    const { error } = await _sb.auth.signInWithOtp({ phone });
+    if (error) throw error;
+    showToast('验证码已发送', 'ok');
+    document.getElementById('l-code-wrap').style.display = '';
+    document.getElementById('l-phone-btn').style.display = '';
+    countdown(btn);
+  } catch(e) {
+    showToast('发送失败：' + (e.message || ''), 'err');
+    btn.disabled = false; btn.textContent = '发送验证码';
+  }
+}
+
+// ── 手机号登录验证 ────────────────────────────────────
+async function doVerifyLogin() {
+  let phone = document.getElementById('l-phone').value.trim().replace(/\s/g,'');
+  const code = document.getElementById('l-code').value.trim();
+  if (!phone.startsWith('+')) phone = '+86' + phone;
+  if (!code) return showToast('请输入验证码', 'err');
+  const btn = document.getElementById('l-phone-btn');
+  btn.textContent = '验证中…'; btn.disabled = true;
+  try {
+    const { error } = await _sb.auth.verifyOtp({ phone, token: code, type: 'sms' });
+    if (error) throw error;
+    onAuthSuccess('影迷');
+  } catch(e) {
+    showToast('验证码不正确', 'err');
+    btn.textContent = '验证登录'; btn.disabled = false;
+  }
+}
+
+// ── 倒计时 ────────────────────────────────────────────
+function countdown(btn) {
+  let s = 60;
+  const t = setInterval(() => {
+    btn.textContent = s + 's后重发'; s--;
+    if (s < 0) { clearInterval(t); btn.disabled = false; btn.textContent = '重新发送'; }
+  }, 1000);
 }
 </script>
 </body>
