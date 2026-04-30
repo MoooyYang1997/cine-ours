@@ -434,6 +434,21 @@ input,textarea{font-family:'DM Sans',sans-serif;background:none;border:none;outl
   padding:10px 18px;border-top:1px solid var(--b);
 }
 
+/* ── REAL OFFLINE FESTIVALS ─────────────────────────── */
+.real-offline{border-bottom:1px solid var(--b);padding:18px 40px 24px}
+.real-offline-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:6px}
+.real-offline-sub{font-size:12px;color:var(--ink3);margin-bottom:14px}
+.real-offline-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b)}
+.real-offline-card{background:var(--bg);padding:14px 16px;cursor:pointer;transition:background .2s}
+.real-offline-card:hover{background:var(--bg1)}
+.real-offline-name{font-family:'Playfair Display',serif;font-size:16px;line-height:1.2;margin-bottom:5px}
+.real-offline-meta{font-size:11px;color:var(--ink3);margin-bottom:8px;display:flex;gap:8px;flex-wrap:wrap}
+.real-offline-desc{font-size:12px;color:var(--ink2);line-height:1.55}
+.real-offline-status{font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-top:8px}
+.real-offline-status.active{color:var(--green)}
+.real-offline-status.upcoming{color:var(--gold)}
+.real-offline-status.past{color:var(--ink4)}
+
 /* Toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(14px);
   background:var(--bg3);border:1px solid var(--b2);padding:10px 22px;
@@ -459,6 +474,14 @@ input,textarea{font-family:'DM Sans',sans-serif;background:none;border:none;outl
     <button class="nbtn nbtn-gold" onclick="toast('导出本届总结')">导出总结</button>
   </div>
 </nav>
+
+<section class="real-offline">
+  <h2 class="real-offline-title">线下影展数据库</h2>
+  <p class="real-offline-sub">从 Supabase `film_festivals_offline` 实时读取（最多12条）</p>
+  <div class="real-offline-grid" id="real-offline-grid">
+    <div class="real-offline-card"><div class="real-offline-desc">正在加载线下影展数据…</div></div>
+  </div>
+</section>
 
 <!-- HERO -->
 <div class="hero">
@@ -1166,6 +1189,7 @@ input,textarea{font-family:'DM Sans',sans-serif;background:none;border:none;outl
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 // ── FILMSTRIP ─────────────────────────────────────────────
 (function(){
@@ -1313,6 +1337,52 @@ function toast(m){
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape') document.getElementById('nearby-compose').classList.remove('open');
 });
+
+const OFFLINE_SUPABASE_URL = 'https://dirrnojiybbwotuqeqww.supabase.co';
+const OFFLINE_SUPABASE_KEY = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
+const _offlineSb = supabase.createClient(OFFLINE_SUPABASE_URL, OFFLINE_SUPABASE_KEY);
+
+function statusClass(status){
+  if (status === 'active') return 'active';
+  if (status === 'upcoming') return 'upcoming';
+  return 'past';
+}
+
+function statusText(status){
+  if (status === 'active') return '进行中';
+  if (status === 'upcoming') return '即将开始';
+  return '已结束';
+}
+
+async function loadOfflineFestivals(){
+  const grid = document.getElementById('real-offline-grid');
+  try {
+    const { data, error } = await _offlineSb
+      .from('film_festivals_offline')
+      .select('id,name,name_en,country,city,type,current_dates,current_status,description,current_edition')
+      .order('created_at', { ascending: false })
+      .limit(12);
+    if (error) throw error;
+    const list = data || [];
+    if (!list.length) {
+      grid.innerHTML = '<div class="real-offline-card"><div class="real-offline-desc">暂无线下影展数据</div></div>';
+      return;
+    }
+    grid.innerHTML = list.map(item => (
+      '<div class="real-offline-card">' +
+      '<div class="real-offline-name">' + (item.name || '未命名影展') + '</div>' +
+      '<div class="real-offline-meta"><span>' + (item.city || '城市待定') + '</span><span>' + (item.country || '国家待定') + '</span><span>' + (item.type || '类型待定') + '</span></div>' +
+      '<div class="real-offline-desc">' + ((item.description || '暂无简介').slice(0, 88)) + '</div>' +
+      '<div class="real-offline-meta" style="margin-top:6px"><span>' + (item.current_edition || '本届信息待定') + '</span><span>' + (item.current_dates || '档期待定') + '</span></div>' +
+      '<div class="real-offline-status ' + statusClass(item.current_status) + '">' + statusText(item.current_status) + '</div>' +
+      '</div>'
+    )).join('');
+  } catch (e) {
+    grid.innerHTML = '<div class="real-offline-card"><div class="real-offline-desc">加载失败：' + (e.message || '未知错误') + '</div></div>';
+  }
+}
+
+loadOfflineFestivals();
 </script>
 </body>
 </html>

@@ -620,7 +620,7 @@ function switchOff(el,id){el.closest('.off-tabs').querySelectorAll('.off-tab').f
 var ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');ro.unobserve(x.target)}})},{threshold:.07});
 document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
 // TMDB
-var TMDB_KEY='YOUR_API_KEY_HERE';
+var TMDB_KEY='68d50b44ac8b8e22f5426fc17fe4fe90';
 var TMDB_BASE='https://api.themoviedb.org/3';
 var TMDB_IMG='https://image.tmdb.org/t/p/w500';
 async function loadTMDB(){

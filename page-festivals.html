@@ -66,61 +66,95 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
     <button class="filter-btn" onclick="toggleF(this)">实验影像</button>
   </div>
 </div>
-<div class="fest-list">
-  <div class="fli" onclick="nav('festival-detail')">
-    <div class="fli-num">047</div>
-    <div class="fli-body">
-      <div class="fli-title">黑泽明与<em>日本新浪潮</em> — 东京映画周</div>
-      <div class="fli-meta"><span class="status-live"><span class="live-dot"></span>进行中 · 第4天</span><span>4月10日—4月17日</span><span>6部影片</span></div>
-    </div>
-    <div class="fli-r"><div class="fli-n">247</div><div class="fli-l">人打卡</div><button class="join-btn" onclick="event.stopPropagation();nav('festival-detail')">进入 →</button></div>
-  </div>
-  <div class="fli" onclick="toast('进入女性凝视电影周')">
-    <div class="fli-num">051</div>
-    <div class="fli-body">
-      <div class="fli-title">她在路上：<em>女性凝视</em>电影周</div>
-      <div class="fli-meta"><span class="status-soon">即将开始 · 3天后</span><span>5月2日—5月8日</span><span>7部影片</span></div>
-    </div>
-    <div class="fli-r"><div class="fli-n">89</div><div class="fli-l">人报名</div><button class="join-btn" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
-  </div>
-  <div class="fli" onclick="toast('进入港片重看')">
-    <div class="fli-num">055</div>
-    <div class="fli-body">
-      <div class="fli-title"><em>九十年代</em>港片重看</div>
-      <div class="fli-meta"><span class="status-soon">即将开始</span><span>5月5日起</span><span>8部影片</span></div>
-    </div>
-    <div class="fli-r"><div class="fli-n">156</div><div class="fli-l">人报名</div><button class="join-btn" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
-  </div>
-  <div class="fli" onclick="toast('进入深夜恐惧独立影展')">
-    <div class="fli-num">039</div>
-    <div class="fli-body">
-      <div class="fli-title">深夜恐惧<em>独立影展</em></div>
-      <div class="fli-meta"><span>招募中</span><span>5月15日起</span><span>5部影片</span></div>
-    </div>
-    <div class="fli-r"><div class="fli-n">32</div><div class="fli-l">人报名</div><button class="join-btn" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
-  </div>
-  <div class="fli" onclick="toast('进入法国电影大回顾')">
-    <div class="fli-num">058</div>
-    <div class="fli-body">
-      <div class="fli-title">新浪潮五十年：<em>法国电影</em>大回顾</div>
-      <div class="fli-meta"><span>招募中</span><span>5月20日起</span><span>10部影片</span></div>
-    </div>
-    <div class="fli-r"><div class="fli-n">74</div><div class="fli-l">人报名</div><button class="join-btn" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
-  </div>
-  <div class="fli" onclick="toast('进入塔可夫斯基全集')">
-    <div class="fli-num">060</div>
-    <div class="fli-body">
-      <div class="fli-title">塔可夫斯基<em>全集</em>观影周</div>
-      <div class="fli-meta"><span>招募中</span><span>6月1日起</span><span>7部影片</span></div>
-    </div>
-    <div class="fli-r"><div class="fli-n">118</div><div class="fli-l">人报名</div><button class="join-btn" onclick="event.stopPropagation();toast('报名成功')">报名</button></div>
-  </div>
-</div>
+<div class="fest-list" id="fest-list"></div>
 <script>
 function nav(p){if(window.parent&&window.parent.navigate)window.parent.navigate(p);else window.parent.postMessage({type:'navigate',payload:{page:p}},'*')}
 function toast(m){if(window.parent&&window.parent.showToast)window.parent.showToast(m);else window.parent.postMessage({type:'toast',payload:{msg:m}},'*')}
-function toggleF(btn){btn.closest('.filters').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on')}
+let festivalsCache = [];
+let currentFilter = '全部';
+
+function toggleF(btn){
+  btn.closest('.filters').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  currentFilter = btn.textContent.trim();
+  renderFestivals();
+}
+
+function fmtDateRange(start, end){
+  if (!start && !end) return '时间待公布';
+  const s = start ? start.slice(5).replace('-', '月') + '日' : '待定';
+  const e = end ? end.slice(5).replace('-', '月') + '日' : '待定';
+  return s + '—' + e;
+}
+
+function getStatus(f){
+  if (!f.start_date || !f.end_date) return { type: 'soon', text: '招募中' };
+  const now = new Date();
+  const start = new Date(f.start_date + 'T00:00:00');
+  const end = new Date(f.end_date + 'T23:59:59');
+  if (now >= start && now <= end) {
+    const day = Math.max(1, Math.ceil((now - start) / 86400000) + 1);
+    return { type: 'live', text: '进行中 · 第' + day + '天' };
+  }
+  if (now < start) return { type: 'soon', text: '即将开始' };
+  return { type: 'soon', text: '已结束' };
+}
+
+function matchFilter(f){
+  if (currentFilter === '全部') return true;
+  const status = getStatus(f);
+  if (currentFilter === '进行中') return status.type === 'live';
+  if (currentFilter === '即将开始') return status.text === '即将开始';
+  if (currentFilter === '招募中') return status.text === '招募中';
+  return (f.tags || []).some(tag => String(tag).includes(currentFilter));
+}
+
+function renderFestivals(){
+  const list = document.getElementById('fest-list');
+  const rows = festivalsCache.filter(matchFilter);
+  if (!rows.length) {
+    list.innerHTML = '<div class="fli"><div class="fli-body" style="grid-column:1/-1;color:var(--ink3)">暂无符合条件的电影节</div></div>';
+    return;
+  }
+  list.innerHTML = rows.map((f, i) => {
+    const status = getStatus(f);
+    const statusHtml = status.type === 'live'
+      ? '<span class="status-live"><span class="live-dot"></span>' + status.text + '</span>'
+      : '<span class="status-soon">' + status.text + '</span>';
+    return '<div class="fli" onclick="nav(\'festival-detail\')">' +
+      '<div class="fli-num">' + String(i + 1).padStart(3, '0') + '</div>' +
+      '<div class="fli-body">' +
+      '<div class="fli-title">' + (f.title || '未命名电影节') + '</div>' +
+      '<div class="fli-meta">' + statusHtml + '<span>' + fmtDateRange(f.start_date, f.end_date) + '</span><span>' + (f.film_count || 0) + '部影片</span></div>' +
+      '</div>' +
+      '<div class="fli-r"><div class="fli-n">' + (f.participant_count || 0) + '</div><div class="fli-l">人参与</div>' +
+      '<button class="join-btn" onclick="event.stopPropagation();nav(\'festival-detail\')">进入 →</button></div></div>';
+  }).join('');
+}
+
+async function loadFestivals(){
+  const list = document.getElementById('fest-list');
+  list.innerHTML = '<div class="fli"><div class="fli-body" style="grid-column:1/-1;color:var(--ink3)">正在加载电影节数据…</div></div>';
+  try {
+    const { data, error } = await window._sb
+      .from('festivals')
+      .select('id,title,start_date,end_date,film_count,participant_count,tags,created_at')
+      .eq('is_public', true)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    festivalsCache = data || [];
+    renderFestivals();
+  } catch (e) {
+    list.innerHTML = '<div class="fli"><div class="fli-body" style="grid-column:1/-1;color:var(--ink3)">加载失败：' + (e.message || '未知错误') + '</div></div>';
+  }
+}
+
+function bootFestivals(){
+  if (window._sb) loadFestivals();
+  else window.addEventListener('supabase-ready', loadFestivals, { once: true });
+}
 </script>
 <script src="supabase.js"></script>
+<script>bootFestivals();</script>
 </body>
 </html>
