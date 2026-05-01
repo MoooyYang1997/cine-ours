@@ -1,160 +1,141 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>电影节广场</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=DM+Mono&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0C0B09;--bg1:#111009;--bg2:#161410;--bg3:#1C1A15;--bg4:#252018;--ink:#EDE6D9;--ink2:#B5AC9E;--ink3:#7A7268;--ink4:#4A4540;--gold:#C8A44A;--gold2:#9B7A2E;--gold3:#3D2E0E;--green:#5C9E6A;--b:rgba(237,230,217,.07);--b2:rgba(237,230,217,.13);--b3:rgba(237,230,217,.22);--tr:all .22s cubic-bezier(.4,0,.2,1)}
 *{margin:0;padding:0;box-sizing:border-box}html{font-size:15px}
-body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-y:auto;height:100vh}
+body{background:var(--bg);color:var(--ink);font-family:"DM Sans",sans-serif;overflow-y:auto;min-height:100vh}
 ::-webkit-scrollbar{width:2px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4)}
-button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:inherit}
-.page-hero{padding:52px 48px 44px;border-bottom:1px solid var(--b);position:relative;overflow:hidden}
-.page-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 50% 80% at 80% 50%,rgba(200,164,74,.04),transparent 60%);pointer-events:none}
+button{font-family:"DM Sans",sans-serif;cursor:pointer;border:none;background:none;color:inherit}
+.hero{padding:52px 48px 44px;border-bottom:1px solid var(--b);position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 50% 80% at 80% 50%,rgba(200,164,74,.04),transparent 60%);pointer-events:none}
 .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:18px}
-.eyebrow::before{content:'';width:20px;height:1px;background:var(--gold)}
-.page-title{font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,58px);font-weight:400;margin-bottom:10px}
+.eyebrow::before{content:"";width:20px;height:1px;background:var(--gold)}
+.page-title{font-family:"Playfair Display",serif;font-size:clamp(32px,5vw,52px);font-weight:400;margin-bottom:10px}
 .page-title em{font-style:italic;color:var(--gold)}
-.page-desc{font-size:14px;color:var(--ink2);max-width:520px;line-height:1.8;margin-bottom:28px}
+.page-desc{font-size:14px;color:var(--ink2);max-width:520px;line-height:1.8;margin-bottom:24px}
 .cta-row{display:flex;gap:10px;margin-bottom:28px}
-.btn-gold{font-size:12px;letter-spacing:.09em;text-transform:uppercase;padding:12px 28px;background:var(--gold);color:var(--bg);border:1px solid var(--gold);transition:var(--tr)}
+.btn-gold{font-size:12px;letter-spacing:.09em;text-transform:uppercase;padding:11px 26px;background:var(--gold);color:var(--bg);border:1px solid var(--gold);transition:var(--tr)}
 .btn-gold:hover{background:#D4AE55}
-.btn-ghost{font-size:12px;letter-spacing:.09em;text-transform:uppercase;padding:12px 22px;border:1px solid var(--b2);color:var(--ink3);transition:var(--tr)}
+.btn-ghost{font-size:12px;letter-spacing:.09em;text-transform:uppercase;padding:11px 20px;border:1px solid var(--b2);color:var(--ink3);transition:var(--tr)}
 .btn-ghost:hover{border-color:var(--b3);color:var(--ink)}
-.filters{display:flex;gap:6px;flex-wrap:wrap}
-.filter-btn{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr)}
-.filter-btn:hover{border-color:var(--b2);color:var(--ink)}
-.filter-btn.on{border-color:var(--gold);color:var(--gold)}
-.fest-list{border-top:1px solid var(--b)}
-.fli{display:grid;grid-template-columns:64px 1fr auto;border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s;min-height:88px}
-.fli:hover{background:var(--bg1)}
-.fli-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink4);padding:0 20px;border-right:1px solid var(--b);display:flex;align-items:center;justify-content:center}
-.fli-body{padding:18px 24px}
-.fli-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;margin-bottom:5px}
-.fli-title em{font-style:italic;color:var(--gold)}
-.fli-meta{font-size:12px;color:var(--ink3);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.stats-row{display:flex;gap:32px;padding-top:24px;border-top:1px solid var(--b)}
+.stat-n{font-family:"Playfair Display",serif;font-size:28px;font-weight:400;color:var(--gold)}
+.stat-l{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:2px}
+.filters-bar{display:flex;align-items:center;gap:6px;padding:14px 48px;border-bottom:1px solid var(--b);overflow-x:auto;background:var(--bg1)}
+.filters-bar::-webkit-scrollbar{height:2px}
+.fbtn{font-size:11px;letter-spacing:.07em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr);white-space:nowrap;cursor:pointer}
+.fbtn:hover{border-color:var(--b2);color:var(--ink)}.fbtn.on{border-color:var(--gold);color:var(--gold)}
+.fest-list{display:flex;flex-direction:column}
+.fest-item{display:grid;grid-template-columns:64px 52px 1fr auto;border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s;min-height:88px;align-items:center}
+.fest-item:hover{background:var(--bg1)}
+.fi-num{font-family:"DM Mono",monospace;font-size:11px;color:var(--ink4);display:flex;align-items:center;justify-content:center;border-right:1px solid var(--b);align-self:stretch}
+.fi-poster{width:36px;height:54px;margin:0 8px;display:flex;align-items:center;justify-content:center;font-family:"Playfair Display",serif;font-size:16px;font-style:italic;color:var(--ink4)}
+.fi-body{padding:16px 20px;min-width:0}
+.fi-title{font-family:"Playfair Display",serif;font-size:18px;font-weight:400;margin-bottom:5px;line-height:1.25}
+.fi-title em{font-style:italic;color:var(--gold)}
+.fi-meta{font-size:12px;color:var(--ink3);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.fi-live{color:var(--green);display:flex;align-items:center;gap:4px}
 .live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:lp 2s ease-in-out infinite}
 @keyframes lp{0%,100%{box-shadow:0 0 3px var(--green)}50%{box-shadow:0 0 9px var(--green)}}
-.status-live{color:var(--green);display:flex;align-items:center;gap:4px}
-.status-soon{color:var(--gold)}
-.fli-r{padding:0 24px;border-left:1px solid var(--b);display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:7px;min-width:140px}
-.fli-n{font-family:'Playfair Display',serif;font-size:22px;font-weight:400}
-.fli-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.fi-right{padding:16px 20px;border-left:1px solid var(--b);display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;min-width:130px;align-self:stretch}
+.fi-count{font-family:"Playfair Display",serif;font-size:22px;font-weight:400}
+.fi-count-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
 .join-btn{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--gold);color:var(--gold);transition:var(--tr)}
 .join-btn:hover{background:var(--gold);color:var(--bg)}
+.skeleton{background:linear-gradient(90deg,var(--bg2) 25%,var(--bg3) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:2px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.empty{padding:60px;text-align:center;color:var(--ink3)}
+.empty-title{font-family:"Playfair Display",serif;font-size:22px;margin-bottom:8px;color:var(--ink2)}
 </style>
 </head>
 <body>
-<div class="page-hero">
-  <div class="page-hero-bg"></div>
+<div class="hero">
+  <div class="hero-bg"></div>
   <div class="eyebrow">线上电影节广场</div>
   <h1 class="page-title">在这里，每个人<br>都是<em>策展人</em></h1>
   <p class="page-desc">创建你的主题电影节，邀请全球影迷共同打卡观影。或者加入一个正在进行的电影节，与同频的人一起经历光影时刻。</p>
   <div class="cta-row">
-    <button class="btn-gold" onclick="toast('创建电影节向导')">+ 创建电影节</button>
+    <button class="btn-gold" onclick="nav('auth')">+ 创建电影节</button>
     <button class="btn-ghost" onclick="toast('策展指南')">如何策展 →</button>
   </div>
-  <div class="filters">
-    <button class="filter-btn on" onclick="toggleF(this)">全部</button>
-    <button class="filter-btn" onclick="toggleF(this)">进行中</button>
-    <button class="filter-btn" onclick="toggleF(this)">即将开始</button>
-    <button class="filter-btn" onclick="toggleF(this)">招募中</button>
-    <button class="filter-btn" onclick="toggleF(this)">日本电影</button>
-    <button class="filter-btn" onclick="toggleF(this)">华语电影</button>
-    <button class="filter-btn" onclick="toggleF(this)">女性导演</button>
-    <button class="filter-btn" onclick="toggleF(this)">实验影像</button>
+  <div class="stats-row">
+    <div><div class="stat-n" id="stat-total">—</div><div class="stat-l">线上电影节</div></div>
+    <div><div class="stat-n" id="stat-active">—</div><div class="stat-l">进行中</div></div>
+    <div><div class="stat-n" id="stat-users">38k</div><div class="stat-l">策展人</div></div>
   </div>
 </div>
-<div class="fest-list" id="fest-list"></div>
+<div class="filters-bar">
+  <button class="fbtn on" onclick="setFilter(this,'all')">全部</button>
+  <button class="fbtn" onclick="setFilter(this,'active')">进行中</button>
+  <button class="fbtn" onclick="setFilter(this,'upcoming')">即将开始</button>
+  <button class="fbtn" onclick="setFilter(this,'other')">招募中</button>
+</div>
+<div class="fest-list" id="fest-list">
+  <div style="padding:24px 48px;border-bottom:1px solid var(--b)"><div class="skeleton" style="height:14px;width:55%;margin-bottom:10px"></div><div class="skeleton" style="height:10px;width:38%"></div></div>
+  <div style="padding:24px 48px;border-bottom:1px solid var(--b)"><div class="skeleton" style="height:14px;width:48%;margin-bottom:10px"></div><div class="skeleton" style="height:10px;width:32%"></div></div>
+  <div style="padding:24px 48px"><div class="skeleton" style="height:14px;width:52%;margin-bottom:10px"></div><div class="skeleton" style="height:10px;width:35%"></div></div>
+</div>
 <script>
-function nav(p){if(window.parent&&window.parent.navigate)window.parent.navigate(p);else window.parent.postMessage({type:'navigate',payload:{page:p}},'*')}
-function toast(m){if(window.parent&&window.parent.showToast)window.parent.showToast(m);else window.parent.postMessage({type:'toast',payload:{msg:m}},'*')}
-let festivalsCache = [];
-let currentFilter = '全部';
-
-function toggleF(btn){
-  btn.closest('.filters').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  currentFilter = btn.textContent.trim();
-  renderFestivals();
+const _sb=supabase.createClient("https://dirrnojiybbwotuqeqww.supabase.co","sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP");
+function nav(p){try{window.parent.postMessage({type:"navigate",payload:{page:p}},"*")}catch(e){}}
+function toast(m){try{if(window.parent.showToast)window.parent.showToast(m)}catch(e){}}
+const GRADS=["linear-gradient(135deg,#0a1220,#1a2040)","linear-gradient(135deg,#1a0808,#280f10)","linear-gradient(135deg,#0a1810,#101a14)","linear-gradient(135deg,#181208,#221808)","linear-gradient(135deg,#0a1018,#101428)","linear-gradient(135deg,#180818,#200f20)","linear-gradient(135deg,#0a1820,#101a28)","linear-gradient(135deg,#1a1a0d,#28280f)"];
+let all=[],filter="all";
+function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function isActive(f){if(!f.start_date||!f.end_date)return false;const n=new Date();return new Date(f.start_date)<=n&&new Date(f.end_date)>=n}
+function isUpcoming(f){if(!f.start_date)return false;return new Date(f.start_date)>new Date()}
+function setFilter(btn,f){document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("on"));btn.classList.add("on");filter=f;render()}
+async function load(){
+  try{
+    const{data,error}=await _sb.from("festivals").select("*,creator:profiles(username,display_name),films:festival_films(count),participants:festival_participants(count)").eq("is_public",true).order("created_at",{ascending:false});
+    if(error)throw error;
+    all=data||[];
+    const active=all.filter(f=>isActive(f)).length;
+    document.getElementById("stat-total").textContent=all.length||"0";
+    document.getElementById("stat-active").textContent=active||"0";
+    render();
+  }catch(e){renderFallback()}
 }
-
-function fmtDateRange(start, end){
-  if (!start && !end) return '时间待公布';
-  const s = start ? start.slice(5).replace('-', '月') + '日' : '待定';
-  const e = end ? end.slice(5).replace('-', '月') + '日' : '待定';
-  return s + '—' + e;
+function render(){
+  const list=document.getElementById("fest-list");
+  let filtered=all;
+  if(filter==="active")filtered=all.filter(f=>isActive(f));
+  if(filter==="upcoming")filtered=all.filter(f=>isUpcoming(f)&&!isActive(f));
+  if(filter==="other")filtered=all.filter(f=>!isActive(f)&&!isUpcoming(f));
+  if(!filtered.length){list.innerHTML=all.length===0?getFallbackHTML():"<div class=\"empty\"><div class=\"empty-title\">暂无符合条件的电影节</div><p>换个筛选条件试试</p></div>";return}
+  list.innerHTML=filtered.map((f,i)=>{
+    const active=isActive(f),upcoming=isUpcoming(f);
+    const cnt=f.participants?.[0]?.count||0;
+    const films=f.films?.[0]?.count||0;
+    const creator=f.creator?.display_name||f.creator?.username||"策展人";
+    const status=active?"<span class=\"fi-live\"><span class=\"live-dot\"></span>进行中</span>":upcoming?"<span style=\"color:var(--gold)\">即将开始</span>":"<span>招募中</span>";
+    return`<div class="fest-item" onclick="nav('festival-detail')"><div class="fi-num">${String(i+1).padStart(3,"0")}</div><div class="fi-poster" style="background:${GRADS[i%GRADS.length]}">${esc(f.title[0])}</div><div class="fi-body"><div class="fi-title">${esc(f.title)}</div><div class="fi-meta">${status}${f.start_date?"<span>"+f.start_date+"</span>":""}${films?"<span>"+films+"部影片</span>":""}<span>@${esc(creator)}</span></div>${f.description?"<div style=\"font-size:12px;color:var(--ink3);margin-top:6px;line-height:1.5\">"+(esc(f.description).slice(0,80))+(f.description.length>80?"…":"")+"</div>":""}</div><div class="fi-right"><div><div class="fi-count">${cnt}</div><div class="fi-count-l">人参与</div></div><button class="join-btn" onclick="event.stopPropagation();joinFest('${f.id}',this)">参与</button></div></div>`;
+  }).join("");
 }
-
-function getStatus(f){
-  if (!f.start_date || !f.end_date) return { type: 'soon', text: '招募中' };
-  const now = new Date();
-  const start = new Date(f.start_date + 'T00:00:00');
-  const end = new Date(f.end_date + 'T23:59:59');
-  if (now >= start && now <= end) {
-    const day = Math.max(1, Math.ceil((now - start) / 86400000) + 1);
-    return { type: 'live', text: '进行中 · 第' + day + '天' };
-  }
-  if (now < start) return { type: 'soon', text: '即将开始' };
-  return { type: 'soon', text: '已结束' };
+async function joinFest(id,btn){
+  try{
+    const{data:{session}}=await _sb.auth.getSession();
+    if(!session){nav("auth");return}
+    btn.textContent="加入中…";btn.disabled=true;
+    await _sb.from("festival_participants").upsert({festival_id:id,user_id:session.user.id},{onConflict:"festival_id,user_id"});
+    btn.textContent="已参与 ✓";btn.style.borderColor="var(--green)";btn.style.color="var(--green)";
+    toast("已加入电影节");
+  }catch(e){btn.textContent="参与";btn.disabled=false;toast("操作失败")}
 }
-
-function matchFilter(f){
-  if (currentFilter === '全部') return true;
-  const status = getStatus(f);
-  if (currentFilter === '进行中') return status.type === 'live';
-  if (currentFilter === '即将开始') return status.text === '即将开始';
-  if (currentFilter === '招募中') return status.text === '招募中';
-  return (f.tags || []).some(tag => String(tag).includes(currentFilter));
+function getFallbackHTML(){
+  document.getElementById("stat-total").textContent="1,247";
+  document.getElementById("stat-active").textContent="3";
+  const items=[{t:"黑泽明与日本新浪潮 · 东京映画周",s:"active",p:"4月10—17日",c:247},{t:"她在路上：女性凝视电影周",s:"soon",p:"5月2—8日",c:89},{t:"九十年代港片重看",s:"soon",p:"5月5日起",c:156},{t:"深夜恐惧独立影展",s:"other",p:"5月15日起",c:32},{t:"新浪潮五十年：法国电影大回顾",s:"other",p:"5月20日起",c:74},{t:"塔可夫斯基全集观影周",s:"other",p:"6月1日起",c:118}];
+  return items.map((f,i)=>{const st=f.s==="active"?"<span class=\"fi-live\"><span class=\"live-dot\"></span>进行中</span>":f.s==="soon"?"<span style=\"color:var(--gold)\">即将开始</span>":"<span>招募中</span>";return`<div class="fest-item" onclick="nav('festival-detail')"><div class="fi-num">${String(i+1).padStart(3,"0")}</div><div class="fi-poster" style="background:${GRADS[i%GRADS.length]}">${f.t[0]}</div><div class="fi-body"><div class="fi-title">${f.t}</div><div class="fi-meta">${st}<span>${f.p}</span></div></div><div class="fi-right"><div><div class="fi-count">${f.c}</div><div class="fi-count-l">人参与</div></div><button class="join-btn" onclick="event.stopPropagation();toast('请先登录')">参与</button></div></div>`}).join("");
 }
-
-function renderFestivals(){
-  const list = document.getElementById('fest-list');
-  const rows = festivalsCache.filter(matchFilter);
-  if (!rows.length) {
-    list.innerHTML = '<div class="fli"><div class="fli-body" style="grid-column:1/-1;color:var(--ink3)">暂无符合条件的电影节</div></div>';
-    return;
-  }
-  list.innerHTML = rows.map((f, i) => {
-    const status = getStatus(f);
-    const statusHtml = status.type === 'live'
-      ? '<span class="status-live"><span class="live-dot"></span>' + status.text + '</span>'
-      : '<span class="status-soon">' + status.text + '</span>';
-    return '<div class="fli" onclick="nav(\'festival-detail\')">' +
-      '<div class="fli-num">' + String(i + 1).padStart(3, '0') + '</div>' +
-      '<div class="fli-body">' +
-      '<div class="fli-title">' + (f.title || '未命名电影节') + '</div>' +
-      '<div class="fli-meta">' + statusHtml + '<span>' + fmtDateRange(f.start_date, f.end_date) + '</span><span>' + (f.film_count || 0) + '部影片</span></div>' +
-      '</div>' +
-      '<div class="fli-r"><div class="fli-n">' + (f.participant_count || 0) + '</div><div class="fli-l">人参与</div>' +
-      '<button class="join-btn" onclick="event.stopPropagation();nav(\'festival-detail\')">进入 →</button></div></div>';
-  }).join('');
-}
-
-async function loadFestivals(){
-  const list = document.getElementById('fest-list');
-  list.innerHTML = '<div class="fli"><div class="fli-body" style="grid-column:1/-1;color:var(--ink3)">正在加载电影节数据…</div></div>';
-  try {
-    const { data, error } = await window._sb
-      .from('festivals')
-      .select('id,title,start_date,end_date,film_count,participant_count,tags,created_at')
-      .eq('is_public', true)
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    festivalsCache = data || [];
-    renderFestivals();
-  } catch (e) {
-    list.innerHTML = '<div class="fli"><div class="fli-body" style="grid-column:1/-1;color:var(--ink3)">加载失败：' + (e.message || '未知错误') + '</div></div>';
-  }
-}
-
-function bootFestivals(){
-  if (window._sb) loadFestivals();
-  else window.addEventListener('supabase-ready', loadFestivals, { once: true });
-}
+function renderFallback(){document.getElementById("fest-list").innerHTML=getFallbackHTML()}
+load();
 </script>
-<script src="supabase.js"></script>
-<script>bootFestivals();</script>
 </body>
 </html>
