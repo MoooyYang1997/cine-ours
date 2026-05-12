@@ -1,642 +1,502 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cine Ours — 首页</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#0C0B09;--bg1:#111009;--bg2:#161410;--bg3:#1C1A15;--bg4:#252018;--ink:#EDE6D9;--ink2:#B5AC9E;--ink3:#7A7268;--ink4:#4A4540;--gold:#C8A44A;--gold2:#9B7A2E;--gold3:#3D2E0E;--green:#5C9E6A;--b:rgba(237,230,217,.07);--b2:rgba(237,230,217,.13);--b3:rgba(237,230,217,.22);--tr:all .22s cubic-bezier(.4,0,.2,1)}
-*{margin:0;padding:0;box-sizing:border-box}html{font-size:15px;scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:"DM Sans",sans-serif;overflow-x:hidden}
-::-webkit-scrollbar{width:2px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4)}
-button{font-family:"DM Sans",sans-serif;cursor:pointer;border:none;background:none;color:inherit}
-/* HERO */
-.hero{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;border-bottom:1px solid var(--b)}
-.hero-l{padding:52px 48px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--b);position:relative;overflow:hidden}
-.hero-l-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 60% at 20% 50%,rgba(200,164,74,.055),transparent 55%)}
-.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:20px}
-.eyebrow::before{content:"";width:22px;height:1px;background:var(--gold)}
-.hero-title{font-family:"Playfair Display",serif;font-size:clamp(48px,6vw,82px);font-weight:400;line-height:1.0;margin-bottom:10px}
-.hero-title em{font-style:italic;color:var(--gold)}
-.hero-tagline{font-family:"Playfair Display",serif;font-size:clamp(14px,1.8vw,19px);font-style:italic;color:var(--ink2);margin-bottom:20px}
-.hero-desc{font-size:13px;color:var(--ink2);max-width:400px;line-height:1.85;margin-bottom:32px}
-.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
-.btn-gold{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:12px 28px;background:var(--gold);color:var(--bg);border:1px solid var(--gold);transition:var(--tr)}
-.btn-gold:hover{background:#D4AE55}
-.btn-ghost{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:12px 22px;border:1px solid var(--b2);color:var(--ink2);transition:var(--tr)}
-.btn-ghost:hover{border-color:var(--b3);color:var(--ink)}
-.hero-stats{display:flex;gap:0;border-top:1px solid var(--b)}
-.hero-stat{flex:1;padding:14px 0;border-right:1px solid var(--b)}
-.hero-stat:last-child{border-right:none}
-.hero-stat-n{font-family:"Playfair Display",serif;font-size:22px;font-weight:400;margin-bottom:2px}
-.hero-stat-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
-/* RIGHT PANEL */
-.hero-r{display:flex;flex-direction:column;background:var(--bg1)}
-.hr-header{padding:18px 24px 12px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.hr-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
-.hr-live{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--green)}
-.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:livp 2s ease-in-out infinite;flex-shrink:0}
-@keyframes livp{0%,100%{box-shadow:0 0 3px var(--green)}50%{box-shadow:0 0 10px var(--green)}}
-.hero-fest-list{flex:1;overflow-y:auto}
-.hf-card{border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s;overflow:hidden}
-.hf-card:hover{background:var(--bg2)}
-.hf-poster{width:100%;height:100px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
-.hf-poster-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.5)}
-.hf-poster-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 20%,rgba(12,11,9,.92) 100%)}
-.hf-poster-content{position:relative;z-index:1;padding:0 18px 10px;width:100%}
-.hf-status{font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:5px;margin-bottom:3px}
-.hf-title-over{font-family:"Playfair Display",serif;font-size:14px;font-weight:400;line-height:1.2;color:var(--ink)}
-.hf-title-over em{font-style:italic;color:var(--gold)}
-.hf-body{padding:10px 18px 12px}
-.hf-meta{font-size:11px;color:var(--ink3);margin-bottom:7px;display:flex;gap:10px}
-.hf-foot{display:flex;align-items:center;justify-content:space-between}
-.hf-host{font-size:11px;color:var(--ink3)}
-.hf-join{font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);transition:var(--tr)}
-.hf-join:hover{background:var(--gold);color:var(--bg)}
-.hf-pbar{height:2px;background:var(--bg4);margin-top:7px;overflow:hidden}
-.hf-pbar-fill{height:2px;background:var(--gold)}
-.hf-new{padding:16px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:var(--tr);border-bottom:1px solid var(--b)}
-.hf-new:hover{background:var(--bg2)}
-/* MAP */
-.map-teaser{height:400px;position:relative;overflow:hidden;cursor:pointer;border-bottom:1px solid var(--b)}
-#teaser-svg{width:100%;height:100%}
-.map-overlay{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(to right,rgba(12,11,9,.92) 0%,rgba(12,11,9,.4) 40%,transparent 70%),linear-gradient(to top,rgba(12,11,9,.5) 0%,transparent 30%)}
-.map-content{position:absolute;top:50%;left:48px;transform:translateY(-50%);z-index:3}
-.map-eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.map-eyebrow::before{content:"";width:16px;height:1px;background:var(--gold)}
-.map-title{font-family:"Playfair Display",serif;font-size:clamp(24px,4vw,44px);font-weight:400;line-height:1.1;margin-bottom:8px}
-.map-title em{font-style:italic;color:var(--gold)}
-.map-sub{font-size:13px;color:var(--ink2);max-width:380px;line-height:1.7;margin-bottom:18px}
-.map-btn{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:10px 22px;border:1px solid var(--gold);color:var(--gold);transition:var(--tr)}
-.map-teaser:hover .map-btn{background:var(--gold);color:var(--bg)}
-.map-chips{position:absolute;bottom:20px;right:48px;z-index:3;display:flex;gap:8px}
-.map-chip{background:rgba(17,16,9,.92);border:1px solid var(--b2);padding:7px 14px;backdrop-filter:blur(8px);display:flex;align-items:center;gap:8px}
-.map-chip-n{font-family:"Playfair Display",serif;font-size:16px}
-.map-chip-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
-/* TODAY */
-.sec-hd{display:flex;align-items:baseline;justify-content:space-between;padding:26px 48px 18px}
-.sec-title{font-family:"Playfair Display",serif;font-size:22px;font-weight:400}
-.sec-more{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:opacity .2s}
-.sec-more:hover{opacity:.7}
-.ticker{border-top:1px solid var(--b);border-bottom:1px solid var(--b);padding:9px 48px;background:var(--bg1);display:flex;align-items:center;gap:14px;overflow:hidden}
-.ticker-badge{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold3);padding:2px 8px;flex-shrink:0;white-space:nowrap}
-.ticker-track{overflow:hidden;flex:1}
-.ticker-inner{display:flex;gap:28px;white-space:nowrap;animation:tick 22s linear infinite}
-@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.ticker-item{font-size:12px;color:var(--ink2);cursor:pointer}
-.ticker-item:hover{color:var(--gold)}
-.ticker-sep{color:var(--ink4)}
-.today-hero{display:grid;grid-template-columns:auto 1fr;border-bottom:1px solid var(--b)}
-.today-date-col{padding:28px 32px;border-right:1px solid var(--b);background:var(--bg1);min-width:140px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-start}
-.today-year{font-family:"Playfair Display",serif;font-size:64px;font-weight:400;color:var(--bg4);line-height:1}
-.today-date{font-size:12px;color:var(--ink3);margin-bottom:auto;margin-top:4px}
-.today-badge{font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--gold3);color:var(--gold);margin-top:16px}
-.today-main{display:grid;grid-template-columns:1fr 300px}
-.tmc{padding:26px 32px;border-right:1px solid var(--b)}
-.tme-title{font-family:"Playfair Display",serif;font-size:clamp(18px,2.5vw,28px);font-weight:400;line-height:1.2;margin-bottom:10px}
-.tme-title em{font-style:italic;color:var(--gold)}
-.tme-body{font-size:13px;color:var(--ink2);line-height:1.8;margin-bottom:16px}
-.tme-link{color:var(--ink);border-bottom:1px solid var(--b2);cursor:pointer;transition:var(--tr)}
-.tme-link:hover{border-bottom-color:var(--gold);color:var(--gold)}
-.tme-img{position:relative;overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center;min-height:200px}
-.tme-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.5)}
-.tme-img-letter{font-family:"Playfair Display",serif;font-size:64px;font-style:italic;color:var(--bg4);position:relative;z-index:1}
-.tme-img-caption{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;background:linear-gradient(transparent,rgba(12,11,9,.9));font-size:11px;color:var(--ink2)}
-.tmdb-badge{position:absolute;top:10px;right:10px;background:rgba(12,11,9,.85);border:1px solid var(--b2);padding:3px 9px;font-size:10px;color:var(--ink3);display:flex;align-items:center;gap:4px;z-index:2}
-.tmdb-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green)}
-.events-strip{display:flex;overflow-x:auto;border-bottom:1px solid var(--b)}
-.events-strip::-webkit-scrollbar{height:2px}
-.ev-card{min-width:200px;border-right:1px solid var(--b);cursor:pointer;transition:background .2s;overflow:hidden;flex-shrink:0}
-.ev-card:hover{background:var(--bg1)}
-.ev-img{height:72px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.ev-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.45)}
-.ev-img-ov{position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(12,11,9,.8))}
-.ev-img-let{font-family:"Playfair Display",serif;font-size:28px;font-style:italic;color:var(--ink4);position:relative;z-index:1}
-.ev-body{padding:10px 14px 12px}
-.ev-year{font-family:"DM Mono",monospace;font-size:10px;color:var(--ink4);margin-bottom:3px}
-.ev-type{font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
-.premiere{color:var(--gold)}.award{color:#4A7FA5}.birth{color:var(--green)}.death{color:var(--ink4)}
-.ev-title{font-family:"Playfair Display",serif;font-size:12px;line-height:1.3;margin-bottom:3px}
-.ev-desc{font-size:11px;color:var(--ink3);line-height:1.4}
-/* NEWS */
-.news-wrap{padding:0 48px 24px}
-.news-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);padding:18px 0 12px;border-bottom:1px solid var(--b);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.news-live{color:var(--green);display:flex;align-items:center;gap:4px;font-size:10px}
-.news-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:livp 2s ease-in-out infinite}
-.news-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b)}
-.nc{background:var(--bg);cursor:pointer;transition:background .2s;overflow:hidden}
-.nc:hover{background:var(--bg1)}
-.nc-img{height:110px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.nc-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.5);transition:transform .4s}
-.nc:hover .nc-img-bg{transform:scale(1.04)}
-.nc-img-ov{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(12,11,9,.7) 100%)}
-.nc-img-let{font-family:"Playfair Display",serif;font-size:38px;font-style:italic;color:var(--ink4);position:relative;z-index:1}
-.nc-body{padding:12px 14px}
-.nc-src{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
-.nc-title{font-family:"Playfair Display",serif;font-size:13px;line-height:1.3;margin-bottom:4px}
-.nc-desc{font-size:11px;color:var(--ink3);line-height:1.5}
-.tmdb-note{text-align:center;padding:12px 0;font-size:11px;color:var(--ink4)}
-/* PICKER */
-.picker-sec{border-bottom:1px solid var(--b);background:var(--bg1)}
-.mood-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:0 48px 18px}
-.mood-card{padding:12px 14px;border:1px solid var(--b);cursor:pointer;transition:var(--tr)}
-.mood-card:hover{border-color:var(--b2);background:var(--bg2)}
-.mood-card.on{border-color:var(--gold);background:rgba(200,164,74,.05)}
-.mood-emoji{font-size:18px;margin-bottom:5px}
-.mood-name{font-size:11px;font-weight:500}
-.mood-desc{font-size:10px;color:var(--ink3);line-height:1.4;margin-top:3px}
-.ctx-row{display:flex;gap:6px;padding:0 48px 16px;align-items:center}
-.ctx-label{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:5px;margin-right:4px}
-.ctx-btn{font-size:11px;letter-spacing:.07em;text-transform:uppercase;padding:6px 12px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr)}
-.ctx-btn:hover{border-color:var(--b2);color:var(--ink)}.ctx-btn.on{border-color:var(--b2);color:var(--ink);background:var(--bg2)}
-.films-grid{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--b);border-left:1px solid var(--b);transition:opacity .3s}
-.films-grid.loading{opacity:.4;pointer-events:none}
-.pf{border-right:1px solid var(--b);border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s;overflow:hidden}
-.pf:hover{background:var(--bg2)}
-.pf-poster{aspect-ratio:2/3;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.pf-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .4s}
-.pf:hover .pf-bg{transform:scale(1.05)}
-.pf-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(12,11,9,.85) 0%,transparent 50%);opacity:0;transition:opacity .25s}
-.pf:hover .pf-ov{opacity:1}
-.pf-action{position:absolute;bottom:8px;left:8px;right:8px;z-index:1;font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:5px;background:var(--gold);color:var(--bg);text-align:center;opacity:0;transform:translateY(5px);transition:all .2s}
-.pf:hover .pf-action{opacity:1;transform:translateY(0)}
-.pf-letter{font-family:"Playfair Display",serif;font-size:44px;font-style:italic;color:var(--ink4);position:relative;z-index:1}
-.pf-info{padding:10px 12px}
-.pf-title{font-family:"Playfair Display",serif;font-size:12px;font-weight:400;margin-bottom:2px}
-.pf-meta{font-size:10px;color:var(--ink3);margin-bottom:4px}
-.pf-rating{font-family:"DM Mono",monospace;font-size:11px;color:var(--gold)}
-.curator-pick{padding:18px 48px;border-top:1px solid var(--b);display:flex;align-items:center;gap:20px;background:var(--bg2)}
-.cp-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);writing-mode:vertical-rl;transform:rotate(180deg);flex-shrink:0}
-.cp-poster{width:60px;height:88px;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative}
-.cp-poster-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.6)}
-.cp-poster-let{font-family:"Playfair Display",serif;font-size:24px;font-style:italic;color:var(--ink4);position:relative;z-index:1}
-.cp-film{font-family:"Playfair Display",serif;font-size:18px;font-weight:400;margin-bottom:5px;cursor:pointer}
-.cp-film em{font-style:italic;color:var(--gold)}
-.cp-reason{font-size:12px;color:var(--ink2);line-height:1.65}
-.cp-curator{font-size:11px;color:var(--ink3);margin-top:5px}
-/* OFFLINE */
-.off-sec{border-bottom:1px solid var(--b)}
-.off-tabs{display:flex;gap:0;border-bottom:1px solid var(--b);padding:0 48px}
-.off-tab{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:10px 16px;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:var(--tr)}
-.off-tab:hover{color:var(--ink)}.off-tab.on{color:var(--ink);border-bottom-color:var(--gold)}
-.off-panel{display:none}.off-panel.on{display:block}
-.off-feat{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--b)}
-.off-fi{position:relative;overflow:hidden;min-height:200px;display:flex;align-items:flex-end}
-.off-fi-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.45)}
-.off-fi-ov{position:absolute;inset:0;background:linear-gradient(to right,transparent 50%,var(--bg) 95%),linear-gradient(to top,rgba(12,11,9,.8) 0%,transparent 40%)}
-.off-fi-cnt{position:absolute;bottom:0;left:0;right:0;padding:20px 24px}
-.off-fb{padding:24px 28px;border-left:1px solid var(--b)}
-.off-ey{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.off-ey::before{content:"";width:14px;height:1px;background:var(--gold)}
-.off-ft{font-family:"Playfair Display",serif;font-size:clamp(20px,3vw,32px);font-weight:400;line-height:1.1;margin-bottom:8px}
-.off-ft em{font-style:italic;color:var(--gold)}
-.off-fm{font-size:12px;color:var(--ink3);margin-bottom:12px;display:flex;gap:12px;flex-wrap:wrap}
-.off-fd{font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:16px}
-.off-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px}
-.off-tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 9px;border:1px solid var(--b2);color:var(--ink3)}
-.off-tag.g{border-color:var(--gold3);color:var(--gold)}
-.off-btn{font-size:11px;letter-spacing:.09em;text-transform:uppercase;padding:9px 20px;border:1px solid var(--b2);color:var(--ink2);transition:var(--tr)}
-.off-btn:hover{border-color:var(--gold);color:var(--gold)}
-.off-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b)}
-.ofc{background:var(--bg);cursor:pointer;transition:background .2s;overflow:hidden}
-.ofc:hover{background:var(--bg1)}
-.ofc-img{height:90px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
-.ofc-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.45);transition:transform .4s}
-.ofc:hover .ofc-bg{transform:scale(1.05)}
-.ofc-ov{position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(12,11,9,.85))}
-.ofc-title{position:relative;z-index:1;font-family:"Playfair Display",serif;font-size:14px;font-weight:400;padding:0 12px 8px;line-height:1.2}
-.ofc-title em{font-style:italic;color:var(--gold)}
-.ofc-body{padding:10px 12px 14px}
-.ofc-status{font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:4px}
-.s-active{color:var(--green)}.s-soon{color:var(--gold)}.s-past{color:var(--ink4)}
-.ofc-meta{font-size:11px;color:var(--ink3);margin-bottom:6px;display:flex;gap:8px}
-.ofc-desc{font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:8px}
-.ofc-aw{font-size:10px;padding:2px 8px;border:1px solid var(--b);color:var(--ink3);display:inline-block;margin-right:4px;margin-bottom:4px}
-/* HISTORY */
-.hist-sec{border-bottom:1px solid var(--b)}
-.h-strip{display:flex;overflow-x:auto;border-top:1px solid var(--b)}
-.h-strip::-webkit-scrollbar{height:2px}
-.h-date{padding:24px 28px;border-right:1px solid var(--b);flex-shrink:0;min-width:110px;display:flex;flex-direction:column;justify-content:center}
-.h-date-big{font-family:"Playfair Display",serif;font-size:40px;font-weight:400;color:var(--ink4);line-height:1}
-.h-date-sub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-top:5px}
-.h-ev{width:200px;border-right:1px solid var(--b);cursor:pointer;transition:background .2s;flex-shrink:0;overflow:hidden}
-.h-ev:hover{background:var(--bg1)}
-.h-ev-img{height:72px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.h-ev-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.45)}
-.h-ev-ov{position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(12,11,9,.8))}
-.h-ev-let{font-family:"Playfair Display",serif;font-size:28px;font-style:italic;color:var(--ink4);position:relative;z-index:1}
-.h-ev-body{padding:10px 12px}
-.h-ev-no{font-family:"DM Mono",monospace;font-size:10px;color:var(--ink4);margin-bottom:4px}
-.h-ev-title{font-family:"Playfair Display",serif;font-size:12px;line-height:1.3;margin-bottom:3px}
-.h-ev-desc{font-size:11px;color:var(--ink3);line-height:1.4}
-/* CREATOR */
-.cc-sec{border-bottom:1px solid var(--b)}
-.cc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b)}
-.cc{background:var(--bg);padding:18px 16px;cursor:pointer;transition:background .2s;display:flex;flex-direction:column}
-.cc:hover{background:var(--bg1)}
-.cc-type{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
-.cc-title{font-family:"Playfair Display",serif;font-size:15px;font-weight:400;margin-bottom:6px;line-height:1.3}
-.cc-body{font-size:12px;color:var(--ink2);line-height:1.7;flex:1;margin-bottom:12px}
-.cc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--b);font-size:11px}
-.cc-stat{color:var(--ink3)}.cc-link{color:var(--gold)}
-/* FOOTER */
-footer{border-top:1px solid var(--b);padding:40px 48px 28px}
-.footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:32px;margin-bottom:28px}
-.footer-logo{font-family:"Playfair Display",serif;font-size:17px;margin-bottom:8px}
-.footer-logo em{font-style:italic;color:var(--gold)}
-.footer-desc{font-size:12px;color:var(--ink3);line-height:1.7}
-.footer-col-t{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-bottom:12px}
-.footer-col a{display:block;font-size:12px;color:var(--ink3);margin-bottom:7px;transition:color .2s;cursor:pointer}
-.footer-col a:hover{color:var(--ink)}
-.footer-btm{display:flex;justify-content:space-between;padding-top:18px;border-top:1px solid var(--b);font-size:11px;color:var(--ink4)}
-.sec-sep{display:flex;align-items:center;gap:18px;padding:0 48px;margin:36px 0 0}
-.sec-sep::before,.sec-sep::after{content:"";flex:1;height:1px;background:var(--b)}
-.sec-sep-t{font-family:"Playfair Display",serif;font-size:12px;font-style:italic;color:var(--ink4);white-space:nowrap}
-.reveal{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
-.reveal.in{opacity:1;transform:translateY(0)}
-</style>
-</head>
-<body>
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-l">
-    <div class="hero-l-bg"></div>
-    <div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column;justify-content:center">
-      <div class="eyebrow">Cinema of Our Own</div>
-      <h1 class="hero-title">Cine<br><em>Ours</em></h1>
-      <p class="hero-tagline">属于我们自己的电影空间</p>
-      <p class="hero-desc">举办你的电影节，分享剧本与灵感，与同频的人共同打卡观影。在世界地图上，发现每一个电影故事发生的地方。</p>
-      <div class="hero-cta">
-        <button class="btn-gold" onclick="nav('festivals')">探索电影节</button>
-        <button class="btn-ghost" onclick="nav('map')">世界电影地图</button>
-      </div>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-n" id="stat-fests">—</div><div class="hero-stat-l">线上电影节</div></div>
-      <div class="hero-stat"><div class="hero-stat-n" id="stat-users">—</div><div class="hero-stat-l">策展人</div></div>
-      <div class="hero-stat"><div class="hero-stat-n">96</div><div class="hero-stat-l">国家与地区</div></div>
-    </div>
-  </div>
-  <div class="hero-r">
-    <div class="hr-header">
-      <div class="hr-title">正在举办的电影节</div>
-      <div class="hr-live"><span class="live-dot"></span><span id="live-count">加载中</span></div>
-    </div>
-    <div class="hero-fest-list" id="hero-fest-list">
-      <div style="padding:24px 18px;border-bottom:1px solid var(--b)"><div style="height:12px;background:var(--bg3);border-radius:2px;margin-bottom:8px;width:70%"></div><div style="height:10px;background:var(--bg2);border-radius:2px;width:50%"></div></div>
-      <div style="padding:24px 18px;border-bottom:1px solid var(--b)"><div style="height:12px;background:var(--bg3);border-radius:2px;margin-bottom:8px;width:60%"></div><div style="height:10px;background:var(--bg2);border-radius:2px;width:45%"></div></div>
-      <div style="padding:24px 18px"><div style="height:12px;background:var(--bg3);border-radius:2px;margin-bottom:8px;width:65%"></div><div style="height:10px;background:var(--bg2);border-radius:2px;width:40%"></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- MAP TEASER -->
-<div class="map-teaser" onclick="nav('map')">
-  <svg id="teaser-svg"></svg>
-  <div class="map-overlay"></div>
-  <div class="map-content">
-    <div class="map-eyebrow">世界电影地图</div>
-    <h2 class="map-title">在地球上找到<br>每一个<em>电影现场</em></h2>
-    <p class="map-sub">4,800余处取景地标注，96个国家正在举办的影展，点击探索。</p>
-    <div class="map-btn">进入世界地图 →</div>
-  </div>
-  <div class="map-chips">
-    <div class="map-chip"><svg width="7" height="7"><circle cx="3.5" cy="3.5" r="3.5" fill="#C8A44A"/></svg><div><div class="map-chip-n" id="mc-fests">—</div><div class="map-chip-l">进行中影展</div></div></div>
-    <div class="map-chip"><svg width="7" height="7"><circle cx="3.5" cy="3.5" r="3.5" fill="#7EC98E"/></svg><div><div class="map-chip-n">4,800+</div><div class="map-chip-l">取景地</div></div></div>
-  </div>
-</div>
-
-<!-- TODAY -->
-<div style="border-bottom:1px solid var(--b)">
-  <div class="sec-hd"><div class="sec-title">影史今天 · 今日事件</div><span class="sec-more" onclick="nav('history')">完整日历 →</span></div>
-  <div class="ticker">
-    <div class="ticker-badge">实时动态</div>
-    <div class="ticker-track"><div class="ticker-inner" id="ticker-inner">
-      <span class="ticker-item">《悲情城市》4K修复版将于戛纳期间全球重映</span><span class="ticker-sep">·</span>
-      <span class="ticker-item">洪常秀新作入围2026年柏林主竞赛单元</span><span class="ticker-sep">·</span>
-      <span class="ticker-item">上海国际电影节公布2026年主竞赛评委阵容</span><span class="ticker-sep">·</span>
-      <span class="ticker-item">贝拉·塔尔宣布新项目开发中，预计2027年完成</span><span class="ticker-sep">·</span>
-      <span class="ticker-item">《悲情城市》4K修复版将于戛纳期间全球重映</span><span class="ticker-sep">·</span>
-      <span class="ticker-item">洪常秀新作入围2026年柏林主竞赛单元</span><span class="ticker-sep">·</span>
-      <span class="ticker-item">上海国际电影节公布2026年主竞赛评委阵容</span><span class="ticker-sep">·</span>
-      <span class="ticker-item">贝拉·塔尔宣布新项目开发中，预计2027年完成</span><span class="ticker-sep">·</span>
-    </div></div>
-  </div>
-  <div class="today-hero">
-    <div class="today-date-col"><div class="today-year">1993</div><div class="today-date">4月29日</div><div class="today-badge">首映</div></div>
-    <div class="today-main">
-      <div class="tmc">
-        <h2 class="tme-title"><span class="tme-link" onclick="nav('history')">《霸王别姬》</span>在<em>戛纳</em>举行世界首映</h2>
-        <p class="tme-body"><span class="tme-link">陈凯歌</span>执导，<span class="tme-link">张国荣</span>、<span class="tme-link">张丰毅</span>、<span class="tme-link">巩俐</span>主演。随后以全票通过摘得<strong style="color:var(--gold)">金棕榈奖</strong>，成为迄今为止唯一获此殊荣的华语影片。</p>
-        <button class="btn-ghost" style="font-size:11px;padding:8px 18px" onclick="nav('history')">查看今日完整影史 →</button>
-      </div>
-      <div class="tme-img">
-        <div class="tme-img-bg" id="tme-img-bg" style="background:linear-gradient(135deg,#1a0808,#280f10)"></div>
-        <div class="tme-img-letter" id="tme-letter">霸</div>
-        <div class="tme-img-caption">《霸王别姬》1993 · 陈凯歌 · 第46届戛纳金棕榈</div>
-        <div class="tmdb-badge" id="tmdb-badge"><span class="tmdb-dot"></span>TMDB</div>
-      </div>
-    </div>
-  </div>
-  <div class="events-strip">
-    <div class="ev-card" onclick="nav('history')"><div class="ev-img"><div class="ev-img-bg" style="background:linear-gradient(135deg,#0a1018,#101428)"></div><div class="ev-img-ov"></div><div class="ev-img-let">一</div></div><div class="ev-body"><div class="ev-year">2000</div><div class="ev-type premiere">首映</div><div class="ev-title">杨德昌《一一》戛纳首映</div><div class="ev-desc">获最佳导演，成为遗作</div></div></div>
-    <div class="ev-card" onclick="nav('history')"><div class="ev-img"><div class="ev-img-bg" style="background:linear-gradient(135deg,#181208,#221808)"></div><div class="ev-img-ov"></div><div class="ev-img-let">赤</div></div><div class="ev-body"><div class="ev-year">1956</div><div class="ev-type death">辞世</div><div class="ev-title">沟口健二完成最后作品</div><div class="ev-desc">《赤线地带》，同年因白血病离世</div></div></div>
-    <div class="ev-card" onclick="nav('history')"><div class="ev-img"><div class="ev-img-bg" style="background:linear-gradient(135deg,#0a1820,#101a28)"></div><div class="ev-img-ov"></div><div class="ev-img-let">启</div></div><div class="ev-body"><div class="ev-year">1979</div><div class="ev-type award">获奖</div><div class="ev-title">《现代启示录》并列金棕榈</div><div class="ev-desc">与《铁皮鼓》共同获奖</div></div></div>
-    <div class="ev-card" onclick="nav('history')"><div class="ev-img"><div class="ev-img-bg" style="background:linear-gradient(135deg,#0a1810,#101a14)"></div><div class="ev-img-ov"></div><div class="ev-img-let">绿</div></div><div class="ev-body"><div class="ev-year">1987</div><div class="ev-type award">获奖</div><div class="ev-title">侯麦《绿光》威尼斯金狮</div><div class="ev-desc">当年最具争议的金狮</div></div></div>
-  </div>
-  <div class="news-wrap">
-    <div class="news-label">今日影坛动态<div class="news-live"><span class="news-dot"></span>TMDB实时</div></div>
-    <div class="news-grid" id="news-grid">
-      <div class="nc"><div class="nc-img"><div class="nc-img-bg" style="background:linear-gradient(135deg,#0a1018,#101428)"></div><div class="nc-img-ov"></div><div class="nc-img-let">悲</div></div><div class="nc-body"><div class="nc-src">修复重映</div><div class="nc-title">《悲情城市》4K修复版宣布全球重映</div><div class="nc-desc">侯孝贤经典将在戛纳期间首映，随后两岸三地同步上映。</div></div></div>
-      <div class="nc"><div class="nc-img"><div class="nc-img-bg" style="background:linear-gradient(135deg,#0a1810,#101a14)"></div><div class="nc-img-ov"></div><div class="nc-img-let">洪</div></div><div class="nc-body"><div class="nc-src">柏林电影节</div><div class="nc-title">洪常秀新作入围2026年柏林主竞赛</div><div class="nc-desc">继《小说家的电影》后再度入围柏林，延续极简主义风格。</div></div></div>
-      <div class="nc"><div class="nc-img"><div class="nc-img-bg" style="background:linear-gradient(135deg,#1a0808,#221010)"></div><div class="nc-img-ov"></div><div class="nc-img-let">沪</div></div><div class="nc-body"><div class="nc-src">上海国际电影节</div><div class="nc-title">上影节2026年主竞赛评委阵容公布</div><div class="nc-desc">评委会主席由韩国导演奉俊昊担任，将于6月在上海主持金爵奖评审。</div></div></div>
-    </div>
-    <div class="tmdb-note" id="tmdb-note">正在从 TMDB 加载实时数据…</div>
-  </div>
-</div>
-
-<!-- FILM PICKER -->
-<div class="picker-sec">
-  <div class="sec-hd" style="padding-bottom:16px">
-    <div class="sec-title">今天看什么</div>
-    <button onclick="shuffleFilms()" style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);border:1px solid var(--b);padding:6px 14px;transition:var(--tr)" onmouseover="this.style.borderColor='var(--b2)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--b)';this.style.color='var(--ink3)'">换一批</button>
-  </div>
-  <div class="mood-grid">
-    <div class="mood-card on" onclick="setMood(this,'quiet')"><div class="mood-emoji">🌧</div><div class="mood-name">需要安静</div><div class="mood-desc">看完想一个人坐着</div></div>
-    <div class="mood-card" onclick="setMood(this,'moved')"><div class="mood-emoji">🌊</div><div class="mood-name">想被打动</div><div class="mood-desc">眼眶热了说不出话</div></div>
-    <div class="mood-card" onclick="setMood(this,'shock')"><div class="mood-emoji">⚡</div><div class="mood-name">想被震撼</div><div class="mood-desc">视觉或叙事的冲击</div></div>
-    <div class="mood-card" onclick="setMood(this,'midnight')"><div class="mood-emoji">🌙</div><div class="mood-name">深夜独处</div><div class="mood-desc">凌晨独自看</div></div>
-    <div class="mood-card" onclick="setMood(this,'light')"><div class="mood-emoji">☕</div><div class="mood-name">轻松一点</div><div class="mood-desc">不沉重，但不烂俗</div></div>
-    <div class="mood-card" onclick="setMood(this,'random')"><div class="mood-emoji">🎲</div><div class="mood-name">随机一部</div><div class="mood-desc">让命运决定今晚</div></div>
-  </div>
-  <div class="ctx-row">
-    <div class="ctx-label">现在是</div>
-    <button class="ctx-btn" onclick="setCtx(this)">下午</button>
-    <button class="ctx-btn on" onclick="setCtx(this)">晚上</button>
-    <button class="ctx-btn" onclick="setCtx(this)">深夜</button>
-    <div style="width:1px;height:14px;background:var(--b2);margin:0 4px"></div>
-    <button class="ctx-btn on" onclick="setCtx(this)">☁ 多云</button>
-    <button class="ctx-btn" onclick="setCtx(this)">🌧 下雨</button>
-    <button class="ctx-btn" onclick="setCtx(this)">☀ 晴天</button>
-  </div>
-  <div class="films-grid" id="films-grid"></div>
-  <div class="curator-pick">
-    <div class="cp-label">今晚策展人手选</div>
-    <div class="cp-poster"><div class="cp-poster-bg" style="background:linear-gradient(135deg,#0a1410,#101a14)"></div><span class="cp-poster-let">春</span></div>
-    <div>
-      <div class="cp-film" onclick="toast('查看晚春详情')"><em>《晚春》</em> · 小津安二郎 · 1949</div>
-      <div class="cp-reason">今天是4月29日。1956年的这一天，沟口健二完成了他最后一部作品。而《晚春》是小津同时代的回答——两个人对"告别"这件事，用截然不同的方式说了同一句话。今晚，108分钟，重新想想有些东西放手了才算真的拥有过。</div>
-      <div class="cp-curator">by @CinemasHiro · 今日策展人</div>
-    </div>
-  </div>
-</div>
-
-<!-- OFFLINE FESTIVALS -->
-<div class="off-sec reveal">
-  <div class="sec-hd"><div class="sec-title">线下影展</div><span class="sec-more" onclick="nav('offline-festival')">全部影展 →</span></div>
-  <div class="off-tabs">
-    <div class="off-tab on" onclick="switchOff(this,'focus')">重点影展</div>
-    <div class="off-tab" onclick="switchOff(this,'alist')">世界A类</div>
-    <div class="off-tab" onclick="switchOff(this,'cn')">中国三大</div>
-    <div class="off-tab" onclick="switchOff(this,'asia')">亚洲影展</div>
-  </div>
-  <div class="off-panel on" id="opanel-focus" style="min-height:200px">
-    <div style="padding:24px 48px;color:var(--ink3);font-size:13px">正在加载影展数据…</div>
-  </div>
-  <div class="off-panel" id="opanel-alist"></div>
-  <div class="off-panel" id="opanel-cn"></div>
-  <div class="off-panel" id="opanel-asia"></div>
-</div>
-
-<!-- HISTORY -->
-<div class="hist-sec reveal">
-  <div class="sec-hd"><div class="sec-title">影史今天</div><span class="sec-more" onclick="nav('history')">完整日历 →</span></div>
-  <div class="h-strip">
-    <div class="h-date"><div class="h-date-big">4.29</div><div class="h-date-sub">April 29</div></div>
-    <div class="h-ev" onclick="nav('history')"><div class="h-ev-img"><div class="h-ev-bg" style="background:linear-gradient(135deg,#1a0808,#280f10)"></div><div class="h-ev-ov"></div><div class="h-ev-let">霸</div></div><div class="h-ev-body"><div class="h-ev-no">01 / 1993</div><div class="h-ev-title">《霸王别姬》戛纳世界首映</div><div class="h-ev-desc">全票夺金棕榈，华语唯一</div></div></div>
-    <div class="h-ev" onclick="nav('history')"><div class="h-ev-img"><div class="h-ev-bg" style="background:linear-gradient(135deg,#181208,#221808)"></div><div class="h-ev-ov"></div><div class="h-ev-let">赤</div></div><div class="h-ev-body"><div class="h-ev-no">02 / 1956</div><div class="h-ev-title">沟口健二完成最后作品</div><div class="h-ev-desc">同年因白血病在京都辞世</div></div></div>
-    <div class="h-ev" onclick="nav('history')"><div class="h-ev-img"><div class="h-ev-bg" style="background:linear-gradient(135deg,#0a1218,#101828)"></div><div class="h-ev-ov"></div><div class="h-ev-let">一</div></div><div class="h-ev-body"><div class="h-ev-no">03 / 2000</div><div class="h-ev-title">杨德昌《一一》戛纳首映</div><div class="h-ev-desc">荣获最佳导演，成为遗作</div></div></div>
-    <div class="h-ev" onclick="nav('history')"><div class="h-ev-img"><div class="h-ev-bg" style="background:linear-gradient(135deg,#0a1820,#101a28)"></div><div class="h-ev-ov"></div><div class="h-ev-let">启</div></div><div class="h-ev-body"><div class="h-ev-no">04 / 1979</div><div class="h-ev-title">《现代启示录》并列金棕榈</div><div class="h-ev-desc">戛纳史上最具争议的决定</div></div></div>
-  </div>
-</div>
-
-<!-- CREATOR -->
-<div class="cc-sec reveal">
-  <div class="sec-hd"><div class="sec-title">近期创作</div><span class="sec-more" onclick="nav('creator')">进入创作室 →</span></div>
-  <div class="cc-grid">
-    <div class="cc"><div class="cc-type">剧本 · 初稿</div><div class="cc-title">《候鸟》第一幕</div><div class="cc-body">两个陌生人在机场滞留18小时。灵感来自侯孝贤《咖啡时光》……</div><div class="cc-foot"><span class="cc-stat">34次反馈</span><span class="cc-link" onclick="nav('creator')">阅读 →</span></div></div>
-    <div class="cc"><div class="cc-type">灵感板 · 50帧</div><div class="cc-title">关于孤独的光影</div><div class="cc-body">从塔可夫斯基的水面倒影到阿彼察邦的丛林余晖……</div><div class="cc-foot"><span class="cc-stat">23人收藏</span><span class="cc-link" onclick="nav('creator')">查看 →</span></div></div>
-    <div class="cc" style="align-items:center;justify-content:center;text-align:center;min-height:140px" onclick="nav('creator')"><div style="font-size:20px;color:var(--ink4);margin-bottom:7px">+</div><div style="font-size:13px;color:var(--ink3)">分享你的创作</div></div>
-  </div>
-</div>
-
-<footer>
-  <div class="footer-grid">
-    <div><div class="footer-logo">Cine <em>Ours</em></div><p class="footer-desc">属于我们自己的电影空间。每个人都是策展人，每次观影都是一次相遇。</p></div>
-    <div class="footer-col"><div class="footer-col-t">平台</div><a onclick="nav('festivals')">电影节广场</a><a onclick="nav('map')">世界电影地图</a><a onclick="nav('creator')">创作空间</a><a onclick="nav('history')">影史今天</a></div>
-    <div class="footer-col"><div class="footer-col-t">影展</div><a onclick="nav('offline-festival')">香港国际电影节</a><a onclick="nav('offline-festival')">北京国际电影节</a><a onclick="nav('offline-festival')">上海国际电影节</a><a onclick="nav('offline-festival')">戛纳国际电影节</a></div>
-    <div class="footer-col"><div class="footer-col-t">关于</div><a>关于我们</a><a>加入团队</a><a>联系我们</a></div>
-  </div>
-  <div class="footer-btm"><span>© 2026 Cine Ours · Cinema of Our Own</span><span>做属于我们的电影时光</span></div>
-</footer>
-
-<div id="toast-el" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--bg3);border:1px solid var(--b2);padding:10px 22px;font-size:13px;color:var(--ink2);z-index:800;opacity:0;transition:all .25s;white-space:nowrap;pointer-events:none"></div>
-
-<script>
-const _sb=supabase.createClient("https://dirrnojiybbwotuqeqww.supabase.co","sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP");
-const TMDB_KEY="68d50b44ac8b8e22f5426fc17fe4fe90";
-const TMDB_BASE="https://api.themoviedb.org/3";
-const TMDB_IMG="https://image.tmdb.org/t/p/w500";
-const GRADS=["linear-gradient(135deg,#0a1220,#1a2040)","linear-gradient(135deg,#1a0808,#280f10)","linear-gradient(135deg,#0a1810,#101a14)","linear-gradient(135deg,#181208,#221808)","linear-gradient(135deg,#0a1018,#101428)","linear-gradient(135deg,#180818,#200f20)","linear-gradient(135deg,#0a1820,#101a28)","linear-gradient(135deg,#1a1a0d,#28280f)","linear-gradient(135deg,#0a1818,#101f20)","linear-gradient(135deg,#1a1008,#221808)","linear-gradient(135deg,#080a1a,#10122a)","linear-gradient(135deg,#181410,#201c14)"];
-
-function nav(p){try{if(window.parent&&window.parent!==window){window.parent.postMessage({type:"navigate",payload:{page:p}},"*")}}catch(e){}}
-let _tt;
-function toast(m){const t=document.getElementById("toast-el");t.textContent=m;t.style.opacity="1";t.style.transform="translateX(-50%) translateY(0)";clearTimeout(_tt);_tt=setTimeout(()=>{t.style.opacity="0";t.style.transform="translateX(-50%) translateY(14px)"},2200)}
-
-// ── Festivals from Supabase ───────────────────────────
-async function loadFestivals(){
-  try{
-    const{data,error}=await _sb.from("festivals").select("*,creator:profiles(username,display_name),participants:festival_participants(count)").eq("is_public",true).order("created_at",{ascending:false}).limit(5);
-    if(error)throw error;
-    const all=data||[];
-    document.getElementById("stat-fests").textContent=all.length>0?all.length+"+":"0";
-    document.getElementById("stat-users").textContent=all.length>0?"38k+":"0";
-    const activeCount=all.filter(f=>{if(!f.start_date||!f.end_date)return false;const n=new Date();return new Date(f.start_date)<=n&&new Date(f.end_date)>=n}).length;
-    document.getElementById("live-count").textContent=activeCount+"个进行中";
-    document.getElementById("mc-fests").textContent=activeCount||"—";
-    if(all.length>0){
-      renderHeroFests(all);
-    } else {
-      renderHeroFestsFallback();
+<div class="ph-root">
+    <style>
+    /* ── Reset & Base ── */
+    .ph-root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#111;color:#ede8df;min-height:100%;box-sizing:border-box}
+    body{margin:0;background:#111}
+    .ph-root *,.ph-root *::before,.ph-root *::after{box-sizing:border-box}
+    .ph-root button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0;margin:0;color:inherit;text-align:left}
+    
+    /* ── Hero ── */
+    .ph-root .hero{display:grid;grid-template-columns:0.5fr 2fr;min-height:100vh;background:linear-gradient(to right,#111 0%,#111 28%,#0e0e0e 100%)}
+    
+    /* 左侧 — 极度弱化，旁注感 */
+    .ph-root .hero-left{padding:52px 20px 52px 32px;display:flex;flex-direction:column;justify-content:space-between}
+    .ph-root .hl-ey{display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(237,232,223,0.22);margin-bottom:28px}
+    .ph-root .hl-ey::before{content:"";width:14px;height:1px;background:#c9a84c;flex-shrink:0}
+    .ph-root .hl-hd{font-family:Georgia,"Times New Roman",serif;font-size:27px;line-height:1.35;color:rgba(237,232,223,0.58);margin-bottom:0}
+    .ph-root .hl-stats{display:flex;flex-direction:column;gap:12px}
+    .ph-root .hl-stat{display:flex;align-items:baseline;gap:8px}
+    .ph-root .stn{font-size:18px;color:rgba(201,168,76,0.65);font-family:Georgia,serif;line-height:1}
+    .ph-root .stl{font-size:9px;color:rgba(237,232,223,0.22);margin-top:0}
+    
+    /* 右侧 */
+    .ph-root .hr{display:flex;flex-direction:column;min-height:100vh;min-width:0;padding:20px 24px 20px 0;gap:10px}
+    
+    /* HKIFF 主卡 — 图片全幅铺底 */
+    .ph-root .hk-wrap{border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.09);flex:1;display:flex;flex-direction:column}
+    .ph-root .hk-card{position:relative;overflow:hidden;min-height:360px;flex:1;display:flex;flex-direction:column;justify-content:flex-end;background:#1a1a1a}
+    /* 底图全幅 */
+    .ph-root .hk-bg{position:absolute;inset:0;z-index:0}
+    .ph-root .hk-bg img{width:100%;height:100%;object-fit:cover;object-position:center 40%;display:block;filter:brightness(0.88) saturate(0.78) contrast(1.05)}
+    /* 半透明蒙层 — 适用任何底图 */
+    .ph-root .hk-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.28)}
+    /* 底部向上渐变 — 保证文字可读 */
+    .ph-root .hk-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.94) 0%,rgba(0,0,0,0.65) 28%,rgba(0,0,0,0.2) 58%,transparent 100%)}
+    /* 水印 */
+    .ph-root .hk-watermark{position:absolute;top:-8%;right:3%;font-size:200px;font-family:Georgia,serif;color:rgba(255,255,255,0.04);line-height:1;user-select:none;pointer-events:none;z-index:1}
+    /* 文字内容浮在图片上 */
+    .ph-root .hk-content{position:relative;z-index:2;padding:28px 30px 26px;display:flex;flex-direction:column;justify-content:flex-end;flex:1}
+    .ph-root .hk-status{display:flex;align-items:center;gap:7px;font-size:11px;color:#c9a84c;margin-bottom:14px}
+    .ph-root .kdot{width:5px;height:5px;border-radius:50%;background:#c9a84c;display:inline-block;animation:pu 1.8s infinite}
+    @keyframes pu{0%,100%{opacity:1}50%{opacity:0.3}}
+    .ph-root .hk-title{font-size:36px;font-weight:400;color:#fff;font-family:Georgia,serif;line-height:1.22;margin-bottom:8px}
+    .ph-root .hk-title em{font-style:italic;color:#c9a84c}
+    .ph-root .hk-meta{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:22px}
+    .ph-root .hk-bottom{display:flex;justify-content:space-between;align-items:flex-end}
+    .ph-root .hk-num{font-size:46px;color:#c9a84c;font-family:Georgia,serif;line-height:1;display:block;transition:opacity 0.2s}
+    .ph-root .hk-num-label{font-size:11px;color:rgba(255,255,255,0.45);margin-top:4px;display:block}
+    .ph-root .hk-btn{padding:11px 22px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.42);border-radius:3px;font-size:13px;cursor:pointer;white-space:nowrap;transition:background 0.2s,border-color 0.2s;backdrop-filter:blur(4px)}
+    .ph-root .hk-btn:hover{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.75)}
+    
+    /* 两格互动 */
+    .ph-root .hk-interact{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(255,255,255,0.08)}
+    .ph-root .hk-ic{padding:16px 22px;background:rgba(10,10,10,0.96);border-right:1px solid rgba(255,255,255,0.07);cursor:pointer;transition:background 0.2s}
+    .ph-root .hk-ic:last-child{border-right:none}
+    .ph-root .hk-ic:hover{background:rgba(20,20,20,0.98)}
+    .ph-root .hk-ic-ey{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(237,232,223,0.38);margin-bottom:7px}
+    .ph-root .kdot-sm{width:4px;height:4px;border-radius:50%;background:#c9a84c;display:inline-block}
+    .ph-root .hk-ic-title{font-size:14px;color:rgba(237,232,223,0.88);font-family:Georgia,serif;margin-bottom:5px;line-height:1.4}
+    .ph-root .hk-ic-sub{font-size:11px;color:rgba(237,232,223,0.35)}
+    
+    /* 更多影展 */
+    .ph-root .mf-wrap{flex-shrink:0}
+    .ph-root .mf-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:0 2px}
+    .ph-root .mf-label{font-size:10px;letter-spacing:0.1em;color:rgba(237,232,223,0.24)}
+    .ph-root .mf-all{font-size:11px;color:rgba(201,168,76,0.55);cursor:pointer}
+    .ph-root .mf-all:hover{color:#c9a84c}
+    .ph-root .mf-grid{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid rgba(255,255,255,0.08);border-radius:6px;overflow:hidden}
+    .ph-root .mf-col{background:#111;padding:14px 16px;cursor:pointer;transition:background 0.2s;display:flex;flex-direction:column;gap:5px;border-right:1px solid rgba(255,255,255,0.07)}
+    .ph-root .mf-col:last-child{border-right:none}
+    .ph-root .mf-col:hover{background:#161616}
+    .ph-root .mf-col-top{display:flex;align-items:flex-start;gap:7px}
+    .ph-root .mf-dot{width:5px;height:5px;border-radius:50%;background:#c9a84c;flex-shrink:0;margin-top:4px}
+    .ph-root .mf-name{font-size:12px;color:rgba(237,232,223,0.8);line-height:1.4;flex:1}
+    .ph-root .mf-name em{font-style:italic;color:#c9a84c}
+    .ph-root .mf-sub{font-size:10px;color:rgba(237,232,223,0.35)}
+    .ph-root .mf-enter{font-size:11px;color:rgba(201,168,76,0.52);margin-top:2px}
+    
+    /* ── 过渡旁白 ── */
+    .ph-root .interlude{padding:52px 0 48px;padding-left:11%;font-size:10px;font-style:italic;color:rgba(237,232,223,0.11);letter-spacing:0.06em;line-height:2.4;background:#111}
+    
+    /* ── 世界信号区 ── */
+    .ph-root .world-signal{position:relative;height:480px;background:#0f0f0f;overflow:hidden}
+    .ph-root .ws-noise{position:absolute;inset:0;pointer-events:none;z-index:9;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+    
+    /* 环境光 */
+    .ph-root .ws-ambient{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 68% 50%,rgba(201,168,76,0.06) 0%,transparent 55%),radial-gradient(ellipse at 82% 28%,rgba(237,232,223,0.03) 0%,transparent 38%)}
+    
+    /* 城市名漂浮层 */
+    .ph-root .city-layer{position:absolute;inset:0;z-index:2;pointer-events:none}
+    .ph-root .city-n{position:absolute;font-family:Georgia,"Times New Roman",serif;color:rgba(237,232,223,0.08);transition:color 1.8s;white-space:nowrap;user-select:none}
+    .ph-root .city-n.glow{color:rgba(237,232,223,0.24)}
+    .ph-root .city-n.cn-paris{font-size:56px;color:rgba(237,232,223,0.03)}
+    .ph-root .city-n.cn-paris.glow{color:rgba(237,232,223,0.1)}
+    .ph-root .city-n.cn-berlin{font-size:46px;color:rgba(237,232,223,0.025)}
+    .ph-root .city-n.cn-berlin.glow{color:rgba(237,232,223,0.09)}
+    .ph-root .city-n.cn-tokyo{font-size:18px}
+    
+    /* 打卡图片 — 浮现在城市位置，边缘消融 */
+    .ph-root .ws-photo{position:absolute;z-index:3;width:340px;height:230px;transition:opacity 2.4s ease;opacity:0;pointer-events:none}
+    .ph-root .ws-photo.visible{opacity:1}
+    .ph-root .ws-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.6) saturate(0.72) contrast(1.08)}
+    .ph-root .ws-photo-mask{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 20%,rgba(15,15,15,0.45) 52%,rgba(15,15,15,0.85) 74%,#0f0f0f 100%)}
+    
+    /* 焦点城市 */
+    .ph-root .focus-stack{position:absolute;z-index:5;transition:opacity 0.9s}
+    .ph-root .focus-zh{font-family:Georgia,serif;font-size:40px;color:rgba(237,232,223,0.65);line-height:1;letter-spacing:0.03em}
+    .ph-root .focus-en{font-size:8px;letter-spacing:0.22em;color:rgba(237,232,223,0.22);margin-top:7px}
+    
+    /* 信号文字 */
+    .ph-root .signal-wrap{position:absolute;left:5%;bottom:58px;z-index:6;max-width:252px}
+    .ph-root .sig-blur{transition:opacity 1s}
+    .ph-root .sig-focus{opacity:0;position:absolute;left:0;bottom:0;max-width:252px;transition:opacity 1s}
+    .ph-root .sbq{font-size:13px;line-height:1.9;color:rgba(237,232,223,0.22);font-style:italic;padding-left:11px;border-left:1px solid rgba(255,255,255,0.07)}
+    .ph-root .sba{font-size:8px;color:rgba(237,232,223,0.1);margin-top:8px;display:block}
+    .ph-root .sf-loc{font-size:9px;color:#c9a84c;letter-spacing:0.1em;margin-bottom:13px;display:flex;align-items:center;gap:6px}
+    .ph-root .sf-dot{width:5px;height:5px;border-radius:50%;background:#c9a84c;display:inline-block;animation:pu 1.8s infinite}
+    .ph-root .sf-quote{font-size:14px;line-height:1.9;color:rgba(237,232,223,0.82);font-style:italic;padding-left:12px;border-left:1px solid rgba(201,168,76,0.2);word-break:keep-all}
+    .ph-root .sf-attr{font-size:9px;color:rgba(237,232,223,0.25);margin-top:11px;display:block}
+    
+    .ph-root .ws-foot{position:absolute;left:0;right:0;bottom:0;z-index:8;display:flex;justify-content:flex-end;padding:12px 28px 16px;background:linear-gradient(to top,rgba(15,15,15,0.65) 0%,transparent 100%)}
+    .ph-root .ws-foot-r{font-size:10px;font-style:italic;color:rgba(201,168,76,0.32);cursor:pointer;background:none;padding:0;border:none;font-family:inherit;transition:color 0.3s}
+    .ph-root .ws-foot-r:hover{color:rgba(201,168,76,0.7)}
+    
+    /* ── 今晚的入口 — 海报横滑 ── */
+    .ph-root .entry-zone{background:#0e0e0e;padding:64px 0 56px;overflow:hidden;position:relative}
+    .ph-root .ez-noise{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n2)'/%3E%3C/svg%3E")}
+    .ph-root .ez-aside{text-align:center;font-size:10px;font-style:italic;color:rgba(237,232,223,0.14);letter-spacing:0.08em;margin-bottom:32px;position:relative;z-index:2}
+    .ph-root .ez-scroll{display:flex;gap:12px;padding:0 36px 20px;overflow-x:auto;scrollbar-width:none;cursor:grab;position:relative;z-index:2;-webkit-overflow-scrolling:touch}
+    .ph-root .ez-scroll::-webkit-scrollbar{display:none}
+    .ph-root .ez-scroll.dragging{cursor:grabbing}
+    
+    /* 海报卡片 */
+    .ph-root .pc{flex-shrink:0;border-radius:6px;overflow:hidden;position:relative;cursor:pointer;transition:transform 0.25s}
+    .ph-root .pc:hover{transform:translateY(-4px)}
+    .ph-root .pc.featured{width:260px}
+    .ph-root .pc.featured .pc-img{width:260px;height:360px}
+    .ph-root .pc.regular{width:180px}
+    .ph-root .pc.regular .pc-img{width:180px;height:268px}
+    .ph-root .pc-img{object-fit:cover;display:block;filter:brightness(0.72) saturate(0.7) contrast(1.05)}
+    .ph-root .pc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.55) 35%,rgba(0,0,0,0.12) 65%,transparent 100%)}
+    .ph-root .pc-content{position:absolute;bottom:0;left:0;right:0;padding:14px 14px 16px}
+    .ph-root .pc-entry{font-size:13px;color:rgba(237,232,223,0.92);line-height:1.45;margin-bottom:5px;font-family:Georgia,serif}
+    .ph-root .pc-entry.featured{font-size:15px}
+    .ph-root .pc-film{font-size:10px;color:rgba(237,232,223,0.38)}
+    .ph-root .pc-entry.gold{color:#c9a84c;font-style:italic}
+    
+    /* ── 响应式 ── */
+    @media(max-width:900px){
+      .ph-root .hero{grid-template-columns:1fr;min-height:auto}
+      .ph-root .hero-left{padding:32px 24px}
+      .ph-root .hr{min-height:auto;padding:16px}
+      .ph-root .focus-stack{top:8%;left:5%}
+      .ph-root .signal-wrap{left:5%;bottom:48px;max-width:88%}
+      .ph-root .city-n{font-size:9px!important}
     }
-  }catch(e){renderHeroFestsFallback()}
-}
-
-function renderHeroFests(fests){
-  const el=document.getElementById("hero-fest-list");
-  el.innerHTML=fests.slice(0,4).map((f,i)=>{
-    const cnt=f.participants?.[0]?.count||0;
-    const creator=f.creator?.display_name||f.creator?.username||"策展人";
-    const isActive=f.start_date&&f.end_date&&new Date(f.start_date)<=new Date()&&new Date(f.end_date)>=new Date();
-    const statusHtml=isActive?`<span class="live-dot"></span><span style="font-size:10px;color:var(--green);letter-spacing:.08em;text-transform:uppercase">进行中</span>`:`<span style="font-size:10px;color:var(--gold);letter-spacing:.08em;text-transform:uppercase">即将开始</span>`;
-    return`<div class="hf-card" onclick="nav('festival-detail')">
-      <div class="hf-poster"><div class="hf-poster-bg" style="background:${GRADS[i%GRADS.length]}"></div><div class="hf-poster-overlay"></div>
-        <div class="hf-poster-content"><div class="hf-status">${statusHtml}</div><div class="hf-title-over">${f.title}</div></div>
+    </style>
+    
+    <!-- ══ HERO ══ -->
+    <section class="hero">
+      <div class="hero-left">
+        <div>
+          <div class="hl-ey">CINEMA OF OUR OWN</div>
+          <p class="hl-hd">跟随<br>电影节<br>发生。</p>
+        </div>
+        <div class="hl-stats">
+          <div class="hl-stat"><span class="stn">47</span><span class="stl">线上电影节</span></div>
+          <div class="hl-stat"><span class="stn">3</span><span class="stl">正在发生</span></div>
+          <div class="hl-stat"><span class="stn">38k</span><span class="stl">参与记录</span></div>
+        </div>
       </div>
-      <div class="hf-body"><div class="hf-meta">${f.start_date?f.start_date:""}${f.end_date?" — "+f.end_date:""}</div>
-        <div class="hf-foot"><span class="hf-host">@${creator} · ${cnt}人</span><button class="hf-join" onclick="event.stopPropagation();nav('festival-detail')">进入</button></div>
-      </div></div>`;
-  }).join("")+`<div class="hf-new" onclick="nav('festivals')"><span style="font-size:12px;color:var(--ink3)">查看全部电影节</span></div>`;
-}
-
-function renderHeroFestsFallback(){
-  document.getElementById("stat-fests").textContent="1,247";
-  document.getElementById("stat-users").textContent="38k";
-  document.getElementById("live-count").textContent="3个进行中";
-  document.getElementById("mc-fests").textContent="3";
-  const fallback=[{t:"黑泽明与日本新浪潮 · 东京映画周",a:true,p:"4月10—17日",c:247},{t:"上海华语独立短片展",a:true,p:"4月25—5月5日",c:203},{t:"她在路上：女性凝视电影周",a:false,p:"5月2—8日",c:89},{t:"九十年代港片重看",a:false,p:"5月5日起",c:156}];
-  document.getElementById("hero-fest-list").innerHTML=fallback.map((f,i)=>`<div class="hf-card" onclick="nav('festival-detail')">
-    <div class="hf-poster"><div class="hf-poster-bg" style="background:${GRADS[i%GRADS.length]}"></div><div class="hf-poster-overlay"></div>
-      <div class="hf-poster-content"><div class="hf-status">${f.a?'<span class="live-dot"></span><span style="font-size:10px;color:var(--green);letter-spacing:.08em;text-transform:uppercase">进行中</span>':`<span style="font-size:10px;color:var(--gold);letter-spacing:.08em;text-transform:uppercase">即将开始</span>`}</div><div class="hf-title-over">${f.t}</div></div>
+    
+      <div class="hr">
+        <div class="hk-wrap">
+          <div class="hk-card">
+            <div class="hk-bg">
+              <img id="hkImg" src="hk-night.jpg" alt="影展底图">
+              <div class="hk-overlay"></div>
+              <div class="hk-grad"></div>
+            </div>
+            <div class="hk-watermark">50</div>
+            <div class="hk-content">
+              <div class="hk-status"><span class="kdot"></span>正在举办 · 第15天</div>
+              <h2 class="hk-title">香港国际<em>电影节</em>·<br>第50届 HKIFF</h2>
+              <p class="hk-meta">3月25日—4月7日 · 香港 · 240部影片</p>
+              <div class="hk-bottom">
+                <div>
+                  <span class="hk-num" id="liveNum">254</span>
+                  <span class="hk-num-label">人正在记录这届影展</span>
+                </div>
+                <button type="button" class="hk-btn" onclick="nav('page-offline-festival')">记录这届影展 →</button>
+              </div>
+            </div>
+            <div class="hk-interact">
+              <div class="hk-ic">
+                <div class="hk-ic-ey"><span class="kdot-sm"></span>正在讨论</div>
+                <div class="hk-ic-title">《悲情城市》讨论正在发生</div>
+                <div class="hk-ic-sub">42 条新回应 · 刚刚</div>
+              </div>
+              <div class="hk-ic">
+                <div class="hk-ic-ey"><span class="kdot-sm"></span>正在预测</div>
+                <div class="hk-ic-title">谁会拿下金像奖？</div>
+                <div class="hk-ic-sub">1,204 人正在预测</div>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <div class="mf-wrap">
+          <div class="mf-header">
+            <span class="mf-label">更多影展</span>
+            <span class="mf-all" onclick="nav('page-festivals')">全部影展 →</span>
+          </div>
+          <div class="mf-grid">
+            <div class="mf-col">
+              <div class="mf-col-top"><div class="mf-dot"></div><span class="mf-name">黑泽明与<em>日本新浪潮</em></span></div>
+              <div class="mf-sub">89人正在参与</div>
+              <div class="mf-enter">进入 →</div>
+            </div>
+            <div class="mf-col">
+              <div class="mf-col-top"><div class="mf-dot"></div><span class="mf-name">上海华语独立短片展</span></div>
+              <div class="mf-sub">203人正在参与</div>
+              <div class="mf-enter">进入 →</div>
+            </div>
+            <div class="mf-col">
+              <div class="mf-col-top"><div class="mf-dot"></div><span class="mf-name">她在路上·<em>女性凝视</em>电影周</span></div>
+              <div class="mf-sub">156人正在参与</div>
+              <div class="mf-enter">进入 →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- ══ 过渡旁白 ══ -->
+    <div class="interlude">
+      <p>电影节之外，<br>电影仍在世界各地继续发生。</p>
     </div>
-    <div class="hf-body"><div class="hf-meta">${f.p}</div><div class="hf-foot"><span class="hf-host">${f.c}人参与</span><button class="hf-join" onclick="event.stopPropagation();nav('festival-detail')">进入</button></div></div></div>`).join("")+`<div class="hf-new" onclick="nav('festivals')"><span style="font-size:12px;color:var(--ink3)">查看全部 1,247 个电影节</span></div>`;
-}
-
-// ── Offline festivals from Supabase ───────────────────
-async function loadOfflineFests(){
-  try{
-    const{data,error}=await _sb.from("film_festivals_offline").select("*").order("founded_year",{ascending:true});
-    if(error)throw error;
-    if(!data||!data.length){renderOfflineFallback();return}
-    renderOffline(data);
-  }catch(e){renderOfflineFallback()}
-}
-
-function statusBadge(s){
-  if(s==="active")return`<span class="ofc-status s-active"><span class="live-dot"></span>正在举办</span>`;
-  if(s==="upcoming")return`<span class="ofc-status s-soon"><span style="width:5px;height:5px;border-radius:50%;background:var(--gold);display:inline-block;margin-right:3px"></span>即将举办</span>`;
-  return`<span class="ofc-status s-past">已结束</span>`;
-}
-function ofc(f,i){return`<div class="ofc" onclick="nav('offline-festival')"><div class="ofc-img"><div class="ofc-bg" style="background:${GRADS[i%GRADS.length]}"></div><div class="ofc-ov"></div><div class="ofc-title">${f.name}</div></div><div class="ofc-body">${statusBadge(f.current_status)}<div class="ofc-meta">${f.current_dates?f.current_dates+" · ":""}${f.city||f.country||""}</div><div class="ofc-desc">${(f.description||"").slice(0,55)}${(f.description||"").length>55?"…":""}</div>${f.main_award?`<span class="ofc-aw">${f.main_award}</span>`:""}</div></div>`}
-function featOfc(f,i){return`<div class="off-feat"><div class="off-fi"><div class="off-fi-bg" style="background:${GRADS[i%GRADS.length]}"></div><div class="off-fi-ov"></div><div class="off-fi-cnt">${statusBadge(f.current_status)}<div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--ink)">${f.name}</div></div></div><div class="off-fb"><div class="off-ey">${f.name_en||""} · ${f.current_edition||""}</div><h3 class="off-ft">${f.name}</h3><div class="off-fm">${f.current_dates?f.current_dates:""}${f.city?"<span>"+f.city+"</span>":""}</div><p class="off-fd">${f.description||""}</p>${f.main_award?`<div class="off-tags"><span class="off-tag g">${f.main_award}</span>${f.type?`<span class="off-tag">${f.type}</span>`:""}</div>`:""}<button class="off-btn" onclick="nav('offline-festival')">查看详情 →</button></div></div>`}
-
-function renderOffline(data){
-  const hk=data.find(f=>f.name.includes("香港"))||data[0];
-  const focusGrid=data.filter(f=>["北京","上海","戛纳"].some(k=>f.name.includes(k))).slice(0,3);
-  document.getElementById("opanel-focus").innerHTML=(hk?featOfc(hk,0):"")+`<div class="off-grid">${focusGrid.map((f,i)=>ofc(f,i+1)).join("")}</div>`;
-  const alist=data.filter(f=>f.type==="A类");
-  document.getElementById("opanel-alist").innerHTML=`<div class="off-grid" style="grid-template-columns:repeat(3,1fr)">${alist.map((f,i)=>ofc(f,i)).join("")}</div>`;
-  const cn=data.filter(f=>f.country==="中国");
-  const cnFeat=cn.find(f=>f.name.includes("上海"))||cn[0];
-  document.getElementById("opanel-cn").innerHTML=(cnFeat?featOfc(cnFeat,2):"")+`<div class="off-grid">${cn.filter(f=>f!==cnFeat).map((f,i)=>ofc(f,i)).join("")}</div>`;
-  const asia=data.filter(f=>["韩国","日本","新加坡"].includes(f.country));
-  document.getElementById("opanel-asia").innerHTML=`<div class="off-grid" style="grid-template-columns:repeat(3,1fr)">${asia.map((f,i)=>ofc(f,i)).join("")}</div>`;
-}
-
-function renderOfflineFallback(){
-  const data=[
-    {name:"香港国际电影节",name_en:"HKIFF",country:"中国",city:"香港",type:"A类",description:"亚洲最重要的电影节之一，以华语电影和亚洲电影的国际推广著称。",current_edition:"第50届",current_dates:"2026年3月25日—4月7日",current_status:"active",main_award:"火鸟奖"},
-    {name:"北京国际电影节",name_en:"BJIFF",country:"中国",city:"北京",type:"A类",description:"天坛奖是中国唯一面向国际长片的竞赛单元。",current_dates:"2026年4月19—26日",current_status:"upcoming",main_award:"天坛奖"},
-    {name:"上海国际电影节",name_en:"SIFF",country:"中国",city:"上海",type:"A类",description:"亚洲最大A类电影节，金爵奖主竞赛今年评委会主席由奉俊昊担任。",current_edition:"第30届",current_dates:"2026年6月14—23日",current_status:"upcoming",main_award:"金爵奖"},
-    {name:"戛纳国际电影节",name_en:"Cannes",country:"法国",city:"戛纳",type:"A类",description:"世界最具声望的电影节，金棕榈奖是影史最高荣誉之一。",current_dates:"2026年5月13—24日",current_status:"upcoming",main_award:"金棕榈"},
-    {name:"威尼斯国际电影节",name_en:"Venice",country:"意大利",city:"威尼斯",type:"A类",description:"历史最悠久，金狮奖以大胆的艺术电影著称。",current_dates:"2026年8月27日—9月6日",current_status:"upcoming",main_award:"金狮奖"},
-    {name:"柏林国际电影节",name_en:"Berlinale",country:"德国",city:"柏林",type:"A类",description:"三大中政治性最强，金熊奖历来关注社会议题影片。",current_dates:"2026年2月13—23日",current_status:"past",main_award:"金熊奖"},
-    {name:"台湾金马奖",name_en:"Golden Horse",country:"中国",city:"台湾",type:"综合",description:"华语影坛最权威的电影奖项，以独立精神和评审标准著称。",current_dates:"2026年11月",current_status:"upcoming",main_award:"金马奖"},
-    {name:"釜山国际电影节",name_en:"BIFF",country:"韩国",city:"釜山",type:"A类",description:"亚洲最重要电影节，亚洲新导演最重要展映平台。",current_dates:"2026年10月2—11日",current_status:"upcoming",main_award:"新浪潮奖"},
-    {name:"东京国际电影节",name_en:"TIFF",country:"日本",city:"东京",type:"A类",description:"亚洲A类电影节，东京樱花奖专注亚洲电影。",current_dates:"2026年10—11月",current_status:"upcoming",main_award:"东京樱花奖"},
-    {name:"新加坡国际电影节",name_en:"SGIFF",country:"新加坡",city:"新加坡",type:"地区",description:"东南亚最重要的电影节，重点关注东南亚及亚洲新兴电影人。",current_dates:"2026年11月",current_status:"upcoming",main_award:"银幕奖"},
-  ];
-  renderOffline(data);
-}
-
-function switchOff(btn,id){
-  document.querySelectorAll(".off-tab").forEach(t=>t.classList.remove("on"));
-  document.querySelectorAll(".off-panel").forEach(p=>p.classList.remove("on"));
-  btn.classList.add("on");
-  document.getElementById("opanel-"+id).classList.add("on");
-}
-
-// ── TMDB ────────────────────────────────────────────
-async function loadTMDB(){
-  try{
-    const r=await fetch(TMDB_BASE+"/trending/movie/week?api_key="+TMDB_KEY+"&language=zh-CN");
-    const d=await r.json();
-    const movies=(d.results||[]).slice(0,3);
-    if(!movies.length)return;
-    const grid=document.getElementById("news-grid");
-    grid.innerHTML=movies.map(m=>{
-      const img=m.poster_path?TMDB_IMG+m.poster_path:null;
-      const bg=img?`background-image:url(${img});background-size:cover;background-position:center`:`background:linear-gradient(135deg,#0a1018,#101428)`;
-      return`<div class="nc" onclick="toast('${(m.title||"").replace(/'/g,"")}')">
-        <div class="nc-img"><div class="nc-img-bg" style="${bg}"></div><div class="nc-img-ov"></div>${img?"":"<div class='nc-img-let'>"+(m.title||"?")[0]+"</div>"}</div>
-        <div class="nc-body"><div class="nc-src">TMDB · 本周热门</div><div class="nc-title">${m.title}</div><div class="nc-desc">评分 ${m.vote_average?m.vote_average.toFixed(1):"N/A"} · ${(m.overview||"").slice(0,55)}…</div></div></div>`;
-    }).join("");
-    document.getElementById("tmdb-note").style.display="none";
-    document.getElementById("tmdb-badge").innerHTML=`<span class="tmdb-dot"></span>TMDB 已连接`;
-    // Main event poster
-    const r2=await fetch(TMDB_BASE+"/search/movie?api_key="+TMDB_KEY+"&query=%E9%9C%B8%E7%8E%8B%E5%88%AB%E5%A7%AC&language=zh-CN");
-    const d2=await r2.json();
-    const m2=(d2.results||[])[0];
-    if(m2&&m2.poster_path){
-      document.getElementById("tme-img-bg").style.cssText="background-image:url("+TMDB_IMG+m2.poster_path+");background-size:cover;background-position:center";
-      document.getElementById("tme-letter").style.display="none";
-    }
-  }catch(e){document.getElementById("tmdb-note").textContent="TMDB 数据加载失败，显示静态内容"}
-}
-
-// ── Film picker ───────────────────────────────────────
-const FILMS={quiet:[{t:"晚春",y:"1949",d:"小津安二郎",bg:"linear-gradient(150deg,#0a1410,#101a14)",l:"春",r:"9.0"},{t:"绿光",y:"1986",d:"侯麦",bg:"linear-gradient(150deg,#0d1f16,#152d20)",l:"绿",r:"8.2"},{t:"镜子",y:"1975",d:"塔可夫斯基",bg:"linear-gradient(150deg,#141018,#1c1428)",l:"镜",r:"9.5"},{t:"东京物语",y:"1953",d:"小津安二郎",bg:"linear-gradient(150deg,#101814,#181e14)",l:"物",r:"9.3"},{t:"爱情万岁",y:"1994",d:"蔡明亮",bg:"linear-gradient(150deg,#0a1218,#101828)",l:"爱",r:"8.8"}],moved:[{t:"一一",y:"2000",d:"杨德昌",bg:"linear-gradient(150deg,#1a1a0d,#28280f)",l:"一",r:"9.1"},{t:"霸王别姬",y:"1993",d:"陈凯歌",bg:"linear-gradient(150deg,#1a0808,#280f10)",l:"霸",r:"9.5"},{t:"悲情城市",y:"1989",d:"侯孝贤",bg:"linear-gradient(150deg,#0a1814,#101e14)",l:"悲",r:"9.3"},{t:"大地之歌",y:"1955",d:"萨蒂亚吉特·雷伊",bg:"linear-gradient(150deg,#0a1618,#101e18)",l:"大",r:"9.1"},{t:"乡愁",y:"1983",d:"塔可夫斯基",bg:"linear-gradient(150deg,#141010,#1c1a10)",l:"乡",r:"9.4"}],shock:[{t:"七武士",y:"1954",d:"黑泽明",bg:"linear-gradient(150deg,#0f1a2e,#1a2840)",l:"七",r:"9.0"},{t:"现代启示录",y:"1979",d:"科波拉",bg:"linear-gradient(150deg,#0a1018,#101428)",l:"启",r:"8.9"},{t:"潜行者",y:"1979",d:"塔可夫斯基",bg:"linear-gradient(150deg,#101418,#181c20)",l:"潜",r:"9.5"},{t:"流浪艺人",y:"1975",d:"安哲罗普洛斯",bg:"linear-gradient(150deg,#0a1018,#101428)",l:"流",r:"9.3"},{t:"四百击",y:"1959",d:"特吕弗",bg:"linear-gradient(150deg,#181408,#201c10)",l:"四",r:"9.0"}],midnight:[{t:"花样年华",y:"2000",d:"王家卫",bg:"linear-gradient(150deg,#1e1028,#2e1840)",l:"花",r:"8.8"},{t:"重庆森林",y:"1994",d:"王家卫",bg:"linear-gradient(150deg,#1a0a08,#2a1210)",l:"重",r:"8.7"},{t:"安德烈·鲁布廖夫",y:"1966",d:"塔可夫斯基",bg:"linear-gradient(150deg,#0a1018,#101428)",l:"安",r:"9.5"},{t:"驾驶我的车",y:"2021",d:"滨口龙介",bg:"linear-gradient(150deg,#0a1018,#10181e)",l:"车",r:"9.1"},{t:"堕落天使",y:"1995",d:"王家卫",bg:"linear-gradient(150deg,#1a0a1a,#200f20)",l:"堕",r:"8.5"}],light:[{t:"咖啡时光",y:"2003",d:"侯孝贤",bg:"linear-gradient(150deg,#1a1408,#221c10)",l:"咖",r:"8.2"},{t:"玩乐时间",y:"1967",d:"雅克·塔蒂",bg:"linear-gradient(150deg,#0a1018,#101420)",l:"玩",r:"8.4"},{t:"偷自行车的人",y:"1948",d:"德·西卡",bg:"linear-gradient(150deg,#141010,#1c1614)",l:"偷",r:"9.2"},{t:"阳光灿烂的日子",y:"1994",d:"姜文",bg:"linear-gradient(150deg,#1a1208,#221a10)",l:"阳",r:"8.8"},{t:"牧神午后",y:"1956",d:"黑泽明",bg:"linear-gradient(150deg,#101a10,#181e14)",l:"牧",r:"7.9"}],random:null};
-let curMood="quiet";
-function setMood(el,mood){document.querySelectorAll(".mood-card").forEach(c=>c.classList.remove("on"));el.classList.add("on");curMood=mood;loadFilms(mood)}
-function setCtx(btn){btn.classList.toggle("on");loadFilms(curMood)}
-function shuffleFilms(){loadFilms(curMood)}
-function loadFilms(mood){
-  const g=document.getElementById("films-grid");g.classList.add("loading");
-  setTimeout(()=>{
-    const pool=mood==="random"?Object.values(FILMS).filter(Boolean).flat():FILMS[mood]||FILMS.quiet;
-    const films=[...pool].sort(()=>Math.random()-.5).slice(0,5);
-    g.innerHTML=films.map(f=>`<div class="pf" onclick="toast('加入片单：${f.t}')"><div class="pf-poster"><div class="pf-bg" style="background:${f.bg}"></div><div class="pf-ov"></div><span class="pf-letter">${f.l}</span><div class="pf-action">加入片单</div></div><div class="pf-info"><div class="pf-title">${f.t}</div><div class="pf-meta">${f.y} · ${f.d}</div><div class="pf-rating">★ ${f.r}</div></div></div>`).join("");
-    g.classList.remove("loading");
-  },260);
-}
-loadFilms("quiet");
-
-// ── Map teaser ────────────────────────────────────────
-(function(){
-  const el=document.getElementById("teaser-svg");
-  if(!el)return;
-  const W=window.innerWidth,H=400;
-  const svg=d3.select("#teaser-svg").attr("width",W).attr("height",H);
-  svg.append("rect").attr("width",W).attr("height",H).attr("fill","#0C0B09");
-  const proj=d3.geoNaturalEarth1().scale(W/6.2).translate([W/2,H/2]);
-  const path=d3.geoPath().projection(proj);
-  const pins=[{lon:139.69,lat:35.68,t:"f"},{lon:114.17,lat:22.30,t:"f"},{lon:2.35,lat:48.85,t:"f"},{lon:121.47,lat:31.22,t:"f"},{lon:116.39,lat:39.91,t:"f"},{lon:25.04,lat:121.53,t:"l"},{lon:12.49,lat:41.89,t:"l"},{lon:37.62,lat:55.75,t:"l"},{lon:-118.24,lat:34.05,t:"l"},{lon:7.02,lat:43.55,t:"f"},{lon:13.40,lat:52.52,t:"f"},{lon:-74.00,lat:40.71,t:"f"}];
-  fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(r=>r.json()).then(w=>{
-    if(typeof topojson==="undefined")return;
-    const countries=topojson.feature(w,w.objects.countries);
-    svg.selectAll(".tc").data(countries.features).join("path").attr("d",path).attr("fill","#191710").attr("stroke","#222018").attr("stroke-width",.4);
-    pins.forEach(p=>{
-      const xy=proj([p.lon,p.lat]);if(!xy[0])return;
-      const g=svg.append("g").attr("transform","translate("+xy[0]+","+xy[1]+")").style("cursor","pointer").on("click",()=>nav("map"));
-      if(p.t==="f"){g.append("circle").attr("r",11).attr("fill","rgba(200,164,74,.1)");g.append("path").attr("d","M0,-9C-5.5,-9 -9,-5 -9,0C-9,6.5 0,14 0,14S9,6.5 9,0C9,-5 5.5,-9 0,-9Z").attr("fill","#C8A44A").attr("opacity",.88);}
-      else{g.append("circle").attr("r",6).attr("fill","none").attr("stroke","#7EC98E").attr("stroke-width",1.5).attr("opacity",.65);g.append("circle").attr("r",2.5).attr("fill","#7EC98E").attr("opacity",.75);}
-    });
-  }).catch(()=>{});
-})();
-
-// ── Scroll reveal ────────────────────────────────────
-const ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");ro.unobserve(x.target)}})},{threshold:.07});
-document.querySelectorAll(".reveal").forEach(el=>ro.observe(el));
-
-// ── Init ─────────────────────────────────────────────
-loadFestivals();
-loadOfflineFests();
-loadTMDB();
-</script>
-</body>
-</html>
+    
+    <!-- ══ 世界信号区 ══ -->
+    <section class="world-signal">
+      <div class="ws-noise"></div>
+      <div class="ws-ambient"></div>
+    
+      <div class="city-layer">
+        <span class="city-n" style="top:5%;left:-1%;font-size:12px">São Paulo</span>
+        <span class="city-n" style="top:3%;left:42%;font-size:10px">Toronto</span>
+        <span class="city-n" style="top:10%;left:70%;font-size:10px">Seoul</span>
+        <span class="city-n" style="top:35%;left:0%;font-size:10px">New York</span>
+        <span class="city-n" style="top:63%;left:3%;font-size:11px">Buenos Aires</span>
+        <span class="city-n cn-tokyo" style="top:72%;left:73%">Tokyo</span>
+        <span class="city-n" style="top:80%;left:41%;font-size:10px">Melbourne</span>
+        <span class="city-n" style="top:46%;left:83%;font-size:10px">Bangkok</span>
+        <span class="city-n cn-paris" style="top:12%;left:-4%">Paris</span>
+        <span class="city-n cn-berlin" style="top:54%;left:57%">Berlin</span>
+      </div>
+    
+      <!-- 打卡图片 浮现在城市名上 -->
+      <div class="ws-photo" id="wsPhoto" style="top:15%;left:52%">
+        <img id="wsPhotoImg" src="" alt="">
+        <div class="ws-photo-mask"></div>
+      </div>
+    
+      <div class="focus-stack" id="focusStack" style="top:62%;left:70%">
+        <div class="focus-zh" id="focusZh">香港</div>
+        <div class="focus-en" id="focusEn">HONG KONG</div>
+      </div>
+    
+      <div class="signal-wrap">
+        <div class="sig-blur" id="sigBlur">
+          <p class="sbq" id="blurQ">第一次在电影院看《悲情城市》，<br>散场后没人说话。</p>
+          <span class="sba" id="blurA">@YueLiang · 香港</span>
+        </div>
+        <div class="sig-focus" id="sigFocus">
+          <div class="sf-loc"><span class="sf-dot"></span><span id="sfLoc">香港 · Kubrick</span></div>
+          <p class="sf-quote" id="sfQuote">第一次在电影院看《悲情城市》，<br>散场后没人说话。</p>
+          <span class="sf-attr" id="sfAttr">—— @YueLiang · 油麻地</span>
+        </div>
+      </div>
+    
+      <div class="ws-foot">
+        <button type="button" class="ws-foot-r" id="wsExploreBtn">探索更多城市信号 →</button>
+      </div>
+    </section>
+    
+    <!-- ══ 今晚的入口 ══ -->
+    <section class="entry-zone" id="entryZone">
+      <div class="ez-noise"></div>
+      <p class="ez-aside">或者，换一种方式进入。</p>
+      <div class="ez-scroll" id="ezScroll"></div>
+    </section>
+    
+    <script>
+    (function(){
+      var TMDB_KEY = '68d50b44ac8b8e22f5426fc17fe4fe90';
+      var TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
+    
+      /* ── nav ── */
+      function nav(page){
+        try{
+          if(window.parent && window.parent !== window){
+            window.parent.postMessage({type:'navigate',page:page},'*');
+          }
+        }catch(e){}
+      }
+      window.nav = nav;
+    
+      /* ── 动态人数 ── */
+      var n = 254;
+      setInterval(function(){
+        n = Math.max(243, Math.min(262, n + (Math.random() < 0.6 ? 1 : -1)));
+        var el = document.getElementById('liveNum');
+        if(!el) return;
+        el.style.opacity = '0.4';
+        setTimeout(function(){ el.textContent = n; el.style.opacity = '1'; }, 200);
+      }, 3200);
+    
+      /* ── 世界信号区 ── */
+      var cityImgs = {
+        hongkong: 'assets/hk-kubrick.jpg',
+        berlin:   'assets/berlin-kino.jpg',
+        tokyo:    'assets/tokyo-bunkamura.jpg',
+        paris:    'assets/paris-cinema.jpg'
+      };
+    
+      var signals = [
+        {zh:'香港',en:'HONG KONG',loc:'香港 · Kubrick',
+         quote:'第一次在电影院看《悲情城市》，<br>散场后没人说话。',
+         attr:'—— @YueLiang · 油麻地',
+         blurQ:'第一次在电影院看《悲情城市》，<br>散场后没人说话。',
+         blurA:'@YueLiang · 香港',imgKey:'hongkong',
+         photoPos:{top:'15%',left:'52%'},focusPos:{top:'62%',left:'70%'}},
+        {zh:'柏林',en:'BERLIN',loc:'柏林 · Kino International',
+         quote:'散场后，雨还在下，<br>街灯把影子拉得很长。',
+         attr:'—— @Lena · Rosa-Luxemburg-Str.',
+         blurQ:'散场后，雨还在下，<br>街灯把影子拉得很长。',
+         blurA:'@Lena · 柏林',imgKey:'berlin',
+         photoPos:{top:'10%',left:'38%'},focusPos:{top:'55%',left:'42%'}},
+        {zh:'东京',en:'TOKYO',loc:'东京 · 涩谷 Bunkamura',
+         quote:'字幕结束后没有人离开，<br>我们都在等灯亮。',
+         attr:'—— @Haruki · 道玄坂',
+         blurQ:'字幕结束后没有人离开，<br>我们都在等灯亮。',
+         blurA:'@Haruki · 东京',imgKey:'tokyo',
+         photoPos:{top:'12%',left:'65%'},focusPos:{top:'26%',left:'74%'}},
+        {zh:'巴黎',en:'PARIS',loc:'巴黎 · Cinéma du Panthéon',
+         quote:'走出电影院时，<br>街道突然像电影里的场景。',
+         attr:'—— @Marie · 拉丁区',
+         blurQ:'走出电影院时，<br>街道突然像电影里的场景。',
+         blurA:'@Marie · 巴黎',imgKey:'paris',
+         photoPos:{top:'20%',left:'28%'},focusPos:{top:'52%',left:'34%'}}
+      ];
+    
+      var si = 0;
+      var wsPhoto    = document.getElementById('wsPhoto');
+      var wsPhotoImg = document.getElementById('wsPhotoImg');
+      var focusStack = document.getElementById('focusStack');
+      var focusZh    = document.getElementById('focusZh');
+      var focusEn    = document.getElementById('focusEn');
+      var sigBlur    = document.getElementById('sigBlur');
+      var sigFocus   = document.getElementById('sigFocus');
+      var blurQ      = document.getElementById('blurQ');
+      var blurA      = document.getElementById('blurA');
+      var sfLoc      = document.getElementById('sfLoc');
+      var sfQuote    = document.getElementById('sfQuote');
+      var sfAttr     = document.getElementById('sfAttr');
+      var cityNodes  = document.querySelectorAll('.ph-root .city-n');
+    
+      function applySignal(s){
+        focusZh.textContent = s.zh;
+        focusEn.textContent = s.en;
+        blurQ.innerHTML     = s.blurQ;
+        blurA.textContent   = s.blurA;
+        sfLoc.textContent   = s.loc;
+        sfQuote.innerHTML   = s.quote;
+        sfAttr.textContent  = s.attr;
+        wsPhoto.style.top   = s.photoPos.top;
+        wsPhoto.style.left  = s.photoPos.left;
+        focusStack.style.top  = s.focusPos.top;
+        focusStack.style.left = s.focusPos.left;
+        var u = cityImgs[s.imgKey];
+        if(u) wsPhotoImg.src = u;
+        else wsPhotoImg.removeAttribute('src');
+      }
+    
+      function setFocus(on){
+        sigBlur.style.opacity  = on ? '0' : '1';
+        sigFocus.style.opacity = on ? '1' : '0';
+        if(on) wsPhoto.classList.add('visible');
+        else   wsPhoto.classList.remove('visible');
+      }
+    
+      function sleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+    
+      async function signalLoop(){
+        await sleep(1400);
+        while(true){
+          setFocus(true);
+          await sleep(4800);
+          setFocus(false);
+          await sleep(4800);
+          focusStack.style.opacity = '0';
+          await sleep(500);
+          si = (si + 1) % signals.length;
+          applySignal(signals[si]);
+          focusStack.style.opacity = '1';
+          await sleep(1800);
+        }
+      }
+      applySignal(signals[0]);
+      signalLoop();
+    
+      setInterval(function(){
+        cityNodes.forEach(function(c){ c.classList.remove('glow'); });
+        cityNodes[Math.floor(Math.random() * cityNodes.length)].classList.add('glow');
+      }, 2500);
+    
+      document.getElementById('wsExploreBtn').addEventListener('click', function(){ nav('page-map'); });
+    
+      /* ── 今晚的入口 — TMDB海报横滑 ── */
+      var entries = [
+        {label:'港影节散场后，最多人在谈的', film:'悲情城市',   tmdbId:18148,  cls:''},
+        {label:'进入巴黎夜晚',               film:'爱在日落黄昏时', tmdbId:9429, cls:''},
+        {label:'回到杨德昌的台北',           film:'牯岭街少年杀人事件', tmdbId:28795, cls:''},
+        {label:'回到九十年代香港',           film:'重庆森林',    tmdbId:11104,  cls:''},
+        {label:'关于深夜与霓虹',             film:'堕落天使',    tmdbId:11839,  cls:''},
+        {label:'城市，以及漂泊的人',         film:'迷失东京',    tmdbId:153,    cls:''},
+        {label:'她们彼此看见',               film:'燃烧女子的肖像', tmdbId:466272, cls:''},
+        {label:'今年戛纳没有得奖的那部',     film:'Cannes 2026', tmdbId:null,   cls:''},
+        {label:'闭上眼睛进入',               film:'为你随机选一部', tmdbId:null,  cls:''},
+        {label:'今晚交给别人策展',           film:'策展人今晚的选择', tmdbId:null, cls:'gold'}
+      ];
+    
+      /* 随机排列 */
+      for(var i = entries.length - 1; i > 0; i--){
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = entries[i]; entries[i] = entries[j]; entries[j] = tmp;
+      }
+    
+      var scroll = document.getElementById('ezScroll');
+      var featured = true; /* 第一张是主卡 */
+    
+      entries.forEach(function(e, idx){
+        var isFeatured = (idx === 0);
+        var card = document.createElement('div');
+        card.className = 'pc ' + (isFeatured ? 'featured' : 'regular');
+    
+        var img = document.createElement('img');
+        img.className = 'pc-img';
+        img.alt = e.film;
+        img.style.width  = isFeatured ? '260px' : '180px';
+        img.style.height = isFeatured ? '360px' : '268px';
+    
+        /* 尝试从TMDB获取海报 */
+        if(e.tmdbId){
+          fetch('https://api.themoviedb.org/3/movie/' + e.tmdbId + '?api_key=' + TMDB_KEY + '&language=zh-CN')
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+              if(d.poster_path) img.src = TMDB_IMG + d.poster_path;
+            })
+            .catch(function(){});
+        }
+    
+        var overlay = document.createElement('div');
+        overlay.className = 'pc-overlay';
+    
+        var content = document.createElement('div');
+        content.className = 'pc-content';
+    
+        var entryEl = document.createElement('div');
+        entryEl.className = 'pc-entry' + (isFeatured ? ' featured' : '') + (e.cls ? ' ' + e.cls : '');
+        entryEl.textContent = e.label;
+    
+        var filmEl = document.createElement('div');
+        filmEl.className = 'pc-film';
+        filmEl.textContent = e.film;
+    
+        content.appendChild(entryEl);
+        content.appendChild(filmEl);
+        card.appendChild(img);
+        card.appendChild(overlay);
+        card.appendChild(content);
+        scroll.appendChild(card);
+      });
+    
+      /* 拖动滚动 */
+      var isDown = false, startX, scrollLeft;
+      scroll.addEventListener('mousedown', function(e){
+        isDown = true; scroll.classList.add('dragging');
+        startX = e.pageX - scroll.offsetLeft;
+        scrollLeft = scroll.scrollLeft;
+      });
+      scroll.addEventListener('mouseleave', function(){ isDown = false; scroll.classList.remove('dragging'); });
+      scroll.addEventListener('mouseup', function(){ isDown = false; scroll.classList.remove('dragging'); });
+      scroll.addEventListener('mousemove', function(e){
+        if(!isDown) return;
+        e.preventDefault();
+        var x = e.pageX - scroll.offsetLeft;
+        scroll.scrollLeft = scrollLeft - (x - startX) * 1.5;
+      });
+    
+    })();
+    </script>
+    </div>

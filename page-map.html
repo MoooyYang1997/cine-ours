@@ -3,1155 +3,575 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cine Ours — 世界电影地图</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<title>Cine Ours — 世界电影信号地图</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <style>
-:root{
-  --bg:#0C0B09; --bg1:#111009; --bg2:#171510; --bg3:#1E1C16; --bg4:#26231C; --bg5:#302D24;
-  --ink:#EDE6D9; --ink2:#B5AC9E; --ink3:#7A7268; --ink4:#4A4540;
-  --gold:#C8A44A; --gold2:#9B7A2E; --gold3:#5C4518;
-  --b:rgba(237,230,217,.07); --b2:rgba(237,230,217,.12); --b3:rgba(237,230,217,.20);
-  --tr:all .22s cubic-bezier(.4,0,.2,1);
+:root {
+  --bg: #07080a;
+  --bg-sidebar: rgba(6, 7, 10, 0.97);
+  --gold: #c9a84c;
+  --gold2: rgba(201, 168, 76, 0.58);
+  --gold3: rgba(201, 168, 76, 0.18);
+  --green: #4ade80;
+  --text: rgba(237, 232, 223, 1);
+  --text2: rgba(237, 232, 223, 0.42);
+  --text3: rgba(237, 232, 223, 0.18);
+  --text4: rgba(237, 232, 223, 0.08);
+  --border: rgba(255, 255, 255, 0.055);
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ease: cubic-bezier(0.25, 0, 0.1, 1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{font-size:15px}
-body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");opacity:.4}
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--bg4)}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px}
+input,button{font-family:inherit}
 a{color:inherit;text-decoration:none}
-button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;color:inherit}
 
-/* NAV */
-.nav{position:fixed;top:0;left:0;right:0;z-index:500;height:62px;
-  display:flex;align-items:center;justify-content:space-between;padding:0 48px;
-  border-bottom:1px solid var(--b);background:rgba(12,11,9,.92);backdrop-filter:blur(16px)}
-.nav-logo{font-family:'Playfair Display',serif;font-size:19px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:3px}
-.nav-logo .accent{font-style:italic;color:var(--gold)}
-.nav-center{display:flex;gap:4px}
-.nav-link{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:6px 14px;transition:var(--tr);cursor:pointer}
-.nav-link:hover,.nav-link.active{color:var(--ink)}
-.nav-right{display:flex;gap:10px;align-items:center}
-.btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;padding:8px 20px;transition:var(--tr);font-weight:400;cursor:pointer}
-.btn-outline{border:1px solid var(--b2);color:var(--ink3)}
-.btn-outline:hover{border-color:var(--b3);color:var(--ink)}
-.btn-gold{background:var(--gold);color:var(--bg);border:1px solid var(--gold)}
-.btn-gold:hover{background:#D9B55A}
-.nav-av{width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ink2);cursor:pointer;transition:var(--tr)}
-.nav-av:hover{border-color:var(--gold);color:var(--gold)}
+@keyframes blink {
+  0%, 100% { opacity: 1 }
+  50% { opacity: 0.3 }
+}
+@keyframes pulse-ring {
+  0% { r: 9; opacity: 0.5 }
+  100% { r: 18; opacity: 0 }
+}
+@keyframes pulse-core {
+  0%, 100% { opacity: 1 }
+  50% { opacity: 0.65 }
+}
 
-/* PAGE WRAPPER */
-.page{display:none}
-.page.active{display:block}
+.app{display:flex;flex-direction:column;height:100%;background:var(--bg)}
 
-/* MAP PAGE LAYOUT */
-.map-page{padding-top:62px;height:100vh;display:flex;flex-direction:column}
+/* NAV 44px */
+.nav{flex-shrink:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px 0 14px;background:rgba(6,7,10,0.98);border-bottom:1px solid var(--border);z-index:100}
+.nav-logo{font-family:var(--serif);font-size:17px;cursor:pointer;display:flex;align-items:baseline;gap:4px}
+.nav-logo em{font-style:italic;color:var(--gold)}
+.nav-center{display:flex;align-items:center;gap:2px}
+.nav-link{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text2);padding:6px 10px;cursor:pointer;border-bottom:1px solid transparent;transition:color 0.2s, opacity 0.2s, border-color 0.2s;opacity:0.42}
+.nav-link:hover{opacity:0.72;color:var(--text)}
+.nav-link.on{opacity:0.88;color:var(--text);border-bottom-color:var(--gold)}
+.nav-link .hist-dot{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--green);margin-left:4px;vertical-align:middle;animation:blink 2s ease-in-out infinite}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-search{width:200px;padding:5px 10px;border:1px solid var(--border);border-radius:3px;background:rgba(0,0,0,0.35);font-size:11px;color:var(--text2)}
+.nav-search::placeholder{color:var(--text4);font-style:italic}
+.nav-av{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);cursor:pointer}
 
-/* MAP TOOLBAR */
-.map-toolbar{
-  height:52px;border-bottom:1px solid var(--b);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 24px;flex-shrink:0;gap:16px;
-  background:var(--bg1);
-}
-.map-toolbar-left{display:flex;align-items:center;gap:8px}
-.map-toolbar-right{display:flex;align-items:center;gap:8px}
-.layer-btn{
-  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  padding:6px 14px;border:1px solid var(--b);color:var(--ink3);transition:var(--tr);
-  display:flex;align-items:center;gap:6px;
-}
-.layer-btn:hover{border-color:var(--b3);color:var(--ink)}
-.layer-btn.on{border-color:var(--gold);color:var(--gold);background:rgba(200,164,74,.06)}
-.layer-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.dot-festival{background:#C8A44A}
-.dot-location{background:#7EC98E}
-.dot-both{background:linear-gradient(135deg,#C8A44A 50%,#7EC98E 50%)}
-.map-search{
-  display:flex;align-items:center;gap:8px;
-  border:1px solid var(--b2);padding:6px 14px;
-  background:var(--bg2);min-width:220px;
-}
-.map-search input{font-size:12px;color:var(--ink);flex:1;letter-spacing:.02em}
-.map-search input::placeholder{color:var(--ink4)}
-.map-count{font-size:11px;color:var(--ink3);letter-spacing:.06em;white-space:nowrap}
+/* BODY */
+.body{flex:1;min-height:0;display:flex;min-width:0}
 
-/* MAP CONTAINER */
-.map-wrap{flex:1;position:relative;overflow:hidden;background:var(--bg)}
+/* SIDEBAR 196px */
+.sidebar{width:196px;flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0}
+.sb-head{padding:12px 14px 8px;border-bottom:1px solid var(--border)}
+.sb-live{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:0.2em;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
+.sb-live i{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 2s ease-in-out infinite;flex-shrink:0}
+.sb-search{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:3px;background:rgba(0,0,0,0.35);font-size:10px;color:var(--text2)}
+.sb-search::placeholder{color:var(--text4);font-style:italic}
+.sb-broadcast{height:30px;display:flex;align-items:center;gap:6px;padding:0 14px;border-bottom:1px solid var(--border);overflow:hidden}
+.sb-broadcast i{width:4px;height:4px;border-radius:50%;background:rgba(74,222,128,0.65);flex-shrink:0}
+.sb-broadcast span{font-size:8.5px;font-style:italic;color:rgba(237,232,223,0.26);line-height:1.35;transition:opacity 0.5s var(--ease)}
+.sb-list{flex:1;overflow-y:auto;min-height:0}
+.sb-item{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.026);cursor:pointer;transition:background 0.2s, border-color 0.2s;border-left:2px solid transparent}
+.sb-item:hover{background:rgba(255,255,255,0.02)}
+.sb-item.on{border-left-color:var(--gold);background:rgba(201,168,76,0.04)}
+.sb-item .t1{font-family:var(--serif);font-size:13px;color:rgba(237,232,223,0.5);line-height:1.2}
+.sb-item.on .t1{color:rgba(237,232,223,0.9)}
+.sb-item .t2{font-size:9px;color:var(--text4);margin-top:3px;line-height:1.3}
+.sb-item.on .t2{color:rgba(74,222,128,0.52)}
+.sb-foot{padding:12px 14px;border-top:1px solid var(--border)}
+.sb-foot a{font-size:9px;font-style:italic;color:rgba(201,168,76,0.35);transition:color 0.2s}
+.sb-foot a:hover{color:var(--gold2)}
 
-/* D3 MAP STYLES */
-#world-map{width:100%;height:100%}
-.country{fill:#1a1812;stroke:#2a2720;stroke-width:.5;transition:fill .2s;cursor:pointer}
-.country:hover{fill:#232118}
-.country.highlighted{fill:#1E1C16}
-.graticule{fill:none;stroke:#1a1812;stroke-width:.3;opacity:.6}
-.sphere{fill:#0C0B09}
-.map-pin{cursor:pointer;transition:transform .15s}
-.map-pin:hover{transform:scale(1.3)}
-.pin-pulse{animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{r:10;opacity:.15}50%{r:18;opacity:.06}}
-.pin-pulse-fast{animation:pulse-fast 1.4s ease-in-out infinite}
-@keyframes pulse-fast{0%,100%{r:8;opacity:.2}50%{r:14;opacity:.08}}
+/* MAP */
+.map-wrap{flex:1;position:relative;min-width:0;background:#04050a}
+.map-title{position:absolute;top:18px;left:16px;z-index:5;pointer-events:none;max-width:280px}
+.map-title .l1{font-family:var(--serif);font-size:16px;font-style:italic;color:rgba(237,232,223,0.68);line-height:1.45;text-shadow:0 1px 18px rgba(0,0,0,0.98)}
+.map-title .l2{font-size:8.5px;color:rgba(201,168,76,0.38);margin-top:6px;letter-spacing:0.04em}
+#mapSvg{display:block;width:100%;height:100%}
 
-/* MAP TOOLTIP */
-.map-tooltip{
-  position:absolute;pointer-events:none;z-index:100;
-  min-width:280px;max-width:340px;
-  background:var(--bg2);border:1px solid var(--b2);
-  transition:opacity .18s;
-}
-.map-tooltip.hidden{opacity:0}
-.tooltip-type{
-  font-size:10px;letter-spacing:.14em;text-transform:uppercase;
-  padding:10px 16px 6px;color:var(--ink3);border-bottom:1px solid var(--b);
-  display:flex;align-items:center;gap:8px;
-}
-.tooltip-body{padding:14px 16px}
-.tooltip-city{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);margin-bottom:6px;letter-spacing:.1em}
-.tooltip-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:400;line-height:1.25;margin-bottom:8px}
-.tooltip-meta{font-size:12px;color:var(--ink3);margin-bottom:10px;display:flex;gap:12px;flex-wrap:wrap}
-.tooltip-desc{font-size:12px;color:var(--ink2);line-height:1.65;margin-bottom:12px}
-.tooltip-stills{display:flex;gap:4px;margin-bottom:12px}
-.still{
-  flex:1;aspect-ratio:16/9;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-size:18px;font-style:italic;color:var(--ink4);
-}
-.tooltip-footer{
-  border-top:1px solid var(--b);padding:10px 16px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.tooltip-action{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);cursor:pointer}
-.tooltip-action:hover{opacity:.7}
+.zoom-ctl{position:absolute;right:10px;bottom:12px;z-index:8;display:flex;flex-direction:column;gap:4px;opacity:0.15;transition:opacity 0.25s}
+.map-wrap:hover .zoom-ctl{opacity:0.6}
+.zoom-ctl button{width:20px;height:20px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.08);color:var(--text2);font-size:14px;line-height:1;cursor:pointer;border-radius:2px}
 
-/* SIDE PANEL */
-.map-panel{
-  position:absolute;top:0;right:0;bottom:0;
-  width:360px;background:var(--bg1);
-  border-left:1px solid var(--b);
-  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
-  z-index:200;display:flex;flex-direction:column;overflow:hidden;
-}
-.map-panel.open{transform:translateX(0)}
-.panel-header{
-  padding:20px 24px 16px;border-bottom:1px solid var(--b);flex-shrink:0;
-  display:flex;align-items:flex-start;justify-content:space-between;
-}
-.panel-close{
-  width:28px;height:28px;border:1px solid var(--b2);color:var(--ink3);
-  display:flex;align-items:center;justify-content:center;font-size:14px;
-  flex-shrink:0;margin-left:12px;transition:var(--tr);
-}
-.panel-close:hover{border-color:var(--ink3);color:var(--ink)}
-.panel-body{overflow-y:auto;flex:1;padding:0}
-.panel-section{padding:20px 24px;border-bottom:1px solid var(--b)}
-.panel-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px}
-.panel-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;line-height:1.2;margin-bottom:8px}
-.panel-subtitle{font-size:13px;font-style:italic;color:var(--ink2);margin-bottom:12px}
-.panel-meta{font-size:12px;color:var(--ink3);display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
-.panel-desc{font-size:13px;color:var(--ink2);line-height:1.75}
-.still-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:0}
-.still-large{
-  aspect-ratio:16/9;overflow:hidden;grid-column:span 2;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-size:32px;font-style:italic;color:var(--ink4);
-}
-.still-small{
-  aspect-ratio:4/3;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--ink4);
-}
-.film-list{display:flex;flex-direction:column;gap:0}
-.film-item{
-  display:flex;align-items:center;gap:12px;padding:12px 0;
-  border-bottom:1px solid var(--b);cursor:pointer;transition:var(--tr);
-}
-.film-item:last-child{border-bottom:none}
-.film-item:hover .film-item-title{color:var(--gold)}
-.film-item-poster{
-  width:36px;height:52px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-size:16px;font-style:italic;color:var(--ink4);
-}
-.film-item-info{flex:1}
-.film-item-title{font-family:'Playfair Display',serif;font-size:14px;transition:color .2s;margin-bottom:2px}
-.film-item-meta{font-size:11px;color:var(--ink3)}
-.scene-tag{display:inline-block;font-size:10px;padding:2px 8px;border:1px solid var(--b);color:var(--ink3);margin-top:4px}
-.fest-item{
-  padding:14px 0;border-bottom:1px solid var(--b);cursor:pointer;
-}
-.fest-item:last-child{border-bottom:none}
-.fest-item:hover .fest-item-title{color:var(--gold)}
-.fest-item-title{font-family:'Playfair Display',serif;font-size:15px;margin-bottom:4px;transition:color .2s}
-.fest-item-meta{font-size:11px;color:var(--ink3);display:flex;gap:10px;flex-wrap:wrap}
-.status-live-s{color:#7EC98E;display:flex;align-items:center;gap:5px}
-.sdot{width:5px;height:5px;border-radius:50%;background:#7EC98E;box-shadow:0 0 5px #5aac6e}
-.panel-btn{
-  display:block;width:100%;padding:13px;text-align:center;
-  font-size:12px;letter-spacing:.1em;text-transform:uppercase;
-  border:1px solid var(--gold);color:var(--gold);transition:var(--tr);margin-top:20px;
-}
-.panel-btn:hover{background:var(--gold);color:var(--bg)}
+/* FLOAT CARD */
+.float-card{position:absolute;right:18px;top:50%;width:268px;z-index:20;
+  background:rgba(7,9,13,0.88);backdrop-filter:blur(22px);
+  border:1px solid rgba(201,168,76,0.14);border-radius:8px;
+  box-shadow:0 20px 70px rgba(0,0,0,0.65);
+  transform:translateY(-50%) translateX(12px);opacity:0;
+  transition:opacity 0.65s var(--ease), transform 0.65s var(--ease)}
+.float-card.show{opacity:1;transform:translateY(-50%) translateX(0)}
+.float-card.fade-out{opacity:0;transition:opacity 0.3s ease}
+.fc-img{height:160px;position:relative;overflow:hidden;border-radius:7px 7px 0 0}
+.fc-img img,.fc-img .ph{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.68) contrast(1.05) saturate(0.72)}
+.fc-img .ph{background:repeating-linear-gradient(-28deg, #0a0c12 0 8px, #12151c 8px 16px)}
+.fc-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top, rgba(7,9,13,1) 0%, transparent 55%);pointer-events:none}
+.fc-cap{position:absolute;left:12px;bottom:10px;z-index:2}
+.fc-cap .v{font-family:var(--serif);font-size:11px;color:rgba(237,232,223,0.75)}
+.fc-cap .c{font-size:8px;letter-spacing:0.12em;color:rgba(201,168,76,0.65);margin-top:3px}
+.fc-body{padding:14px 16px 16px}
+.fc-quote{font-family:var(--serif);font-size:15px;line-height:1.55;color:rgba(237,232,223,0.88);padding-left:12px;border-left:2px solid var(--gold3);margin-bottom:12px}
+.fc-meta{font-size:9px;color:var(--text3);display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.fc-meta .likes{color:rgba(201,168,76,0.45)}
+.fc-btn{width:100%;padding:10px;border:1px solid var(--gold2);border-radius:4px;background:transparent;color:var(--gold);font-size:12px;cursor:pointer;margin-bottom:10px;transition:background 0.2s, border-color 0.2s}
+.fc-btn:hover{background:rgba(201,168,76,0.08)}
+.fc-link{font-size:10px;font-style:italic;color:rgba(201,168,76,0.38);cursor:pointer;text-align:center;display:block}
+.fc-link:hover{color:var(--gold2)}
 
-/* LEGEND */
-.map-legend{
-  position:absolute;bottom:24px;left:24px;
-  background:rgba(17,16,9,.92);border:1px solid var(--b2);
-  padding:14px 18px;z-index:50;backdrop-filter:blur(8px);
-}
-.legend-title{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
-.legend-item{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px;color:var(--ink2)}
-.legend-item:last-child{margin-bottom:0}
-.legend-icon{width:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-
-/* MAP STATS BAR */
-.map-stats{
-  position:absolute;top:16px;left:24px;
-  display:flex;gap:0;z-index:50;
-}
-.map-stat-pill{
-  background:rgba(17,16,9,.92);border:1px solid var(--b2);
-  padding:8px 16px;backdrop-filter:blur(8px);
-  border-right:none;
-  display:flex;align-items:center;gap:8px;
-}
-.map-stat-pill:last-child{border-right:1px solid var(--b2)}
-.map-stat-n{font-family:'Playfair Display',serif;font-size:18px;color:var(--ink)}
-.map-stat-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
-
-/* ZOOM CONTROLS */
-.zoom-controls{
-  position:absolute;bottom:24px;right:24px;z-index:50;
-  display:flex;flex-direction:column;gap:2px;
-}
-.zoom-btn{
-  width:36px;height:36px;
-  background:rgba(17,16,9,.92);border:1px solid var(--b2);
-  color:var(--ink2);font-size:18px;
-  display:flex;align-items:center;justify-content:center;
-  transition:var(--tr);
-}
-.zoom-btn:hover{border-color:var(--b3);color:var(--ink)}
-
-/* HOME PAGE (compact) */
-.home-page{padding-top:62px}
-.hero{min-height:90vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 48px;position:relative;overflow:hidden;gap:40px}
-.hero-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 55% 70% at 75% 35%,rgba(200,164,74,.055) 0%,transparent 60%),radial-gradient(ellipse 35% 45% at 15% 75%,rgba(140,48,48,.045) 0%,transparent 50%)}
-.hero-left{position:relative;z-index:1;padding:100px 0 60px}
-.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:28px}
-.eyebrow::before{content:'';width:24px;height:1px;background:var(--gold)}
-.hero-title{font-family:'Playfair Display',serif;font-size:clamp(52px,7vw,92px);font-weight:400;line-height:1.0;margin-bottom:12px}
-.hero-title .it{font-style:italic;color:var(--gold)}
-.hero-tagline{font-family:'Playfair Display',serif;font-size:clamp(15px,2vw,21px);font-style:italic;color:var(--ink2);margin-bottom:24px}
-.hero-desc{font-size:14px;color:var(--ink2);max-width:440px;line-height:1.8;margin-bottom:40px}
-.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
-.hero-right{position:relative;z-index:1;border-left:1px solid var(--b);padding-left:48px;padding-top:100px;padding-bottom:60px}
-.hero-stat-item{padding:24px 0;border-bottom:1px solid var(--b)}
-.hero-stat-item:first-child{border-top:1px solid var(--b)}
-.hero-stat-n{font-family:'Playfair Display',serif;font-size:40px;font-weight:400;line-height:1;margin-bottom:4px}
-.hero-stat-l{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
-
-/* MAP TEASER on home */
-.map-teaser{
-  position:relative;height:480px;overflow:hidden;cursor:pointer;
-  border-top:1px solid var(--b);border-bottom:1px solid var(--b);
-}
-.map-teaser::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(to bottom,transparent 40%,rgba(12,11,9,.95) 100%);
-  pointer-events:none;z-index:2;
-}
-.map-teaser-overlay{
-  position:absolute;bottom:0;left:0;right:0;z-index:3;
-  padding:32px 48px;display:flex;align-items:flex-end;justify-content:space-between;
-}
-.map-teaser-text h2{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;margin-bottom:8px}
-.map-teaser-text h2 em{font-style:italic;color:var(--gold)}
-.map-teaser-text p{font-size:13px;color:var(--ink2);max-width:500px}
-.map-teaser-enter{
-  font-size:12px;letter-spacing:.1em;text-transform:uppercase;
-  padding:12px 28px;border:1px solid var(--gold);color:var(--gold);
-  white-space:nowrap;flex-shrink:0;margin-left:32px;
-  transition:var(--tr);
-}
-.map-teaser-enter:hover{background:var(--gold);color:var(--bg)}
-#teaser-map{width:100%;height:100%}
-.teaser-country{fill:#191710;stroke:#242118;stroke-width:.4}
-.teaser-sphere{fill:#0C0B09}
-
-/* FOOTER */
-footer{border-top:1px solid var(--b);padding:48px;margin-top:0}
-.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
-.footer-logo{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:10px}
-.footer-logo em{font-style:italic;color:var(--gold)}
-.footer-desc{font-size:13px;color:var(--ink3);line-height:1.7}
-.footer-col-t{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-bottom:14px}
-.footer-col a{display:block;font-size:13px;color:var(--ink3);margin-bottom:9px;transition:color .2s}
-.footer-col a:hover{color:var(--ink)}
-.footer-bottom{display:flex;justify-content:space-between;padding-top:20px;border-top:1px solid var(--b);font-size:11px;color:var(--ink4);letter-spacing:.04em}
+/* FILM STRIP 150px */
+.film-strip{flex-shrink:0;height:150px;border-top:1px solid var(--border);display:flex;background:var(--bg);min-height:0}
+.fs-label{width:52px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border);font-size:8px;color:var(--text4);writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:0.2em;text-transform:uppercase}
+.fs-scroll{flex:1;overflow-x:auto;overflow-y:hidden;display:flex;align-items:stretch;cursor:grab;scrollbar-width:thin;user-select:none;-webkit-user-select:none}
+.fs-scroll:active{cursor:grabbing}
+.fs-scroll::-webkit-scrollbar{height:4px}
+.fs-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+.fs-inner{display:flex;gap:0;padding:0 8px;align-items:stretch}
+.fs-frame{width:148px;flex-shrink:0;padding:10px 8px 12px;position:relative;opacity:0.5;transition:opacity 0.25s;cursor:pointer}
+.fs-frame.on{opacity:1}
+.fs-frame .im{height:92px;border-radius:4px;overflow:hidden;position:relative;margin-bottom:8px}
+.fs-frame .im img,.fs-frame .im .ph{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.7) saturate(0.75)}
+.fs-frame .im .ph{background:repeating-linear-gradient(-28deg, #0a0c12 0 6px, #141820 6px 12px)}
+.fs-frame .nm{font-size:9.5px;color:rgba(237,232,223,0.45);line-height:1.25}
+.fs-frame.on .nm{color:rgba(237,232,223,0.88)}
+.fs-frame .qt{font-size:8.5px;font-style:italic;font-family:var(--serif);color:rgba(237,232,223,0.2);margin-top:4px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.fs-frame.on .qt{color:rgba(201,168,76,0.5)}
+.fs-frame .bar{position:absolute;bottom:0;left:8px;right:8px;height:1.5px;background:transparent;transition:background 0.2s}
+.fs-frame.on .bar{background:var(--gold)}
+.fs-all{width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-left:1px solid var(--border);font-size:9px;color:rgba(201,168,76,0.45);cursor:pointer;writing-mode:vertical-rl;transform:rotate(180deg)}
+.fs-all:hover{color:var(--gold)}
 </style>
 </head>
 <body>
+<div class="app">
+  <nav class="nav">
+    <div class="nav-logo" onclick="navigate('page-home')">Cine <em>Ours</em></div>
+    <div class="nav-center">
+      <span class="nav-link" onclick="navigate('page-home')">首页</span>
+      <span class="nav-link on">世界地图</span>
+      <span class="nav-link" onclick="navigate('page-festivals')">电影节</span>
+      <span class="nav-link" onclick="navigate('page-creator')">创作</span>
+      <span class="nav-link" onclick="navigate('page-history')">影史今天<i class="hist-dot"></i></span>
+    </div>
+    <div class="nav-right">
+      <input class="nav-search" type="search" placeholder="搜索城市、影院或一段电影记忆" aria-label="搜索">
+      <div class="nav-av" title="账户">余</div>
+    </div>
+  </nav>
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-logo" onclick="showPage('home')">Cine <span class="accent">Ours</span></div>
-  <div class="nav-center">
-    <span class="nav-link active" id="nl-home" onclick="showPage('home');setNL('home')">首页</span>
-    <span class="nav-link" id="nl-map" onclick="showPage('map');setNL('map')">世界地图</span>
-    <span class="nav-link" id="nl-festivals" onclick="showPage('festivals');setNL('festivals')">电影节</span>
-    <span class="nav-link" id="nl-creators" onclick="showPage('creators');setNL('creators')">创作者</span>
-    <span class="nav-link" id="nl-history" onclick="showPage('history');setNL('history')">影史今天</span>
-  </div>
-  <div class="nav-right">
-    <button class="btn btn-outline">登录</button>
-    <button class="btn btn-gold">加入</button>
-    <div class="nav-av">余</div>
-  </div>
-</nav>
-
-<!-- ══════════ HOME PAGE ══════════ -->
-<div id="page-home" class="page active home-page">
-  <div class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-left">
-      <div class="eyebrow">Cinema of Our Own</div>
-      <h1 class="hero-title">Cine<br><span class="it">Ours</span></h1>
-      <p class="hero-tagline">属于我们自己的电影空间</p>
-      <p class="hero-desc">举办你的电影节，分享剧本与灵感，与同频的人共同打卡观影。在世界地图上，发现每一个电影故事发生的地方。</p>
-      <div class="hero-cta">
-        <button class="btn btn-gold" onclick="showPage('map');setNL('map')">探索世界电影地图</button>
-        <button class="btn btn-outline" onclick="showPage('festivals');setNL('festivals')">浏览电影节</button>
+  <div class="body">
+    <aside class="sidebar">
+      <div class="sb-head">
+        <div class="sb-live"><i></i>正在发生</div>
+        <input class="sb-search" id="cityFilter" type="search" placeholder="🔍 搜索城市 / 国家" autocomplete="off">
       </div>
-    </div>
-    <div class="hero-right">
-      <div class="hero-stat-item"><div class="hero-stat-n" style="font-family:'Playfair Display',serif">1,247</div><div class="hero-stat-l">线上电影节</div></div>
-      <div class="hero-stat-item"><div class="hero-stat-n" style="font-family:'Playfair Display',serif">4,800+</div><div class="hero-stat-l">取景地标注</div></div>
-      <div class="hero-stat-item"><div class="hero-stat-n" style="font-family:'Playfair Display',serif">96</div><div class="hero-stat-l">个国家与地区</div></div>
-      <div class="hero-stat-item" style="border-bottom:none"><div class="hero-stat-n" style="font-family:'Playfair Display',serif">38k</div><div class="hero-stat-l">策展人</div></div>
-    </div>
-  </div>
+      <div class="sb-broadcast"><i></i><span id="bcText"></span></div>
+      <div class="sb-list" id="cityList"></div>
+      <div class="sb-foot"><a href="#" onclick="navigate('page-festivals');return false">让地图带我去别处 →</a></div>
+    </aside>
 
-  <!-- Map Teaser -->
-  <div class="map-teaser" onclick="showPage('map');setNL('map')">
-    <svg id="teaser-map"></svg>
-    <div class="map-teaser-overlay">
-      <div class="map-teaser-text">
-        <h2>世界<em>电影地图</em></h2>
-        <p>在地球上找到每一部电影的取景地，发现正在世界各地举办的电影节。96个国家，4800余处电影现场。</p>
+    <main class="map-wrap" id="mapWrap">
+      <div class="map-title">
+        <div class="l1">世界很大，<br>电影让我们在同一时刻相遇。</div>
+        <div class="l2">探索真实的电影现场，留下你的记录。</div>
       </div>
-      <div class="map-teaser-enter">进入地图 →</div>
-    </div>
+      <svg id="mapSvg" aria-label="世界电影信号地图"></svg>
+      <div class="zoom-ctl">
+        <button type="button" id="zoomIn" title="放大">+</button>
+        <button type="button" id="zoomOut" title="缩小">−</button>
+      </div>
+      <div class="float-card" id="floatCard">
+        <div class="fc-img" id="fcImg"></div>
+        <div class="fc-body">
+          <div class="fc-quote" id="fcQuote"></div>
+          <div class="fc-meta"><span id="fcUser"></span><span class="likes" id="fcLikes"></span></div>
+          <button type="button" class="fc-btn">我也来打卡</button>
+          <span class="fc-link" onclick="void(0)">查看此地全部记录 →</span>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <footer>
-    <div class="footer-grid">
-      <div><div class="footer-logo"><em>Cine Ours</em></div><p class="footer-desc">属于我们自己的电影空间。每个人都是策展人，每次观影都是一次相遇。</p></div>
-      <div class="footer-col"><div class="footer-col-t">平台</div><a>电影节广场</a><a>世界地图</a><a>创作空间</a><a>影史今天</a></div>
-      <div class="footer-col"><div class="footer-col-t">社区</div><a>影评论坛</a><a>观影挑战</a><a>线下活动</a></div>
-      <div class="footer-col"><div class="footer-col-t">关于</div><a>关于我们</a><a>加入团队</a><a>联系我们</a></div>
+  <div class="film-strip">
+    <div class="fs-label">电影地标</div>
+    <div class="fs-scroll" id="fsScroll">
+      <div class="fs-inner" id="fsInner"></div>
     </div>
-    <div class="footer-bottom"><span>© 2025 Cine Ours · Cinema of Our Own</span><span>做属于我们的电影时光</span></div>
-  </footer>
-</div>
-
-<!-- ══════════ MAP PAGE ══════════ -->
-<div id="page-map" class="page">
-  <div class="map-page">
-
-    <!-- Toolbar -->
-    <div class="map-toolbar">
-      <div class="map-toolbar-left">
-        <div class="map-search">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4" stroke="#7A7268" stroke-width="1.2"/><line x1="9" y1="9" x2="12" y2="12" stroke="#7A7268" stroke-width="1.2" stroke-linecap="round"/></svg>
-          <input type="text" placeholder="搜索城市、电影、取景地…" id="map-search-input" oninput="filterMap(this.value)">
-        </div>
-        <button class="layer-btn on" id="layer-festival" onclick="toggleLayer('festival')">
-          <span class="layer-dot dot-festival"></span>电影节
-        </button>
-        <button class="layer-btn on" id="layer-location" onclick="toggleLayer('location')">
-          <span class="layer-dot dot-location"></span>取景地
-        </button>
-      </div>
-      <div class="map-toolbar-right">
-        <span class="map-count" id="pin-count">共 <strong>28</strong> 个标注</span>
-        <button class="layer-btn" onclick="resetMapView()">重置视图</button>
-      </div>
-    </div>
-
-    <!-- Map wrap -->
-    <div class="map-wrap">
-      <svg id="world-map"></svg>
-
-      <!-- Stats -->
-      <div class="map-stats">
-        <div class="map-stat-pill">
-          <svg width="8" height="8"><circle cx="4" cy="4" r="4" fill="#C8A44A"/></svg>
-          <div><div class="map-stat-n" style="font-family:'Playfair Display',serif;font-size:16px">12</div><div class="map-stat-l">进行中的电影节</div></div>
-        </div>
-        <div class="map-stat-pill">
-          <svg width="8" height="8"><circle cx="4" cy="4" r="4" fill="#7EC98E"/></svg>
-          <div><div class="map-stat-n" style="font-family:'Playfair Display',serif;font-size:16px">4,800+</div><div class="map-stat-l">电影取景地</div></div>
-        </div>
-        <div class="map-stat-pill">
-          <svg width="8" height="8"><circle cx="4" cy="4" r="4" fill="#B5AC9E"/></svg>
-          <div><div class="map-stat-n" style="font-family:'Playfair Display',serif;font-size:16px">96</div><div class="map-stat-l">国家与地区</div></div>
-        </div>
-      </div>
-
-      <!-- Tooltip -->
-      <div class="map-tooltip hidden" id="map-tooltip"></div>
-
-      <!-- Legend -->
-      <div class="map-legend">
-        <div class="legend-title">图层说明</div>
-        <div class="legend-item">
-          <div class="legend-icon">
-            <svg width="16" height="20" viewBox="0 0 16 20"><path d="M8 0C3.58 0 0 3.58 0 8c0 5.52 8 12 8 12s8-6.48 8-12c0-4.42-3.58-8-8-8z" fill="#C8A44A" opacity=".9"/><circle cx="8" cy="8" r="3" fill="#0C0B09" opacity=".6"/></svg>
-          </div>
-          正在举办的电影节
-        </div>
-        <div class="legend-item">
-          <div class="legend-icon">
-            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" fill="none" stroke="#7EC98E" stroke-width="1.5"/><circle cx="8" cy="8" r="2" fill="#7EC98E"/></svg>
-          </div>
-          电影取景地
-        </div>
-        <div class="legend-item">
-          <div class="legend-icon">
-            <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="#C8A44A" stroke-width="1" stroke-dasharray="2 2"/></svg>
-          </div>
-          点击查看详情
-        </div>
-      </div>
-
-      <!-- Zoom -->
-      <div class="zoom-controls">
-        <button class="zoom-btn" onclick="zoomIn()">+</button>
-        <button class="zoom-btn" onclick="zoomOut()">−</button>
-      </div>
-
-      <!-- Side Panel -->
-      <div class="map-panel" id="map-panel">
-        <div class="panel-header">
-          <div id="panel-header-content"></div>
-          <button class="panel-close" onclick="closePanel()">✕</button>
-        </div>
-        <div class="panel-body" id="panel-body"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════ FESTIVALS PAGE (simplified) ══════════ -->
-<div id="page-festivals" class="page">
-  <div style="padding-top:62px;min-height:100vh">
-    <div style="padding:60px 48px 0">
-      <div class="eyebrow">线上电影节广场</div>
-      <h1 style="font-family:'Playfair Display',serif;font-size:52px;font-weight:400;margin:16px 0 12px">电影节 <em style="font-style:italic;color:var(--gold)">广场</em></h1>
-      <p style="font-size:14px;color:var(--ink2);max-width:520px;line-height:1.8;margin-bottom:32px">创建你的主题电影节，或者加入一个正在进行的电影节，与同频的人一起经历光影时刻。</p>
-    </div>
-    <div style="border-top:1px solid var(--b);margin-top:20px">
-      <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr;border-left:1px solid var(--b)">
-        <div style="padding:32px 28px;border-right:1px solid var(--b);border-bottom:1px solid var(--b);cursor:pointer" onclick="showPage('map');setNL('map')">
-          <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7EC98E;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:#7EC98E;box-shadow:0 0 6px #5aac6e;display:inline-block"></span>进行中 · 第4天</div>
-          <h3 style="font-family:'Playfair Display',serif;font-size:26px;font-weight:400;line-height:1.2;margin-bottom:10px">黑泽明与<em style="font-style:italic;color:var(--gold)">日本新浪潮</em><br>东京映画周</h3>
-          <p style="font-size:12px;color:var(--ink3);margin-bottom:16px">4月10日 — 4月17日 · 6部影片</p>
-          <p style="font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:20px">从《七武士》到《晚春》，沿着东京电影的脉络，重走那段黑白光影的黄金时代。</p>
-          <div style="display:flex;justify-content:space-between;padding-top:16px;border-top:1px solid var(--b)">
-            <span style="font-size:12px;color:var(--ink2)">@CinemasHiro</span>
-            <span style="font-size:12px;color:var(--ink3)">247人打卡</span>
-          </div>
-        </div>
-        <div style="padding:28px 24px;border-right:1px solid var(--b);border-bottom:1px solid var(--b);cursor:pointer">
-          <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:12px">即将开始</div>
-          <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:400;line-height:1.25;margin-bottom:8px">她在路上：<em style="font-style:italic;color:var(--gold)">女性凝视</em>电影周</h3>
-          <p style="font-size:12px;color:var(--ink3)">5月2日 — 5月8日 · 7部影片</p>
-        </div>
-        <div style="padding:28px 24px;border-bottom:1px solid var(--b);cursor:pointer">
-          <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:12px">即将开始</div>
-          <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:400;line-height:1.25;margin-bottom:8px"><em style="font-style:italic;color:var(--gold)">九十年代</em>港片重看</h3>
-          <p style="font-size:12px;color:var(--ink3)">5月5日起 · 8部影片</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════ OTHER PAGES ══════════ -->
-<div id="page-creators" class="page">
-  <div style="padding-top:62px;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center">
-    <div><div class="eyebrow" style="justify-content:center">创作者空间</div><h1 style="font-family:'Playfair Display',serif;font-size:52px;font-weight:400;margin:16px 0 12px">剧本、灵感、<em style="font-style:italic;color:var(--gold)">短片</em></h1><p style="font-size:14px;color:var(--ink2)">完整界面请见主网站 cine-ours-web.html</p></div>
-  </div>
-</div>
-<div id="page-history" class="page">
-  <div style="padding-top:62px;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center">
-    <div><div class="eyebrow" style="justify-content:center">影史今天</div><h1 style="font-family:'Playfair Display',serif;font-size:52px;font-weight:400;margin:16px 0 12px">每一天都是<em style="font-style:italic;color:var(--gold)">电影史</em>一页</h1><p style="font-size:14px;color:var(--ink2)">完整界面请见主网站 cine-ours-web.html</p></div>
+    <div class="fs-all" onclick="navigate('page-festivals')">全部→</div>
   </div>
 </div>
 
 <script>
-// ════════════════════════════════════════════════════════
-// DATA
-// ════════════════════════════════════════════════════════
-const PINS = [
-  // ── FESTIVALS ──────────────────────────────────────
-  {
-    id:'f1', type:'festival', lat:35.68, lon:139.69,
-    city:'东京', country:'日本',
-    title:'黑泽明与日本新浪潮 · 东京映画周',
-    subtitle:'东京映画周 No.047',
-    status:'live', period:'4月10日 — 4月17日',
-    host:'@CinemasHiro', count:247,
-    desc:'从《七武士》到《晚春》，沿着东京电影的脉络，重走那段黑白光影的黄金时代。每日解锁一部，附策展人导赏文章。',
-    films:['七武士','罗生门','东京物语','晚春','切腹','生之欲'],
-    stills:['七','罗','東']
-  },
-  {
-    id:'f2', type:'festival', lat:43.55, lon:7.02,
-    city:'戛纳', country:'法国',
-    title:'新浪潮五十年 · 法国电影大回顾',
-    subtitle:'法国电影周 No.058',
-    status:'soon', period:'5月20日起',
-    host:'@FrenchCinema', count:74,
-    desc:'从戈达尔到杜蒙，五十年法国新浪潮的精神谱系，在戛纳的光影中重新相遇。',
-    films:['精疲力竭','四百击','去年在马里昂巴德','电影手册','狂人彼埃罗'],
-    stills:['精','四','巴']
-  },
-  {
-    id:'f3', type:'festival', lat:22.30, lon:114.17,
-    city:'香港', country:'中国',
-    title:'九十年代港片重看',
-    subtitle:'香港映画周 No.055',
-    status:'soon', period:'5月5日起',
-    host:'@HKFilmLover', count:156,
-    desc:'王家卫、陈果、许鞍华——用今天的眼睛重看那个黄金时代。8部影片，8种香港。',
-    films:['花样年华','重庆森林','堕落天使','阿飞正传','东邪西毒'],
-    stills:['花','重','阿']
-  },
-  {
-    id:'f4', type:'festival', lat:52.52, lon:13.40,
-    city:'柏林', country:'德国',
-    title:'德国新电影 · 法斯宾德专题',
-    subtitle:'柏林放映 No.041',
-    status:'live', period:'4月20日 — 4月30日',
-    host:'@BerlinKino', count:88,
-    desc:'重看法斯宾德的愤怒与柔情——从《玛利亚·布劳恩的婚姻》到《水手奎雷尔》。',
-    films:['玛利亚·布劳恩的婚姻','水手奎雷尔','柏林亚历山大广场'],
-    stills:['玛','水','柏']
-  },
-  {
-    id:'f5', type:'festival', lat:40.71, lon:-74.00,
-    city:'纽约', country:'美国',
-    title:'独立精神 · 美国独立电影节',
-    subtitle:'纽约独立 No.062',
-    status:'open', period:'6月1日起',
-    host:'@NYIndieFilm', count:45,
-    desc:'低成本、高密度——从约翰·卡萨维茨到贾木许，美国独立电影的谱系。',
-    films:['阴影','陌生天堂','咖啡与香烟','破碎之花'],
-    stills:['阴','陌','咖']
-  },
-  {
-    id:'f6', type:'festival', lat:55.75, lon:37.62,
-    city:'莫斯科', country:'俄罗斯',
-    title:'塔可夫斯基全集观影周',
-    subtitle:'莫斯科专题 No.060',
-    status:'open', period:'6月1日起',
-    host:'@TarkovskyFan', count:118,
-    desc:'七部长片，七种时间。跟随塔可夫斯基穿越记忆、梦境与永恒。',
-    films:['伊万的童年','安德烈·鲁布廖夫','镜子','潜行者','乡愁','牺牲'],
-    stills:['安','镜','潜']
-  },
-  {
-    id:'f7', type:'festival', lat:31.22, lon:121.47,
-    city:'上海', country:'中国',
-    title:'华语独立短片展',
-    subtitle:'上海独立 No.064',
-    status:'live', period:'4月25日 — 5月5日',
-    host:'@SH_Indie', count:203,
-    desc:'来自大陆、台湾、香港的独立短片，在上海完成一次跨越海峡的影像对话。',
-    films:['之间','候鸟（片段）','夜行者','城市切片'],
-    stills:['之','候','夜']
-  },
+/* 各地标实景（Wikimedia Commons，CC 许可；需网络加载） */
+var VENUE_PHOTOS = {
+  berlin: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Berlin_kino_babylon.jpg/960px-Berlin_kino_babylon.jpg',
+  hk: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Hong_Kong_Cultural_Centre_%282038560974%29.jpg/960px-Hong_Kong_Cultural_Centre_%282038560974%29.jpg',
+  tokyo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Tokyo_Shibuya_Bunkamura_Le_Cinema.JPG/960px-Tokyo_Shibuya_Bunkamura_Le_Cinema.JPG',
+  paris: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Cin%C3%A9math%C3%A8que_fran%C3%A7aise_de_nuit_en_janvier_2020.jpg/960px-Cin%C3%A9math%C3%A8que_fran%C3%A7aise_de_nuit_en_janvier_2020.jpg',
+  nyc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Facade_of_the_Metropolitan_Opera_House_at_Lincoln_Center%2C_NYC.jpg/960px-Facade_of_the_Metropolitan_Opera_House_at_Lincoln_Center%2C_NYC.jpg',
+  sp: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Cine_Belas_Artes.jpg/960px-Cine_Belas_Artes.jpg'
+};
 
-  // ── FILM LOCATIONS ─────────────────────────────────
-  {
-    id:'l1', type:'location', lat:35.68, lon:139.72,
-    city:'东京 · 新宿区', country:'日本',
-    title:'《迷失东京》拍摄地',
-    subtitle:'Lost in Translation, 2003',
-    director:'索菲亚·科波拉', year:2003,
-    desc:'比尔·莫瑞在新宿公园凝视夜景的场景，帝国酒店顶层酒吧，以及涩谷街头的霓虹洪流——整座东京成为了孤独的容器。',
-    films:[
-      {title:'迷失东京',year:2003,director:'索菲亚·科波拉',scene:'新宿公园 · 帝国酒店'},
-      {title:'晚春',year:1949,director:'小津安二郎',scene:'东京市区'},
-      {title:'东京物语',year:1953,director:'小津安二郎',scene:'东京全景'},
-    ],
-    stills:['迷','春','物']
-  },
-  {
-    id:'l2', type:'location', lat:22.28, lon:114.15,
-    city:'香港 · 中环 / 旺角', country:'中国',
-    title:'《重庆森林》《花样年华》取景地',
-    subtitle:'王家卫 Wong Kar-wai Universe',
-    director:'王家卫', year:'1994–2000',
-    desc:'重庆大厦、旺角的夜市、中环的雨巷——王家卫把香港的褶皱拍成了整个城市的情绪。',
-    films:[
-      {title:'重庆森林',year:1994,director:'王家卫',scene:'重庆大厦 · 中环'},
-      {title:'花样年华',year:2000,director:'王家卫',scene:'旺角 · 窄巷'},
-      {title:'堕落天使',year:1995,director:'王家卫',scene:'尖沙咀'},
-      {title:'阿飞正传',year:1990,director:'王家卫',scene:'菲律宾 & 香港'},
-    ],
-    stills:['重','花','堕']
-  },
-  {
-    id:'l3', type:'location', lat:48.85, lon:2.35,
-    city:'巴黎 · 左岸', country:'法国',
-    title:'法国新浪潮的诞生地',
-    subtitle:'法国电影 1958–1968',
-    director:'戈达尔 · 特吕弗 · 侯麦', year:'1958-1968',
-    desc:'圣米歇尔大道、卢浮宫的奔跑、巴黎公社墙——新浪潮导演把巴黎变成了世界上最被拍摄的城市。',
-    films:[
-      {title:'精疲力竭',year:1960,director:'戈达尔',scene:'香榭丽舍大道'},
-      {title:'四百击',year:1959,director:'特吕弗',scene:'巴黎街头 · 海边'},
-      {title:'绿光',year:1986,director:'侯麦',scene:'巴黎 · 海滨'},
-      {title:'午夜巴黎',year:2011,director:'伍迪·艾伦',scene:'塞纳河畔'},
-    ],
-    stills:['精','四','绿']
-  },
-  {
-    id:'l4', type:'location', lat:41.89, lon:12.49,
-    city:'罗马 · 台伯河边', country:'意大利',
-    title:'意大利新现实主义的街道',
-    subtitle:'Italian Neorealism 1945–1955',
-    director:'罗西里尼 · 德·西卡 · 维斯康蒂', year:'1945-1955',
-    desc:'战后罗马的废墟变成了影史上最具力量的布景。德·西卡让工人阶级的面孔填满了银幕。',
-    films:[
-      {title:'罗马，不设防的城市',year:1945,director:'罗西里尼',scene:'罗马街头'},
-      {title:'偷自行车的人',year:1948,director:'德·西卡',scene:'罗马市区'},
-      {title:'大地在波动',year:1948,director:'维斯康蒂',scene:'西西里岛'},
-    ],
-    stills:['罗','偷','大']
-  },
-  {
-    id:'l5', type:'location', lat:34.05, lon:-118.24,
-    city:'洛杉矶 · 好莱坞', country:'美国',
-    title:'好莱坞黄金时代的背景板',
-    subtitle:'Hollywood Classic & New Wave',
-    director:'比利·怀尔德 · 马丁·斯科塞斯', year:'1940-now',
-    desc:'比弗利山的棕榈树、好莱坞大道的星光、夜晚的日落大道——这座城市从来不是真实的，它只是电影。',
-    films:[
-      {title:'日落大道',year:1950,director:'比利·怀尔德',scene:'好莱坞别墅'},
-      {title:'穆赫兰道',year:2001,director:'大卫·林奇',scene:'穆赫兰道'},
-      {title:'爱乐之城',year:2016,director:'达米安·查泽雷',scene:'洛杉矶全景'},
-    ],
-    stills:['日','穆','爱']
-  },
-  {
-    id:'l6', type:'location', lat:39.91, lon:116.39,
-    city:'北京 · 胡同与故宫', country:'中国',
-    title:'第五代与第六代导演的北京',
-    subtitle:'中国电影 1984–now',
-    director:'张艺谋 · 陈凯歌 · 贾樟柯', year:'1984-now',
-    desc:'从故宫的权力意象到胡同里的个体命运——北京在中国电影里是一个充满张力的符号。',
-    films:[
-      {title:'霸王别姬',year:1993,director:'陈凯歌',scene:'北京胡同 · 戏院'},
-      {title:'站台',year:2000,director:'贾樟柯',scene:'汾阳 & 北京'},
-      {title:'活着',year:1994,director:'张艺谋',scene:'陕北农村'},
-    ],
-    stills:['霸','站','活']
-  },
-  {
-    id:'l7', type:'location', lat:25.04, lon:121.53,
-    city:'台北 · 永康街 / 淡水', country:'中国台湾',
-    title:'台湾新浪潮的城市与乡愁',
-    subtitle:'Taiwan New Wave 1982–now',
-    director:'侯孝贤 · 杨德昌 · 蔡明亮', year:'1982-now',
-    desc:'永康街的咖啡馆、淡水的码头、台北的捷运——台湾导演把城市变成了一种关于时间的诗。',
-    films:[
-      {title:'一一',year:2000,director:'杨德昌',scene:'台北 · 新竹'},
-      {title:'悲情城市',year:1989,director:'侯孝贤',scene:'九份 · 基隆'},
-      {title:'爱情万岁',year:1994,director:'蔡明亮',scene:'台北空屋'},
-    ],
-    stills:['一','悲','爱']
-  },
-  {
-    id:'l8', type:'location', lat:55.95, lon:37.77,
-    city:'莫斯科郊外 · 梦幻庄园', country:'俄罗斯',
-    title:'塔可夫斯基的记忆地景',
-    subtitle:'Tarkovsky Landscapes',
-    director:'安德烈·塔可夫斯基', year:'1962-1986',
-    desc:'浸透在水中的废墟、燃烧的长草地、无边的白桦林——塔可夫斯基的镜头是对俄罗斯大地的一种冥想。',
-    films:[
-      {title:'镜子',year:1975,director:'塔可夫斯基',scene:'扎夫拉日耶村'},
-      {title:'乡愁',year:1983,director:'塔可夫斯基',scene:'意大利 · 俄罗斯'},
-      {title:'牺牲',year:1986,director:'塔可夫斯基',scene:'瑞典海岸'},
-    ],
-    stills:['镜','乡','牺']
-  },
-  {
-    id:'l9', type:'location', lat:37.97, lon:23.73,
-    city:'雅典 · 皮雷埃夫斯港', country:'希腊',
-    title:'安哲罗普洛斯的流亡地图',
-    subtitle:'Angelopoulos Film Geographies',
-    director:'西奥·安哲罗普洛斯', year:'1975-2012',
-    desc:'希腊的边境、雾中的港口、流亡者的漫游——安哲罗普洛斯把整个巴尔干半岛变成了一部关于历史的长诗。',
-    films:[
-      {title:'流浪艺人',year:1975,director:'安哲罗普洛斯',scene:'希腊全境'},
-      {title:'雾中风景',year:1988,director:'安哲罗普洛斯',scene:'希腊 · 德国'},
-      {title:'永恒与一日',year:1998,director:'安哲罗普洛斯',scene:'塞萨洛尼基'},
-    ],
-    stills:['流','雾','永']
-  },
-  {
-    id:'l10', type:'location', lat:-33.87, lon:151.21,
-    city:'悉尼 · 邦迪海滩', country:'澳大利亚',
-    title:'澳大利亚的阳光与幽暗',
-    subtitle:'Australian New Wave',
-    director:'彼得·威尔 · 简·坎皮恩', year:'1975-1993',
-    desc:'阳光下的恐惧——澳大利亚荒野的美丽与残酷，被彼得·威尔拍成了难以言说的神秘。',
-    films:[
-      {title:'悬崖上的野餐',year:1975,director:'彼得·威尔',scene:'维多利亚州荒野'},
-      {title:'钢琴课',year:1993,director:'简·坎皮恩',scene:'新西兰海岸'},
-    ],
-    stills:['悬','钢']
-  },
-  {
-    id:'l11', type:'location', lat:28.61, lon:77.20,
-    city:'孟买 / 德里', country:'印度',
-    title:'印度平行电影与宝莱坞',
-    subtitle:'Indian Cinema',
-    director:'萨蒂亚吉特·雷伊 · 米拉·奈尔', year:'1955-now',
-    desc:'雷伊把孟加拉的贫困与诗意化为银幕史诗；奈尔把孟买的混乱拍成了生命力四射的庆典。',
-    films:[
-      {title:'大地之歌',year:1955,director:'萨蒂亚吉特·雷伊',scene:'西孟加拉邦'},
-      {title:'孟买日记',year:1988,director:'米拉·奈尔',scene:'孟买街头'},
-    ],
-    stills:['大','孟']
-  },
-  {
-    id:'l12', type:'location', lat:35.89, lon:14.51,
-    city:'马耳他 · 瓦莱塔', country:'马耳他',
-    title:'《角斗士》与古地中海史诗',
-    subtitle:'Epic Cinema Locations',
-    director:'雷德利·斯科特', year:2000,
-    desc:'古罗马竞技场外景、中世纪城墙、金色的石灰岩——马耳他成了史诗电影的完美背景板。',
-    films:[
-      {title:'角斗士',year:2000,director:'雷德利·斯科特',scene:'马耳他外景'},
-      {title:'特洛伊',year:2004,director:'沃尔夫冈·彼得森',scene:'马耳他海岸'},
-    ],
-    stills:['角','特']
-  },
+var CITIES = [
+  { id:'berlin', zh:'柏林', en:'BERLIN', venue:'Babylon Kino', sub:'Babylon Kino · 刚刚有人记录',
+    quote:'散场后，雨还在下，街灯把影子拉得很长。', user:'@Lena · 刚刚记录于此', likes:24, lng:13.405, lat:52.52, country:'德国' },
+  { id:'hk', zh:'香港', en:'HONG KONG', venue:'香港文化中心', sub:'香港文化中心 · 247 人留下记录',
+    quote:'第一次在电影院看《悲情城市》，散场后没人说话。', user:'@YueLiang · 记录于此', likes:89, lng:114.172, lat:22.295, country:'中国' },
+  { id:'tokyo', zh:'东京', en:'TOKYO', venue:'涩谷 Bunkamura', sub:'涩谷 Bunkamura · 388 人留下记录',
+    quote:'字幕结束后没有人离开，我们都在等灯亮。', user:'@Haruki · 记录于此', likes:52, lng:139.702, lat:35.659, country:'日本' },
+  { id:'paris', zh:'巴黎', en:'PARIS', venue:'La Cinémathèque française', sub:'La Cinémathèque française · 刚刚有人记录',
+    quote:'走出电影院时，街道突然像电影里的场景。', user:'@Marie · 记录于此', likes:37, lng:2.346, lat:48.851, country:'法国' },
+  { id:'nyc', zh:'纽约', en:'NEW YORK', venue:'Film at Lincoln Center', sub:'Film at Lincoln Center · 92 人留下记录',
+    quote:'在纽约看完电影走出来，城市本身就是续集。', user:'@Maya · 记录于此', likes:61, lng:-73.983, lat:40.771, country:'美国' },
+  { id:'sp', zh:'圣保罗', en:'SÃO PAULO', venue:'Cine Belas Artes', sub:'Cine Belas Artes · 16 人留下记录',
+    quote:'Belas Artes 重开的那天，整个城市都在哭。', user:'@Lucas · 记录于此', likes:18, lng:-46.633, lat:-23.55, country:'巴西' }
 ];
 
-// ════════════════════════════════════════════════════════
-// PAGE ROUTING
-// ════════════════════════════════════════════════════════
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  window.scrollTo({top:0,behavior:'instant'});
-  if(id==='map' && !mapInited) initMap();
+var HEAT_CITIES = [
+  [2.35,48.85],[13.41,52.52],[0.12,51.51],[-3.70,40.42],[12.49,41.90],
+  [4.90,52.37],[18.07,59.33],[14.42,50.08],[19.04,47.50],[28.95,41.01],
+  [30.52,50.45],[37.62,55.75],[16.37,48.21],[9.19,45.46],
+  [114.17,22.30],[121.47,31.23],[116.39,39.93],[139.70,35.68],
+  [126.98,37.57],[103.82,1.35],[100.52,13.75],[77.21,28.63],
+  [72.88,19.07],[88.36,22.57],[104.92,11.57],[106.85,-6.21],
+  [51.53,25.29],[46.72,24.69],[55.27,25.20],
+  [-73.98,40.77],[-87.63,41.88],[-118.24,34.05],[-122.42,37.77],
+  [-79.38,43.65],[-43.17,-22.90],[-46.63,-23.55],[-58.38,-34.60],
+  [-70.67,-33.45],[-99.13,19.43],[-74.08,4.71],
+  [3.39,6.45],[36.82,-1.29],[28.04,-26.20],[18.42,-33.93],
+  [39.19,21.49],[44.38,33.34],[35.22,31.77],
+  [151.21,-33.87],[144.96,-37.82]
+];
+
+var BROADCASTS = [
+  '刚刚有人在柏林记录了 Babylon Kino',
+  '香港文化中心新增 3 条散场后讨论',
+  '东京有人收藏了涩谷 Bunkamura',
+  '巴黎刚刚出现一条新的放映后记录',
+  '纽约 Lincoln Center 有人写下了今晚的感受',
+  '圣保罗 Belas Artes 有人在周年纪念日回来',
+  '柏林有人在雨中等待下一场放映',
+  '香港有 12 人同时记录了同一部电影'
+];
+
+var FRAMES = [
+  { name:'Babylon Kino', quote:'散场后，雨还在下。', cityId:'berlin' },
+  { name:'香港文化中心', quote:'散场后没人说话。', cityId:'hk' },
+  { name:'涩谷 Bunkamura', quote:'我们都在等灯亮。', cityId:'tokyo' },
+  { name:'Cinémathèque Française', quote:'街道突然像电影里的场景。', cityId:'paris' },
+  { name:'Film at Lincoln Center', quote:'城市本身就是续集。', cityId:'nyc' },
+  { name:'Cine Belas Artes', quote:'整个城市都在哭。', cityId:'sp' }
+];
+
+function navigate(page) {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'navigate', page: page }, '*');
+    }
+  } catch (e) {}
 }
-function setNL(active){
-  document.querySelectorAll('.nav-link').forEach(el=>{
-    el.classList.toggle('active', el.id==='nl-'+active);
+
+var activeId = 'berlin';
+var worldData = null;
+var mapWrap = document.getElementById('mapWrap');
+var svgEl = document.getElementById('mapSvg');
+var floatCard = document.getElementById('floatCard');
+var zoomK = 1;
+var bcIndex = 0;
+var bcEl = document.getElementById('bcText');
+
+function cityById(id) {
+  for (var i = 0; i < CITIES.length; i++) if (CITIES[i].id === id) return CITIES[i];
+  return CITIES[0];
+}
+
+function renderCityList(filter) {
+  var q = (filter || '').trim().toLowerCase();
+  var list = document.getElementById('cityList');
+  list.innerHTML = '';
+  CITIES.forEach(function (c) {
+    var hay = (c.zh + c.en + c.venue).toLowerCase();
+    if (q && hay.indexOf(q) === -1) return;
+    var div = document.createElement('div');
+    div.className = 'sb-item' + (c.id === activeId ? ' on' : '');
+    div.dataset.id = c.id;
+    div.innerHTML = '<div class="t1">' + c.zh + '</div><div class="t2">' + c.sub + '</div>';
+    div.onclick = function () { selectCity(c.id); };
+    list.appendChild(div);
   });
 }
 
-// ════════════════════════════════════════════════════════
-// TEASER MAP (home page — static simplified)
-// ════════════════════════════════════════════════════════
-function initTeaserMap(){
-  const w = document.getElementById('teaser-map').parentElement.clientWidth || 1400;
-  const h = 480;
-  const svg = d3.select('#teaser-map').attr('width',w).attr('height',h);
-  const proj = d3.geoNaturalEarth1().scale(w/6.2).translate([w/2, h/2]);
-  const path = d3.geoPath().projection(proj);
-  svg.append('path').datum({type:'Sphere'}).attr('class','teaser-sphere').attr('d',path);
-  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
-    .then(r=>r.json())
-    .then(world=>{
-      const countries = topojson.feature(world, world.objects.countries);
-      svg.selectAll('.tc').data(countries.features).join('path')
-        .attr('class','teaser-country').attr('d',path);
-      // Add a few teaser pins
-      const teaserPins = PINS.slice(0,7);
-      teaserPins.forEach(p=>{
-        const [x,y] = proj([p.lon,p.lat]);
-        if(!x||!y) return;
-        const g = svg.append('g').attr('transform',`translate(${x},${y})`).style('cursor','pointer').on('click',()=>{showPage('map');setNL('map')});
-        if(p.type==='festival'){
-          g.append('circle').attr('r',12).attr('fill','rgba(200,164,74,0.12)').attr('class','pin-pulse');
-          g.append('path').attr('d','M0,-9C-5,-9 -9,-5 -9,0C-9,6.5 0,13 0,13S9,6.5 9,0C9,-5 5,-9 0,-9Z').attr('fill','#C8A44A').attr('opacity',.85);
-        } else {
-          g.append('circle').attr('r',6).attr('fill','none').attr('stroke','#7EC98E').attr('stroke-width',1.5).attr('opacity',.7);
-          g.append('circle').attr('r',2).attr('fill','#7EC98E').attr('opacity',.7);
-        }
-      });
-    }).catch(()=>{});
-}
-
-// ════════════════════════════════════════════════════════
-// MAIN MAP
-// ════════════════════════════════════════════════════════
-let mapInited = false;
-let mapSvg, mapProj, mapPath, mapZoom, mapG;
-let activeLayer = {festival:true, location:true};
-let currentTransform = d3.zoomIdentity;
-
-function initMap(){
-  mapInited = true;
-  const container = document.getElementById('world-map');
-  const W = container.clientWidth || window.innerWidth;
-  const H = container.clientHeight || window.innerHeight - 114;
-
-  mapSvg = d3.select('#world-map').attr('width',W).attr('height',H);
-  mapProj = d3.geoNaturalEarth1().scale(W/6.3).translate([W/2, H/2]);
-  mapPath = d3.geoPath().projection(mapProj);
-
-  mapZoom = d3.zoom()
-    .scaleExtent([0.7, 18])
-    .on('zoom', e=>{
-      currentTransform = e.transform;
-      mapG.attr('transform', e.transform);
-      // Adjust pin sizes on zoom
-      const s = e.transform.k;
-      mapG.selectAll('.festival-pin-group').attr('transform', d=>{
-        const [x,y] = mapProj([d.lon,d.lat]);
-        return `translate(${x},${y}) scale(${1/Math.sqrt(s)})`;
-      });
-      mapG.selectAll('.location-pin-group').attr('transform', d=>{
-        const [x,y] = mapProj([d.lon,d.lat]);
-        return `translate(${x},${y}) scale(${1/Math.sqrt(s)})`;
-      });
-    });
-
-  mapSvg.call(mapZoom);
-
-  // Graticule
-  mapSvg.append('path').datum(d3.geoGraticule()()).attr('class','graticule').attr('d',mapPath);
-
-  mapG = mapSvg.append('g');
-
-  // Sphere
-  mapG.append('path').datum({type:'Sphere'}).attr('class','sphere').attr('d',mapPath);
-
-  // Countries
-  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
-    .then(r=>r.json())
-    .then(world=>{
-      const topojsonLoaded = typeof topojson !== 'undefined';
-      if(!topojsonLoaded){ renderFallback(W,H); return; }
-      const countries = topojson.feature(world, world.objects.countries);
-      mapG.selectAll('.country').data(countries.features).join('path')
-        .attr('class','country').attr('d',mapPath)
-        .on('click', (e,d)=>{
-          // find nearby pins
-          const [mx,my] = d3.pointer(e);
-          // just close panel on empty country click
-          if(!e.target.closest('.map-pin')) closePanel();
-        });
-      renderPins();
-    })
-    .catch(()=>{ renderFallback(W,H); renderPins(); });
-}
-
-function renderFallback(W,H){
-  // Draw simple placeholder world outline if topojson fails
-  mapG.append('rect').attr('x',0).attr('y',0).attr('width',W).attr('height',H).attr('fill','#0F0E0B');
-  mapG.append('text').attr('x',W/2).attr('y',H/2).attr('text-anchor','middle')
-    .attr('fill','#4A4540').attr('font-size',13).attr('font-family','DM Sans')
-    .text('地图数据加载中，标注点仍可交互');
-}
-
-function renderPins(){
-  // Remove existing
-  mapG.selectAll('.festival-pin-group,.location-pin-group').remove();
-
-  const festivals = PINS.filter(p=>p.type==='festival');
-  const locations = PINS.filter(p=>p.type==='location');
-
-  // Festival pins — gold drop-pins
-  if(activeLayer.festival){
-    const fg = mapG.selectAll('.festival-pin-group')
-      .data(festivals).join('g')
-      .attr('class','festival-pin-group map-pin')
-      .attr('transform', d=>{
-        const [x,y] = mapProj([d.lon,d.lat]);
-        return `translate(${x},${y})`;
-      })
-      .style('cursor','pointer')
-      .on('mouseenter', (e,d)=>showTooltip(e,d))
-      .on('mouseleave', hideTooltip)
-      .on('click', (e,d)=>{ e.stopPropagation(); openPanel(d); });
-
-    // pulse ring
-    fg.append('circle')
-      .attr('r',14).attr('fill','rgba(200,164,74,0.1)')
-      .attr('class', d=>d.status==='live' ? 'pin-pulse' : '');
-
-    // pin body (teardrop)
-    fg.append('path')
-      .attr('d','M0,-13C-7,-13 -13,-7 -13,0C-13,9 0,20 0,20S13,9 13,0C13,-7 7,-13 0,-13Z')
-      .attr('fill', d=>d.status==='live' ? '#C8A44A' : d.status==='soon' ? '#8A6E2F' : '#5C4518')
-      .attr('opacity',.92);
-
-    // inner dot
-    fg.append('circle').attr('r',4).attr('fill','rgba(12,11,9,0.6)').attr('cy',-1);
-
-    // live badge pulse
-    fg.filter(d=>d.status==='live').append('circle')
-      .attr('r',3).attr('fill','#7EC98E').attr('cy',-25).attr('class','pin-pulse-fast');
+function updateFloatCard(c, skipAnim) {
+  var fcImg = document.getElementById('fcImg');
+  var fcQuote = document.getElementById('fcQuote');
+  var fcUser = document.getElementById('fcUser');
+  var fcLikes = document.getElementById('fcLikes');
+  function fill() {
+    fcQuote.textContent = c.quote;
+    fcUser.textContent = c.user;
+    fcLikes.textContent = '♡ ' + c.likes;
+    fcImg.innerHTML = '';
+    var photo = VENUE_PHOTOS[c.id];
+    if (photo) {
+      var im = document.createElement('img');
+      im.src = photo;
+      im.alt = c.venue;
+      fcImg.appendChild(im);
+    } else {
+      var ph = document.createElement('div');
+      ph.className = 'ph';
+      fcImg.appendChild(ph);
+    }
+    var cap = document.createElement('div');
+    cap.className = 'fc-cap';
+    cap.innerHTML = '<div class="v">' + c.venue + '</div><div class="c">' + c.en + ' · ' + c.country + '</div>';
+    fcImg.appendChild(cap);
   }
-
-  // Location pins — green crosshair
-  if(activeLayer.location){
-    const lg = mapG.selectAll('.location-pin-group')
-      .data(locations).join('g')
-      .attr('class','location-pin-group map-pin')
-      .attr('transform', d=>{
-        const [x,y] = mapProj([d.lon,d.lat]);
-        return `translate(${x},${y})`;
-      })
-      .style('cursor','pointer')
-      .on('mouseenter', (e,d)=>showTooltip(e,d))
-      .on('mouseleave', hideTooltip)
-      .on('click', (e,d)=>{ e.stopPropagation(); openPanel(d); });
-
-    lg.append('circle').attr('r',9).attr('fill','rgba(126,201,142,0.08)');
-    lg.append('circle').attr('r',6).attr('fill','none').attr('stroke','#7EC98E').attr('stroke-width',1.4).attr('opacity',.75);
-    lg.append('circle').attr('r',2.5).attr('fill','#7EC98E').attr('opacity',.85);
-    // cross lines
-    lg.append('line').attr('x1',-10).attr('x2',-7).attr('y1',0).attr('y2',0).attr('stroke','#7EC98E').attr('stroke-width',1).attr('opacity',.5);
-    lg.append('line').attr('x1',7).attr('x2',10).attr('y1',0).attr('y2',0).attr('stroke','#7EC98E').attr('stroke-width',1).attr('opacity',.5);
-    lg.append('line').attr('x1',0).attr('x2',0).attr('y1',-10).attr('y2',-7).attr('stroke','#7EC98E').attr('stroke-width',1).attr('opacity',.5);
-    lg.append('line').attr('x1',0).attr('x2',0).attr('y1',7).attr('y2',10).attr('stroke','#7EC98E').attr('stroke-width',1).attr('opacity',.5);
+  if (skipAnim) {
+    fill();
+    return;
   }
-}
-
-// ════════════════════════════════════════════════════════
-// TOOLTIP
-// ════════════════════════════════════════════════════════
-let tooltipTimer;
-function showTooltip(event, d){
-  clearTimeout(tooltipTimer);
-  const tip = document.getElementById('map-tooltip');
-  tip.classList.remove('hidden');
-
-  const isF = d.type==='festival';
-  const statusText = isF ? (d.status==='live'?'<span style="color:#7EC98E;display:flex;align-items:center;gap:5px"><span style="width:5px;height:5px;border-radius:50%;background:#7EC98E;box-shadow:0 0 5px #5aac6e;display:inline-block;flex-shrink:0"></span>进行中</span>' : d.status==='soon' ? '<span style="color:var(--gold)">即将开始</span>' : '<span style="color:var(--ink3)">招募中</span>') : '';
-
-  const stillColors = ['#141210','#1a1614','#181410'];
-  const stillsHTML = (d.stills||[]).slice(0,3).map((s,i)=>`<div class="still" style="background:${stillColors[i]}">${s}</div>`).join('');
-
-  tip.innerHTML = `
-    <div class="tooltip-type">
-      ${isF ? `<svg width="10" height="10"><path d="M5 0C2.2 0 0 2.2 0 5c0 3.3 5 7 5 7s5-3.7 5-7C10 2.2 7.8 0 5 0z" fill="#C8A44A"/></svg> 电影节 ${statusText}` : `<svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="none" stroke="#7EC98E" stroke-width="1.5"/><circle cx="5" cy="5" r="2" fill="#7EC98E"/></svg> 取景地`}
-    </div>
-    <div class="tooltip-body">
-      <div class="tooltip-city">${d.city} · ${d.country}</div>
-      <div class="tooltip-title">${d.title}</div>
-      <div class="tooltip-meta">
-        ${isF ? `<span>${d.period}</span><span>${d.host}</span>` : `<span>${d.director}</span><span>${d.year}</span>`}
-      </div>
-      ${d.desc ? `<div class="tooltip-desc">${d.desc.substring(0,80)}…</div>` : ''}
-      ${d.stills?.length ? `<div class="tooltip-stills">${stillsHTML}</div>` : ''}
-      <div class="tooltip-footer">
-        <span style="font-size:11px;color:var(--ink3)">${isF ? d.count+' 人参与' : (d.films?.length||0)+' 部影片'}</span>
-        <span class="tooltip-action" onclick="openPanel(window._tipData)">展开详情 →</span>
-      </div>
-    </div>`;
-
-  window._tipData = d;
-
-  // Position
-  const mapRect = document.getElementById('world-map').getBoundingClientRect();
-  const toolbarH = 52;
-  const [px,py] = mapProj([d.lon,d.lat]);
-  const [sx,sy] = [px * currentTransform.k + currentTransform.x, py * currentTransform.k + currentTransform.y];
-  let left = sx + 20;
-  let top = sy - 60 + toolbarH;
-  if(left + 340 > mapRect.width - 370) left = sx - 360;
-  if(top + 260 > mapRect.height - 20) top = mapRect.height - 280;
-  if(top < 10) top = 10;
-  tip.style.left = left + 'px';
-  tip.style.top = top + 'px';
-}
-
-function hideTooltip(){
-  tooltipTimer = setTimeout(()=>{
-    document.getElementById('map-tooltip').classList.add('hidden');
+  floatCard.classList.add('fade-out');
+  setTimeout(function () {
+    fill();
+    floatCard.classList.remove('fade-out');
+    floatCard.classList.add('show');
   }, 300);
 }
 
-// ════════════════════════════════════════════════════════
-// SIDE PANEL
-// ════════════════════════════════════════════════════════
-function openPanel(d){
-  hideTooltip();
-  const panel = document.getElementById('map-panel');
-  const header = document.getElementById('panel-header-content');
-  const body = document.getElementById('panel-body');
-  panel.classList.add('open');
-
-  const isF = d.type==='festival';
-  const stillColors = {
-    '七':'#0F1A2E','罗':'#1A0A1A','東':'#0D1A12','精':'#1A100A','四':'#0A1020','绿':'#0A1A10',
-    '花':'#1E1028','重':'#1A0A08','堕':'#1A1028','霸':'#1A0A0A','站':'#0A1020','活':'#1A0D0A',
-    '一':'#0A1218','悲':'#141014','爱':'#1A1020','镜':'#0A1418','乡':'#141010','牺':'#0E1814',
-    '流':'#101418','雾':'#0A1020','永':'#141820','大':'#0A1618','孟':'#1A1008','角':'#1A0E08',
-    '日':'#1A0E08','穆':'#1A0A14','爱':'#180E14','偷':'#0A1420','安':'#0A1018','潜':'#141018',
-    '迷':'#1A1028','春':'#0A1410','物':'#101418','悬':'#0A1418','钢':'#141018','特':'#1A0E08',
-  };
-  const getC = s => stillColors[s] || '#141210';
-
-  header.innerHTML = `
-    <div>
-      <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:${isF?'var(--gold)':'#7EC98E'};margin-bottom:6px">
-        ${isF ? '电影节' : '电影取景地'}
-      </div>
-      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:400;line-height:1.25;max-width:270px">${d.title}</div>
-    </div>`;
-
-  const statusHTML = isF ? (d.status==='live'
-    ? `<span style="color:#7EC98E;display:inline-flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:#7EC98E;box-shadow:0 0 6px #5aac6e;display:inline-block"></span>进行中</span>`
-    : `<span style="color:var(--gold)">${d.status==='soon'?'即将开始':'招募中'}</span>`) : '';
-
-  const stillsLargeColor = getC((d.stills||['?'])[0]);
-  const stillsMedColors = (d.stills||[]).slice(1,3).map(s=>getC(s));
-
-  const stillGridHTML = d.stills?.length ? `
-    <div class="still-grid">
-      <div class="still-large" style="background:${stillsLargeColor}">${d.stills[0]||'?'}</div>
-      ${(d.stills.slice(1,3)||[]).map((s,i)=>`<div class="still-small" style="background:${stillsMedColors[i]||'#141210'}">${s}</div>`).join('')}
-    </div>` : '';
-
-  if(isF){
-    body.innerHTML = `
-      <div class="panel-section">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-          ${statusHTML}
-          <span style="font-size:11px;color:var(--ink3)">${d.period}</span>
-        </div>
-        <div style="font-size:12px;color:var(--ink3);margin-bottom:14px">${d.city} · ${d.country} · 主办：${d.host}</div>
-        <p style="font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:16px">${d.desc}</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--b)">
-          <div style="padding:12px 16px;border-right:1px solid var(--b);text-align:center"><div style="font-family:'Playfair Display',serif;font-size:22px">${d.count}</div><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">参与人数</div></div>
-          <div style="padding:12px 16px;text-align:center"><div style="font-family:'Playfair Display',serif;font-size:22px">${d.films?.length||0}</div><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">精选影片</div></div>
-        </div>
-      </div>
-      <div class="panel-section">
-        <div class="panel-label">排片影片</div>
-        <div class="film-list">
-          ${(d.films||[]).map((f,i)=>`
-            <div class="film-item">
-              <div class="film-item-poster" style="background:${getC(f[0]||'?')}">${f[0]||'?'}</div>
-              <div class="film-item-info">
-                <div class="film-item-title">${f}</div>
-                <div class="film-item-meta">第${i+1}天 · 点击查看详情</div>
-              </div>
-            </div>`).join('')}
-        </div>
-        <button class="panel-btn" onclick="alert('进入电影节详情页')">加入这届电影节 →</button>
-      </div>`;
-  } else {
-    body.innerHTML = `
-      <div class="panel-section">
-        ${stillGridHTML}
-      </div>
-      <div class="panel-section">
-        <div style="font-size:12px;color:var(--ink3);margin-bottom:12px">${d.city} · ${d.country}</div>
-        <p style="font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:0">${d.desc}</p>
-      </div>
-      <div class="panel-section">
-        <div class="panel-label">在此取景的影片</div>
-        <div class="film-list">
-          ${(d.films||[]).map(f=>`
-            <div class="film-item">
-              <div class="film-item-poster" style="background:${getC(f.title[0]||'?')}">${f.title[0]||'?'}</div>
-              <div class="film-item-info">
-                <div class="film-item-title">${f.title}</div>
-                <div class="film-item-meta">${f.year} · ${f.director}</div>
-                <div class="scene-tag">${f.scene}</div>
-              </div>
-            </div>`).join('')}
-        </div>
-        <button class="panel-btn" onclick="alert('查看该地区相关电影节')">发现此地的电影节 →</button>
-      </div>`;
-  }
-}
-
-function closePanel(){
-  document.getElementById('map-panel').classList.remove('open');
-}
-
-// ════════════════════════════════════════════════════════
-// CONTROLS
-// ════════════════════════════════════════════════════════
-function toggleLayer(type){
-  activeLayer[type] = !activeLayer[type];
-  document.getElementById('layer-'+type).classList.toggle('on', activeLayer[type]);
-  if(mapInited) renderPins();
-  // Update count
-  const shown = PINS.filter(p=>activeLayer[p.type]).length;
-  document.getElementById('pin-count').innerHTML = `共 <strong>${shown}</strong> 个标注`;
-}
-
-function zoomIn(){
-  if(!mapInited) return;
-  mapSvg.transition().duration(350).call(mapZoom.scaleBy, 1.6);
-}
-function zoomOut(){
-  if(!mapInited) return;
-  mapSvg.transition().duration(350).call(mapZoom.scaleBy, 0.625);
-}
-function resetMapView(){
-  if(!mapInited) return;
-  mapSvg.transition().duration(600).call(mapZoom.transform, d3.zoomIdentity);
-  closePanel();
-}
-
-function filterMap(val){
-  if(!mapInited) return;
-  const v = val.toLowerCase().trim();
-  if(!v){ mapG.selectAll('.festival-pin-group,.location-pin-group').attr('opacity',1); return; }
-  mapG.selectAll('.festival-pin-group,.location-pin-group').attr('opacity', function(d){
-    const match = d.title.toLowerCase().includes(v) || d.city.toLowerCase().includes(v) || d.country.toLowerCase().includes(v) || (d.films||[]).some(f=>(typeof f==='string'?f:f.title||'').toLowerCase().includes(v));
-    return match ? 1 : 0.12;
+function renderFilmStrip() {
+  var inner = document.getElementById('fsInner');
+  inner.innerHTML = '';
+  FRAMES.forEach(function (f, idx) {
+    var d = document.createElement('div');
+    d.className = 'fs-frame' + (f.cityId === activeId ? ' on' : '');
+    d.dataset.city = f.cityId;
+    var stripUrl = VENUE_PHOTOS[f.cityId];
+    var imh = '<div class="im">';
+    if (stripUrl) imh += '<img src="' + stripUrl + '" alt="">';
+    else imh += '<div class="ph"></div>';
+    imh += '</div>';
+    d.innerHTML = imh + '<div class="nm">' + f.name + '</div><div class="qt">「' + f.quote + '」</div><div class="bar"></div>';
+    d.onclick = function () { selectCity(f.cityId); };
+    inner.appendChild(d);
   });
 }
 
-// ════════════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════════════
+function selectCity(id) {
+  activeId = id;
+  renderCityList(document.getElementById('cityFilter').value);
+  renderFilmStrip();
+  updateFloatCard(cityById(id), false);
+  renderMapLayers();
+}
 
-// Load topojson
-const tsScript = document.createElement('script');
-tsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js';
-document.head.appendChild(tsScript);
+function arcPath(projection, from, to) {
+  var a = projection([from.lng, from.lat]);
+  var b = projection([to.lng, to.lat]);
+  if (!a || !b) return '';
+  var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+  var dx = b[0] - a[0], dy = b[1] - a[1];
+  var len = Math.sqrt(dx * dx + dy * dy) || 1;
+  var ox = -dy / len * 40, oy = dx / len * 40;
+  var cx = mx + ox, cy = my + oy;
+  return 'M' + a[0] + ',' + a[1] + ' Q' + cx + ',' + cy + ' ' + b[0] + ',' + b[1];
+}
 
-document.addEventListener('DOMContentLoaded', ()=>{
-  setTimeout(initTeaserMap, 400);
-});
+function renderMapLayers() {
+  var w = mapWrap.clientWidth, h = mapWrap.clientHeight;
+  if (w < 2 || h < 2) return;
+  var projection = d3.geoNaturalEarth1()
+    .scale(Math.min(w / 6.2, h / 3.2) * zoomK)
+    .translate([w / 2, h / 2]);
+  var path = d3.geoPath().projection(projection);
+  var svg = d3.select(svgEl);
+  svg.selectAll('*').remove();
+  svg.attr('width', w).attr('height', h).attr('viewBox', '0 0 ' + w + ' ' + h);
 
-window.addEventListener('resize', ()=>{
-  if(mapInited){
-    const c = document.getElementById('world-map');
-    const W = c.clientWidth, H = c.clientHeight;
-    mapSvg.attr('width',W).attr('height',H);
-    mapProj.translate([W/2,H/2]).scale(W/6.3);
-    mapG.selectAll('.sphere,.country,.graticule,.festival-pin-group,.location-pin-group').remove();
-    renderPins();
+  var defs = svg.append('defs');
+  var grad = defs.append('radialGradient').attr('id', 'heatG').attr('cx', '50%').attr('cy', '50%').attr('r', '50%');
+  grad.append('stop').attr('offset', '0%').attr('stop-color', 'rgba(180,110,15,0.28)');
+  grad.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(180,110,15,0)');
+  var blur = defs.append('filter').attr('id', 'softBlur').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
+  blur.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', 4);
+
+  var root = svg.append('g').attr('class', 'map-root');
+  root.append('rect').attr('width', w).attr('height', h).attr('fill', '#04050a');
+
+  var gx = root.append('g').attr('class', 'grid');
+  for (var i = 1; i <= 3; i++) {
+    gx.append('line').attr('x1', 0).attr('x2', w).attr('y1', h * i / 4).attr('y2', h * i / 4)
+      .attr('stroke', 'rgba(255,255,255,0.018)').attr('stroke-dasharray', '4 10');
   }
-});
-</script>
-<script>
-if(!window.shellNavigate){window.shellNavigate=function(p){if(window.parent&&window.parent.navigate)window.parent.navigate(p);else window.parent.postMessage({type:"navigate",payload:{page:p}},"*")};window.shellShowToast=function(m){if(window.parent&&window.parent.showToast)window.parent.showToast(m);else window.parent.postMessage({type:"toast",payload:{msg:m}},"*")}}
+  for (var j = 1; j <= 3; j++) {
+    gx.append('line').attr('y1', 0).attr('y2', h).attr('x1', w * j / 4).attr('x2', w * j / 4)
+      .attr('stroke', 'rgba(255,255,255,0.018)').attr('stroke-dasharray', '4 10');
+  }
+
+  if (worldData) {
+    var countries = topojson.feature(worldData, worldData.objects.countries);
+    root.append('g').selectAll('path')
+      .data(countries.features)
+      .join('path')
+      .attr('d', path)
+      .attr('fill', 'rgba(255,255,255,0.052)')
+      .attr('stroke', 'none');
+    root.append('g').selectAll('path.b')
+      .data(countries.features)
+      .join('path')
+      .attr('class', 'b')
+      .attr('d', path)
+      .attr('fill', 'none')
+      .attr('stroke', 'rgba(255,255,255,0.09)')
+      .attr('stroke-width', 0.4);
+  }
+
+  var heatG = root.append('g').attr('class', 'heat');
+  HEAT_CITIES.forEach(function (coord, idx) {
+    var p = projection(coord);
+    if (!p) return;
+    var rad = 20 + (idx % 3) * 10;
+    heatG.append('circle')
+      .attr('cx', p[0]).attr('cy', p[1]).attr('r', rad)
+      .attr('fill', 'url(#heatG)');
+  });
+
+  var active = cityById(activeId);
+  var arcG = root.append('g').attr('class', 'arcs');
+  CITIES.forEach(function (c) {
+    if (c.id === activeId) return;
+    var d = arcPath(projection, active, c);
+    if (d) {
+      arcG.append('path')
+        .attr('d', d)
+        .attr('fill', 'none')
+        .attr('stroke', 'rgba(201,168,76,0.2)')
+        .attr('stroke-width', 0.6)
+        .attr('stroke-dasharray', '3 7');
+    }
+  });
+
+  var markers = root.append('g').attr('class', 'markers');
+  CITIES.forEach(function (c) {
+    var p = projection([c.lng, c.lat]);
+    if (!p) return;
+    var g = markers.append('g').attr('transform', 'translate(' + p[0] + ',' + p[1] + ')').attr('class', 'city-g').style('cursor', 'pointer');
+    if (c.id === activeId) {
+      g.append('circle').attr('r', 16).attr('fill', 'rgba(201,168,76,0.08)').attr('filter', 'url(#softBlur)');
+      var mid = g.append('circle').attr('r', 9).attr('fill', 'rgba(201,168,76,0.2)');
+      mid.append('animate').attr('attributeName', 'r').attr('values', '9;14;9').attr('dur', '2.4s').attr('repeatCount', 'indefinite');
+      mid.append('animate').attr('attributeName', 'opacity').attr('values', '0.5;0.15;0.5').attr('dur', '2.4s').attr('repeatCount', 'indefinite');
+      var core = g.append('circle').attr('r', 5).attr('fill', '#f0c86a');
+      core.append('animate').attr('attributeName', 'opacity').attr('values', '1;0.65;1').attr('dur', '2.4s').attr('repeatCount', 'indefinite');
+      g.append('text').attr('text-anchor', 'middle').attr('y', -14).attr('font-family', 'Georgia, Times New Roman, serif').attr('font-size', 12).attr('fill', 'rgba(237,232,223,0.82)').text(c.zh);
+    } else {
+      var oc = g.append('circle').attr('r', 3).attr('fill', '#c9a84c').attr('opacity', 0.22);
+      g.append('title').text(c.zh + ' · ' + c.venue);
+      g.on('mouseenter', function () { oc.attr('opacity', 0.6); });
+      g.on('mouseleave', function () { oc.attr('opacity', 0.22); });
+    }
+    g.on('click', function () { selectCity(c.id); });
+  });
+}
+
+function renderFallback() {
+  window._fallbackMode = true;
+  worldData = null;
+  renderMapLayers();
+}
+
+function applyWorldData(data) {
+  try {
+    if (typeof topojson === 'undefined') throw new Error('topojson missing');
+    topojson.feature(data, data.objects.countries);
+    worldData = data;
+    window._fallbackMode = false;
+    renderMapLayers();
+  } catch (e) {
+    renderFallback();
+  }
+}
+
+function tickBroadcast() {
+  bcEl.style.opacity = '0';
+  setTimeout(function () {
+    bcIndex = (bcIndex + 1) % BROADCASTS.length;
+    bcEl.textContent = BROADCASTS[bcIndex];
+    bcEl.style.opacity = '1';
+  }, 500);
+}
+
+function setupBroadcast() {
+  bcEl.textContent = BROADCASTS[0];
+  setInterval(tickBroadcast, 6500);
+}
+
+function setupResize() {
+  var ro = new ResizeObserver(function () {
+    renderMapLayers();
+  });
+  ro.observe(mapWrap);
+}
+
+function setupFilter() {
+  document.getElementById('cityFilter').addEventListener('input', function () {
+    renderCityList(this.value);
+  });
+}
+
+function setupZoom() {
+  document.getElementById('zoomIn').onclick = function () {
+    zoomK = Math.min(2.2, zoomK * 1.12);
+    renderMapLayers();
+  };
+  document.getElementById('zoomOut').onclick = function () {
+    zoomK = Math.max(0.65, zoomK / 1.12);
+    renderMapLayers();
+  };
+}
+
+function setupFilmDrag() {
+  var el = document.getElementById('fsScroll');
+  var down = false, startX = 0, startScroll = 0;
+  el.addEventListener('mousedown', function (e) {
+    down = true;
+    startX = e.pageX;
+    startScroll = el.scrollLeft;
+    el.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', function (e) {
+    if (!down) return;
+    el.scrollLeft = startScroll - (e.pageX - startX) * 1.2;
+  });
+  window.addEventListener('mouseup', function () {
+    down = false;
+    el.style.cursor = 'grab';
+  });
+}
+
+function init() {
+  renderCityList('');
+  renderFilmStrip();
+  updateFloatCard(cityById(activeId), true);
+  floatCard.classList.add('show');
+  setupBroadcast();
+  setupFilter();
+  setupResize();
+  setupZoom();
+  setupFilmDrag();
+
+  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+    .then(function (r) { return r.json(); })
+    .then(function (data) { applyWorldData(data); })
+    .catch(function () { renderFallback(); });
+
+  setTimeout(function () { renderMapLayers(); }, 50);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 </script>
 </body>
 </html>

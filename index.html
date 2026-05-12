@@ -36,6 +36,8 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
 .nl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);
   padding:7px 15px;border-bottom:2px solid transparent;transition:var(--tr);cursor:pointer;white-space:nowrap}
 .nl:hover{color:var(--ink)}.nl.on{color:var(--ink);border-bottom-color:var(--gold)}
+@media (max-width:1100px){.nav{padding-left:22px;padding-right:22px}.nl{padding:7px 10px;font-size:11px}}
+@media (max-width:920px){.nl{font-size:10px;padding:7px 7px}}
 .tdot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);
   margin-left:5px;vertical-align:middle;animation:tdp 2s ease-in-out infinite}
 @keyframes tdp{0%,100%{opacity:1}50%{opacity:.4}}
@@ -142,6 +144,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
     <div class="nl"    id="nl-festivals" onclick="go('festivals')">电影节</div>
     <div class="nl"    id="nl-creator"   onclick="go('creator')">创作</div>
     <div class="nl"    id="nl-history"   onclick="go('history')">影史今天<span class="tdot"></span></div>
+    <div class="nl"    id="nl-french-learn" onclick="go('french-learn')">法语</div>
   </div>
   <div class="nav-r">
     <div class="nav-icon-btn" onclick="openSearch()">
@@ -177,6 +180,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
   <iframe class="pframe"    id="f-profile"          src=""  data-src="page-profile.html"          title="个人主页"></iframe>
   <iframe class="pframe"    id="f-auth"             src=""  data-src="page-auth.html"             title="登录注册"></iframe>
   <iframe class="pframe"    id="f-offline-festival" src=""  data-src="page-offline-festival.html" title="线下影展"></iframe>
+  <iframe class="pframe"    id="f-french-learn"     src=""  data-src="page-french-learn.html"     title="法语查词"></iframe>
 </div>
 
 <!-- USER MENU -->
@@ -197,6 +201,10 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
   <div class="um-item" onclick="go('creator');closeUmenu()">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2h7l3 3v7H2V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M5 6h4M5 8.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
     我的创作
+  </div>
+  <div class="um-item" onclick="go('french-learn');closeUmenu()">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 11V3l4 4 4-4v8" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/><path d="M3 7h8" stroke="currentColor" stroke-width="1.2"/></svg>
+    法语查词
   </div>
   <div class="um-item" style="color:var(--ink3)" onclick="logout()">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2H3a1 1 0 00-1 1v8a1 1 0 001 1h6M10 5l2 2-2 2M5 7h7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -221,7 +229,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
 
 <div class="kb" id="kb">
   <span><span class="kbk">⌘K</span>搜索</span>
-  <span><span class="kbk">1-5</span>切换</span>
+  <span><span class="kbk">1-6</span>切换</span>
   <span><span class="kbk">L</span>演示登录</span>
 </div>
 
@@ -237,6 +245,7 @@ const PAGES = {
   profile:           {src:'page-profile.html',           nav:null,           label:'个人主页',     bc:null},
   auth:              {src:'page-auth.html',               nav:null,           label:'加入',         bc:null},
   'offline-festival':{src:'page-offline-festival.html', nav:null,           label:'线下影展',     bc:{p:'festivals',pl:'电影节广场',l:'香港国际电影节'}},
+  'french-learn':    {src:'page-french-learn.html',      nav:'nl-french-learn', label:'法语查词', bc:null},
 };
 
 const SEARCH = [
@@ -259,6 +268,7 @@ const SEARCH = [
   {ty:'导演',    t:'黑泽明 · 日本',                   m:'世界地图', pg:'map'},
   {ty:'导演',    t:'侯孝贤 · 台湾',                   m:'世界地图', pg:'map'},
   {ty:'导演',    t:'安哲罗普洛斯 · 希腊',              m:'世界地图', pg:'map'},
+  {ty:'学习',    t:'法语查词 · 维基词典 / VPN',         m:'工具', pg:'french-learn'},
 ];
 
 // ── STATE ─────────────────────────────────────────────────────
@@ -375,6 +385,7 @@ function renderSearch(res) {
     {ty:'影史',    t:'《霸王别姬》1993年戛纳首映',      m:'4月29日',  pg:'history'},
     {ty:'取景地',  t:'东京 · 小津安二郎取景地',        m:'世界地图', pg:'map'},
     {ty:'创作',    t:'《候鸟》第一幕 — YueLiang',      m:'剧本',     pg:'creator'},
+    {ty:'学习',    t:'法语查词 · 维基词典',            m:'工具',     pg:'french-learn'},
   ];
   (res.length ? res : defaults).forEach(r => {
     const d = document.createElement('div');
@@ -405,8 +416,13 @@ function showToast(m) {
 
 // ── MESSAGE BRIDGE ────────────────────────────────────────────
 window.addEventListener('message', e => {
-  const { type, payload } = e.data || {};
-  if (type === 'navigate') go(payload.page);
+  const { type, payload, page } = e.data || {};
+  if (type === 'navigate') {
+    const raw = page != null ? page : payload && payload.page;
+    if (raw == null) return;
+    const dest = typeof raw === 'string' && raw.indexOf('page-') === 0 ? raw.slice(5) : raw;
+    go(dest);
+  }
   if (type === 'toast')    showToast(payload.msg);
   if (type === 'login')    { setAuth(true); go('home'); showToast('欢迎回来 余小舟'); }
   if (type === 'logout')   logout();
@@ -417,7 +433,7 @@ document.addEventListener('keydown', e => {
   if ((e.metaKey||e.ctrlKey) && e.key==='k') { e.preventDefault(); openSearch(); }
   if (e.key==='Escape') { closeSearch(); closeUmenu(); }
   if (!e.metaKey&&!e.ctrlKey&&!e.altKey&&document.activeElement.tagName!=='INPUT') {
-    const map={'1':'home','2':'map','3':'festivals','4':'creator','5':'history'};
+    const map={'1':'home','2':'map','3':'festivals','4':'creator','5':'history','6':'french-learn'};
     if (map[e.key]) go(map[e.key]);
     if (e.key==='l'||e.key==='L') {
       if (loggedIn) logout(); else { setAuth(true); showToast('已登录：余小舟'); }
@@ -429,7 +445,7 @@ document.addEventListener('keydown', e => {
 document.getElementById('f-home').addEventListener('load', function(){ wireFrame(this); });
 renderSearch([]);
 setTimeout(() => {
-  showToast('⌘K 全局搜索 · 1-5 切换页面 · L 演示登录');
+  showToast('⌘K 全局搜索 · 1-6 切换页面 · L 演示登录');
   setTimeout(() => document.getElementById('kb').style.opacity='0', 6000);
 }, 1200);
 </script>
