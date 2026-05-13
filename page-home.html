@@ -23,10 +23,26 @@
     .ph-root .hl-ey{display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(237,232,223,0.22);margin-bottom:28px}
     .ph-root .hl-ey::before{content:"";width:14px;height:1px;background:#c9a84c;flex-shrink:0}
     .ph-root .hl-hd{font-family:Georgia,"Times New Roman",serif;font-size:27px;line-height:1.35;color:rgba(237,232,223,0.58);margin-bottom:0}
-    .ph-root .hl-stats{display:flex;flex-direction:column;gap:12px}
-    .ph-root .hl-stat{display:flex;align-items:baseline;gap:8px}
-    .ph-root .stn{font-size:18px;color:rgba(201,168,76,0.65);font-family:Georgia,serif;line-height:1}
-    .ph-root .stl{font-size:9px;color:rgba(237,232,223,0.22);margin-top:0}
+    .ph-root .hl-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: auto;
+      padding-top: 48px;
+    }
+    .ph-root .hl-stat {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .ph-root .stn {
+      font-size: 20px;
+      color: rgba(201,168,76,0.68);
+    }
+    .ph-root .stl {
+      font-size: 9px;
+      color: rgba(237,232,223,0.28);
+    }
     
     /* 右侧 */
     .ph-root .hr{display:flex;flex-direction:column;min-height:100%;min-height:100dvh;min-width:0;padding:20px 24px 20px 0;gap:10px}
@@ -85,7 +101,16 @@
     .ph-root .mf-enter{font-size:11px;color:rgba(201,168,76,0.52);margin-top:2px}
     
     /* ── 过渡旁白 ── */
-    .ph-root .interlude{padding:52px 0 48px;padding-left:11%;font-size:10px;font-style:italic;color:rgba(237,232,223,0.11);letter-spacing:0.06em;line-height:2.4;background:#111}
+    .ph-root .interlude {
+      padding: 28px 0 24px;
+      padding-left: 11%;
+      font-size: 11px;
+      font-style: italic;
+      color: rgba(237,232,223,0.18);
+      letter-spacing: 0.06em;
+      line-height: 2;
+      background: #111;
+    }
     
     /* ── 世界信号区 ── */
     .ph-root .world-signal{position:relative;height:480px;background:#0f0f0f;overflow:hidden}
@@ -133,7 +158,16 @@
     /* ── 今晚的入口 — 海报横滑 ── */
     .ph-root .entry-zone{background:#0e0e0e;padding:64px 0 56px;overflow:hidden;position:relative}
     .ph-root .ez-noise{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n2)'/%3E%3C/svg%3E")}
-    .ph-root .ez-aside{text-align:center;font-size:10px;font-style:italic;color:rgba(237,232,223,0.14);letter-spacing:0.08em;margin-bottom:32px;position:relative;z-index:2}
+    .ph-root .ez-aside {
+      text-align: center;
+      font-size: 13px;
+      font-style: italic;
+      color: rgba(237,232,223,0.28);
+      letter-spacing: 0.06em;
+      margin-bottom: 48px;
+      position: relative;
+      z-index: 2;
+    }
     .ph-root .ez-scroll{display:flex;gap:12px;padding:0 36px 20px;overflow-x:auto;scrollbar-width:none;cursor:grab;position:relative;z-index:2;-webkit-overflow-scrolling:touch}
     .ph-root .ez-scroll::-webkit-scrollbar{display:none}
     .ph-root .ez-scroll.dragging{cursor:grabbing}
@@ -145,7 +179,12 @@
     .ph-root .pc.featured .pc-img{width:260px;height:360px}
     .ph-root .pc.regular{width:180px}
     .ph-root .pc.regular .pc-img{width:180px;height:268px}
-    .ph-root .pc-img{object-fit:cover;display:block;filter:brightness(0.72) saturate(0.7) contrast(1.05)}
+    .ph-root .pc-img {
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.72) saturate(0.7) contrast(1.05);
+      background: linear-gradient(135deg, #1a1408 0%, #0e0c08 100%);
+    }
     .ph-root .pc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.55) 35%,rgba(0,0,0,0.12) 65%,transparent 100%)}
     .ph-root .pc-content{position:absolute;bottom:0;left:0;right:0;padding:14px 14px 16px}
     .ph-root .pc-entry{font-size:13px;color:rgba(237,232,223,0.92);line-height:1.45;margin-bottom:5px;font-family:Georgia,serif}
@@ -199,17 +238,17 @@
                 <button type="button" class="hk-btn" onclick="nav('page-offline-festival')">记录这届影展 →</button>
               </div>
             </div>
-            <div class="hk-interact">
-              <div class="hk-ic">
-                <div class="hk-ic-ey"><span class="kdot-sm"></span>正在讨论</div>
-                <div class="hk-ic-title">《悲情城市》讨论正在发生</div>
-                <div class="hk-ic-sub">42 条新回应 · 刚刚</div>
-              </div>
-              <div class="hk-ic">
-                <div class="hk-ic-ey"><span class="kdot-sm"></span>正在预测</div>
-                <div class="hk-ic-title">谁会拿下金像奖？</div>
-                <div class="hk-ic-sub">1,204 人正在预测</div>
-              </div>
+          </div>
+          <div class="hk-interact">
+            <div class="hk-ic">
+              <div class="hk-ic-ey"><span class="kdot-sm"></span>正在讨论</div>
+              <div class="hk-ic-title">《悲情城市》讨论正在发生</div>
+              <div class="hk-ic-sub">42 条新回应 · 刚刚</div>
+            </div>
+            <div class="hk-ic">
+              <div class="hk-ic-ey"><span class="kdot-sm"></span>正在预测</div>
+              <div class="hk-ic-title">谁会拿下金像奖？</div>
+              <div class="hk-ic-sub">1,204 人正在预测</div>
             </div>
           </div>
         </div>
@@ -457,6 +496,11 @@
         img.alt = e.film;
         img.style.width  = isFeatured ? '260px' : '180px';
         img.style.height = isFeatured ? '360px' : '268px';
+    
+        if(!e.tmdbId){
+          img.style.background = 'linear-gradient(135deg, #1a1408 0%, #0e0c08 100%)';
+          img.style.display = 'block';
+        }
     
         /* 尝试从TMDB获取海报 */
         if(e.tmdbId){
