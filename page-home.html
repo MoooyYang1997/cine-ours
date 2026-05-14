@@ -162,42 +162,60 @@
     .ph-root .ws-foot-r{font-size:10px;font-style:italic;color:rgba(201,168,76,0.32);cursor:pointer;background:none;padding:0;border:none;font-family:inherit;transition:color 0.3s}
     .ph-root .ws-foot-r:hover{color:rgba(201,168,76,0.7)}
     
-    /* ── 今晚的入口 — 海报横滑 ── */
-    .ph-root .entry-zone{background:#0e0e0e;padding:64px 0 56px;overflow:hidden;position:relative}
-    .ph-root .ez-noise{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n2)'/%3E%3C/svg%3E")}
-    .ph-root .ez-aside {
-      text-align: center;
-      font-size: 14px;
-      font-style: italic;
-      color: rgba(237,232,223,0.45);
-      letter-spacing: 0.06em;
-      margin-bottom: 40px;
-      position: relative;
-      z-index: 2;
-    }
-    .ph-root .ez-scroll{display:flex;gap:12px;padding:0 36px 20px;overflow-x:auto;scrollbar-width:none;cursor:grab;position:relative;z-index:2;-webkit-overflow-scrolling:touch}
-    .ph-root .ez-scroll::-webkit-scrollbar{display:none}
-    .ph-root .ez-scroll.dragging{cursor:grabbing}
-    
-    /* 海报卡片 */
-    .ph-root .pc{flex-shrink:0;border-radius:6px;overflow:hidden;position:relative;cursor:pointer;transition:transform 0.25s}
-    .ph-root .pc:hover{transform:translateY(-4px)}
-    .ph-root .pc.featured{width:260px}
-    .ph-root .pc.featured .pc-img{width:260px;height:360px}
-    .ph-root .pc.regular{width:180px}
-    .ph-root .pc.regular .pc-img{width:180px;height:268px}
-    .ph-root .pc-img {
-      object-fit: cover;
-      display: block;
-      filter: brightness(0.72) saturate(0.7) contrast(1.05);
-      background: linear-gradient(135deg, #1a1408 0%, #0e0c08 100%);
-    }
-    .ph-root .pc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.55) 35%,rgba(0,0,0,0.12) 65%,transparent 100%)}
-    .ph-root .pc-content{position:absolute;bottom:0;left:0;right:0;padding:14px 14px 16px}
-    .ph-root .pc-entry{font-size:13px;color:rgba(237,232,223,0.92);line-height:1.45;margin-bottom:5px;font-family:Georgia,serif}
-    .ph-root .pc-entry.featured{font-size:15px}
-    .ph-root .pc-film{font-size:10px;color:rgba(237,232,223,0.38)}
-    .ph-root .pc-entry.gold{color:#c9a84c;font-style:italic}
+    /* ── 策展入口 ── */
+    .ph-root .entry-section{background:#141414;border-top:1px solid rgba(255,255,255,0.06)}
+    .ph-root .entry-stage{position:relative;width:100%;height:480px;overflow:hidden;background:#0e0e0e}
+    .ph-root .entry-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+    .ph-root .e-ovr{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,0.84) 0%,rgba(0,0,0,0.46) 52%,rgba(0,0,0,0.06) 100%)}
+    .ph-root .e-ovb{position:absolute;left:0;right:0;bottom:0;height:88px;background:linear-gradient(to top,#141414 0%,transparent 100%)}
+    .ph-root .e-inner{position:absolute;inset:0;z-index:4;display:flex;align-items:center}
+    .ph-root .e-left{width:56%;padding:36px 50px;display:flex;flex-direction:column}
+    .ph-root .e-tag{font-size:9px;letter-spacing:.2em;color:rgba(201,168,76,0.6);margin-bottom:13px}
+    .ph-root .e-zh{font-size:25px;color:rgba(237,232,223,0.93);line-height:1.25;margin-bottom:4px;font-family:Georgia,serif}
+    .ph-root .e-en{font-size:11px;font-style:italic;color:rgba(237,232,223,0.2);letter-spacing:.08em;margin-bottom:20px}
+    .ph-root .e-rule{width:20px;height:1px;background:rgba(201,168,76,0.32);margin-bottom:22px}
+    .ph-root .e-films{display:flex;flex-direction:column;margin-bottom:26px}
+    .ph-root .ef{padding:12px 0 12px 14px;border-bottom:1px solid rgba(255,255,255,0.045)}
+    .ph-root .ef:last-child{border-bottom:none}
+    .ph-root .ef.p1{border-left:1px solid rgba(201,168,76,0.52)}
+    .ph-root .ef.p2{border-left:1px solid rgba(255,255,255,0.13)}
+    .ph-root .ef.p3{border-left:1px solid rgba(255,255,255,0.07)}
+    .ph-root .ef-name{font-size:14px;line-height:1.3;margin-bottom:5px;font-family:Georgia,serif}
+    .ph-root .ef.p1 .ef-name{color:rgba(237,232,223,0.94)}
+    .ph-root .ef.p2 .ef-name{color:rgba(237,232,223,0.80)}
+    .ph-root .ef.p3 .ef-name{color:rgba(237,232,223,0.62)}
+    .ph-root .ef-line{font-size:11px;font-style:italic;line-height:1.65;margin-bottom:6px}
+    .ph-root .ef.p1 .ef-line{color:rgba(237,232,223,0.50)}
+    .ph-root .ef.p2 .ef-line{color:rgba(237,232,223,0.36)}
+    .ph-root .ef.p3 .ef-line{color:rgba(237,232,223,0.26)}
+    .ph-root .ef-meta{font-size:9px;letter-spacing:.04em}
+    .ph-root .ef.p1 .ef-meta{color:rgba(201,168,76,0.46)}
+    .ph-root .ef.p2 .ef-meta{color:rgba(237,232,223,0.24)}
+    .ph-root .ef.p3 .ef-meta{color:rgba(237,232,223,0.18)}
+    .ph-root .cta-bd{display:inline-flex;align-items:center;gap:11px;cursor:pointer;padding:3px 0;background:none;border:none;outline:none;font-family:inherit}
+    .ph-root .cta-lens{width:7px;height:7px;border-radius:50%;background:rgba(201,168,76,0.2);flex-shrink:0;position:relative;transition:background .35s}
+    .ph-root .cta-lens::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(201,168,76,0);transition:border-color .35s,box-shadow .35s}
+    .ph-root .cta-bd.lit .cta-lens{background:rgba(201,168,76,0.9)}
+    .ph-root .cta-bd.lit .cta-lens::before{border-color:rgba(201,168,76,0.3);box-shadow:0 0 10px rgba(201,168,76,0.22)}
+    .ph-root .cta-cc{font-size:12px;letter-spacing:.1em;color:rgba(237,232,223,0.26);transition:color .06s}
+    .ph-root .cta-cc.on{color:rgba(237,232,223,0.86)}
+    .ph-root .e-right{position:absolute;right:0;top:0;bottom:0;width:36%;z-index:3;display:flex;align-items:center;justify-content:center;padding:48px 44px 48px 16px}
+    .ph-root .cn-note{max-width:215px}
+    .ph-root .cn-mark{font-size:26px;color:rgba(201,168,76,0.2);line-height:1;margin-bottom:9px;font-family:Georgia,serif}
+    .ph-root .cn-quote{font-size:13px;font-style:italic;line-height:2;color:rgba(237,232,223,0.52);letter-spacing:.02em}
+    .ph-root .cn-attr{font-size:9px;color:rgba(201,168,76,0.3);margin-top:14px;letter-spacing:.12em}
+    .ph-root .e-tab-wrap{background:#141414;padding-top:13px}
+    .ph-root .e-tab-row{display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .ph-root .e-tab-row::-webkit-scrollbar{display:none}
+    .ph-root .e-tab{flex:1;min-width:108px;padding:9px 13px 8px;cursor:pointer;position:relative;background:none;border:none;text-align:left;font-family:inherit}
+    .ph-root .e-tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(201,168,76,0);transition:background .18s}
+    .ph-root .e-tab.act::after{background:rgba(201,168,76,0.7)}
+    .ph-root .e-tab-label{font-size:10px;color:rgba(237,232,223,0.22);line-height:1.45;letter-spacing:.02em;transition:color .18s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ph-root .e-tab.act .e-tab-label{color:rgba(237,232,223,0.62)}
+    .ph-root .e-tab:hover .e-tab-label{color:rgba(237,232,223,0.38)}
+    .ph-root .e-tab-more{padding:9px 15px 8px;white-space:nowrap;cursor:pointer;border-left:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;background:none;border-top:none;border-right:none;border-bottom:none;font-family:inherit}
+    .ph-root .e-tab-more span{font-size:10px;color:rgba(201,168,76,0.28);letter-spacing:.04em;font-style:italic;transition:color .2s}
+    .ph-root .e-tab-more:hover span{color:rgba(201,168,76,0.6)}
     
     /* ── 响应式 ── */
     @media(max-width:900px){
@@ -337,18 +355,40 @@
       </div>
     </section>
     
-    <!-- ══ 今晚的入口 ══ -->
-    <section class="entry-zone" id="entryZone">
-      <div class="ez-noise"></div>
-      <p class="ez-aside">或者，换一种方式进入。</p>
-      <div class="ez-scroll" id="ezScroll"></div>
+    <!-- ══ 策展入口 ══ -->
+    <section class="entry-section">
+      <div class="entry-stage">
+        <canvas id="eCanvas" width="900" height="480"></canvas>
+        <div class="e-ovr"></div>
+        <div class="e-ovb"></div>
+        <div class="e-inner">
+          <div class="e-left">
+            <div class="e-tag">一条线索</div>
+            <div class="e-zh" id="eZh">城市，以及漂泊的人</div>
+            <div class="e-en" id="eEn">The City and Its Shadow</div>
+            <div class="e-rule"></div>
+            <div class="e-films" id="eFilms"></div>
+            <button class="cta-bd" id="ctaBD" type="button">
+              <div class="cta-lens"></div>
+              <div id="ctaChars" style="display:inline-flex;gap:0"></div>
+            </button>
+          </div>
+        </div>
+        <div class="e-right">
+          <div class="cn-note">
+            <div class="cn-mark">"</div>
+            <div class="cn-quote" id="cnQ">这三部片放在一起，是因为它们都在问同一个问题：一个人独自在城市里，算不算失落？</div>
+            <div class="cn-attr">策展人手记</div>
+          </div>
+        </div>
+      </div>
+      <div class="e-tab-wrap">
+        <div class="e-tab-row" id="eTabRow"></div>
+      </div>
     </section>
     
     <script>
     (function(){
-      var TMDB_KEY = '68d50b44ac8b8e22f5426fc17fe4fe90';
-      var TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
-    
       /* ── nav ── */
       function nav(page){
         try{
@@ -470,94 +510,170 @@
     
       document.getElementById('wsExploreBtn').addEventListener('click', function(){ nav('page-map'); });
     
-      /* ── 今晚的入口 — TMDB海报横滑 ── */
-      var entries = [
-        {label:'港影节散场后，最多人在谈的', film:'悲情城市',   tmdbId:18148,  cls:''},
-        {label:'进入巴黎夜晚',               film:'爱在日落黄昏时', tmdbId:9429, cls:''},
-        {label:'回到杨德昌的台北',           film:'牯岭街少年杀人事件', tmdbId:28795, cls:''},
-        {label:'回到九十年代香港',           film:'重庆森林',    tmdbId:11104,  cls:''},
-        {label:'关于深夜与霓虹',             film:'堕落天使',    tmdbId:11839,  cls:''},
-        {label:'城市，以及漂泊的人',         film:'迷失东京',    tmdbId:153,    cls:''},
-        {label:'她们彼此看见',               film:'燃烧女子的肖像', tmdbId:466272, cls:''},
-        {label:'今年戛纳没有得奖的那部',     film:'Cannes 2026', tmdbId:null,   cls:''},
-        {label:'闭上眼睛进入',               film:'为你随机选一部', tmdbId:null,  cls:''},
-        {label:'今晚交给别人策展',           film:'策展人今晚的选择', tmdbId:null, cls:'gold'}
+      /* ── 策展入口 ── */
+      var curators = [
+        { tab:'城市线', zh:'城市，以及漂泊的人', en:'The City and Its Shadow', ctaLabel:'进入这条放映线',
+          films:[
+            { p:'p1', name:'迷失东京', line:'在异国酒店里，孤独也可以很温柔。', meta:'索菲亚 · 2003' },
+            { p:'p2', name:'重庆森林', line:'罐头会过期，喜欢也会。', meta:'王家卫 · 1994' },
+            { p:'p3', name:'堕落天使', line:'深夜的霓虹里，人人都是配角。', meta:'王家卫 · 1995' }
+          ],
+          quote:'这三部片放在一起，是因为它们都在问同一个问题：一个人独自在城市里，算不算失落？',
+          attr:'策展人手记',
+          navPage:'page-offline-festival'
+        },
+        { tab:'欧洲线', zh:'欧陆作者夜', en:'EUROPEAN AUTHORS', ctaLabel:'进入这条放映线',
+          films:[
+            { p:'p1', name:'燃烧女子的肖像', line:'彼此凝视，胜过千言万语。', meta:'瑟琳 · 2019' },
+            { p:'p2', name:'爱在日落黄昏时', line:'维也纳的一夜，足够一生回想。', meta:'林克莱特 · 2004' },
+            { p:'p3', name:'蓝白红之蓝', line:'失去一切之后，还剩自由。', meta:'基耶斯洛夫斯基 · 1993' }
+          ],
+          quote:'欧洲片单像一条慢火车，窗外风景换得很慢，心里却走得很远。',
+          attr:'—— @午夜场选片',
+          navPage:'page-offline-festival'
+        },
+        { tab:'东亚线', zh:'东京—台北', en:'TOKYO — TAIPEI', ctaLabel:'进入这条放映线',
+          films:[
+            { p:'p1', name:'迷失东京', line:'在异国酒店里，孤独也可以很温柔。', meta:'索菲亚 · 2003' },
+            { p:'p2', name:'牯岭街少年杀人事件', line:'少年与世界第一次正面相撞。', meta:'杨德昌 · 1991' },
+            { p:'p3', name:'小偷家族', line:'没有血缘的家人，也是家人。', meta:'是枝裕和 · 2018' }
+          ],
+          quote:'东亚的城市夜里，总有一盏灯为散场的人亮着。',
+          attr:'—— @邻座观众',
+          navPage:'page-offline-festival'
+        }
       ];
     
-      /* 随机排列 */
-      for(var i = entries.length - 1; i > 0; i--){
-        var j = Math.floor(Math.random() * (i + 1));
-        var tmp = entries[i]; entries[i] = entries[j]; entries[j] = tmp;
+      var eZh = document.getElementById('eZh');
+      var eEn = document.getElementById('eEn');
+      var eFilms = document.getElementById('eFilms');
+      var cnQ = document.getElementById('cnQ');
+      var cnAttrEl = document.querySelector('.ph-root .entry-section .cn-attr');
+      var ctaBD = document.getElementById('ctaBD');
+      var ctaChars = document.getElementById('ctaChars');
+      var eTabRow = document.getElementById('eTabRow');
+      var entryStage = document.querySelector('.ph-root .entry-section .entry-stage');
+      var eCanvas = document.getElementById('eCanvas');
+      var ci = 0;
+    
+      function renderFilms(films){
+        if(!eFilms) return;
+        eFilms.innerHTML = '';
+        films.forEach(function(f){
+          var row = document.createElement('div');
+          row.className = 'ef ' + f.p;
+          var nm = document.createElement('div');
+          nm.className = 'ef-name';
+          nm.textContent = f.name;
+          var ln = document.createElement('div');
+          ln.className = 'ef-line';
+          ln.textContent = f.line;
+          var mt = document.createElement('div');
+          mt.className = 'ef-meta';
+          mt.textContent = f.meta;
+          row.appendChild(nm);
+          row.appendChild(ln);
+          row.appendChild(mt);
+          eFilms.appendChild(row);
+        });
       }
     
-      var scroll = document.getElementById('ezScroll');
-      var featured = true; /* 第一张是主卡 */
+      function setCtaLabel(txt){
+        if(!ctaChars) return;
+        ctaChars.innerHTML = '';
+        var sp = document.createElement('span');
+        sp.className = 'cta-cc';
+        sp.textContent = txt || '进入这条放映线';
+        ctaChars.appendChild(sp);
+      }
     
-      entries.forEach(function(e, idx){
-        var isFeatured = (idx === 0);
-        var card = document.createElement('div');
-        card.className = 'pc ' + (isFeatured ? 'featured' : 'regular');
+      function applyCurator(c){
+        if(eZh) eZh.textContent = c.zh;
+        if(eEn) eEn.textContent = c.en;
+        if(cnQ) cnQ.textContent = c.quote;
+        if(cnAttrEl) cnAttrEl.textContent = c.attr;
+        renderFilms(c.films);
+        setCtaLabel(c.ctaLabel);
+      }
     
-        var img = document.createElement('img');
-        img.className = 'pc-img';
-        img.alt = e.film;
-        img.style.width  = isFeatured ? '260px' : '180px';
-        img.style.height = isFeatured ? '360px' : '268px';
+      function setActiveTab(idx){
+        var tabs = eTabRow.querySelectorAll('.e-tab');
+        tabs.forEach(function(t, i){
+          if(i === idx){ t.classList.add('act'); }
+          else{ t.classList.remove('act'); }
+        });
+      }
     
-        if(!e.tmdbId){
-          img.style.background = 'linear-gradient(160deg, #1e1a10 0%, #0e0c08 100%)';
-          img.style.width = img.style.width || '180px';
-          img.style.height = img.style.height || '268px';
-          img.style.display = 'block';
+      curators.forEach(function(c, idx){
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'e-tab' + (idx === 0 ? ' act' : '');
+        var lab = document.createElement('span');
+        lab.className = 'e-tab-label';
+        lab.textContent = c.tab;
+        b.appendChild(lab);
+        b.addEventListener('click', function(){
+          ci = idx;
+          applyCurator(curators[ci]);
+          setActiveTab(ci);
+        });
+        eTabRow.appendChild(b);
+      });
+      applyCurator(curators[0]);
+    
+      if(ctaBD && ctaChars){
+        ctaBD.addEventListener('mouseenter', function(){
+          ctaBD.classList.add('lit');
+          ctaChars.querySelectorAll('.cta-cc').forEach(function(el){ el.classList.add('on'); });
+        });
+        ctaBD.addEventListener('mouseleave', function(){
+          ctaBD.classList.remove('lit');
+          ctaChars.querySelectorAll('.cta-cc').forEach(function(el){ el.classList.remove('on'); });
+        });
+        ctaBD.addEventListener('click', function(){ nav(curators[ci].navPage || 'page-offline-festival'); });
+      }
+    
+      if(eCanvas && entryStage){
+        var ctx = eCanvas.getContext('2d');
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var t0 = 0;
+        function resizeCanvas(){
+          var w = entryStage.clientWidth, h = entryStage.clientHeight;
+          eCanvas.width = Math.floor(w * dpr);
+          eCanvas.height = Math.floor(h * dpr);
+          eCanvas.style.width = w + 'px';
+          eCanvas.style.height = h + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
-    
-        /* 尝试从TMDB获取海报 */
-        if(e.tmdbId){
-          fetch('https://api.themoviedb.org/3/movie/' + e.tmdbId + '?api_key=' + TMDB_KEY + '&language=zh-CN')
-            .then(function(r){ return r.json(); })
-            .then(function(d){
-              if(d.poster_path) img.src = TMDB_IMG + d.poster_path;
-            })
-            .catch(function(){});
+        function frame(ts){
+          if(!t0) t0 = ts;
+          var w = entryStage.clientWidth, h = entryStage.clientHeight;
+          if(w < 1 || h < 1){ requestAnimationFrame(frame); return; }
+          var a = (ts - t0) * 0.00012;
+          ctx.fillStyle = '#0a0a0a';
+          ctx.fillRect(0, 0, w, h);
+          var gx = w * (0.42 + Math.sin(a) * 0.08);
+          var gy = h * (0.38 + Math.cos(a * 0.7) * 0.06);
+          var g = ctx.createRadialGradient(gx, gy, 0, gx, gy, Math.max(w, h) * 0.55);
+          g.addColorStop(0, 'rgba(201,168,76,0.07)');
+          g.addColorStop(0.45, 'rgba(30,26,18,0.25)');
+          g.addColorStop(1, 'rgba(8,8,8,0)');
+          ctx.fillStyle = g;
+          ctx.fillRect(0, 0, w, h);
+          ctx.fillStyle = 'rgba(255,255,255,0.02)';
+          for(var k = 0; k < 420; k++){
+            var x = (Math.sin(k * 12.9898 + a * 40) * 0.5 + 0.5) * w;
+            var y = (Math.cos(k * 78.233 + a * 30) * 0.5 + 0.5) * h;
+            if(((k * 73856093) ^ (ts | 0)) % 11 === 0){
+              ctx.fillRect(x, y, 1, 1);
+            }
+          }
+          requestAnimationFrame(frame);
         }
-    
-        var overlay = document.createElement('div');
-        overlay.className = 'pc-overlay';
-    
-        var content = document.createElement('div');
-        content.className = 'pc-content';
-    
-        var entryEl = document.createElement('div');
-        entryEl.className = 'pc-entry' + (isFeatured ? ' featured' : '') + (e.cls ? ' ' + e.cls : '');
-        entryEl.textContent = e.label;
-    
-        var filmEl = document.createElement('div');
-        filmEl.className = 'pc-film';
-        filmEl.textContent = e.film;
-    
-        content.appendChild(entryEl);
-        content.appendChild(filmEl);
-        card.appendChild(img);
-        card.appendChild(overlay);
-        card.appendChild(content);
-        scroll.appendChild(card);
-      });
-    
-      /* 拖动滚动 */
-      var isDown = false, startX, scrollLeft;
-      scroll.addEventListener('mousedown', function(e){
-        isDown = true; scroll.classList.add('dragging');
-        startX = e.pageX - scroll.offsetLeft;
-        scrollLeft = scroll.scrollLeft;
-      });
-      scroll.addEventListener('mouseleave', function(){ isDown = false; scroll.classList.remove('dragging'); });
-      scroll.addEventListener('mouseup', function(){ isDown = false; scroll.classList.remove('dragging'); });
-      scroll.addEventListener('mousemove', function(e){
-        if(!isDown) return;
-        e.preventDefault();
-        var x = e.pageX - scroll.offsetLeft;
-        scroll.scrollLeft = scrollLeft - (x - startX) * 1.5;
-      });
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        requestAnimationFrame(frame);
+      }
     
     })();
     </script>
