@@ -43,20 +43,6 @@ a{color:inherit;text-decoration:none}
 
 .app{display:flex;flex-direction:column;height:100%;background:var(--bg)}
 
-/* NAV 44px */
-.nav{flex-shrink:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px 0 14px;background:rgba(6,7,10,0.98);border-bottom:1px solid var(--border);z-index:100}
-.nav-logo{font-family:var(--serif);font-size:17px;cursor:pointer;display:flex;align-items:baseline;gap:4px}
-.nav-logo em{font-style:italic;color:var(--gold)}
-.nav-center{display:flex;align-items:center;gap:2px}
-.nav-link{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text2);padding:6px 10px;cursor:pointer;border-bottom:1px solid transparent;transition:color 0.2s, opacity 0.2s, border-color 0.2s;opacity:0.42}
-.nav-link:hover{opacity:0.72;color:var(--text)}
-.nav-link.on{opacity:0.88;color:var(--text);border-bottom-color:var(--gold)}
-.nav-link .hist-dot{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--green);margin-left:4px;vertical-align:middle;animation:blink 2s ease-in-out infinite}
-.nav-right{display:flex;align-items:center;gap:10px}
-.nav-search{width:200px;padding:5px 10px;border:1px solid var(--border);border-radius:3px;background:rgba(0,0,0,0.35);font-size:11px;color:var(--text2)}
-.nav-search::placeholder{color:var(--text4);font-style:italic}
-.nav-av{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);cursor:pointer}
-
 /* BODY */
 .body{flex:1;min-height:0;display:flex;min-width:0}
 
@@ -71,13 +57,15 @@ a{color:inherit;text-decoration:none}
 .sb-broadcast i{width:4px;height:4px;border-radius:50%;background:rgba(74,222,128,0.65);flex-shrink:0}
 .sb-broadcast span{font-size:8.5px;font-style:italic;color:rgba(237,232,223,0.26);line-height:1.35;transition:opacity 0.5s var(--ease)}
 .sb-list{flex:1;overflow-y:auto;min-height:0}
+.city-list{scrollbar-width:none}
+.city-list::-webkit-scrollbar{display:none}
 .sb-item{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.026);cursor:pointer;transition:background 0.2s, border-color 0.2s;border-left:2px solid transparent}
 .sb-item:hover{background:rgba(255,255,255,0.02)}
 .sb-item.on{border-left-color:var(--gold);background:rgba(201,168,76,0.04)}
 .sb-item .t1{font-family:var(--serif);font-size:13px;color:rgba(237,232,223,0.5);line-height:1.2}
 .sb-item.on .t1{color:rgba(237,232,223,0.9)}
 .sb-item .t2{font-size:9px;color:var(--text4);margin-top:3px;line-height:1.3}
-.sb-item.on .t2{color:rgba(74,222,128,0.52)}
+.sb-item.on .t2,.sb-item.active .t2,.city-item.active .ci-sub{color:rgba(74,222,128,0.48)}
 .sb-foot{padding:12px 14px;border-top:1px solid var(--border)}
 .sb-foot a{font-size:9px;font-style:italic;color:rgba(201,168,76,0.35);transition:color 0.2s}
 .sb-foot a:hover{color:var(--gold2)}
@@ -85,7 +73,7 @@ a{color:inherit;text-decoration:none}
 /* MAP */
 .map-wrap{flex:1;position:relative;min-width:0;background:#04050a}
 .map-title{position:absolute;top:18px;left:16px;z-index:5;pointer-events:none;max-width:280px}
-.map-title .l1{font-family:var(--serif);font-size:16px;font-style:italic;color:rgba(237,232,223,0.68);line-height:1.45;text-shadow:0 1px 18px rgba(0,0,0,0.98)}
+.map-title h1.l1,#map-hl h1{margin:0;font-weight:400;font-family:var(--serif);font-size:16px;font-style:italic;color:rgba(237,232,223,0.68);line-height:1.5;text-shadow:0 1px 18px rgba(0,0,0,0.98)}
 .map-title .l2{font-size:8.5px;color:rgba(201,168,76,0.38);margin-top:6px;letter-spacing:0.04em}
 #mapSvg{display:block;width:100%;height:100%}
 
@@ -94,14 +82,14 @@ a{color:inherit;text-decoration:none}
 .zoom-ctl button{width:20px;height:20px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.08);color:var(--text2);font-size:14px;line-height:1;cursor:pointer;border-radius:2px}
 
 /* FLOAT CARD */
-.float-card{position:absolute;right:18px;top:50%;width:268px;z-index:20;
+.float-card,#float-card{position:absolute;right:20px;top:50%;width:260px;max-width:calc(100vw - 240px - 60px);z-index:20;
   background:rgba(7,9,13,0.88);backdrop-filter:blur(22px);
   border:1px solid rgba(201,168,76,0.14);border-radius:8px;
   box-shadow:0 20px 70px rgba(0,0,0,0.65);
   transform:translateY(-50%) translateX(12px);opacity:0;
   transition:opacity 0.65s var(--ease), transform 0.65s var(--ease)}
-.float-card.show{opacity:1;transform:translateY(-50%) translateX(0)}
-.float-card.fade-out{opacity:0;transition:opacity 0.3s ease}
+.float-card.show,#float-card.show{opacity:1;transform:translateY(-50%) translateX(0)}
+.float-card.fade-out,#float-card.fade-out{opacity:0;transition:opacity 0.3s ease}
 .fc-img{height:160px;position:relative;overflow:hidden;border-radius:7px 7px 0 0}
 .fc-img img,.fc-img .ph{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.68) contrast(1.05) saturate(0.72)}
 .fc-img .ph{background:repeating-linear-gradient(-28deg, #0a0c12 0 8px, #12151c 8px 16px)}
@@ -126,10 +114,11 @@ a{color:inherit;text-decoration:none}
 .fs-scroll::-webkit-scrollbar{height:4px}
 .fs-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
 .fs-inner{display:flex;gap:0;padding:0 8px;align-items:stretch}
-.fs-frame{width:148px;flex-shrink:0;padding:10px 8px 12px;position:relative;opacity:0.5;transition:opacity 0.25s;cursor:pointer}
+.film-frame.fs-frame,.fs-frame{width:152px;flex-shrink:0;padding:10px 8px 12px;position:relative;opacity:0.5;transition:opacity 0.25s;cursor:pointer}
 .fs-frame.on{opacity:1}
-.fs-frame .im{height:92px;border-radius:4px;overflow:hidden;position:relative;margin-bottom:8px}
+.fs-frame .im{height:78px;border-radius:4px;overflow:hidden;position:relative;margin-bottom:8px}
 .fs-frame .im img,.fs-frame .im .ph{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.7) saturate(0.75)}
+.fs-frame .im img.ff-img{height:78px}
 .fs-frame .im .ph{background:repeating-linear-gradient(-28deg, #0a0c12 0 6px, #141820 6px 12px)}
 .fs-frame .nm{font-size:9.5px;color:rgba(237,232,223,0.45);line-height:1.25}
 .fs-frame.on .nm{color:rgba(237,232,223,0.88)}
@@ -143,35 +132,20 @@ a{color:inherit;text-decoration:none}
 </head>
 <body>
 <div class="app">
-  <nav class="nav">
-    <div class="nav-logo" onclick="navigate('page-home')">Cine <em>Ours</em></div>
-    <div class="nav-center">
-      <span class="nav-link" onclick="navigate('page-home')">首页</span>
-      <span class="nav-link on">世界地图</span>
-      <span class="nav-link" onclick="navigate('page-festivals')">电影节</span>
-      <span class="nav-link" onclick="navigate('page-creator')">创作</span>
-      <span class="nav-link" onclick="navigate('page-history')">影史今天<i class="hist-dot"></i></span>
-    </div>
-    <div class="nav-right">
-      <input class="nav-search" type="search" placeholder="搜索城市、影院或一段电影记忆" aria-label="搜索">
-      <div class="nav-av" title="账户">余</div>
-    </div>
-  </nav>
-
-  <div class="body">
+  <div class="body" id="body">
     <aside class="sidebar">
       <div class="sb-head">
         <div class="sb-live"><i></i>正在发生</div>
         <input class="sb-search" id="cityFilter" type="search" placeholder="🔍 搜索城市 / 国家" autocomplete="off">
       </div>
       <div class="sb-broadcast"><i></i><span id="bcText"></span></div>
-      <div class="sb-list" id="cityList"></div>
+      <div class="sb-list city-list" id="cityList"></div>
       <div class="sb-foot"><a href="#" onclick="navigate('page-festivals');return false">让地图带我去别处 →</a></div>
     </aside>
 
     <main class="map-wrap" id="mapWrap">
-      <div class="map-title">
-        <div class="l1">世界很大，<br>电影让我们在同一时刻相遇。</div>
+      <div class="map-title" id="map-hl">
+        <h1 class="l1">世界很大，<br>电影让我们在同一时刻相遇。</h1>
         <div class="l2">探索真实的电影现场，留下你的记录。</div>
       </div>
       <svg id="mapSvg" aria-label="世界电影信号地图"></svg>
@@ -179,7 +153,7 @@ a{color:inherit;text-decoration:none}
         <button type="button" id="zoomIn" title="放大">+</button>
         <button type="button" id="zoomOut" title="缩小">−</button>
       </div>
-      <div class="float-card" id="floatCard">
+      <div class="float-card" id="float-card">
         <div class="fc-img" id="fcImg"></div>
         <div class="fc-body">
           <div class="fc-quote" id="fcQuote"></div>
@@ -201,10 +175,11 @@ a{color:inherit;text-decoration:none}
 </div>
 
 <script>
-/* 各地标实景（Wikimedia Commons，CC 许可；需网络加载） */
-/* 测试用占位图（Lorem Picsum，每城不同 seed）；上线前换回真实场馆图 */
+/* 柏林：Kino International 建筑外景（与 page-map.html 同目录 kino_cinema.jpg） */
+var KINO_IMG = 'kino_cinema.jpg';
+/* 其他城市场馆图：测试占位（Lorem Picsum）；上线前可换为真实场馆图 */
 var VENUE_PHOTOS = {
-  berlin: 'https://picsum.photos/seed/cine-map-berlin/960/540',
+  berlin: KINO_IMG,
   hk: 'https://picsum.photos/seed/cine-map-hk/960/540',
   tokyo: 'https://picsum.photos/seed/cine-map-tokyo/960/540',
   paris: 'https://picsum.photos/seed/cine-map-paris/960/540',
@@ -275,7 +250,7 @@ var activeId = 'berlin';
 var worldData = null;
 var mapWrap = document.getElementById('mapWrap');
 var svgEl = document.getElementById('mapSvg');
-var floatCard = document.getElementById('floatCard');
+var floatCard = document.getElementById('float-card');
 var zoomK = 1;
 var bcIndex = 0;
 var bcEl = document.getElementById('bcText');
@@ -293,9 +268,9 @@ function renderCityList(filter) {
     var hay = (c.zh + c.en + c.venue).toLowerCase();
     if (q && hay.indexOf(q) === -1) return;
     var div = document.createElement('div');
-    div.className = 'sb-item' + (c.id === activeId ? ' on' : '');
+    div.className = 'sb-item city-item' + (c.id === activeId ? ' on active' : '');
     div.dataset.id = c.id;
-    div.innerHTML = '<div class="t1">' + c.zh + '</div><div class="t2">' + c.sub + '</div>';
+    div.innerHTML = '<div class="t1">' + c.zh + '</div><div class="t2 ci-sub">' + c.sub + '</div>';
     div.onclick = function () { selectCity(c.id); };
     list.appendChild(div);
   });
@@ -344,11 +319,11 @@ function renderFilmStrip() {
   inner.innerHTML = '';
   FRAMES.forEach(function (f, idx) {
     var d = document.createElement('div');
-    d.className = 'fs-frame' + (f.cityId === activeId ? ' on' : '');
+    d.className = 'fs-frame film-frame' + (f.cityId === activeId ? ' on' : '');
     d.dataset.city = f.cityId;
     var stripUrl = VENUE_PHOTOS[f.cityId];
     var imh = '<div class="im">';
-    if (stripUrl) imh += '<img src="' + stripUrl + '" alt="">';
+    if (stripUrl) imh += '<img class="ff-img" src="' + stripUrl + '" alt="">';
     else imh += '<div class="ph"></div>';
     imh += '</div>';
     d.innerHTML = imh + '<div class="nm">' + f.name + '</div><div class="qt">「' + f.quote + '」</div><div class="bar"></div>';
@@ -390,8 +365,9 @@ function renderMapLayers() {
 
   var defs = svg.append('defs');
   var grad = defs.append('radialGradient').attr('id', 'heatG').attr('cx', '50%').attr('cy', '50%').attr('r', '50%');
-  grad.append('stop').attr('offset', '0%').attr('stop-color', 'rgba(180,110,15,0.28)');
-  grad.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(180,110,15,0)');
+  [[0, 'rgba(0,0,0,0)'], [0.07, 'rgba(25,12,2,0.4)'], [0.22, 'rgba(55,30,5,0.5)'], [0.42, 'rgba(95,55,8,0.58)'], [0.62, 'rgba(138,88,18,0.63)'], [0.8, 'rgba(168,115,32,0.67)'], [1, 'rgba(188,142,52,0.70)']].forEach(function (st) {
+    grad.append('stop').attr('offset', (st[0] * 100) + '%').attr('stop-color', st[1]);
+  });
   var blur = defs.append('filter').attr('id', 'softBlur').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
   blur.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', 4);
 
@@ -426,7 +402,7 @@ function renderMapLayers() {
       .attr('stroke-width', 0.4);
   }
 
-  var heatG = root.append('g').attr('class', 'heat');
+  var heatG = root.append('g').attr('class', 'heat').attr('opacity', 0.82);
   HEAT_CITIES.forEach(function (coord, idx) {
     var p = projection(coord);
     if (!p) return;
