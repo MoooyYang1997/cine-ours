@@ -7,7 +7,7 @@
 // ── 初始化 Supabase ──────────────────────────
 const SUPABASE_URL  = 'https://dirrnojiybbwotuqeqww.supabase.co';
 const SUPABASE_KEY  = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
-const TMDB_KEY      = 'YOUR_TMDB_KEY_HERE'; // 替换为你的 TMDB key
+const TMDB_KEY      = '68d50b44ac8b8e22f5426fc17fe4fe90'; // 替换为你的 TMDB key
 const TMDB_BASE     = 'https://api.themoviedb.org/3';
 const TMDB_IMG      = 'https://image.tmdb.org/t/p/w500';
 const TMDB_IMG_ORIG = 'https://image.tmdb.org/t/p/original';
