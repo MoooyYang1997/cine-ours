@@ -270,9 +270,41 @@ let loggedIn = false;
 const loaded = new Set(['home']);
 
 // ── NAVIGATION ────────────────────────────────────────────────
+function slugToMapCityId(slug) {
+  if (slug == null || slug === '') return null;
+  var s = String(slug).toLowerCase();
+  var alias = { hongkong: 'hk', newyork: 'nyc', saopaulo: 'sp', buenosaires: 'sp' };
+  if (alias[s]) return alias[s];
+  if (['berlin', 'hk', 'tokyo', 'paris', 'nyc', 'sp'].indexOf(s) >= 0) return s;
+  return null;
+}
+
+function trySelectMapCity(frame, slug) {
+  var id = slugToMapCityId(slug);
+  if (!id || !frame || !frame.contentWindow) return;
+  try {
+    if (typeof frame.contentWindow.selectCity === 'function') {
+      frame.contentWindow.selectCity(id);
+    }
+  } catch (e) {}
+}
+
 function go(page, force=false) {
-  if (page === cur && !force) return;
-  const cfg = PAGES[page];
+  var pageKey = page;
+  var mapCitySlug = null;
+  if (typeof page === 'string') {
+    var qi = page.indexOf('?');
+    if (qi >= 0) {
+      pageKey = page.slice(0, qi);
+      try {
+        mapCitySlug = new URLSearchParams(page.slice(qi + 1)).get('city');
+      } catch (e2) {
+        mapCitySlug = null;
+      }
+    }
+  }
+  if (pageKey === cur && !mapCitySlug && !force) return;
+  const cfg = PAGES[pageKey];
   if (!cfg) return showToast('页面未找到');
 
   const cover = document.getElementById('cover');
@@ -281,22 +313,33 @@ function go(page, force=false) {
   setTimeout(() => {
     document.querySelectorAll('.pframe').forEach(f => f.classList.remove('on'));
 
-    const frame = document.getElementById('f-' + page);
+    const frame = document.getElementById('f-' + pageKey);
     if (!frame) { cover.classList.remove('on'); return; }
 
-    if (!loaded.has(page)) {
+    const afterMapCity = () => {
+      if (pageKey === 'map' && mapCitySlug) {
+        trySelectMapCity(frame, mapCitySlug);
+        setTimeout(() => trySelectMapCity(frame, mapCitySlug), 400);
+        setTimeout(() => trySelectMapCity(frame, mapCitySlug), 1400);
+      }
+    };
+
+    if (!loaded.has(pageKey)) {
       const loader = document.getElementById('loader');
       document.getElementById('lt').textContent = cfg.label;
       loader.classList.add('show');
       frame.src = frame.dataset.src || cfg.src;
-      loaded.add(page);
+      loaded.add(pageKey);
       frame.onload = () => {
         loader.classList.remove('show');
         frame.classList.add('on');
         wireFrame(frame);
+        afterMapCity();
       };
     } else {
       frame.classList.add('on');
+      wireFrame(frame);
+      afterMapCity();
     }
 
     // Nav
@@ -317,7 +360,7 @@ function go(page, force=false) {
       shell.classList.remove('with-bc');
     }
 
-    cur = page;
+    cur = pageKey;
     document.title = cfg.label + ' — Cine Ours';
     cover.classList.remove('on');
     closeUmenu(); closeSearch();
