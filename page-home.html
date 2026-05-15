@@ -10,13 +10,13 @@
     <style>
     /* ── Reset & Base（线上：iframe 高度链 + dvh 缓解移动地址栏） ── */
     html{height:100%}
-    body{margin:0;background:#111;min-height:100%;min-height:100dvh}
-    .ph-root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#111;color:#ede8df;min-height:100%;box-sizing:border-box}
+    body{margin:0;background:#181818;min-height:100%;min-height:100dvh}
+    .ph-root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#181818;color:#ede8df;min-height:100%;box-sizing:border-box}
     .ph-root *,.ph-root *::before,.ph-root *::after{box-sizing:border-box}
     .ph-root button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0;margin:0;color:inherit;text-align:left}
     
     /* ── Hero ── */
-    .ph-root .hero{display:grid;grid-template-columns:0.5fr 2fr;min-height:100%;min-height:100dvh;background:linear-gradient(to right,#111 0%,#111 28%,#0e0e0e 100%)}
+    .ph-root .hero{display:grid;grid-template-columns:0.5fr 2fr;min-height:100%;min-height:100dvh;background:linear-gradient(to right,#181818 0%,#181818 28%,#151515 100%)}
     
     /* 左侧 — 极度弱化，旁注感 */
     .ph-root .hero-left{padding:52px 20px 52px 32px;display:flex;flex-direction:column;justify-content:space-between}
@@ -90,7 +90,7 @@
     .ph-root .mf-all{font-size:11px;color:rgba(201,168,76,0.55);cursor:pointer}
     .ph-root .mf-all:hover{color:#c9a84c}
     .ph-root .mf-grid{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid rgba(255,255,255,0.08);border-radius:6px;overflow:hidden}
-    .ph-root .mf-col{background:#111;padding:14px 16px;cursor:pointer;transition:background 0.2s;display:flex;flex-direction:column;gap:5px;border-right:1px solid rgba(255,255,255,0.07)}
+    .ph-root .mf-col{background:#181818;padding:14px 16px;cursor:pointer;transition:background 0.2s;display:flex;flex-direction:column;gap:5px;border-right:1px solid rgba(255,255,255,0.07)}
     .ph-root .mf-col:last-child{border-right:none}
     .ph-root .mf-col:hover{background:#161616}
     .ph-root .mf-col-top{display:flex;align-items:flex-start;gap:7px}
@@ -109,12 +109,12 @@
       color: rgba(237,232,223,0.38);
       letter-spacing: 0.06em;
       line-height: 1.8;
-      background: #111;
+      background: #181818;
       border-top: 1px solid rgba(255,255,255,0.06);
     }
     
     /* ── 世界信号区 ── */
-    .ph-root .world-signal{position:relative;height:480px;background:#0f0f0f;overflow:hidden}
+    .ph-root .world-signal{position:relative;min-height:100vh;min-height:100dvh;height:auto;background:#161616;overflow:hidden}
     .ph-root .ws-noise{position:absolute;inset:0;pointer-events:none;z-index:9;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
     
     /* 环境光 */
@@ -140,7 +140,7 @@
       display: block;
       filter: brightness(0.62) saturate(0.72) contrast(1.08);
     }
-    .ph-root .ws-photo-mask{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 20%,rgba(15,15,15,0.45) 52%,rgba(15,15,15,0.85) 74%,#0f0f0f 100%)}
+    .ph-root .ws-photo-mask{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 20%,rgba(15,15,15,0.45) 52%,rgba(15,15,15,0.85) 74%,#161616 100%)}
     
     /* 焦点城市 */
     .ph-root .focus-stack{position:absolute;z-index:5;transition:opacity 0.9s}
@@ -163,12 +163,12 @@
     .ph-root .ws-foot-r:hover{color:rgba(201,168,76,0.7)}
     
     /* ── 策展入口 ── */
-    .ph-root .entry-section{background:#141414;border-top:1px solid rgba(255,255,255,0.06)}
-    .ph-root .entry-stage{position:relative;width:100%;height:480px;overflow:hidden;background:#0e0e0e}
+    .ph-root .entry-section{background:#181818;border-top:1px solid rgba(255,255,255,0.06);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+    .ph-root .entry-stage{position:relative;width:100%;min-height:100vh;min-height:100dvh;flex:1;overflow:hidden;background:#151515}
     .ph-root .e-line-bg{position:absolute;inset:0;z-index:2;pointer-events:none;background-color:transparent;background-position:center;background-size:cover;opacity:0.58;mix-blend-mode:soft-light;transition:opacity 0.85s ease,filter 0.85s ease;filter:saturate(0.92)contrast(1.05)}
     .ph-root .entry-stage canvas{position:absolute;inset:0;z-index:1;width:100%;height:100%}
     .ph-root .e-ovr{position:absolute;inset:0;z-index:3;background:linear-gradient(to right,rgba(0,0,0,0.84) 0%,rgba(0,0,0,0.46) 52%,rgba(0,0,0,0.06) 100%)}
-    .ph-root .e-ovb{position:absolute;left:0;right:0;bottom:0;height:88px;z-index:3;background:linear-gradient(to top,#141414 0%,transparent 100%)}
+    .ph-root .e-ovb{position:absolute;left:0;right:0;bottom:0;height:88px;z-index:3;background:linear-gradient(to top,#181818 0%,transparent 100%)}
     .ph-root .e-inner{position:absolute;inset:0;z-index:6;display:flex;align-items:center}
     .ph-root .e-left{width:56%;padding:36px 50px;display:flex;flex-direction:column}
     .ph-root .e-tag{font-size:9px;letter-spacing:.2em;color:rgba(201,168,76,0.6);margin-bottom:13px}
@@ -205,7 +205,7 @@
     .ph-root .cn-mark{font-size:26px;color:rgba(201,168,76,0.2);line-height:1;margin-bottom:9px;font-family:Georgia,serif}
     .ph-root .cn-quote{font-size:13px;font-style:italic;line-height:2;color:rgba(237,232,223,0.52);letter-spacing:.02em}
     .ph-root .cn-attr{font-size:9px;color:rgba(201,168,76,0.3);margin-top:14px;letter-spacing:.12em}
-    .ph-root .e-tab-wrap{background:#141414;padding-top:13px}
+    .ph-root .e-tab-wrap{background:#181818;padding-top:13px}
     .ph-root .e-tab-row{display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,0.05)}
     .ph-root .e-tab-row::-webkit-scrollbar{display:none}
     .ph-root .e-tab{flex:1;min-width:108px;padding:9px 13px 8px;cursor:pointer;position:relative;background:none;border:none;text-align:left;font-family:inherit}
