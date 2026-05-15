@@ -260,15 +260,15 @@
         <div class="hk-wrap">
           <div class="hk-card">
             <div class="hk-bg">
-              <img id="hkImg" src="siff-bg.jpg" alt="香港街景·港影节底图">
+              <img id="hkImg" src="siff-bg.jpg" alt="上海国际电影节底图">
               <div class="hk-overlay"></div>
               <div class="hk-grad"></div>
             </div>
-            <div class="hk-watermark">50</div>
+            <div class="hk-watermark">28</div>
             <div class="hk-content">
-              <div class="hk-status"><span class="kdot"></span>正在举办 · 第15天</div>
-              <h2 class="hk-title">香港国际<em>电影节</em>·<br>第50届 HKIFF</h2>
-              <p class="hk-meta">3月25日—4月7日 · 香港 · 240部影片</p>
+              <div class="hk-status"><span class="kdot"></span>即将举办 · 征片进行中</div>
+              <h2 class="hk-title">上海国际<em>电影节</em>·<br>第28届 SIFF</h2>
+              <p class="hk-meta">2026年6月 · 上海 · 金爵奖主竞赛</p>
               <div class="hk-bottom">
                 <div>
                   <span class="hk-num" id="liveNum">254</span>
@@ -747,19 +747,18 @@
       var IC_STATES = {
         pre: function(news){
           var n0 = news[0] || {};
-          var n1 = news[1] || {};
           return [
             {
               eye:   '最新资讯',
               title:  n0.title   || '第28届上影节征片进行中',
               sub:    n0.summary || '主竞赛 · 亚洲新人 · 纪录片',
-              url:    n0.url     || 'https://www.siff.com/list?cid=import-37'
+              url:    ''
             },
             {
               eye:   '评审预测',
               title: '谁会摘得金爵奖？',
               sub:   '提前预测 · 加入讨论',
-              url:   n1.url || ''
+              url:   ''
             }
           ];
         },
@@ -797,7 +796,7 @@
         }
       };
 
-      (async function(){
+      async function initIC(){
         var stage = await loadFestivalState();
         var news  = (stage === 'pre') ? await loadFestivalNews() : [];
         var items = (IC_STATES[stage] || IC_STATES.pre)(news);
@@ -811,13 +810,14 @@
           eyeEl.textContent   = item.eye;
           if(titleEl) titleEl.textContent = item.title;
           if(subEl) subEl.textContent = item.sub;
-          if(item.url && cardEl){
+          if(cardEl){
             cardEl.addEventListener('click', function(){
-              window.open(item.url, '_blank');
+              nav('page-offline-festival');
             });
           }
         });
-      })();
+      }
+      initIC();
     
     })();
     </script>
