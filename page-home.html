@@ -165,10 +165,7 @@
     /* ── 策展入口 ── */
     .ph-root .entry-section{background:#181818;border-top:1px solid rgba(255,255,255,0.06);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
     .ph-root .entry-stage{position:relative;width:100%;min-height:100vh;min-height:100dvh;flex:1;overflow:hidden;background:transparent}
-    .ph-root .e-line-bg{position:absolute;inset:0;z-index:2;pointer-events:none;background-color:#121016;background-position:center;background-size:cover;background-repeat:no-repeat;opacity:1;transition:opacity 0.85s ease,filter 0.85s ease;filter:brightness(0.84) saturate(0.9) contrast(1.03)}
-    .ph-root .entry-stage.has-still .e-line-bg{background-color:transparent}
-    .ph-root .entry-stage canvas{position:absolute;inset:0;z-index:1;width:100%;height:100%;opacity:1;transition:opacity 0.35s ease}
-    .ph-root .entry-stage.has-still canvas{opacity:0;pointer-events:none}
+    .ph-root .e-line-bg{position:absolute;inset:0;z-index:1;pointer-events:none;background-color:#121016;background-position:center;background-size:cover;background-repeat:no-repeat;opacity:1;transition:opacity 0.85s ease,filter 0.85s ease;filter:brightness(0.84) saturate(0.9) contrast(1.03)}
     .ph-root .e-ovr{
       position:absolute;
       inset:0;
@@ -375,7 +372,6 @@
     <!-- ══ 策展入口 ══ -->
     <section class="entry-section">
       <div class="entry-stage">
-        <canvas id="eCanvas" width="900" height="480"></canvas>
         <div class="e-line-bg" id="eLineBg" aria-hidden="true"></div>
         <div class="e-ovr"></div>
         <div class="e-inner">
@@ -555,7 +551,7 @@
            {n:'《迷失东京》',l:'两个失眠的人，在陌生城市里相遇。',m:'2003 · 索菲亚·科波拉',c:'p1'},
            {n:'《重庆森林》',l:'城市足够大，孤独就足够近。',m:'1994 · 王家卫',c:'p2'},
            {n:'《天使爱美丽》',l:'一个人决定让别人快乐，但忘了自己。',m:'2001 · 让-皮埃尔·热内',c:'p3'}
-         ],p:[[8,8,14],[22,18,28],[52,42,64],[14,12,20]]},
+         ]},
         {zh:'港影节散场后，最多人在谈的',en:'After the Last Screening',
          still:'https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=1600&q=82',
          note:'这三部片不是最好看的，但是最难从里面出来的。散场后你会站在外面，不想走。',
@@ -563,7 +559,7 @@
            {n:'《悲情城市》',l:'台湾最沉重的历史，用最安静的方式说出来。',m:'1989 · 侯孝贤',c:'p1'},
            {n:'《花样年华》',l:'所有没有说出口的，比说出口的更真实。',m:'2000 · 王家卫',c:'p2'},
            {n:'《牯岭街少年杀人事件》',l:'给它四个小时。它会给你一整个时代。',m:'1991 · 杨德昌',c:'p3'}
-         ],p:[[10,8,6],[26,18,12],[58,42,24],[14,10,8]]},
+         ]},
         {zh:'她们彼此看见',en:'The Way They Looked',
          still:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1600&q=82',
          note:'三位导演，三种目光。共同的是：她们都在问"被看见"意味着什么。',
@@ -571,7 +567,7 @@
            {n:'《燃烧女子的肖像》',l:'用眼睛爱一个人，是什么感觉。',m:'2019 · 瑟琳·席安玛',c:'p1'},
            {n:'《卡罗尔》',l:'那个年代，爱本身就是勇气。',m:'2015 · 托德·海因斯',c:'p2'},
            {n:'《钢琴课》',l:'沉默有时比语言更有力量。',m:'1993 · 简·坎皮恩',c:'p3'}
-         ],p:[[12,8,10],[28,16,20],[60,38,48],[16,10,14]]},
+         ]},
         {zh:'回到杨德昌的台北',en:"A Director's City",
          still:'https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?w=1600&q=82',
          note:'杨德昌用摄影机记录了一个城市正在失去某种东西的时刻。我们现在才看懂。',
@@ -579,7 +575,7 @@
            {n:'《牯岭街少年杀人事件》',l:'一个少年，一座城市，一个没有出口的时代。',m:'1991 · 杨德昌',c:'p1'},
            {n:'《一一》',l:'人生的每一段，都值得被好好看见。',m:'2000 · 杨德昌',c:'p2'},
            {n:'《独立时代》',l:'台北的中产生活，有多少是真实的？',m:'1994 · 杨德昌',c:'p3'}
-         ],p:[[6,8,12],[14,18,28],[30,40,58],[10,14,18]]},
+         ]},
         {zh:'今晚交给别人策展',en:'Tonight, Someone Else Decides',
          still:'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1600&q=82',
          note:'不告诉你为什么选这三部。进去就知道了。',
@@ -587,45 +583,10 @@
            {n:'《东京物语》',l:'关于家人之间，来不及说出口的事。',m:'1953 · 小津安二郎',c:'p1'},
            {n:'《花样年华》',l:'那些没有说出口的，比说出口的更真实。',m:'2000 · 王家卫',c:'p2'},
            {n:'《悲情城市》',l:'散场后，没有人说话。',m:'1989 · 侯孝贤',c:'p3'}
-         ],p:[[6,6,6],[16,14,12],[40,36,30],[10,10,10]]}
+         ]}
       ];
     
       var eCur=0;
-    
-      function drawECanvas(s){
-        var cv=document.getElementById('eCanvas');
-        if(!cv)return;
-        var st=document.querySelector('.ph-root .entry-section .entry-stage');
-        if(st){
-          var rw=Math.max(1,Math.floor(st.clientWidth)),rh=Math.max(1,Math.floor(st.clientHeight));
-          if(cv.width!==rw||cv.height!==rh){cv.width=rw;cv.height=rh;}
-        }
-        var ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
-        ctx.clearRect(0,0,W,H);
-        if(s&&s.still)return;
-        var g=ctx.createLinearGradient(0,0,W,H),p=s.p;
-        g.addColorStop(0,'rgb('+p[0]+')');
-        g.addColorStop(0.35,'rgb('+p[1]+')');
-        g.addColorStop(0.7,'rgb('+p[2]+')');
-        g.addColorStop(1,'rgb('+p[3]+')');
-        ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-        ctx.fillStyle='rgba(0,0,0,0.44)';
-        ctx.beginPath();ctx.ellipse(W*0.64,H*0.67,14,44,0,0,Math.PI*2);ctx.fill();
-        ctx.beginPath();ctx.ellipse(W*0.64,H*0.6,10,10,0,0,Math.PI*2);ctx.fill();
-        var sp=ctx.createRadialGradient(W*0.64,H,0,W*0.64,H,H*0.5);
-        sp.addColorStop(0,'rgba(201,168,76,0.09)');sp.addColorStop(1,'transparent');
-        ctx.fillStyle=sp;ctx.fillRect(0,0,W,H);
-        ctx.fillStyle='rgba(0,0,0,0.22)';
-        [[0.32,0.44,0.05,0.3],[0.39,0.41,0.04,0.28],[0.45,0.45,0.065,0.26],
-         [0.53,0.43,0.048,0.28],[0.73,0.45,0.055,0.26],[0.81,0.43,0.048,0.28],
-         [0.87,0.41,0.06,0.3]].forEach(function(b){
-          ctx.fillRect(b[0]*W,b[1]*H,b[2]*W,b[3]*H);
-        });
-        for(var i=0;i<900;i++){
-          ctx.fillStyle='rgba(237,232,223,'+(Math.random()*0.013)+')';
-          ctx.fillRect(Math.random()*W,Math.random()*H,1,1);
-        }
-      }
     
       function applyESet(s){
         var zh=document.getElementById('eZh');
@@ -638,13 +599,8 @@
         en.textContent=s.en;
         cnQ.textContent=s.note;
         if(lineBg){
-          if(s.still){ lineBg.style.backgroundImage='url(\''+s.still+'\')'; }
-          else{ lineBg.style.backgroundImage='none'; }
-        }
-        var stage=document.querySelector('.ph-root .entry-stage');
-        if(stage){
-          if(s.still)stage.classList.add('has-still');
-          else stage.classList.remove('has-still');
+          if(s.still){ lineBg.style.backgroundImage='url(\''+s.still+'\')';lineBg.style.backgroundColor='transparent'; }
+          else{ lineBg.style.backgroundImage='none';lineBg.style.backgroundColor='#121016'; }
         }
         fl.innerHTML='';
         s.films.forEach(function(f){
@@ -655,7 +611,6 @@
             +'<div class="ef-meta">'+f.m+'</div>';
           fl.appendChild(d);
         });
-        drawECanvas(s);
       }
     
       /* B+D CTA */
@@ -733,9 +688,6 @@
     
       buildETabs();
       applyESet(ES[0]);
-      window.addEventListener('resize',function(){
-        drawECanvas(ES[eCur]);
-      });
     
     })();
     </script>
