@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cine Ours — 电影节</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;min-height:100vh;}
+
+/* NAV — 由 index.html 统一管理，此页不渲染 */
+
+/* BUTTONS */
+.btn-g{border:0.5px solid #c9a84c;color:#c9a84c;font-size:10px;padding:6px 14px;background:transparent;border-radius:1px;cursor:pointer;transition:all .2s;}
+.btn-g:hover{background:rgba(201,168,76,0.08);}
+
+/* HERO ONE-LINE */
+.hero{padding:13px 36px 12px;border-bottom:0.5px solid rgba(201,168,76,0.06);display:flex;align-items:baseline;justify-content:space-between;}
+.hero-copy{font-family:Georgia,serif;font-size:13px;color:rgba(237,232,223,0.36);font-style:italic;opacity:0;animation:fadeIn .8s ease .1s forwards;}
+@keyframes fadeIn{to{opacity:1;}}
+.hs-n{font-family:Georgia,serif;font-size:13px;color:rgba(201,168,76,0.6);}
+.hs-l{font-size:9px;color:rgba(237,232,223,0.2);margin-left:3px;}
+.hero-stats{display:flex;gap:20px;}
+
+/* PINNED — 线下电影节置顶 */
+.pinned{background:#131310;border-bottom:0.5px solid rgba(201,168,76,0.1);padding:0 36px;}
+.pinned-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid rgba(201,168,76,0.05);cursor:pointer;transition:background .15s;}
+.pinned-item:last-of-type{border-bottom:none;}
+.pinned-item:hover .pname{color:rgba(237,232,223,0.9);}
+.pinned-more{padding:8px 0;font-size:10px;color:rgba(201,168,76,0.38);cursor:pointer;display:block;transition:color .2s;}
+.pinned-more:hover{color:rgba(201,168,76,0.65);}
+.pdot{width:4px;height:4px;border-radius:50%;background:#c9a84c;flex-shrink:0;}
+.pdot.dim{background:rgba(201,168,76,0.3);}
+.pbadge{font-size:8px;letter-spacing:.1em;text-transform:uppercase;background:rgba(201,168,76,0.07);border:0.5px solid rgba(201,168,76,0.18);color:#c9a84c;padding:1px 6px;border-radius:1px;flex-shrink:0;}
+.pbadge.dim{opacity:.5;}
+.pname{font-size:11px;color:rgba(237,232,223,0.65);transition:color .2s;}
+.pname.dim{color:rgba(237,232,223,0.38);}
+.pmeta{font-size:10px;color:rgba(237,232,223,0.22);margin-left:4px;}
+.parr{font-size:10px;color:rgba(201,168,76,0.35);margin-left:auto;transition:color .2s;}
+.parr.dim{color:rgba(201,168,76,0.2);}
+.pinned-item:hover .parr{color:rgba(201,168,76,0.7);}
+
+/* DIVIDER */
+.divider{height:0.5px;background:rgba(201,168,76,0.07);margin:0 36px;}
+
+/* ONLINE SECTION */
+.online-wrap{padding:0 36px;}
+.online-hdr{padding:28px 0 16px;}
+.lbl{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:rgba(237,232,223,0.22);}
+
+/* MAIN CARD */
+.main-card{position:relative;height:510px;border-radius:2px;overflow:hidden;cursor:pointer;margin-bottom:16px;transition:opacity .2s;}
+.main-card:hover{opacity:.95;}
+.main-card:hover .card-join{border-color:rgba(201,168,76,0.7);color:rgba(201,168,76,1);}
+.mc-bg{position:absolute;inset:0;background-size:cover;background-position:center;}
+.mc-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,6,4,0.94) 0%,rgba(8,6,4,0.8) 42%,rgba(8,6,4,0.35) 100%);}
+.mc-bg-1{background-image:url('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1400&q=80');background-position:center 40%;}
+.mc-bg-2{background-image:url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1400&q=80');background-position:center 50%;}
+.mc-inner{position:relative;z-index:2;height:100%;display:grid;grid-template-columns:1fr 0.5fr;}
+.mc-left{padding:26px 30px;display:flex;flex-direction:column;justify-content:space-between;}
+.mc-tag{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(201,168,76,0.45);margin-bottom:10px;}
+.mc-title-zh{font-family:Georgia,serif;font-size:21px;color:rgba(237,232,223,0.9);line-height:1.2;margin-bottom:4px;}
+.mc-title-en{font-family:Georgia,serif;font-size:11px;color:rgba(237,232,223,0.28);font-style:italic;margin-bottom:16px;}
+.mc-divider{width:22px;height:0.5px;background:rgba(201,168,76,0.28);margin-bottom:14px;}
+.mc-film{padding:5px 0;border-bottom:0.5px solid rgba(237,232,223,0.05);}
+.mc-film:last-child{border:none;}
+.mc-film-title{font-family:Georgia,serif;font-size:13px;color:rgba(237,232,223,0.72);margin-bottom:2px;}
+.mc-film-title.hl{color:rgba(201,168,76,0.85);border-left:2px solid rgba(201,168,76,0.6);padding-left:7px;}
+.mc-film-sub{font-size:9px;font-style:italic;color:rgba(237,232,223,0.28);}
+.mc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+.mc-meta{font-size:10px;color:rgba(237,232,223,0.22);}
+.mc-right{padding:26px 24px 26px 18px;display:flex;flex-direction:column;justify-content:center;border-left:0.5px solid rgba(201,168,76,0.07);}
+.mc-qmark{font-family:Georgia,serif;font-size:32px;color:rgba(201,168,76,0.18);line-height:1;margin-bottom:6px;}
+.mc-quote{font-family:Georgia,serif;font-size:13px;color:rgba(237,232,223,0.58);line-height:1.75;font-style:italic;margin-bottom:12px;}
+.mc-author{font-size:9px;color:rgba(237,232,223,0.24);}
+
+/* UNIFIED JOIN BUTTON */
+.card-join{border:0.5px solid rgba(201,168,76,0.3);color:rgba(201,168,76,0.65);font-size:9px;padding:4px 12px;background:transparent;border-radius:1px;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+.card-join:hover{border-color:rgba(201,168,76,0.7);color:rgba(201,168,76,1);}
+
+/* SUB CARDS */
+.sub-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.sub-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+
+/* 分组标签：进行中 / 即将开始 / 已结束 */
+.sub-group{margin-bottom:4px;}
+.sub-group-lbl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(237,232,223,0.2);padding:16px 0 10px;}
+
+.sub-card{height:200px;border-radius:2px;overflow:hidden;cursor:pointer;position:relative;background:#0d0b08;border:0.5px solid rgba(201,168,76,0.07);transition:border-color .2s;}
+.sub-card:hover{border-color:rgba(201,168,76,0.18);}
+.sub-card:hover .sc-tagline{color:rgba(237,232,223,0.88);}
+.sub-card:hover .card-join{border-color:rgba(201,168,76,0.7);color:rgba(201,168,76,1);}
+/* 已结束卡片降调 */
+.sub-card.ended{opacity:.65;}
+.sub-card.ended:hover{opacity:.85;}
+
+/* POSTER FRAME：宽度加大，比例更协调 */
+.sc-poster-frame{position:absolute;left:12px;top:12px;bottom:12px;width:96px;border-radius:3px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.5);border:0.5px solid rgba(255,255,255,0.05);}
+.sc-poster-frame img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.82) saturate(0.8);}
+.sc-poster-frame::after{content:'';position:absolute;right:0;top:0;bottom:0;width:28px;background:linear-gradient(90deg,transparent,#0d0b08);}
+.sc-poster-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:20px;color:rgba(201,168,76,0.25);background:linear-gradient(160deg,#1a1408,#100e06);}
+
+.sc-inner{position:relative;z-index:2;height:100%;padding:14px 16px 14px 120px;display:flex;flex-direction:column;justify-content:space-between;}
+.sc-tag{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,168,76,0.4);margin-bottom:6px;}
+.sc-tagline{font-family:Georgia,serif;font-size:12px;color:rgba(237,232,223,0.62);line-height:1.55;font-style:italic;flex:1;transition:color .2s;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.sc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px;}
+/* 策展名字加大加亮 */
+.sc-title{font-size:11px;color:rgba(237,232,223,0.65);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;font-family:Georgia,serif;}
+
+/* FOOTER */
+.footer{border-top:0.5px solid rgba(201,168,76,0.07);padding:22px 36px;display:flex;align-items:center;justify-content:space-between;margin-top:20px;}
+.footer-txt{font-size:11px;color:rgba(237,232,223,0.26);line-height:1.7;}
+.footer-txt span{color:rgba(237,232,223,0.5);}
+
+/* LOADING STATE */
+.loading-poster{width:100%;height:100%;background:linear-gradient(160deg,#1a1408,#100e06);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:16px;color:rgba(201,168,76,0.2);}
+</style>
+</head>
+<body>
+
+<!-- HERO ONE-LINE -->
+<div class="hero">
+  <div class="hero-copy">走进影院之前，走出影院之后。</div>
+  <div class="hero-stats">
+    <span><span class="hs-n" id="stat-online">—</span><span class="hs-l">线上电影节</span></span>
+    <span><span class="hs-n" id="stat-live">—</span><span class="hs-l">进行中</span></span>
+    <span><span class="hs-n">38k</span><span class="hs-l">策展人</span></span>
+  </div>
+</div>
+
+<!-- 置顶线下电影节 -->
+<div class="pinned">
+  <div class="pinned-item" onclick="navigate('page-offline-festival')">
+    <span class="pdot"></span>
+    <span class="pbadge" id="siff-badge">线下电影节 · 展前</span>
+    <span class="pname">上海国际电影节 · 第28届</span>
+    <span class="pmeta" id="siff-meta">上海 · 6月14—23日 · 30天后开幕</span>
+    <span class="parr">进入专页 →</span>
+  </div>
+  <div class="pinned-item">
+    <span class="pdot dim"></span>
+    <span class="pbadge dim">线下电影节 · 即将开始</span>
+    <span class="pname dim">北京国际电影节 · 第14届</span>
+    <span class="pmeta">北京 · 8月开幕 · 筹备中</span>
+    <span class="parr dim">进入专页 →</span>
+  </div>
+  <a class="pinned-more">探索更多线下电影节 →</a>
+</div>
+
+<div class="divider"></div>
+
+<!-- 线上电影节 -->
+<div class="online-wrap">
+  <div class="online-hdr"><span class="lbl">线上电影节</span></div>
+
+  <!-- 主卡 1：黑泽明与日本新浪潮 -->
+  <div class="main-card" onclick="navigate('page-festival-detail')">
+    <div class="mc-bg mc-bg-1"></div>
+    <div class="mc-inner">
+      <div class="mc-left">
+        <div>
+          <div class="mc-tag">线上电影节 · 进行中</div>
+          <div class="mc-title-zh">黑泽明与日本新浪潮</div>
+          <div class="mc-title-en">Kurosawa and the Japanese New Wave</div>
+          <div class="mc-divider"></div>
+          <div>
+            <div class="mc-film"><div class="mc-film-title hl">《七武士》</div><div class="mc-film-sub">战后废墟里最有力的人性宣言 · 黑泽明 1954</div></div>
+            <div class="mc-film"><div class="mc-film-title">《罗生门》</div><div class="mc-film-sub">真相从不只有一个版本 · 黑泽明 1950</div></div>
+            <div class="mc-film"><div class="mc-film-title">《野草莓》</div><div class="mc-film-sub">一个人如何与自己的过去和解 · 柏格曼 1957</div></div>
+          </div>
+        </div>
+        <div class="mc-foot">
+          <div class="mc-meta">4月10—17日 · 247 人参与</div>
+          <div class="card-join" onclick="event.stopPropagation()">加入这场影展</div>
+        </div>
+      </div>
+      <div class="mc-right">
+        <div class="mc-qmark">"</div>
+        <div class="mc-quote">从战后的焦土出发，这些导演把摄影机对准了一个核心问题：人，究竟值不值得被相信？</div>
+        <div class="mc-author">策展人手记</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主卡 2：新浪潮五十年 -->
+  <div class="main-card" onclick="navigate('page-festival-detail')">
+    <div class="mc-bg mc-bg-2"></div>
+    <div class="mc-inner">
+      <div class="mc-left">
+        <div>
+          <div class="mc-tag">线上电影节 · 即将开始</div>
+          <div class="mc-title-zh">新浪潮五十年</div>
+          <div class="mc-title-en">Fifty Years of the French New Wave</div>
+          <div class="mc-divider"></div>
+          <div>
+            <div class="mc-film"><div class="mc-film-title hl">《精疲力竭》</div><div class="mc-film-sub">第一个把摄影机扛上巴黎街头的人 · 戈达尔 1960</div></div>
+            <div class="mc-film"><div class="mc-film-title">《四百击》</div><div class="mc-film-sub">特吕弗给所有在路上的少年 · 1959</div></div>
+            <div class="mc-film"><div class="mc-film-title">《广岛之恋》</div><div class="mc-film-sub">记忆与遗忘，谁更残忍 · 雷乃 1959</div></div>
+          </div>
+        </div>
+        <div class="mc-foot">
+          <div class="mc-meta">5月20日起 · 74 人参与</div>
+          <div class="card-join" onclick="event.stopPropagation()">加入这场影展</div>
+        </div>
+      </div>
+      <div class="mc-right">
+        <div class="mc-qmark">"</div>
+        <div class="mc-quote">五十年后再看，那场革命依然没有结束。他们改变的不只是电影，而是我们看世界的方式。</div>
+        <div class="mc-author">策展人手记</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 次卡：即将开始 -->
+  <div class="sub-group">
+    <div class="sub-group-lbl">即将开始</div>
+    <div class="sub-grid-2">
+      <div class="sub-card" onclick="navigate('page-festival-detail')">
+        <div class="sc-poster-frame" id="poster-she">
+          <img src="https://image.tmdb.org/t/p/w200/6fgUHRsAkXIMxCjR8DgkFpyFPhH.jpg" alt="天使爱美丽"
+            style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.8) saturate(0.8);"
+            onerror="this.parentNode.innerHTML='<div class=\'sc-poster-fb\'>她</div>'">
+        </div>
+        <div class="sc-inner">
+          <div class="sc-tag">线上电影节 · 即将开始</div>
+          <div class="sc-tagline">当摄影机被她们握住，目光的方向就此改变。</div>
+          <div class="sc-foot">
+            <div class="sc-title">她在路上：女性凝视电影节</div>
+            <div class="card-join" onclick="event.stopPropagation()">加入这场影展</div>
+          </div>
+        </div>
+      </div>
+      <div class="sub-card" onclick="navigate('page-festival-detail')">
+        <div class="sc-poster-frame" id="poster-jiu">
+          <img src="https://image.tmdb.org/t/p/w200/nKGhCQ5FqXjcSfmXrnXxLAKQnvg.jpg" alt="堕落天使"
+            style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.8) saturate(0.8);"
+            onerror="this.parentNode.innerHTML='<div class=\'sc-poster-fb\'>九</div>'">
+        </div>
+        <div class="sc-inner">
+          <div class="sc-tag">线上电影节 · 即将开始</div>
+          <div class="sc-tagline">九七前的告别，九七后的回望。那些电影还没讲完。</div>
+          <div class="sc-foot">
+            <div class="sc-title">九十年代港片重看</div>
+            <div class="card-join" onclick="event.stopPropagation()">加入这场影展</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 次卡：进行中 -->
+  <div class="sub-group">
+    <div class="sub-group-lbl">进行中</div>
+    <div class="sub-grid-3">
+      <div class="sub-card" onclick="navigate('page-festival-detail')">
+        <div class="sc-poster-frame" id="poster-shen">
+          <img src="https://image.tmdb.org/t/p/w200/c7rCv5VpWLAFGmBlzLhayxH4XIN.jpg" alt="罗生门"
+            style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.8) saturate(0.8);"
+            onerror="this.parentNode.innerHTML='<div class=\'sc-poster-fb\'>深</div>'">
+        </div>
+        <div class="sc-inner">
+          <div class="sc-tag">线上电影节 · 进行中</div>
+          <div class="sc-tagline">凌晨三点，在黑暗里和陌生人一起害怕。</div>
+          <div class="sc-foot">
+            <div class="sc-title">深夜恐惧独立电影节</div>
+            <div class="card-join" onclick="event.stopPropagation()">加入这场影展</div>
+          </div>
+        </div>
+      </div>
+      <div class="sub-card" onclick="navigate('page-festival-detail')">
+        <div class="sc-poster-frame" id="poster-cheng">
+          <img src="https://image.tmdb.org/t/p/w200/r1UQoYxibWqxiudcqzwrjzBqWU0.jpg" alt="重庆森林"
+            style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.8) saturate(0.8);"
+            onerror="this.parentNode.innerHTML='<div class=\'sc-poster-fb\'>城</div>'">
+        </div>
+        <div class="sc-inner">
+          <div class="sc-tag">线上电影节 · 进行中</div>
+          <div class="sc-tagline">城市是背景，也是主角，也是你。</div>
+          <div class="sc-foot">
+            <div class="sc-title">城市，以及漂泊的人</div>
+            <div class="card-join" onclick="event.stopPropagation()">加入这场影展</div>
+          </div>
+        </div>
+      </div>
+      <div class="sub-card" onclick="navigate('page-festival-detail')">
+        <div class="sc-poster-frame" id="poster-ta">
+          <img src="https://image.tmdb.org/t/p/w200/8ViRRFHsSPifbLCpOH2U6B0F2Lv.jpg" alt="花样年华"
+            style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.8) saturate(0.8);"
+            onerror="this.parentNode.innerHTML='<div class=\'sc-poster-fb\'>她</div>'">
+        </div>
+        <div class="sc-inner">
+          <div class="sc-tag">线上电影节 · 进行中</div>
+          <div class="sc-tagline">她们彼此看见，这已经是一种革命。</div>
+          <div class="sc-foot">
+            <div class="sc-title">她们彼此看见</div>
+            <div class="card-join" onclick="event.stopPropagation()">加入这场影展</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 次卡：已结束 -->
+  <div class="sub-group">
+    <div class="sub-group-lbl">已结束</div>
+    <div class="sub-grid-3">
+      <div class="sub-card ended" onclick="navigate('page-festival-detail')">
+        <div class="sc-poster-frame">
+          <img src="https://image.tmdb.org/t/p/w200/8OKmBV5BUFzmozIC3pPWKHy17kx.jpg" alt="七武士"
+            style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.7) saturate(0.6);"
+            onerror="this.parentNode.innerHTML='<div class=\'sc-poster-fb\'>黑</div>'">
+        </div>
+        <div class="sc-inner">
+          <div class="sc-tag">线上电影节 · 已结束</div>
+          <div class="sc-tagline">从战后废墟出发，重新进入现代性的焦虑。</div>
+          <div class="sc-foot">
+            <div class="sc-title">黑泽明与日本新浪潮 · 东京映画周</div>
+            <div class="card-join" onclick="event.stopPropagation()" style="color:rgba(237,232,223,0.3);border-color:rgba(237,232,223,0.12);">查看回顾</div>
+          </div>
+        </div>
+      </div>
+      <div class="sub-card ended" onclick="navigate('page-festival-detail')">
+        <div class="sc-poster-frame">
+          <img src="https://image.tmdb.org/t/p/w200/kFz9GgU0N7oUygJqiJj7AFRsHn8.jpg" alt="精疲力竭"
+            style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.7) saturate(0.6);"
+            onerror="this.parentNode.innerHTML='<div class=\'sc-poster-fb\'>法</div>'">
+        </div>
+        <div class="sc-inner">
+          <div class="sc-tag">线上电影节 · 已结束</div>
+          <div class="sc-tagline">五十年后再看，那场革命依然没有结束。</div>
+          <div class="sc-foot">
+            <div class="sc-title">新浪潮五十年：法国电影大回顾</div>
+            <div class="card-join" onclick="event.stopPropagation()" style="color:rgba(237,232,223,0.3);border-color:rgba(237,232,223,0.12);">查看回顾</div>
+          </div>
+        </div>
+      </div>
+      <div class="sub-card ended" onclick="navigate('page-festival-detail')">
+        <div class="sc-poster-frame">
+          <img src="https://image.tmdb.org/t/p/w200/c7rCv5VpWLAFGmBlzLhayxH4XIN.jpg" alt="罗生门"
+            style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.7) saturate(0.6);"
+            onerror="this.parentNode.innerHTML='<div class=\'sc-poster-fb\'>港</div>'">
+        </div>
+        <div class="sc-inner">
+          <div class="sc-tag">线上电影节 · 已结束</div>
+          <div class="sc-tagline">港影节散场后，那些还没说完的话。</div>
+          <div class="sc-foot">
+            <div class="sc-title">港影节散场后，最多人在谈的</div>
+            <div class="card-join" onclick="event.stopPropagation()" style="color:rgba(237,232,223,0.3);border-color:rgba(237,232,223,0.12);">查看回顾</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-txt">还没有找到你的那场电影节？<br><span>从一部电影出发，发起一场属于你的线上电影节。</span></div>
+  <div class="btn-g" onclick="navigate('page-festival-detail')">策划一场小电影节 →</div>
+</div>
+
+<script>
+// ── navigate：兼容 iframe 和独立运行 ──
+function navigate(page) {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'navigate', page: page }, '*');
+    } else {
+      // 独立运行时直接跳转
+      window.location.href = page + '.html';
+    }
+  } catch(e) {
+    console.warn('navigate error:', e);
+  }
+}
+
+// ── Supabase：读取 festival_config 更新上影节状态 ──
+const SUPABASE_URL = 'https://dirrnojiybbwotuqeqww.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
+const TMDB_KEY = '68d50b44ac8b8e22f5426fc17fe4fe90';
+
+async function loadFestivalConfig() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/festival_config?festival=eq.siff2026&select=*`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const data = await res.json();
+    if (!data || !data.length) return;
+
+    const config = data[0];
+    const now = new Date();
+    let phase = config.status;
+
+    // auto_switch 时按日期判断阶段
+    if (config.auto_switch) {
+      const start = new Date(config.start_date);
+      const end   = new Date(config.end_date);
+      if (now < start) phase = 'pre';
+      else if (now >= start && now <= end) phase = 'during';
+      else phase = 'post';
+    }
+
+    // 距开幕天数
+    const start = new Date(config.start_date);
+    const diffDays = Math.max(0, Math.ceil((start - now) / 86400000));
+
+    const badgeEl = document.getElementById('siff-badge');
+    const metaEl  = document.getElementById('siff-meta');
+
+    if (phase === 'pre') {
+      badgeEl.textContent = '线下电影节 · 展前';
+      metaEl.textContent  = `上海 · 6月14—23日 · ${diffDays}天后开幕`;
+    } else if (phase === 'during') {
+      badgeEl.textContent = '线下电影节 · 进行中';
+      metaEl.textContent  = '上海 · 6月14—23日 · 正在进行';
+    } else {
+      badgeEl.textContent = '线下电影节 · 已结束';
+      metaEl.textContent  = '上海 · 2026年6月';
+    }
+  } catch(e) {
+    console.warn('Supabase festival_config 读取失败:', e);
+  }
+}
+
+// ── 统计数字（可接 Supabase 真实数据） ──
+function loadStats() {
+  document.getElementById('stat-online').textContent = '1,247';
+  document.getElementById('stat-live').textContent   = '3';
+}
+
+// ── init ──
+document.addEventListener('DOMContentLoaded', () => {
+  loadFestivalConfig();
+  loadStats();
+});
+</script>
+</body>
+</html>
