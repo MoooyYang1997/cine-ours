@@ -279,15 +279,21 @@
             </div>
           </div>
           <div class="hk-interact">
-            <div class="hk-ic">
-              <div class="hk-ic-ey"><span class="kdot-sm"></span>正在讨论</div>
-              <div class="hk-ic-title">《悲情城市》讨论正在发生</div>
-              <div class="hk-ic-sub">42 条新回应 · 刚刚</div>
+            <div class="hk-ic" id="ic0" style="cursor:pointer">
+              <div class="hk-ic-ey">
+                <span class="kdot-sm"></span>
+                <span id="ic0-eye">加载中</span>
+              </div>
+              <div class="hk-ic-title" id="ic0-title">—</div>
+              <div class="hk-ic-sub" id="ic0-sub"></div>
             </div>
-            <div class="hk-ic">
-              <div class="hk-ic-ey"><span class="kdot-sm"></span>正在预测</div>
-              <div class="hk-ic-title">谁会拿下金像奖？</div>
-              <div class="hk-ic-sub">1,204 人正在预测</div>
+            <div class="hk-ic" id="ic1" style="cursor:pointer">
+              <div class="hk-ic-ey">
+                <span class="kdot-sm"></span>
+                <span id="ic1-eye">加载中</span>
+              </div>
+              <div class="hk-ic-title" id="ic1-title">—</div>
+              <div class="hk-ic-sub" id="ic1-sub"></div>
             </div>
           </div>
         </div>
@@ -402,6 +408,51 @@
     
     <script>
     (function(){
+      window._supabaseUrl = 'https://dirrnojiybbwotuqeqww.supabase.co';
+      window._supabaseKey = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
+
+      async function loadFestivalState(){
+        try{
+          var cfgRes = await fetch(
+            window._supabaseUrl + '/rest/v1/festival_config' +
+            '?festival=eq.siff2026&limit=1&select=*',
+            {headers:{
+              'apikey': window._supabaseKey,
+              'Authorization': 'Bearer ' + window._supabaseKey
+            }}
+          );
+          var cfgData = await cfgRes.json();
+          var cfg = cfgData[0];
+          if(!cfg) return 'pre';
+
+          if(cfg.auto_switch){
+            var today = new Date();
+            var start = new Date(cfg.start_date);
+            var end   = new Date(cfg.end_date);
+            if(today < start) return 'pre';
+            if(today > end)   return 'post';
+            return 'during';
+          } else {
+            return cfg.status;
+          }
+        } catch(e){ return 'pre'; }
+      }
+
+      async function loadFestivalNews(){
+        try{
+          var res = await fetch(
+            window._supabaseUrl + '/rest/v1/festival_news' +
+            '?festival=eq.siff2026&is_featured=eq.true' +
+            '&order=published_at.desc&limit=2&select=*',
+            {headers:{
+              'apikey': window._supabaseKey,
+              'Authorization': 'Bearer ' + window._supabaseKey
+            }}
+          );
+          return await res.json();
+        } catch(e){ return []; }
+      }
+
       /* ── nav ── */
       function nav(page){
         try{
@@ -688,6 +739,80 @@
     
       buildETabs();
       applyESet(ES[0]);
+
+      var IC_CONTENT = {
+        pre: function(news){
+          var n0 = news[0] || {};
+          return [
+            {
+              eye:'最新资讯',
+              title: n0.title || '第28届上影节征片进行中',
+              sub:   n0.summary || '主竞赛·亚洲新人·纪录片',
+              url:   n0.url || ''
+            },
+            {
+              eye:'评审预测',
+              title:'谁会摘得金爵奖？',
+              sub:  '提前预测 · 加入讨论',
+              url:  ''
+            }
+          ];
+        },
+        during: function(news){
+          return [
+            {
+              eye:'放映后讨论',
+              title:'今天看了哪部？说说感受',
+              sub:  '加入讨论 · 实时更新',
+              url:  ''
+            },
+            {
+              eye:'奖项预测',
+              title:'谁会摘得金爵奖？',
+              sub:  '预测截止颁奖前夜',
+              url:  ''
+            }
+          ];
+        },
+        post: function(news){
+          return [
+            {
+              eye:'颁奖回顾',
+              title:'金爵奖完整获奖名单',
+              sub:  '查看所有单元结果',
+              url:  ''
+            },
+            {
+              eye:'你的片单',
+              title:'这届上影节，你看了几部？',
+              sub:  '生成你的专属观影记录',
+              url:  ''
+            }
+          ];
+        }
+      };
+
+      (async function(){
+        var stage = await loadFestivalState();
+        var news  = (stage === 'pre') ? await loadFestivalNews() : [];
+        var items = (IC_CONTENT[stage] || IC_CONTENT.pre)(news);
+
+        items.forEach(function(item, i){
+          var eyeEl   = document.getElementById('ic'+i+'-eye');
+          var titleEl = document.getElementById('ic'+i+'-title');
+          var subEl   = document.getElementById('ic'+i+'-sub');
+          var cardEl  = document.getElementById('ic'+i);
+          if(!eyeEl) return;
+          eyeEl.textContent   = item.eye;
+          if(titleEl) titleEl.textContent = item.title;
+          if(subEl) subEl.textContent = item.sub;
+          if(item.url && cardEl){
+            cardEl.addEventListener('click', function(){
+              window.open(item.url, '_blank');
+            });
+          }
+        });
+      })();
     
     })();
     </script>
