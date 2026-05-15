@@ -150,6 +150,51 @@ create table public.watched_films (
   unique(user_id, tmdb_id)
 );
 
+-- 10. 影展配置表（如 SIFF 档期、状态、是否自动切换展示）
+create table public.festival_config (
+  id           bigserial primary key,
+  festival     text not null,
+  status       text not null default 'pre',
+  start_date   date,
+  end_date     date,
+  auto_switch  boolean not null default true,
+  created_at   timestamptz default now()
+);
+
+-- 11. 影展新闻表
+create table public.festival_news (
+  id           bigserial primary key,
+  festival     text not null,
+  title        text not null,
+  summary      text,
+  url          text,
+  published_at date,
+  is_featured  boolean default false,
+  created_at   timestamptz default now()
+);
+
+-- 上影节 2026 初始配置与种子新闻（可按需在 Supabase 中增删）
+insert into public.festival_config
+  (festival, status, start_date, end_date, auto_switch)
+values
+  ('siff2026', 'pre', '2026-06-14', '2026-06-23', true);
+
+insert into public.festival_news
+  (festival, title, summary, url, published_at, is_featured)
+values
+  ('siff2026', '第28届上海国际电影节征片截止倒计时',
+   '主竞赛、亚洲新人等五大单元征片即将截止，欢迎全球影人投递。',
+   'https://www.siff.com/content?aid=101260325105501806442600864157701700',
+   '2026-03-25', true),
+  ('siff2026', '上影节首设AI片场，双线招募全球影像共创者',
+   '2026年新增AI片场专项单元，开放影像共创报名。',
+   'https://www.siff.com/content?aid=101260304210608798986250873737221726',
+   '2026-03-04', true),
+  ('siff2026', '上影节成功入选全新A类电影节名单',
+   '国际制片人协会公布最新A类电影节名单，上影节正式入列。',
+   'https://www.siff.com/content?aid=101260312104740801729711649591301572',
+   '2026-03-12', false);
+
 -- ============================================
 -- Row Level Security (RLS) 权限控制
 -- ============================================
@@ -163,6 +208,8 @@ alter table public.comments enable row level security;
 alter table public.likes enable row level security;
 alter table public.film_festivals_offline enable row level security;
 alter table public.watched_films enable row level security;
+alter table public.festival_config enable row level security;
+alter table public.festival_news enable row level security;
 
 -- profiles: 所有人可读，只有本人可写
 create policy "profiles_read" on public.profiles for select using (true);
@@ -203,6 +250,10 @@ create policy "offline_read" on public.film_festivals_offline for select using (
 -- watched_films: 本人可读写
 create policy "watched_read" on public.watched_films for select using (auth.uid() = user_id);
 create policy "watched_write" on public.watched_films for all using (auth.uid() = user_id);
+
+-- festival_config / festival_news: 匿名可读（官网首页等）
+create policy "festival_config_public_read" on public.festival_config for select using (true);
+create policy "festival_news_public_read" on public.festival_news for select using (true);
 
 -- ============================================
 -- 自动创建 profile 的触发器
