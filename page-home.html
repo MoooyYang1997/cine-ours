@@ -164,11 +164,27 @@
     
     /* ── 策展入口 ── */
     .ph-root .entry-section{background:#181818;border-top:1px solid rgba(255,255,255,0.06);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
-    .ph-root .entry-stage{position:relative;width:100%;min-height:100vh;min-height:100dvh;flex:1;overflow:hidden;background:#151515}
+    .ph-root .entry-stage{position:relative;width:100%;min-height:100vh;min-height:100dvh;flex:1;overflow:hidden;background:transparent}
     .ph-root .e-line-bg{position:absolute;inset:0;z-index:2;pointer-events:none;background-color:transparent;background-position:center;background-size:cover;opacity:0.58;mix-blend-mode:soft-light;transition:opacity 0.85s ease,filter 0.85s ease;filter:saturate(0.92)contrast(1.05)}
     .ph-root .entry-stage canvas{position:absolute;inset:0;z-index:1;width:100%;height:100%}
-    .ph-root .e-ovr{position:absolute;inset:0;z-index:3;background:linear-gradient(to right,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.32) 52%,rgba(0,0,0,0.04) 100%)}
-    .ph-root .e-ovb{position:absolute;left:0;right:0;bottom:0;height:88px;z-index:3;background:linear-gradient(to top,#181818 0%,transparent 100%)}
+    .ph-root .e-ovr{
+      position:absolute;
+      inset:0;
+      z-index:3;
+      background:linear-gradient(
+        to right,
+        rgba(0,0,0,0.65) 0%,
+        rgba(0,0,0,0.22) 45%,
+        rgba(0,0,0,0.0) 100%
+      );
+    }
+    .ph-root .e-ovb{
+      position:absolute;
+      left:0;right:0;bottom:0;
+      z-index:3;
+      height:60px;
+      background:linear-gradient(to top,rgba(24,24,24,0.7) 0%,transparent 100%);
+    }
     .ph-root .e-inner{position:absolute;inset:0;z-index:6;display:flex;align-items:center}
     .ph-root .e-left{width:52%;padding:36px 50px;display:flex;flex-direction:column}
     .ph-root .e-tag{font-size:9px;letter-spacing:.2em;color:rgba(201,168,76,0.6);margin-bottom:13px}
@@ -202,9 +218,15 @@
     .ph-root .cta-cc.on{color:rgba(237,232,223,0.86)}
     .ph-root .e-right{position:absolute;right:0;top:0;bottom:0;width:40%;z-index:5;display:flex;align-items:center;justify-content:center;padding:48px 44px 48px 16px}
     .ph-root .cn-note{max-width:260px}
-    .ph-root .cn-mark{font-size:32px;color:rgba(201,168,76,0.35);line-height:1;margin-bottom:9px;font-family:Georgia,serif}
-    .ph-root .cn-quote{font-size:15px;font-style:italic;line-height:2.1;color:rgba(237,232,223,0.72);letter-spacing:.02em}
-    .ph-root .cn-attr{font-size:9px;color:rgba(201,168,76,0.5);margin-top:14px;letter-spacing:.12em}
+    .ph-root .cn-mark{font-size:32px;color:rgba(201,168,76,0.45);line-height:1;margin-bottom:9px;font-family:Georgia,serif}
+    .ph-root .cn-quote{
+      font-size:15px;
+      font-style:italic;
+      line-height:2.1;
+      color:rgba(237,232,223,0.82);
+      letter-spacing:0.02em;
+    }
+    .ph-root .cn-attr{font-size:9px;color:rgba(201,168,76,0.6);margin-top:14px;letter-spacing:.12em}
     .ph-root .e-tab-wrap{background:#181818;padding-top:13px}
     .ph-root .e-tab-row{display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,0.05)}
     .ph-root .e-tab-row::-webkit-scrollbar{display:none}
@@ -540,7 +562,7 @@
            {n:'《迷失东京》',l:'两个失眠的人，在陌生城市里相遇。',m:'2003 · 索菲亚·科波拉',c:'p1'},
            {n:'《重庆森林》',l:'城市足够大，孤独就足够近。',m:'1994 · 王家卫',c:'p2'},
            {n:'《天使爱美丽》',l:'一个人决定让别人快乐，但忘了自己。',m:'2001 · 让-皮埃尔·热内',c:'p3'}
-         ],p:[[8,8,14],[22,18,28],[38,30,48],[14,12,20]]},
+         ],p:[[8,8,14],[22,18,28],[52,42,64],[14,12,20]]},
         {zh:'港影节散场后，最多人在谈的',en:'After the Last Screening',
          still:'https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=1600&q=82',
          note:'这三部片不是最好看的，但是最难从里面出来的。散场后你会站在外面，不想走。',
@@ -548,7 +570,7 @@
            {n:'《悲情城市》',l:'台湾最沉重的历史，用最安静的方式说出来。',m:'1989 · 侯孝贤',c:'p1'},
            {n:'《花样年华》',l:'所有没有说出口的，比说出口的更真实。',m:'2000 · 王家卫',c:'p2'},
            {n:'《牯岭街少年杀人事件》',l:'给它四个小时。它会给你一整个时代。',m:'1991 · 杨德昌',c:'p3'}
-         ],p:[[10,8,6],[26,18,12],[44,30,16],[14,10,8]]},
+         ],p:[[10,8,6],[26,18,12],[58,42,24],[14,10,8]]},
         {zh:'她们彼此看见',en:'The Way They Looked',
          still:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1600&q=82',
          note:'三位导演，三种目光。共同的是：她们都在问"被看见"意味着什么。',
@@ -556,7 +578,7 @@
            {n:'《燃烧女子的肖像》',l:'用眼睛爱一个人，是什么感觉。',m:'2019 · 瑟琳·席安玛',c:'p1'},
            {n:'《卡罗尔》',l:'那个年代，爱本身就是勇气。',m:'2015 · 托德·海因斯',c:'p2'},
            {n:'《钢琴课》',l:'沉默有时比语言更有力量。',m:'1993 · 简·坎皮恩',c:'p3'}
-         ],p:[[12,8,10],[28,16,20],[46,26,34],[16,10,14]]},
+         ],p:[[12,8,10],[28,16,20],[60,38,48],[16,10,14]]},
         {zh:'回到杨德昌的台北',en:"A Director's City",
          still:'https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?w=1600&q=82',
          note:'杨德昌用摄影机记录了一个城市正在失去某种东西的时刻。我们现在才看懂。',
@@ -564,7 +586,7 @@
            {n:'《牯岭街少年杀人事件》',l:'一个少年，一座城市，一个没有出口的时代。',m:'1991 · 杨德昌',c:'p1'},
            {n:'《一一》',l:'人生的每一段，都值得被好好看见。',m:'2000 · 杨德昌',c:'p2'},
            {n:'《独立时代》',l:'台北的中产生活，有多少是真实的？',m:'1994 · 杨德昌',c:'p3'}
-         ],p:[[6,8,12],[14,18,28],[20,28,44],[10,14,18]]},
+         ],p:[[6,8,12],[14,18,28],[30,40,58],[10,14,18]]},
         {zh:'今晚交给别人策展',en:'Tonight, Someone Else Decides',
          still:'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1600&q=82',
          note:'不告诉你为什么选这三部。进去就知道了。',
@@ -572,7 +594,7 @@
            {n:'《东京物语》',l:'关于家人之间，来不及说出口的事。',m:'1953 · 小津安二郎',c:'p1'},
            {n:'《花样年华》',l:'那些没有说出口的，比说出口的更真实。',m:'2000 · 王家卫',c:'p2'},
            {n:'《悲情城市》',l:'散场后，没有人说话。',m:'1989 · 侯孝贤',c:'p3'}
-         ],p:[[6,6,6],[16,14,12],[28,24,20],[10,10,10]]}
+         ],p:[[6,6,6],[16,14,12],[40,36,30],[10,10,10]]}
       ];
     
       var eCur=0;
