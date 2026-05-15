@@ -282,7 +282,7 @@
             <div class="hk-ic" id="ic0" style="cursor:pointer">
               <div class="hk-ic-ey">
                 <span class="kdot-sm"></span>
-                <span id="ic0-eye">加载中</span>
+                <span id="ic0-eye">载入中</span>
               </div>
               <div class="hk-ic-title" id="ic0-title">—</div>
               <div class="hk-ic-sub" id="ic0-sub"></div>
@@ -290,7 +290,7 @@
             <div class="hk-ic" id="ic1" style="cursor:pointer">
               <div class="hk-ic-ey">
                 <span class="kdot-sm"></span>
-                <span id="ic1-eye">加载中</span>
+                <span id="ic1-eye">载入中</span>
               </div>
               <div class="hk-ic-title" id="ic1-title">—</div>
               <div class="hk-ic-sub" id="ic1-sub"></div>
@@ -408,50 +408,10 @@
     
     <script>
     (function(){
-      window._supabaseUrl = 'https://dirrnojiybbwotuqeqww.supabase.co';
-      window._supabaseKey = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
-
-      async function loadFestivalState(){
-        try{
-          var cfgRes = await fetch(
-            window._supabaseUrl + '/rest/v1/festival_config' +
-            '?festival=eq.siff2026&limit=1&select=*',
-            {headers:{
-              'apikey': window._supabaseKey,
-              'Authorization': 'Bearer ' + window._supabaseKey
-            }}
-          );
-          var cfgData = await cfgRes.json();
-          var cfg = cfgData[0];
-          if(!cfg) return 'pre';
-
-          if(cfg.auto_switch){
-            var today = new Date();
-            var start = new Date(cfg.start_date);
-            var end   = new Date(cfg.end_date);
-            if(today < start) return 'pre';
-            if(today > end)   return 'post';
-            return 'during';
-          } else {
-            return cfg.status;
-          }
-        } catch(e){ return 'pre'; }
-      }
-
-      async function loadFestivalNews(){
-        try{
-          var res = await fetch(
-            window._supabaseUrl + '/rest/v1/festival_news' +
-            '?festival=eq.siff2026&is_featured=eq.true' +
-            '&order=published_at.desc&limit=2&select=*',
-            {headers:{
-              'apikey': window._supabaseKey,
-              'Authorization': 'Bearer ' + window._supabaseKey
-            }}
-          );
-          return await res.json();
-        } catch(e){ return []; }
-      }
+      const SUPABASE_URL = 'https://dirrnojiybbwotuqeqww.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
+      window._supabaseUrl = SUPABASE_URL;
+      window._supabaseKey = SUPABASE_KEY;
 
       /* ── nav ── */
       function nav(page){
@@ -740,21 +700,66 @@
       buildETabs();
       applyESet(ES[0]);
 
-      var IC_CONTENT = {
+      /* ── 影展状态机 ── */
+      async function loadFestivalState(){
+        try{
+          var res = await fetch(
+            window._supabaseUrl +
+            '/rest/v1/festival_config?festival=eq.siff2026&limit=1&select=*',
+            { headers:{
+                'apikey': window._supabaseKey,
+                'Authorization': 'Bearer ' + window._supabaseKey
+              }
+            }
+          );
+          var data = await res.json();
+          var cfg  = data[0];
+          if(!cfg) return 'pre';
+          if(cfg.auto_switch){
+            var today = new Date();
+            today.setHours(0,0,0,0);
+            var start = new Date(cfg.start_date);
+            var end   = new Date(cfg.end_date);
+            if(today < start) return 'pre';
+            if(today > end)   return 'post';
+            return 'during';
+          }
+          return cfg.status;
+        } catch(e){ return 'pre'; }
+      }
+
+      async function loadFestivalNews(){
+        try{
+          var res = await fetch(
+            window._supabaseUrl +
+            '/rest/v1/festival_news?festival=eq.siff2026' +
+            '&is_featured=eq.true&order=published_at.desc&limit=2&select=*',
+            { headers:{
+                'apikey': window._supabaseKey,
+                'Authorization': 'Bearer ' + window._supabaseKey
+              }
+            }
+          );
+          return await res.json();
+        } catch(e){ return []; }
+      }
+
+      var IC_STATES = {
         pre: function(news){
           var n0 = news[0] || {};
+          var n1 = news[1] || {};
           return [
             {
-              eye:'最新资讯',
-              title: n0.title || '第28届上影节征片进行中',
-              sub:   n0.summary || '主竞赛·亚洲新人·纪录片',
-              url:   n0.url || ''
+              eye:   '最新资讯',
+              title:  n0.title   || '第28届上影节征片进行中',
+              sub:    n0.summary || '主竞赛 · 亚洲新人 · 纪录片',
+              url:    n0.url     || 'https://www.siff.com/list?cid=import-37'
             },
             {
-              eye:'评审预测',
-              title:'谁会摘得金爵奖？',
-              sub:  '提前预测 · 加入讨论',
-              url:  ''
+              eye:   '评审预测',
+              title: '谁会摘得金爵奖？',
+              sub:   '提前预测 · 加入讨论',
+              url:   n1.url || ''
             }
           ];
         },
@@ -795,7 +800,7 @@
       (async function(){
         var stage = await loadFestivalState();
         var news  = (stage === 'pre') ? await loadFestivalNews() : [];
-        var items = (IC_CONTENT[stage] || IC_CONTENT.pre)(news);
+        var items = (IC_STATES[stage] || IC_STATES.pre)(news);
 
         items.forEach(function(item, i){
           var eyeEl   = document.getElementById('ic'+i+'-eye');
