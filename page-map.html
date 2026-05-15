@@ -352,6 +352,18 @@ function arcPath(projection, from, to) {
   return 'M' + a[0] + ',' + a[1] + ' Q' + cx + ',' + cy + ' ' + b[0] + ',' + b[1];
 }
 
+/** 将 rgba(...) 的 alpha 乘以 factor（热力强度缩放） */
+function scaleRgbaAlpha(rgba, factor) {
+  return rgba.replace(/rgba\(\s*([^)]+)\s*\)/, function (_, inner) {
+    var p = inner.split(',').map(function (s) { return s.trim(); });
+    if (p.length < 4) return rgba;
+    var a = parseFloat(p[3]);
+    if (isNaN(a)) return rgba;
+    p[3] = String(Math.min(1, Math.max(0, a * factor)));
+    return 'rgba(' + p.join(', ') + ')';
+  });
+}
+
 function renderMapLayers() {
   var w = mapWrap.clientWidth, h = mapWrap.clientHeight;
   if (w < 2 || h < 2) return;
@@ -363,14 +375,36 @@ function renderMapLayers() {
   svg.selectAll('*').remove();
   svg.attr('width', w).attr('height', h).attr('viewBox', '0 0 ' + w + ' ' + h);
 
+  /* SVG 热力 ≈ Mapbox heatmap-*：半径 / 透明度 / 强度随 zoom 插值（zoomK 0.65～2.2 映射到 z≈0～6） */
+  var zSpan = 2.2 - 0.65;
+  var zMap6 = Math.max(0, Math.min(6, ((zoomK - 0.65) / zSpan) * 6));
+  var zMap5 = Math.max(0, Math.min(5, ((zoomK - 0.65) / zSpan) * 5));
+  function heatOpacityVal() {
+    if (zMap6 <= 3) return 0.62;
+    if (zMap6 >= 6) return 0.32;
+    return 0.62 + (0.32 - 0.62) * ((zMap6 - 3) / 3);
+  }
+  function heatIntensityVal() {
+    return 0.28 + (1.0 - 0.28) * (zMap5 / 5);
+  }
+  function heatRadiusVal() {
+    if (zMap5 <= 3) return 12 + (22 - 12) * (zMap5 / 3);
+    return 22 + (35 - 22) * ((zMap5 - 3) / 2);
+  }
+  var heatInt = heatIntensityVal();
+  var heatOp = heatOpacityVal();
+  var radBase = heatRadiusVal();
+
   var defs = svg.append('defs');
   var grad = defs.append('radialGradient').attr('id', 'heatG').attr('cx', '50%').attr('cy', '50%').attr('r', '50%');
-  /* 暖琥珀光晕（柔和径向），与城市光点搭配 */
+  /* 暖琥珀光晕；各 stop alpha 再乘 heatmap-intensity */
   [[0, 'rgba(0,0,0,0)'], [0.07, 'rgba(25,12,2,0.4)'], [0.22, 'rgba(55,30,5,0.5)'], [0.42, 'rgba(95,55,8,0.58)'], [0.62, 'rgba(138,88,18,0.63)'], [0.8, 'rgba(168,115,32,0.67)'], [1, 'rgba(188,142,52,0.70)']].forEach(function (st) {
-    grad.append('stop').attr('offset', (st[0] * 100) + '%').attr('stop-color', st[1]);
+    grad.append('stop').attr('offset', (st[0] * 100) + '%').attr('stop-color', scaleRgbaAlpha(st[1], heatInt));
   });
   var blur = defs.append('filter').attr('id', 'softBlur').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
   blur.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', 4);
+  var heatBlur = defs.append('filter').attr('id', 'heatBlur').attr('x', '-100%').attr('y', '-100%').attr('width', '300%').attr('height', '300%');
+  heatBlur.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', 8);
 
   var root = svg.append('g').attr('class', 'map-root');
   root.append('rect').attr('width', w).attr('height', h).attr('fill', '#04050a');
@@ -403,14 +437,15 @@ function renderMapLayers() {
       .attr('stroke-width', 0.4);
   }
 
-  var heatG = root.append('g').attr('class', 'heat').attr('opacity', 0.82);
+  var heatG = root.append('g').attr('class', 'heat').attr('opacity', heatOp);
   HEAT_CITIES.forEach(function (coord, idx) {
     var p = projection(coord);
     if (!p) return;
-    var rad = 20 + (idx % 3) * 10;
+    var rad = radBase * (0.94 + (idx % 3) * 0.04);
     heatG.append('circle')
       .attr('cx', p[0]).attr('cy', p[1]).attr('r', rad)
-      .attr('fill', 'url(#heatG)');
+      .attr('fill', 'url(#heatG)')
+      .attr('filter', 'url(#heatBlur)');
   });
 
   var active = cityById(activeId);
