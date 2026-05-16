@@ -16,7 +16,7 @@ html,body{height:100%;overflow:hidden;background:#07080a}
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --ease:cubic-bezier(0.25,0,0.1,1);
 }
-#app{display:flex;flex-direction:column;height:100vh;width:100vw;font-family:var(--sans);color:rgba(237,232,223,1)}
+#app{display:flex;flex-direction:column;height:100%;width:100%;font-family:var(--sans);color:rgba(237,232,223,1)}
 
 #body{display:flex;flex:1;min-height:0;overflow:hidden}
 
@@ -92,11 +92,11 @@ html,body{height:100%;overflow:hidden;background:#07080a}
 #mc:hover{opacity:0.6}
 .mcb{width:22px;height:22px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.08);border-radius:3px;display:flex;align-items:center;justify-content:center;color:rgba(237,232,223,0.5);font-size:13px;cursor:pointer}
 
-/* BOTTOM STRIP — 260px, two rows */
-#bs{height:260px;flex-shrink:0;background:#060709;border-top:1px solid rgba(255,255,255,0.048);display:flex}
+/* BOTTOM STRIP — 280px, two rows */
+#bs{height:280px;flex-shrink:0;background:#060709;border-top:1px solid rgba(255,255,255,0.048);display:flex}
 
-/* Left city info — 160px */
-#bsc{width:160px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.045);display:flex;flex-direction:column;justify-content:center;padding:0 22px;gap:6px}
+/* Left city info — 175px */
+#bsc{width:175px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.045);display:flex;flex-direction:column;justify-content:center;padding:0 22px;gap:6px}
 #bsn{font-family:var(--serif);font-size:28px;color:rgba(201,168,76,0.86);line-height:1.1}
 #bss{font-size:10px;color:rgba(237,232,223,0.26);letter-spacing:0.05em;line-height:1.6;white-space:nowrap}
 #bsk{font-size:9px;color:rgba(237,232,223,0.16);font-style:italic}
@@ -113,7 +113,7 @@ html,body{height:100%;overflow:hidden;background:#07080a}
 
 /* CTA — right edge */
 .bcta{width:72px;flex-shrink:0;border-left:1px solid rgba(255,255,255,0.042);display:flex;align-items:center;justify-content:center;padding:0 8px;cursor:pointer}
-.bcta-t{font-size:9.5px;color:rgba(201,168,76,0.5);font-style:italic;writing-mode:vertical-rl;letter-spacing:0.06em;line-height:1.4;text-align:center}
+.bcta-t{font-size:10px;color:rgba(201,168,76,0.55);font-style:italic;writing-mode:vertical-rl;letter-spacing:0.05em;line-height:1.4;text-align:center}
 
 /* Frame card */
 .bf{flex-shrink:0;width:122px;border-radius:3px;overflow:hidden;background:#0d0f12;cursor:pointer;position:relative;opacity:0.5;transition:opacity 0.2s,transform 0.2s}
@@ -273,11 +273,11 @@ function buildMap() {
 
   // heat gradients
   var hgs = [
-    {id:'heu',cx:0.45,cy:0.28,rx:0.09,ry:0.12,c:'rgba(148,95,12,0.38)'},
-    {id:'has',cx:0.72,cy:0.32,rx:0.15,ry:0.16,c:'rgba(135,82,10,0.32)'},
-    {id:'hhk',cx:0.80,cy:0.38,rx:0.08,ry:0.09,c:'rgba(201,160,50,0.42)'},
-    {id:'hna',cx:0.16,cy:0.30,rx:0.07,ry:0.08,c:'rgba(125,75,8,0.28)'},
-    {id:'hsa',cx:0.20,cy:0.62,rx:0.05,ry:0.06,c:'rgba(115,68,6,0.22)'},
+    {id:'heu',cx:0.45,cy:0.28,rx:0.09,ry:0.12,c:'rgba(148,95,12,0.52)'},
+    {id:'has',cx:0.72,cy:0.32,rx:0.15,ry:0.16,c:'rgba(135,82,10,0.45)'},
+    {id:'hhk',cx:0.80,cy:0.38,rx:0.08,ry:0.09,c:'rgba(201,160,50,0.58)'},
+    {id:'hna',cx:0.16,cy:0.30,rx:0.07,ry:0.08,c:'rgba(125,75,8,0.38)'},
+    {id:'hsa',cx:0.20,cy:0.62,rx:0.05,ry:0.06,c:'rgba(115,68,6,0.30)'},
   ];
   hgs.forEach(function(h) {
     var rg = defs.append('radialGradient').attr('id',h.id)
