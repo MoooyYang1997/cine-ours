@@ -252,6 +252,9 @@ var mapWrap = document.getElementById('mapWrap');
 var svgEl = document.getElementById('mapSvg');
 var floatCard = document.getElementById('float-card');
 var zoomK = 1;
+var FILL_OPACITY_MULT = 0.72;
+var LINE_OPACITY_MULT = 0.35;
+var DARK_VEIL_OVERLAY = 'rgba(0,0,0,0.22)';
 var bcIndex = 0;
 var bcEl = document.getElementById('bcText');
 
@@ -406,17 +409,22 @@ function renderMapLayers() {
   var heatBlur = defs.append('filter').attr('id', 'heatBlur').attr('x', '-100%').attr('y', '-100%').attr('width', '300%').attr('height', '300%');
   heatBlur.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', 8);
 
+  var landFillA = (0.108333 * FILL_OPACITY_MULT).toFixed(3);
+  var landStrokeA = (0.409091 * LINE_OPACITY_MULT).toFixed(3);
+  var gridStrokeA = (0.081818 * LINE_OPACITY_MULT).toFixed(4);
+  var arcStrokeA = (0.909091 * LINE_OPACITY_MULT).toFixed(3);
+
   var root = svg.append('g').attr('class', 'map-root');
   root.append('rect').attr('width', w).attr('height', h).attr('fill', '#04050a');
 
   var gx = root.append('g').attr('class', 'grid');
   for (var i = 1; i <= 3; i++) {
     gx.append('line').attr('x1', 0).attr('x2', w).attr('y1', h * i / 4).attr('y2', h * i / 4)
-      .attr('stroke', 'rgba(255,255,255,0.018)').attr('stroke-dasharray', '4 10');
+      .attr('stroke', 'rgba(255,255,255,' + gridStrokeA + ')').attr('stroke-dasharray', '4 10');
   }
   for (var j = 1; j <= 3; j++) {
     gx.append('line').attr('y1', 0).attr('y2', h).attr('x1', w * j / 4).attr('x2', w * j / 4)
-      .attr('stroke', 'rgba(255,255,255,0.018)').attr('stroke-dasharray', '4 10');
+      .attr('stroke', 'rgba(255,255,255,' + gridStrokeA + ')').attr('stroke-dasharray', '4 10');
   }
 
   if (worldData) {
@@ -425,7 +433,7 @@ function renderMapLayers() {
       .data(countries.features)
       .join('path')
       .attr('d', path)
-      .attr('fill', 'rgba(255,255,255,0.052)')
+      .attr('fill', 'rgba(255,255,255,' + landFillA + ')')
       .attr('stroke', 'none');
     root.append('g').selectAll('path.b')
       .data(countries.features)
@@ -433,8 +441,14 @@ function renderMapLayers() {
       .attr('class', 'b')
       .attr('d', path)
       .attr('fill', 'none')
-      .attr('stroke', 'rgba(255,255,255,0.09)')
+      .attr('stroke', 'rgba(255,255,255,' + landStrokeA + ')')
       .attr('stroke-width', 0.4);
+    root.append('rect')
+      .attr('class', 'dark-veil')
+      .attr('width', w)
+      .attr('height', h)
+      .attr('fill', DARK_VEIL_OVERLAY)
+      .attr('pointer-events', 'none');
   }
 
   var heatG = root.append('g').attr('class', 'heat').attr('opacity', heatOp);
@@ -457,7 +471,7 @@ function renderMapLayers() {
       arcG.append('path')
         .attr('d', d)
         .attr('fill', 'none')
-        .attr('stroke', 'rgba(201,168,76,0.2)')
+        .attr('stroke', 'rgba(201,168,76,' + arcStrokeA + ')')
         .attr('stroke-width', 0.6)
         .attr('stroke-dasharray', '3 7');
     }
@@ -477,10 +491,10 @@ function renderMapLayers() {
       core.append('animate').attr('attributeName', 'opacity').attr('values', '1;0.65;1').attr('dur', '2.4s').attr('repeatCount', 'indefinite');
       g.append('text').attr('text-anchor', 'middle').attr('y', -14).attr('font-family', 'Georgia, Times New Roman, serif').attr('font-size', 12).attr('fill', 'rgba(237,232,223,0.82)').text(c.zh);
     } else {
-      var oc = g.append('circle').attr('r', 3).attr('fill', '#c9a84c').attr('opacity', 0.22);
+      var oc = g.append('circle').attr('r', 3).attr('fill', '#c9a84c').attr('opacity', LINE_OPACITY_MULT);
       g.append('title').text(c.zh + ' · ' + c.venue);
       g.on('mouseenter', function () { oc.attr('opacity', 0.6); });
-      g.on('mouseleave', function () { oc.attr('opacity', 0.22); });
+      g.on('mouseleave', function () { oc.attr('opacity', LINE_OPACITY_MULT); });
     }
     g.on('click', function () { selectCity(c.id); });
   });
