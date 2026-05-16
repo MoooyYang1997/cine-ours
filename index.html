@@ -172,7 +172,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
     <div class="lb"><div class="lf"></div></div>
     <div class="lt" id="lt">loading</div>
   </div>
-  <iframe class="pframe on" id="f-home"             src="page-home.html"             title="首页"></iframe>
+  <iframe class="pframe on" id="f-home"             src="page-home.html" title="首页"></iframe>
   <iframe class="pframe"    id="f-map"              src=""  data-src="page-map.html"              title="世界地图"></iframe>
   <iframe class="pframe"    id="f-festivals"        src=""  data-src="page-festivals.html"        title="电影节广场"></iframe>
   <iframe class="pframe"    id="f-festival-detail"  src=""  data-src="page-festival-detail.html"  title="电影节详情"></iframe>
@@ -230,6 +230,14 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
 </div>
 
 <script>
+// 发布时改此版本号，避免 iframe / 浏览器沿用旧子页面缓存
+const SITE_BUILD = '7f08a90-map2';
+function assetUrl(src) {
+  if (!src) return src;
+  const sep = src.includes('?') ? '&' : '?';
+  return src + sep + 'v=' + encodeURIComponent(SITE_BUILD);
+}
+
 // ── CONFIG ───────────────────────────────────────────────────
 const PAGES = {
   home:              {src:'page-home.html',             nav:'nl-home',      label:'首页',         bc:null},
@@ -269,6 +277,21 @@ const SEARCH = [
 let cur = 'home';
 let loggedIn = false;
 const loaded = new Set(['home']);
+(function syncBuildCache() {
+  try {
+    const key = 'cineOursBuild';
+    if (sessionStorage.getItem(key) !== SITE_BUILD) {
+      sessionStorage.setItem(key, SITE_BUILD);
+      loaded.clear();
+      loaded.add('home');
+      document.querySelectorAll('.pframe[data-src]').forEach(function (f) {
+        f.removeAttribute('src');
+      });
+      const home = document.getElementById('f-home');
+      if (home) home.src = assetUrl('page-home.html');
+    }
+  } catch (e) {}
+})();
 
 // ── NAVIGATION ────────────────────────────────────────────────
 function slugToMapCityId(slug) {
@@ -329,7 +352,7 @@ function go(page, force=false) {
       const loader = document.getElementById('loader');
       document.getElementById('lt').textContent = cfg.label;
       loader.classList.add('show');
-      frame.src = frame.dataset.src || cfg.src;
+      frame.src = assetUrl(frame.dataset.src || cfg.src);
       loaded.add(pageKey);
       frame.onload = () => {
         loader.classList.remove('show');
