@@ -22,22 +22,7 @@ html_shell = """<!DOCTYPE html>
 </head>
 <body>
 <div class="app">
-  <nav class="nav">
-    <div class="nav-logo" onclick="navigate('page-home')">Cine <em>Ours</em></div>
-    <div class="nav-center">
-      <span class="nav-link" onclick="navigate('page-home')">首页</span>
-      <span class="nav-link on">世界地图</span>
-      <span class="nav-link" onclick="navigate('page-festivals')">电影节</span>
-      <span class="nav-link" onclick="navigate('page-creator')">创作</span>
-      <span class="nav-link" onclick="navigate('page-history')">影史今天<span class="hist-dot"></span></span>
-    </div>
-    <div class="nav-right">
-      <input class="nav-search" id="navSearch" type="search" placeholder="搜索城市、影院或电影地标" aria-label="搜索">
-      <div class="nav-av" title="账户">余</div>
-    </div>
-  </nav>
-
-  <div class="body-row">
+  <div id="body" class="body-row">
     <aside class="sidebar">
       <div class="sb-head">
         <div class="sb-live"><i></i>正在发生</div>
@@ -59,7 +44,7 @@ html_shell = """<!DOCTYPE html>
   </div>
 
   <div class="bottom-strip">
-    <div class="bs-side">
+    <div class="bs-city">
       <div class="bs-city-name" id="bsCityName">柏林</div>
       <div class="bs-city-sub">电影发生过的地方</div>
       <div class="bs-city-count" id="bsCityCount">1 个地点</div>
@@ -83,12 +68,7 @@ html_shell = """<!DOCTYPE html>
 </script>
 </body>
 </html>
-"""
-
-html_shell = html_shell.replace("<div", "<div").replace("</div>", "</div>")
-html_shell = html_shell.replace("</div>", "</div>").replace("<div", "<div")
-# fix any remaining
-html_shell = html_shell.replace("</div>", "</div>")
+""".replace("<div", "<div").replace("</div>", "</div>")
 
 out = ROOT / "page-map.html"
 out.write_text(html_shell, encoding="utf-8")

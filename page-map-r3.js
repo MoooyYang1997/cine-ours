@@ -82,9 +82,7 @@ var floatCard = document.getElementById('float-card');
 var zoomK = 1;
 
 function syncSearch(val) {
-  var n = document.getElementById('navSearch');
   var p = document.getElementById('placeFilter');
-  if (n && n !== document.activeElement) n.value = val;
   if (p && p !== document.activeElement) p.value = val;
 }
 
@@ -132,7 +130,7 @@ function renderFloatCard(p, skipAnim) {
         + '<div class="fc-actions"><button type="button" class="fc-btn-ghost">查看场景</button><button type="button" class="fc-btn-gold">我也来打卡</button></div>'
         + '<div class="fc-more">查看此地全部记录 →</div>';
     }
-    floatCard.innerHTML = '<div class="fc-still">' + still + cap + '</div><div class="fc-body">' + body + '</div>';
+    floatCard.innerHTML = '<div class="fc-still"><div class="fc-grain"></div>' + still + cap + '</div><div class="fc-body">' + body + '</div>';
   }
   if (skipAnim) { fill(); return; }
   floatCard.classList.add('fade-out');
@@ -267,7 +265,7 @@ function renderMap() {
       .attr('stroke-width', 0.5);
   }
 
-  var heatG = root.append('g');
+  var heatG = root.append('g').attr('opacity', 0.85);
   var baseR = 28 * zoomK;
   HEAT_CITIES.forEach(function (coord) {
     var pt = projection(coord);
@@ -276,7 +274,7 @@ function renderMap() {
     var r = near ? baseR * 2 : baseR;
     var gid = 'heat-' + coord[0] + '-' + coord[1];
     var g = defs.append('radialGradient').attr('id', gid).attr('cx', '50%').attr('cy', '50%').attr('r', '50%');
-    g.append('stop').attr('offset', '0%').attr('stop-color', near ? 'rgba(201,168,76,0.28)' : 'rgba(168,108,16,0.24)');
+    g.append('stop').attr('offset', '0%').attr('stop-color', near ? 'rgba(160,100,15,0.24)' : 'rgba(160,100,15,0.20)');
     g.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(0,0,0,0)');
     heatG.append('circle').attr('cx', pt[0]).attr('cy', pt[1]).attr('r', r).attr('fill', 'url(#' + gid + ')');
   });
@@ -353,7 +351,6 @@ function initDrag(el) {
 
 function init() {
   document.getElementById('placeFilter').addEventListener('input', function () { renderPlaceList(this.value); });
-  document.getElementById('navSearch').addEventListener('input', function () { renderPlaceList(this.value); });
   document.getElementById('zoomIn').onclick = function () { zoomK = Math.min(2.2, zoomK * 1.12); renderMap(); };
   document.getElementById('zoomOut').onclick = function () { zoomK = Math.max(0.65, zoomK / 1.12); renderMap(); };
   initDrag(document.getElementById('scrollFilm'));

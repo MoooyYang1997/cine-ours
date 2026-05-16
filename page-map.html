@@ -34,21 +34,10 @@ a{color:inherit;text-decoration:none}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
 @keyframes glow{0%,100%{opacity:1}50%{opacity:0.55}}
 
-.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
-.nav{flex-shrink:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px 0 14px;background:rgba(7,8,11,0.98);border-bottom:1px solid var(--border)}
-.nav-logo{font-family:var(--serif);font-size:15px;cursor:pointer}
-.nav-logo em{font-style:italic;color:var(--gold)}
-.nav-center{display:flex;gap:2px}
-.nav-link{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.4;padding:6px 10px;cursor:pointer;border-bottom:1px solid transparent;transition:opacity 0.2s,border-color 0.2s}
-.nav-link:hover{opacity:0.72}
-.nav-link.on{opacity:0.88;border-bottom-color:var(--gold)}
-.nav-right{display:flex;align-items:center;gap:10px}
-.nav-search{width:150px;padding:5px 8px;border:1px solid var(--border);border-radius:3px;background:rgba(0,0,0,0.35);font-size:10px;color:var(--text2)}
-.nav-search::placeholder{color:var(--text4);font-style:italic}
-.nav-av{width:26px;height:26px;border-radius:50%;border:1px solid var(--gold3);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold2)}
-.hist-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);margin-left:4px;vertical-align:middle;animation:blink 2s ease-in-out infinite}
+.app{display:flex;flex-direction:column;height:100%;min-height:0;background:var(--bg)}
 
-.body-row{flex:1;min-height:0;display:flex}
+#body,.body-row{flex:1;min-height:0;display:flex;min-width:0}
+
 .sidebar{width:196px;flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0}
 .sb-head{padding:12px 14px 8px;border-bottom:1px solid var(--border)}
 .sb-live{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:0.2em;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
@@ -63,9 +52,9 @@ a{color:inherit;text-decoration:none}
 .place-item.on{border-left-color:rgba(201,168,76,0.55);background:rgba(201,168,76,0.038)}
 .place-item .pl-type{font-size:7.5px;letter-spacing:0.1em;color:rgba(237,232,223,0.2);margin-bottom:4px}
 .place-item.on .pl-type{color:rgba(201,168,76,0.42)}
-.place-item .pl-name{font-family:var(--serif);font-size:12.5px;color:rgba(237,232,223,0.44);line-height:1.25}
+.place-item .pl-name{font-family:var(--serif);font-size:12.5px;color:rgba(237,232,223,0.52);line-height:1.25}
 .place-item.on .pl-name{color:rgba(237,232,223,0.9)}
-.place-item .pl-sub{font-size:8px;font-style:italic;color:rgba(237,232,223,0.15);margin-top:3px}
+.place-item .pl-sub{font-size:8px;font-style:italic;color:rgba(237,232,223,0.22);margin-top:3px;line-height:1.35}
 .place-item.on .pl-sub{color:rgba(237,232,223,0.3)}
 .sb-foot{height:12px;flex-shrink:0}
 
@@ -77,13 +66,16 @@ a{color:inherit;text-decoration:none}
 .map-wrap:hover #map-ctrl{opacity:0.6}
 #map-ctrl button{width:20px;height:20px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.08);color:var(--text2);font-size:14px;cursor:pointer;border-radius:2px}
 
-.float-card{position:absolute;right:18px;top:50%;width:244px;max-width:calc(100vw - 196px - 72px);z-index:20;background:var(--bg-card);border:1px solid rgba(201,168,76,0.12);border-radius:7px;overflow:hidden;box-shadow:0 16px 56px rgba(0,0,0,0.7);backdrop-filter:blur(20px);transform:translateY(-50%) translateX(12px);opacity:0;transition:opacity 0.65s var(--ease),transform 0.65s var(--ease)}
-.float-card.show{opacity:1;transform:translateY(-50%) translateX(0)}
-.float-card.fade-out{opacity:0;transition:opacity 0.3s ease}
-.fc-still{height:140px;position:relative;overflow:hidden;background:linear-gradient(170deg,#1c1208 0%,#100e06 30%,#080a0c 65%,#050810 100%)}
-.fc-still img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.72) contrast(1.05) saturate(0.78)}
-.fc-still::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(12,14,20,0.88) 0%,transparent 55%)}
-.fc-still-cap{position:absolute;left:10px;bottom:8px;z-index:2}
+#float-card{position:absolute;right:20px;top:50%;width:260px;max-width:calc(100vw - 220px - 60px);z-index:20;background:var(--bg-card);border:1px solid rgba(201,168,76,0.12);border-radius:7px;overflow:hidden;box-shadow:0 16px 56px rgba(0,0,0,0.7);backdrop-filter:blur(20px);transform:translateY(-50%) translateX(12px);opacity:0;transition:opacity 0.65s var(--ease),transform 0.65s var(--ease)}
+#float-card.show{opacity:1;transform:translateY(-50%) translateX(0)}
+#float-card.fade-out{opacity:0;transition:opacity 0.3s ease}
+.fc-still{height:140px;position:relative;overflow:hidden;background:linear-gradient(160deg,#1e1508 0%,#141008 35%,#0a0d12 70%,#080b14 100%)}
+.fc-grain{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(135deg,rgba(255,255,255,0.018) 0,rgba(255,255,255,0.018) 1px,transparent 0,transparent 50%);
+  background-size:5px 5px}
+.fc-still img{position:relative;z-index:2;width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.72) contrast(1.05) saturate(0.78)}
+.fc-still::after{content:'';position:absolute;inset:0;z-index:3;background:linear-gradient(to top,rgba(12,14,20,0.88) 0%,transparent 55%);pointer-events:none}
+.fc-still-cap{position:absolute;left:10px;bottom:8px;z-index:4}
 .fc-still-cap .nm{font-family:var(--serif);font-size:11px;color:rgba(237,232,223,0.78)}
 .fc-still-cap .ct{font-size:8px;color:rgba(201,168,76,0.55);margin-top:2px}
 .fc-body{padding:12px 14px 14px}
@@ -98,17 +90,17 @@ a{color:inherit;text-decoration:none}
 .fc-more{font-size:8.5px;color:rgba(201,168,76,0.35);font-style:italic;cursor:pointer}
 .fc-more:hover{color:rgba(201,168,76,0.6)}
 
-.bottom-strip{flex-shrink:0;height:200px;background:var(--bg-strip);border-top:1px solid var(--border);display:flex}
-.bs-side{width:110px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center}
-.bs-city-name{font-family:var(--serif);font-size:20px;color:rgba(201,168,76,0.82);line-height:1.2}
-.bs-city-sub{font-size:8px;color:rgba(237,232,223,0.22);letter-spacing:0.06em;line-height:1.6;margin-top:4px}
+.bottom-strip{flex-shrink:0;height:200px;background:var(--bg-strip);border-top:1px solid var(--border);display:flex;min-height:0}
+.bs-city{width:120px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;padding:0 14px 0 16px;text-align:left}
+.bs-city-name{font-family:var(--serif);font-size:22px;color:rgba(201,168,76,0.82);line-height:1.2}
+.bs-city-sub{font-size:8.5px;color:rgba(237,232,223,0.22);letter-spacing:0.06em;line-height:1.6;margin-top:4px}
 .bs-city-count{font-size:8px;color:rgba(237,232,223,0.14);font-style:italic;margin-top:6px}
-.bs-rows{flex:1;display:flex;flex-direction:column;min-width:0}
-.bs-row{flex:1;display:flex;min-height:0;border-bottom:1px solid rgba(255,255,255,0.036)}
+.bs-rows{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+.bs-row{flex:1;display:flex;min-height:0;align-items:stretch;border-bottom:1px solid rgba(255,255,255,0.036)}
 .bs-row:last-child{border-bottom:none}
 .bs-row-label{width:68px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.036);display:flex;align-items:center;justify-content:center;padding:0 10px}
-.bs-row-type{font-size:9px;letter-spacing:0.08em;color:rgba(237,232,223,0.28);text-align:center;line-height:1.5}
-.bs-row-scroll{flex:1;overflow-x:auto;display:flex;align-items:center;gap:5px;padding:8px 10px;cursor:grab;scrollbar-width:none;user-select:none}
+.bs-row-type{font-size:10px;letter-spacing:0.08em;color:rgba(237,232,223,0.32);text-align:center;line-height:1.5}
+.bs-row-scroll{flex:1;overflow-x:auto;overflow-y:hidden;display:flex;align-items:center;gap:5px;padding:8px 10px;cursor:grab;scrollbar-width:none;user-select:none;min-height:0}
 .bs-row-scroll::-webkit-scrollbar{display:none}
 .bs-row-scroll.grabbing{cursor:grabbing}
 .bs-row-cta{width:72px;flex-shrink:0;border-left:1px solid rgba(255,255,255,0.036);display:flex;align-items:center;justify-content:center}
@@ -119,8 +111,8 @@ a{color:inherit;text-decoration:none}
 .bs-frame.active{opacity:1}
 .bs-frame.active::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1.5px;background:rgba(201,168,76,0.52)}
 .bs-frame-img{height:62px;overflow:hidden}
-.bs-frame-img.warm{background:linear-gradient(160deg,#120d04,#0c0a06)}
-.bs-frame-img.cool{background:#0d0f14}
+.bs-frame-img.warm{background:linear-gradient(160deg,#1a1006 0%,#0e0c05 60%,#0a0b0e 100%)}
+.bs-frame-img.cool{background:linear-gradient(160deg,#0c0e16 0%,#0a0c14 100%)}
 .bs-frame-img img{width:100%;height:100%;object-fit:cover;filter:brightness(0.7) saturate(0.75)}
 .bs-frame-info{padding:4px 7px 5px}
 .bs-frame-name{font-size:9px;color:rgba(237,232,223,0.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
@@ -132,22 +124,7 @@ a{color:inherit;text-decoration:none}
 </head>
 <body>
 <div class="app">
-  <nav class="nav">
-    <div class="nav-logo" onclick="navigate('page-home')">Cine <em>Ours</em></div>
-    <div class="nav-center">
-      <span class="nav-link" onclick="navigate('page-home')">首页</span>
-      <span class="nav-link on">世界地图</span>
-      <span class="nav-link" onclick="navigate('page-festivals')">电影节</span>
-      <span class="nav-link" onclick="navigate('page-creator')">创作</span>
-      <span class="nav-link" onclick="navigate('page-history')">影史今天<span class="hist-dot"></span></span>
-    </div>
-    <div class="nav-right">
-      <input class="nav-search" id="navSearch" type="search" placeholder="搜索城市、影院或电影地标" aria-label="搜索">
-      <div class="nav-av" title="账户">余</div>
-    </div>
-  </nav>
-
-  <div class="body-row">
+  <div id="body" class="body-row">
     <aside class="sidebar">
       <div class="sb-head">
         <div class="sb-live"><i></i>正在发生</div>
@@ -169,7 +146,7 @@ a{color:inherit;text-decoration:none}
   </div>
 
   <div class="bottom-strip">
-    <div class="bs-side">
+    <div class="bs-city">
       <div class="bs-city-name" id="bsCityName">柏林</div>
       <div class="bs-city-sub">电影发生过的地方</div>
       <div class="bs-city-count" id="bsCityCount">1 个地点</div>
@@ -273,9 +250,7 @@ var floatCard = document.getElementById('float-card');
 var zoomK = 1;
 
 function syncSearch(val) {
-  var n = document.getElementById('navSearch');
   var p = document.getElementById('placeFilter');
-  if (n && n !== document.activeElement) n.value = val;
   if (p && p !== document.activeElement) p.value = val;
 }
 
@@ -323,7 +298,7 @@ function renderFloatCard(p, skipAnim) {
         + '<div class="fc-actions"><button type="button" class="fc-btn-ghost">查看场景</button><button type="button" class="fc-btn-gold">我也来打卡</button></div>'
         + '<div class="fc-more">查看此地全部记录 →</div>';
     }
-    floatCard.innerHTML = '<div class="fc-still">' + still + cap + '</div><div class="fc-body">' + body + '</div>';
+    floatCard.innerHTML = '<div class="fc-still"><div class="fc-grain"></div>' + still + cap + '</div><div class="fc-body">' + body + '</div>';
   }
   if (skipAnim) { fill(); return; }
   floatCard.classList.add('fade-out');
@@ -458,7 +433,7 @@ function renderMap() {
       .attr('stroke-width', 0.5);
   }
 
-  var heatG = root.append('g');
+  var heatG = root.append('g').attr('opacity', 0.85);
   var baseR = 28 * zoomK;
   HEAT_CITIES.forEach(function (coord) {
     var pt = projection(coord);
@@ -467,7 +442,7 @@ function renderMap() {
     var r = near ? baseR * 2 : baseR;
     var gid = 'heat-' + coord[0] + '-' + coord[1];
     var g = defs.append('radialGradient').attr('id', gid).attr('cx', '50%').attr('cy', '50%').attr('r', '50%');
-    g.append('stop').attr('offset', '0%').attr('stop-color', near ? 'rgba(201,168,76,0.28)' : 'rgba(168,108,16,0.24)');
+    g.append('stop').attr('offset', '0%').attr('stop-color', near ? 'rgba(160,100,15,0.24)' : 'rgba(160,100,15,0.20)');
     g.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(0,0,0,0)');
     heatG.append('circle').attr('cx', pt[0]).attr('cy', pt[1]).attr('r', r).attr('fill', 'url(#' + gid + ')');
   });
@@ -544,7 +519,6 @@ function initDrag(el) {
 
 function init() {
   document.getElementById('placeFilter').addEventListener('input', function () { renderPlaceList(this.value); });
-  document.getElementById('navSearch').addEventListener('input', function () { renderPlaceList(this.value); });
   document.getElementById('zoomIn').onclick = function () { zoomK = Math.min(2.2, zoomK * 1.12); renderMap(); };
   document.getElementById('zoomOut').onclick = function () { zoomK = Math.max(0.65, zoomK / 1.12); renderMap(); };
   initDrag(document.getElementById('scrollFilm'));
