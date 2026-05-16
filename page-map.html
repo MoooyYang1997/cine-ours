@@ -9,7 +9,7 @@
 <style>
 :root {
   --bg: #07080a;
-  --bg-sidebar: rgba(6, 7, 10, 0.97);
+  --bg-sidebar: rgba(10, 12, 18, 0.97);
   --gold: #c9a84c;
   --gold2: rgba(201, 168, 76, 0.58);
   --gold3: rgba(201, 168, 76, 0.18);
@@ -32,36 +32,25 @@ a{color:inherit;text-decoration:none}
   0%, 100% { opacity: 1 }
   50% { opacity: 0.3 }
 }
-@keyframes pulse-ring {
-  0% { r: 9; opacity: 0.5 }
-  100% { r: 18; opacity: 0 }
-}
-@keyframes pulse-core {
-  0%, 100% { opacity: 1 }
-  50% { opacity: 0.65 }
-}
 
 .app{display:flex;flex-direction:column;height:100%;background:var(--bg)}
 
-/* BODY */
 .body{flex:1;min-height:0;display:flex;min-width:0}
 
-/* SIDEBAR 196px */
 .sidebar{width:196px;flex-shrink:0;background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0}
 .sb-head{padding:12px 14px 8px;border-bottom:1px solid var(--border)}
 .sb-live{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:0.2em;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
 .sb-live i{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 2s ease-in-out infinite;flex-shrink:0}
 .sb-search{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:3px;background:rgba(0,0,0,0.35);font-size:10px;color:var(--text2)}
 .sb-search::placeholder{color:var(--text4);font-style:italic}
-.sb-broadcast{height:30px;display:flex;align-items:center;gap:6px;padding:0 14px;border-bottom:1px solid var(--border);overflow:hidden}
-.sb-broadcast i{width:4px;height:4px;border-radius:50%;background:rgba(74,222,128,0.65);flex-shrink:0}
-.sb-broadcast span{font-size:8.5px;font-style:italic;color:rgba(237,232,223,0.26);line-height:1.35;transition:opacity 0.5s var(--ease)}
+.sb-hint{padding:5px 13px;border-bottom:1px solid rgba(255,255,255,0.026);font-size:8px;color:rgba(237,232,223,0.16);font-style:italic;letter-spacing:0.02em;line-height:1.5}
 .sb-list{flex:1;overflow-y:auto;min-height:0}
 .city-list{scrollbar-width:none}
 .city-list::-webkit-scrollbar{display:none}
-.sb-item{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.026);cursor:pointer;transition:background 0.2s, border-color 0.2s;border-left:2px solid transparent}
+.sb-item{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.026);cursor:pointer;transition:background 0.2s,border-color 0.2s;border-left:2px solid transparent}
 .sb-item:hover{background:rgba(255,255,255,0.02)}
 .sb-item.on{border-left-color:var(--gold);background:rgba(201,168,76,0.04)}
+.sb-item .pl-type{font-size:7px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(201,168,76,0.32);margin-bottom:4px}
 .sb-item .t1{font-family:var(--serif);font-size:13px;color:rgba(237,232,223,0.5);line-height:1.2}
 .sb-item.on .t1{color:rgba(237,232,223,0.9)}
 .sb-item .t2{font-size:9px;color:var(--text4);margin-top:3px;line-height:1.3}
@@ -70,8 +59,7 @@ a{color:inherit;text-decoration:none}
 .sb-foot a{font-size:9px;font-style:italic;color:rgba(201,168,76,0.35);transition:color 0.2s}
 .sb-foot a:hover{color:var(--gold2)}
 
-/* MAP */
-.map-wrap{flex:1;position:relative;min-width:0;background:#04050a}
+.map-wrap{flex:1;position:relative;min-width:0;background:#0a0c14}
 .map-title{position:absolute;top:18px;left:16px;z-index:5;pointer-events:none;max-width:280px}
 #map-hl h1{margin:0;font-family:var(--serif);font-size:15px;font-style:italic;font-weight:400;color:rgba(237,232,223,0.62);line-height:1.5;text-shadow:0 1px 18px rgba(0,0,0,0.98)}
 #map-hl p{margin:0;margin-top:5px;font-size:8px;color:rgba(201,168,76,0.38);letter-spacing:0.04em}
@@ -81,45 +69,53 @@ a{color:inherit;text-decoration:none}
 .map-wrap:hover .zoom-ctl{opacity:0.6}
 .zoom-ctl button{width:20px;height:20px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.08);color:var(--text2);font-size:14px;line-height:1;cursor:pointer;border-radius:2px}
 
-/* FLOAT CARD */
 .float-card,#float-card{position:absolute;right:20px;top:50%;width:260px;max-width:calc(100vw - 240px - 60px);z-index:20;
-  background:rgba(7,9,13,0.88);backdrop-filter:blur(22px);
+  background:rgba(12,14,20,0.92);backdrop-filter:blur(22px);
   border:1px solid rgba(201,168,76,0.14);border-radius:8px;
   box-shadow:0 20px 70px rgba(0,0,0,0.65);
   transform:translateY(-50%) translateX(12px);opacity:0;
-  transition:opacity 0.65s var(--ease), transform 0.65s var(--ease)}
+  transition:opacity 0.65s var(--ease),transform 0.65s var(--ease)}
 .float-card.show,#float-card.show{opacity:1;transform:translateY(-50%) translateX(0)}
 .float-card.fade-out,#float-card.fade-out{opacity:0;transition:opacity 0.3s ease}
 .fc-img{height:160px;position:relative;overflow:hidden;border-radius:7px 7px 0 0}
-.fc-img img,.fc-img .ph{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.68) contrast(1.05) saturate(0.72)}
-.fc-img .ph{background:repeating-linear-gradient(-28deg, #0a0c12 0 8px, #12151c 8px 16px)}
-.fc-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top, rgba(7,9,13,1) 0%, transparent 55%);pointer-events:none}
-.fc-cap{position:absolute;left:12px;bottom:10px;z-index:2}
+.fc-still-inner{position:absolute;inset:0;background:linear-gradient(170deg,#1c1208 0%,#100e06 30%,#080a0c 65%,#05080e 100%)}
+.fc-grain{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  opacity:0.4}
+.fc-img img,.fc-img .ph{position:relative;z-index:2;width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.72) contrast(1.05) saturate(0.78)}
+.fc-img .ph{z-index:2;background:transparent}
+.fc-img::after{content:'';position:absolute;inset:0;z-index:3;background:linear-gradient(to top,rgba(12,14,20,0.92) 0%,transparent 55%);pointer-events:none}
+.fc-cap{position:absolute;left:12px;bottom:10px;z-index:4}
+.fc-type{font-size:7px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(201,168,76,0.45);margin-bottom:4px}
 .fc-cap .v{font-family:var(--serif);font-size:11px;color:rgba(237,232,223,0.75)}
 .fc-cap .c{font-size:8px;letter-spacing:0.12em;color:rgba(201,168,76,0.65);margin-top:3px}
 .fc-body{padding:14px 16px 16px}
 .fc-quote{font-family:var(--serif);font-size:15px;line-height:1.55;color:rgba(237,232,223,0.88);padding-left:12px;border-left:2px solid var(--gold3);margin-bottom:12px}
 .fc-meta{font-size:9px;color:var(--text3);display:flex;align-items:center;gap:8px;margin-bottom:14px}
 .fc-meta .likes{color:rgba(201,168,76,0.45)}
-.fc-btn{width:100%;padding:10px;border:1px solid var(--gold2);border-radius:4px;background:transparent;color:var(--gold);font-size:12px;cursor:pointer;margin-bottom:10px;transition:background 0.2s, border-color 0.2s}
-.fc-btn:hover{background:rgba(201,168,76,0.08)}
-.fc-link{font-size:10px;font-style:italic;color:rgba(201,168,76,0.38);cursor:pointer;text-align:center;display:block}
-.fc-link:hover{color:var(--gold2)}
+.fc-actions{display:flex;gap:8px}
+.fc-btn-ghost{flex:1;padding:10px;border:1px solid rgba(255,255,255,0.14);border-radius:4px;background:transparent;color:rgba(237,232,223,0.42);font-size:12px;cursor:pointer;transition:background 0.2s,border-color 0.2s}
+.fc-btn-ghost:hover{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.22)}
+.fc-btn-gold{flex:1;padding:10px;border:1px solid var(--gold2);border-radius:4px;background:transparent;color:var(--gold);font-size:12px;cursor:pointer;transition:background 0.2s}
+.fc-btn-gold:hover{background:rgba(201,168,76,0.08)}
 
-/* FILM STRIP 150px */
 .film-strip{flex-shrink:0;height:150px;border-top:1px solid var(--border);display:flex;background:var(--bg);min-height:0}
-.fs-label{width:52px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border);font-size:8px;color:var(--text4);writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:0.2em;text-transform:uppercase}
+.fs-lbl{width:52px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--border);padding:8px 4px}
+.fs-lbl-city{font-family:Georgia,serif;font-size:8.5px;color:rgba(201,168,76,0.52);writing-mode:vertical-rl;letter-spacing:0.06em}
+.fs-lbl-sub{font-size:6.5px;color:rgba(237,232,223,0.13);writing-mode:vertical-rl;letter-spacing:0.1em;margin-top:4px}
 .fs-scroll{flex:1;overflow-x:auto;overflow-y:hidden;display:flex;align-items:stretch;cursor:grab;scrollbar-width:thin;user-select:none;-webkit-user-select:none}
 .fs-scroll:active{cursor:grabbing}
 .fs-scroll::-webkit-scrollbar{height:4px}
 .fs-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
 .fs-inner{display:flex;gap:0;padding:0 8px;align-items:stretch}
-.film-frame.fs-frame,.fs-frame{width:152px;flex-shrink:0;padding:10px 8px 12px;position:relative;opacity:0.5;transition:opacity 0.25s;cursor:pointer}
+.film-frame.fs-frame,.fs-frame{width:152px;flex-shrink:0;padding:10px 8px 12px;position:relative;opacity:0.46;transition:opacity 0.25s;cursor:pointer}
 .fs-frame.on{opacity:1}
 .fs-frame .im{height:78px;border-radius:4px;overflow:hidden;position:relative;margin-bottom:8px}
+.fs-frame .ff-type{position:absolute;top:6px;left:7px;z-index:2;font-size:6.5px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(237,232,223,0.22);pointer-events:none}
+.fs-frame.on .ff-type{color:rgba(201,168,76,0.38)}
 .fs-frame .im img,.fs-frame .im .ph{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.7) saturate(0.75)}
 .fs-frame .im img.ff-img{height:78px}
-.fs-frame .im .ph{background:repeating-linear-gradient(-28deg, #0a0c12 0 6px, #141820 6px 12px)}
+.fs-frame .im .ph{background:repeating-linear-gradient(-28deg,#0a0c12 0 6px,#141820 6px 12px)}
 .fs-frame .nm{font-size:9.5px;color:rgba(237,232,223,0.45);line-height:1.25}
 .fs-frame.on .nm{color:rgba(237,232,223,0.88)}
 .fs-frame .qt{font-size:8.5px;font-style:italic;font-family:var(--serif);color:rgba(237,232,223,0.2);margin-top:4px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
@@ -138,7 +134,7 @@ a{color:inherit;text-decoration:none}
         <div class="sb-live"><i></i>正在发生</div>
         <input class="sb-search" id="cityFilter" type="search" placeholder="🔍 搜索城市 / 国家" autocomplete="off">
       </div>
-      <div class="sb-broadcast"><i></i><span id="bcText"></span></div>
+      <div class="sb-hint">刚刚有人在世界某处留下了记录</div>
       <div class="sb-list city-list" id="cityList"></div>
       <div class="sb-foot"><a href="#" onclick="navigate('page-festivals');return false">让地图带我去别处 →</a></div>
     </aside>
@@ -158,15 +154,20 @@ a{color:inherit;text-decoration:none}
         <div class="fc-body">
           <div class="fc-quote" id="fcQuote"></div>
           <div class="fc-meta"><span id="fcUser"></span><span class="likes" id="fcLikes"></span></div>
-          <button type="button" class="fc-btn">我也来打卡</button>
-          <span class="fc-link" onclick="void(0)">查看此地全部记录 →</span>
+          <div class="fc-actions">
+            <button type="button" class="fc-btn-ghost">查看场景</button>
+            <button type="button" class="fc-btn-gold">我也来打卡</button>
+          </div>
         </div>
       </div>
     </main>
   </div>
 
   <div class="film-strip">
-    <div class="fs-label">电影地标</div>
+    <div class="fs-lbl">
+      <span class="fs-lbl-city" id="fsLblCity">柏林</span>
+      <span class="fs-lbl-sub">电影发生过的地方</span>
+    </div>
     <div class="fs-scroll" id="fsScroll">
       <div class="fs-inner" id="fsInner"></div>
     </div>
@@ -175,9 +176,7 @@ a{color:inherit;text-decoration:none}
 </div>
 
 <script>
-/* 柏林：Kino International 建筑外景（与 page-map.html 同目录 kino_cinema.jpg） */
 var KINO_IMG = 'kino_cinema.jpg';
-/* 其他城市场馆图：测试占位（Lorem Picsum）；上线前可换为真实场馆图 */
 var VENUE_PHOTOS = {
   berlin: KINO_IMG,
   hk: 'https://picsum.photos/seed/cine-map-hk/960/540',
@@ -188,17 +187,17 @@ var VENUE_PHOTOS = {
 };
 
 var CITIES = [
-  { id:'berlin', zh:'柏林', en:'BERLIN', venue:'Babylon Kino', sub:'Babylon Kino · 刚刚有人记录',
+  { id:'berlin', zh:'柏林', en:'BERLIN', venue:'Babylon Kino', locType:'影院现场', sub:'Babylon Kino · 刚刚有人记录',
     quote:'散场后，雨还在下，街灯把影子拉得很长。', user:'@Lena · 刚刚记录于此', likes:24, lng:13.405, lat:52.52, country:'德国' },
-  { id:'hk', zh:'香港', en:'HONG KONG', venue:'香港文化中心', sub:'香港文化中心 · 247 人留下记录',
+  { id:'hk', zh:'香港', en:'HONG KONG', venue:'香港文化中心', locType:'影院现场', sub:'香港文化中心 · 247 人留下记录',
     quote:'第一次在电影院看《悲情城市》，散场后没人说话。', user:'@YueLiang · 记录于此', likes:89, lng:114.172, lat:22.295, country:'中国' },
-  { id:'tokyo', zh:'东京', en:'TOKYO', venue:'涩谷 Bunkamura', sub:'涩谷 Bunkamura · 388 人留下记录',
+  { id:'tokyo', zh:'东京', en:'TOKYO', venue:'涩谷 Bunkamura', locType:'影院现场', sub:'涩谷 Bunkamura · 388 人留下记录',
     quote:'字幕结束后没有人离开，我们都在等灯亮。', user:'@Haruki · 记录于此', likes:52, lng:139.702, lat:35.659, country:'日本' },
-  { id:'paris', zh:'巴黎', en:'PARIS', venue:'La Cinémathèque française', sub:'La Cinémathèque française · 刚刚有人记录',
+  { id:'paris', zh:'巴黎', en:'PARIS', venue:'La Cinémathèque française', locType:'影院现场', sub:'La Cinémathèque française · 刚刚有人记录',
     quote:'走出电影院时，街道突然像电影里的场景。', user:'@Marie · 记录于此', likes:37, lng:2.346, lat:48.851, country:'法国' },
-  { id:'nyc', zh:'纽约', en:'NEW YORK', venue:'Film at Lincoln Center', sub:'Film at Lincoln Center · 92 人留下记录',
+  { id:'nyc', zh:'纽约', en:'NEW YORK', venue:'Film at Lincoln Center', locType:'影院现场', sub:'Film at Lincoln Center · 92 人留下记录',
     quote:'在纽约看完电影走出来，城市本身就是续集。', user:'@Maya · 记录于此', likes:61, lng:-73.983, lat:40.771, country:'美国' },
-  { id:'sp', zh:'圣保罗', en:'SÃO PAULO', venue:'Cine Belas Artes', sub:'Cine Belas Artes · 16 人留下记录',
+  { id:'sp', zh:'圣保罗', en:'SÃO PAULO', venue:'Cine Belas Artes', locType:'影院现场', sub:'Cine Belas Artes · 16 人留下记录',
     quote:'Belas Artes 重开的那天，整个城市都在哭。', user:'@Lucas · 记录于此', likes:18, lng:-46.633, lat:-23.55, country:'巴西' }
 ];
 
@@ -218,24 +217,13 @@ var HEAT_CITIES = [
   [151.21,-33.87],[144.96,-37.82]
 ];
 
-var BROADCASTS = [
-  '刚刚有人在柏林记录了 Babylon Kino',
-  '香港文化中心新增 3 条散场后讨论',
-  '东京有人收藏了涩谷 Bunkamura',
-  '巴黎刚刚出现一条新的放映后记录',
-  '纽约 Lincoln Center 有人写下了今晚的感受',
-  '圣保罗 Belas Artes 有人在周年纪念日回来',
-  '柏林有人在雨中等待下一场放映',
-  '香港有 12 人同时记录了同一部电影'
-];
-
 var FRAMES = [
-  { name:'Babylon Kino', quote:'散场后，雨还在下。', cityId:'berlin' },
-  { name:'香港文化中心', quote:'散场后没人说话。', cityId:'hk' },
-  { name:'涩谷 Bunkamura', quote:'我们都在等灯亮。', cityId:'tokyo' },
-  { name:'Cinémathèque Française', quote:'街道突然像电影里的场景。', cityId:'paris' },
-  { name:'Film at Lincoln Center', quote:'城市本身就是续集。', cityId:'nyc' },
-  { name:'Cine Belas Artes', quote:'整个城市都在哭。', cityId:'sp' }
+  { name:'Babylon Kino', quote:'散场后，雨还在下。', cityId:'berlin', locType:'电影地标' },
+  { name:'香港文化中心', quote:'散场后没人说话。', cityId:'hk', locType:'电影地标' },
+  { name:'涩谷 Bunkamura', quote:'我们都在等灯亮。', cityId:'tokyo', locType:'电影地标' },
+  { name:'Cinémathèque Française', quote:'街道突然像电影里的场景。', cityId:'paris', locType:'电影地标' },
+  { name:'Film at Lincoln Center', quote:'城市本身就是续集。', cityId:'nyc', locType:'电影地标' },
+  { name:'Cine Belas Artes', quote:'整个城市都在哭。', cityId:'sp', locType:'电影地标' }
 ];
 
 function navigate(page) {
@@ -251,16 +239,17 @@ var worldData = null;
 var mapWrap = document.getElementById('mapWrap');
 var svgEl = document.getElementById('mapSvg');
 var floatCard = document.getElementById('float-card');
+
 var zoomK = 1;
-var FILL_OPACITY_MULT = 0.72;
-var LINE_OPACITY_MULT = 0.35;
-var DARK_VEIL_OVERLAY = 'rgba(0,0,0,0.22)';
-var bcIndex = 0;
-var bcEl = document.getElementById('bcText');
 
 function cityById(id) {
   for (var i = 0; i < CITIES.length; i++) if (CITIES[i].id === id) return CITIES[i];
   return CITIES[0];
+}
+
+function updateFsLblCity() {
+  var el = document.getElementById('fsLblCity');
+  if (el) el.textContent = cityById(activeId).zh;
 }
 
 function renderCityList(filter) {
@@ -273,7 +262,9 @@ function renderCityList(filter) {
     var div = document.createElement('div');
     div.className = 'sb-item city-item' + (c.id === activeId ? ' on active' : '');
     div.dataset.id = c.id;
-    div.innerHTML = '<div class="t1">' + c.zh + '</div><div class="t2 ci-sub">' + c.sub + '</div>';
+    div.innerHTML = '<div class="pl-type">' + (c.locType || '影院现场') + '</div>'
+      + '<div class="t1">' + c.zh + '</div>'
+      + '<div class="t2 ci-sub">' + c.sub + '</div>';
     div.onclick = function () { selectCity(c.id); };
     list.appendChild(div);
   });
@@ -288,22 +279,21 @@ function updateFloatCard(c, skipAnim) {
     fcQuote.textContent = c.quote;
     fcUser.textContent = c.user;
     fcLikes.textContent = '♡ ' + c.likes;
-    fcImg.innerHTML = '';
+    fcImg.innerHTML = '<div class="fc-still-inner"></div><div class="fc-grain"></div>';
+    var still = fcImg.querySelector('.fc-still-inner');
     var photo = VENUE_PHOTOS[c.id];
     if (photo) {
       var im = document.createElement('img');
       im.src = photo;
       im.alt = c.venue;
-      fcImg.appendChild(im);
-    } else {
-      var ph = document.createElement('div');
-      ph.className = 'ph';
-      fcImg.appendChild(ph);
+      still.appendChild(im);
     }
     var cap = document.createElement('div');
     cap.className = 'fc-cap';
-    cap.innerHTML = '<div class="v">' + c.venue + '</div><div class="c">' + c.en + ' · ' + c.country + '</div>';
-    fcImg.appendChild(cap);
+    cap.innerHTML = '<div class="fc-type">' + (c.locType || '影院现场') + '</div>'
+      + '<div class="v">' + c.venue + '</div>'
+      + '<div class="c">' + c.en + ' · ' + c.country + '</div>';
+    still.appendChild(cap);
   }
   if (skipAnim) {
     fill();
@@ -320,12 +310,13 @@ function updateFloatCard(c, skipAnim) {
 function renderFilmStrip() {
   var inner = document.getElementById('fsInner');
   inner.innerHTML = '';
-  FRAMES.forEach(function (f, idx) {
+  FRAMES.forEach(function (f) {
     var d = document.createElement('div');
     d.className = 'fs-frame film-frame' + (f.cityId === activeId ? ' on' : '');
     d.dataset.city = f.cityId;
     var stripUrl = VENUE_PHOTOS[f.cityId];
-    var imh = '<div class="im">';
+    var locType = f.locType || '电影地标';
+    var imh = '<div class="im"><span class="ff-type">' + locType + '</span>';
     if (stripUrl) imh += '<img class="ff-img" src="' + stripUrl + '" alt="">';
     else imh += '<div class="ph"></div>';
     imh += '</div>';
@@ -339,6 +330,7 @@ function selectCity(id) {
   activeId = id;
   renderCityList(document.getElementById('cityFilter').value);
   renderFilmStrip();
+  updateFsLblCity();
   updateFloatCard(cityById(id), false);
   renderMapLayers();
 }
@@ -355,7 +347,19 @@ function arcPath(projection, from, to) {
   return 'M' + a[0] + ',' + a[1] + ' Q' + cx + ',' + cy + ' ' + b[0] + ',' + b[1];
 }
 
-/** 将 rgba(...) 的 alpha 乘以 factor（热力强度缩放） */
+function arcStrokeOpacity(projection, active, c, w, h) {
+  var a = projection([active.lng, active.lat]);
+  var b = projection([c.lng, c.lat]);
+  if (!a || !b) return 0.12;
+  var dx = b[0] - a[0], dy = b[1] - a[1];
+  var dist = Math.sqrt(dx * dx + dy * dy);
+  var maxD = Math.min(w, h) * 0.45;
+  var t = Math.min(1, dist / maxD);
+  if (t < 0.33) return 0.16;
+  if (t < 0.66) return 0.12;
+  return 0.08;
+}
+
 function scaleRgbaAlpha(rgba, factor) {
   return rgba.replace(/rgba\(\s*([^)]+)\s*\)/, function (_, inner) {
     var p = inner.split(',').map(function (s) { return s.trim(); });
@@ -378,14 +382,13 @@ function renderMapLayers() {
   svg.selectAll('*').remove();
   svg.attr('width', w).attr('height', h).attr('viewBox', '0 0 ' + w + ' ' + h);
 
-  /* SVG 热力 ≈ Mapbox heatmap-*：半径 / 透明度 / 强度随 zoom 插值（zoomK 0.65～2.2 映射到 z≈0～6） */
   var zSpan = 2.2 - 0.65;
   var zMap6 = Math.max(0, Math.min(6, ((zoomK - 0.65) / zSpan) * 6));
   var zMap5 = Math.max(0, Math.min(5, ((zoomK - 0.65) / zSpan) * 5));
   function heatOpacityVal() {
-    if (zMap6 <= 3) return 0.62;
-    if (zMap6 >= 6) return 0.32;
-    return 0.62 + (0.32 - 0.62) * ((zMap6 - 3) / 3);
+    if (zMap6 <= 3) return 0.82;
+    if (zMap6 >= 6) return 0.45;
+    return 0.82 + (0.45 - 0.82) * ((zMap6 - 3) / 3);
   }
   function heatIntensityVal() {
     return 0.28 + (1.0 - 0.28) * (zMap5 / 5);
@@ -400,55 +403,52 @@ function renderMapLayers() {
 
   var defs = svg.append('defs');
   var grad = defs.append('radialGradient').attr('id', 'heatG').attr('cx', '50%').attr('cy', '50%').attr('r', '50%');
-  /* 暖琥珀光晕；各 stop alpha 再乘 heatmap-intensity */
-  [[0, 'rgba(0,0,0,0)'], [0.07, 'rgba(25,12,2,0.4)'], [0.22, 'rgba(55,30,5,0.5)'], [0.42, 'rgba(95,55,8,0.58)'], [0.62, 'rgba(138,88,18,0.63)'], [0.8, 'rgba(168,115,32,0.67)'], [1, 'rgba(188,142,52,0.70)']].forEach(function (st) {
+  [[0, 'rgba(0,0,0,0)'], [0.07, 'rgba(25,12,2,0.4)'], [0.22, 'rgba(55,30,5,0.5)'], [0.42, 'rgba(95,55,8,0.58)'], [0.62, 'rgba(138,88,18,0.63)'], [0.8, 'rgba(168,115,32,0.67)'], [1, 'rgba(205,158,62,0.78)']].forEach(function (st) {
     grad.append('stop').attr('offset', (st[0] * 100) + '%').attr('stop-color', scaleRgbaAlpha(st[1], heatInt));
   });
-  var blur = defs.append('filter').attr('id', 'softBlur').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
-  blur.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', 4);
+  var softBlur = defs.append('filter').attr('id', 'softBlur').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
+  softBlur.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', 4);
   var heatBlur = defs.append('filter').attr('id', 'heatBlur').attr('x', '-100%').attr('y', '-100%').attr('width', '300%').attr('height', '300%');
   heatBlur.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', 8);
-
-  var landFillA = (0.108333 * FILL_OPACITY_MULT).toFixed(3);
-  var landStrokeA = (0.409091 * LINE_OPACITY_MULT).toFixed(3);
-  var gridStrokeA = (0.081818 * LINE_OPACITY_MULT).toFixed(4);
-  var arcStrokeA = (0.909091 * LINE_OPACITY_MULT).toFixed(3);
+  var landBlur = defs.append('filter').attr('id', 'land-blur');
+  landBlur.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', 1.2);
+  var dotGlow = defs.append('filter').attr('id', 'dot-glow');
+  dotGlow.append('feGaussianBlur').attr('in', 'SourceGraphic').attr('stdDeviation', 3).attr('result', 'blur');
+  var dotMerge = dotGlow.append('feMerge');
+  dotMerge.append('feMergeNode').attr('in', 'blur');
+  dotMerge.append('feMergeNode').attr('in', 'SourceGraphic');
 
   var root = svg.append('g').attr('class', 'map-root');
-  root.append('rect').attr('width', w).attr('height', h).attr('fill', '#04050a');
+  root.append('rect').attr('width', w).attr('height', h).attr('fill', '#0a0c14');
 
   var gx = root.append('g').attr('class', 'grid');
   for (var i = 1; i <= 3; i++) {
     gx.append('line').attr('x1', 0).attr('x2', w).attr('y1', h * i / 4).attr('y2', h * i / 4)
-      .attr('stroke', 'rgba(255,255,255,' + gridStrokeA + ')').attr('stroke-dasharray', '4 10');
+      .attr('stroke', 'rgba(255,255,255,0.01)').attr('stroke-width', 0.3).attr('stroke-dasharray', '6 14');
   }
   for (var j = 1; j <= 3; j++) {
     gx.append('line').attr('y1', 0).attr('y2', h).attr('x1', w * j / 4).attr('x2', w * j / 4)
-      .attr('stroke', 'rgba(255,255,255,' + gridStrokeA + ')').attr('stroke-dasharray', '4 10');
+      .attr('stroke', 'rgba(255,255,255,0.01)').attr('stroke-width', 0.3).attr('stroke-dasharray', '6 14');
   }
 
   if (worldData) {
     var countries = topojson.feature(worldData, worldData.objects.countries);
-    root.append('g').selectAll('path')
+    var landG = root.append('g').attr('class', 'land').attr('filter', 'url(#land-blur)').attr('opacity', 0.85);
+    landG.selectAll('path.land-fill')
       .data(countries.features)
       .join('path')
+      .attr('class', 'land-fill')
       .attr('d', path)
-      .attr('fill', 'rgba(255,255,255,' + landFillA + ')')
+      .attr('fill', 'rgba(255,255,255,0.11)')
       .attr('stroke', 'none');
-    root.append('g').selectAll('path.b')
+    landG.selectAll('path.land-stroke')
       .data(countries.features)
       .join('path')
-      .attr('class', 'b')
+      .attr('class', 'land-stroke')
       .attr('d', path)
       .attr('fill', 'none')
-      .attr('stroke', 'rgba(255,255,255,' + landStrokeA + ')')
-      .attr('stroke-width', 0.4);
-    root.append('rect')
-      .attr('class', 'dark-veil')
-      .attr('width', w)
-      .attr('height', h)
-      .attr('fill', DARK_VEIL_OVERLAY)
-      .attr('pointer-events', 'none');
+      .attr('stroke', 'rgba(255,255,255,0.16)')
+      .attr('stroke-width', 0.6);
   }
 
   var heatG = root.append('g').attr('class', 'heat').attr('opacity', heatOp);
@@ -468,12 +468,13 @@ function renderMapLayers() {
     if (c.id === activeId) return;
     var d = arcPath(projection, active, c);
     if (d) {
+      var arcOp = arcStrokeOpacity(projection, active, c, w, h);
       arcG.append('path')
         .attr('d', d)
         .attr('fill', 'none')
-        .attr('stroke', 'rgba(201,168,76,' + arcStrokeA + ')')
-        .attr('stroke-width', 0.6)
-        .attr('stroke-dasharray', '3 7');
+        .attr('stroke', 'rgba(201,168,76,' + arcOp + ')')
+        .attr('stroke-width', 0.55)
+        .attr('stroke-dasharray', '2 8');
     }
   });
 
@@ -487,14 +488,14 @@ function renderMapLayers() {
       var mid = g.append('circle').attr('r', 9).attr('fill', 'rgba(201,168,76,0.2)');
       mid.append('animate').attr('attributeName', 'r').attr('values', '9;14;9').attr('dur', '2.4s').attr('repeatCount', 'indefinite');
       mid.append('animate').attr('attributeName', 'opacity').attr('values', '0.5;0.15;0.5').attr('dur', '2.4s').attr('repeatCount', 'indefinite');
-      var core = g.append('circle').attr('r', 5).attr('fill', '#f0c86a');
-      core.append('animate').attr('attributeName', 'opacity').attr('values', '1;0.65;1').attr('dur', '2.4s').attr('repeatCount', 'indefinite');
+      g.append('circle').attr('r', 5).attr('fill', '#f0c86a').attr('filter', 'url(#dot-glow)')
+        .append('animate').attr('attributeName', 'opacity').attr('values', '1;0.65;1').attr('dur', '2.4s').attr('repeatCount', 'indefinite');
       g.append('text').attr('text-anchor', 'middle').attr('y', -14).attr('font-family', 'Georgia, Times New Roman, serif').attr('font-size', 12).attr('fill', 'rgba(237,232,223,0.82)').text(c.zh);
     } else {
-      var oc = g.append('circle').attr('r', 3).attr('fill', '#c9a84c').attr('opacity', LINE_OPACITY_MULT);
+      var oc = g.append('circle').attr('r', 2).attr('fill', '#c9a84c').attr('opacity', 0.12);
       g.append('title').text(c.zh + ' · ' + c.venue);
-      g.on('mouseenter', function () { oc.attr('opacity', 0.6); });
-      g.on('mouseleave', function () { oc.attr('opacity', LINE_OPACITY_MULT); });
+      g.on('mouseenter', function () { oc.attr('opacity', 0.35); });
+      g.on('mouseleave', function () { oc.attr('opacity', 0.12); });
     }
     g.on('click', function () { selectCity(c.id); });
   });
@@ -518,24 +519,8 @@ function applyWorldData(data) {
   }
 }
 
-function tickBroadcast() {
-  bcEl.style.opacity = '0';
-  setTimeout(function () {
-    bcIndex = (bcIndex + 1) % BROADCASTS.length;
-    bcEl.textContent = BROADCASTS[bcIndex];
-    bcEl.style.opacity = '1';
-  }, 500);
-}
-
-function setupBroadcast() {
-  bcEl.textContent = BROADCASTS[0];
-  setInterval(tickBroadcast, 6500);
-}
-
 function setupResize() {
-  var ro = new ResizeObserver(function () {
-    renderMapLayers();
-  });
+  var ro = new ResizeObserver(function () { renderMapLayers(); });
   ro.observe(mapWrap);
 }
 
@@ -578,9 +563,9 @@ function setupFilmDrag() {
 function init() {
   renderCityList('');
   renderFilmStrip();
+  updateFsLblCity();
   updateFloatCard(cityById(activeId), true);
   floatCard.classList.add('show');
-  setupBroadcast();
   setupFilter();
   setupResize();
   setupZoom();
