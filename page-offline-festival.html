@@ -8,25 +8,19 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;min-height:100vh;}
-
 .btn-gold{border:1px solid #c9a84c;color:#c9a84c;font-size:11px;padding:8px 18px;background:transparent;border-radius:2px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .2s;}
 .btn-gold:hover{background:rgba(201,168,76,0.08);}
 .btn-dim{border:1px solid rgba(237,232,223,0.2);color:rgba(237,232,223,0.55);font-size:11px;padding:8px 16px;background:transparent;border-radius:2px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
-.pulse{width:5px;height:5px;border-radius:50%;background:#c9a84c;display:inline-block;flex-shrink:0;}
+.pulse{width:5px;height:5px;border-radius:50%;background:#c9a84c;display:inline-block;flex-shrink:0;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
 .sec-title{font-size:16px;color:#ede8df;font-weight:400;}
 .sec-more{font-size:12px;color:rgba(201,168,76,0.55);cursor:pointer;}
 .sec-hdr{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;}
+.loading-txt{color:rgba(237,232,223,0.2);font-size:12px;padding:20px 0;text-align:center;}
 
-/* ── 1. BANNER ── */
+/* BANNER */
 .banner{position:relative;height:300px;overflow:hidden;}
-.banner-bg{
-  position:absolute;inset:0;
-  background:
-    linear-gradient(180deg,rgba(10,8,5,0.3) 0%,rgba(10,8,5,0.1) 20%,rgba(10,8,5,0.6) 65%,rgba(10,8,5,0.97) 100%),
-    linear-gradient(90deg,rgba(10,8,5,0.6) 0%,transparent 55%),
-    url('siff-bg.jpg') center 30%/cover no-repeat,
-    linear-gradient(135deg,#1a1408 0%,#0e0c06 100%);
-}
+.banner-bg{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,5,0.3) 0%,rgba(10,8,5,0.1) 20%,rgba(10,8,5,0.6) 65%,rgba(10,8,5,0.97) 100%),linear-gradient(90deg,rgba(10,8,5,0.6) 0%,transparent 55%),url('siff-bg.jpg') center 30%/cover no-repeat,linear-gradient(135deg,#1a1408 0%,#0e0c06 100%);}
 .banner-inner{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:0 36px 28px;}
 .banner-tag{font-size:10px;color:rgba(201,168,76,0.6);letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px;}
 .banner-title{font-family:Georgia,serif;font-size:38px;color:#ede8df;line-height:1.1;margin-bottom:5px;}
@@ -35,44 +29,39 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 .banner-status{display:flex;align-items:center;gap:6px;color:#c9a84c;font-size:11px;}
 .banner-btns{display:flex;gap:10px;}
 
-/* ── 2. 社区片单 ── */
+/* 社区片单 */
 .section{padding:28px 36px;}
-.plan-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.plan-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;min-height:80px;}
 .plan-card{border-radius:4px;overflow:hidden;cursor:pointer;position:relative;height:150px;transition:opacity .2s;}
 .plan-card:hover{opacity:.9;}
-.plan-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(0.28) saturate(0.5);}
-.plan-grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(10,8,5,0.85) 100%);}
+.plan-bg{position:absolute;inset:0;background-size:cover;background-position:center;}
+.plan-grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(10,8,5,0.88) 100%);}
 .plan-inner{position:relative;z-index:2;height:100%;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between;}
 .plan-user{display:flex;align-items:center;gap:6px;}
-.plan-av{width:20px;height:20px;border-radius:50%;background:rgba(201,168,76,0.18);display:flex;align-items:center;justify-content:center;font-size:8px;color:#c9a84c;flex-shrink:0;}
+.plan-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;}
 .plan-uname{font-size:10px;color:rgba(237,232,223,0.5);}
 .plan-tagline{font-family:Georgia,serif;font-size:13px;color:rgba(237,232,223,0.88);line-height:1.4;}
 .plan-foot{display:flex;align-items:center;justify-content:space-between;}
 .plan-meta{font-size:9px;color:rgba(237,232,223,0.28);}
-.plan-likes{font-size:9px;color:rgba(237,232,223,0.28);}
+.plan-empty{color:rgba(237,232,223,0.2);font-size:12px;padding:40px 0;text-align:center;grid-column:1/-1;}
 
-/* ── 3. 选片视角 ── */
+/* 选片视角 */
 .cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;}
 .cat-tab{font-size:11px;padding:5px 13px;border:0.5px solid rgba(237,232,223,0.12);color:rgba(237,232,223,0.42);border-radius:2px;cursor:pointer;transition:all .15s;}
 .cat-tab.active{border-color:#c9a84c;color:#c9a84c;background:rgba(201,168,76,0.06);}
-.films-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.films-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;min-height:120px;}
 .film-card{cursor:pointer;position:relative;}
 .film-card:hover .film-add-btn{opacity:1;}
-.film-poster{width:100%;aspect-ratio:2/3;border-radius:3px;overflow:hidden;position:relative;margin-bottom:8px;background:#1a1408;}
+.film-poster{width:100%;aspect-ratio:2/3;border-radius:3px;overflow:hidden;position:relative;margin-bottom:8px;}
 .film-poster img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.88);}
 .film-poster-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:22px;color:rgba(201,168,76,0.25);}
-.fp1{background:linear-gradient(160deg,#1c1408,#120e06);}
-.fp2{background:linear-gradient(160deg,#0c1018,#080c12);}
-.fp3{background:linear-gradient(160deg,#100818,#0c0614);}
-.fp4{background:linear-gradient(160deg,#0c1410,#08100c);}
-.fp5{background:linear-gradient(160deg,#1a1006,#120c04);}
 .film-add-btn{position:absolute;top:7px;right:7px;width:26px;height:26px;border-radius:50%;background:rgba(10,8,5,0.75);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;border:0.5px solid rgba(237,232,223,0.18);opacity:0;transition:opacity .18s;color:rgba(237,232,223,0.8);}
 .film-add-btn:hover{background:rgba(201,168,76,0.2);border-color:rgba(201,168,76,0.5);}
 .film-badge-sm{position:absolute;bottom:7px;left:7px;font-size:8px;letter-spacing:.05em;text-transform:uppercase;background:rgba(10,8,5,0.82);color:rgba(201,168,76,0.75);padding:2px 6px;border-radius:1px;}
 .film-name{font-family:Georgia,serif;font-size:12px;color:rgba(237,232,223,0.82);margin-bottom:4px;line-height:1.3;}
 .film-reason{font-size:10px;color:rgba(237,232,223,0.36);line-height:1.5;font-style:italic;}
 
-/* ── 4. 现场打卡 ── */
+/* 现场打卡 */
 .checkin-sub{font-size:12px;color:rgba(237,232,223,0.32);margin-bottom:14px;}
 .checkin-sub span{color:rgba(201,168,76,0.55);}
 .checkin-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:2px;cursor:grab;}
@@ -81,24 +70,20 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 .ci-card{flex-shrink:0;width:210px;border-radius:4px;overflow:hidden;cursor:pointer;border:0.5px solid rgba(237,232,223,0.05);transition:border-color .2s;}
 .ci-card:hover{border-color:rgba(201,168,76,0.15);}
 .ci-card:hover .ci-map-link{color:rgba(201,168,76,0.8);}
-.ci-img{height:120px;position:relative;}
-.ci-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
-.ci-fb-1{background:linear-gradient(135deg,#1c1408,#120e04);}
-.ci-fb-2{background:linear-gradient(135deg,#0e1018,#0a0c12);}
-.ci-fb-3{background:linear-gradient(135deg,#0c1810,#080e0a);}
-.ci-fb-4{background:linear-gradient(135deg,#181006,#120c04);}
-.ci-fb-5{background:linear-gradient(135deg,#100818,#0c0614);}
+.ci-img{height:90px;position:relative;}
 .ci-user-row{position:absolute;top:8px;left:10px;display:flex;align-items:center;gap:6px;}
-.ci-av{width:20px;height:20px;border-radius:50%;background:rgba(201,168,76,0.18);display:flex;align-items:center;justify-content:center;font-size:8px;color:#c9a84c;flex-shrink:0;}
+.ci-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;}
 .ci-uname{font-size:10px;color:rgba(237,232,223,0.8);font-weight:500;}
 .ci-venue{position:absolute;bottom:8px;left:10px;font-size:9px;color:rgba(237,232,223,0.45);}
 .ci-body{background:#1c1a14;padding:10px 12px;}
 .ci-quote{font-size:11px;color:rgba(237,232,223,0.65);line-height:1.5;margin-bottom:8px;font-style:italic;}
 .ci-foot{display:flex;align-items:center;justify-content:space-between;}
-.ci-likes{font-size:10px;color:rgba(237,232,223,0.25);}
+.ci-likes{font-size:10px;color:rgba(237,232,223,0.25);cursor:pointer;}
+.ci-likes:hover{color:rgba(201,168,76,0.6);}
 .ci-map-link{font-size:10px;color:rgba(201,168,76,0.45);cursor:pointer;transition:color .2s;}
+.ci-empty{color:rgba(237,232,223,0.2);font-size:12px;padding:40px 20px;}
 
-/* ── 5. 散场后讨论 ── */
+/* 散场讨论 */
 .discuss-section{padding:0 36px 32px;}
 .mod-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
 .mod-title{font-family:Georgia,serif;font-size:22px;color:#ede8df;margin-bottom:4px;}
@@ -108,11 +93,10 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 .hot-col{display:flex;flex-direction:column;gap:10px;}
 .hot-hdr{display:flex;align-items:center;gap:8px;margin-bottom:2px;}
 .hot-label{font-size:12px;color:rgba(237,232,223,0.65);font-weight:500;}
-.hot-live{font-size:10px;color:rgba(237,232,223,0.28);margin-left:4px;}
+.hot-live{font-size:10px;color:rgba(237,232,223,0.28);}
 .disc-enter{font-size:10px;color:rgba(201,168,76,0.5);cursor:pointer;margin-left:auto;transition:color .2s;}
 .disc-enter:hover{color:rgba(201,168,76,0.9);}
 .disc-tag{display:inline-block;font-size:9px;letter-spacing:.06em;padding:2px 8px;border-radius:1px;margin-bottom:8px;background:rgba(201,168,76,0.08);border:0.5px solid rgba(201,168,76,0.2);color:rgba(201,168,76,0.7);}
-/* 配图大卡 */
 .disc-card-hero{border-radius:4px;overflow:hidden;cursor:pointer;position:relative;height:190px;border:0.5px solid rgba(237,232,223,0.06);transition:border-color .2s;}
 .disc-card-hero:hover{border-color:rgba(201,168,76,0.2);}
 .dch-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(0.4) saturate(0.6);}
@@ -127,39 +111,38 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 .av-c{background:rgba(160,80,120,0.25);color:rgba(180,100,140,0.9);}
 .av-d{background:rgba(80,140,100,0.25);color:rgba(100,180,120,0.9);}
 .disc-from{font-size:10px;color:rgba(237,232,223,0.3);margin-left:10px;}
-/* 纯文字卡 */
 .disc-card-text{border-radius:3px;background:#1a1810;border:0.5px solid rgba(237,232,223,0.06);padding:13px 15px;cursor:pointer;transition:border-color .2s;}
 .disc-card-text:hover{border-color:rgba(201,168,76,0.2);}
 .disc-q-text{font-family:Georgia,serif;font-size:14px;color:rgba(237,232,223,0.8);line-height:1.45;margin-bottom:10px;margin-top:6px;}
 .disc-text-foot{display:flex;align-items:center;justify-content:space-between;}
 .disc-stat-sm{font-size:10px;color:rgba(237,232,223,0.28);margin-left:10px;}
-/* 散场一句话 */
 .moment-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .moment-title{font-size:12px;color:rgba(237,232,223,0.65);font-weight:500;}
 .moment-sub{font-size:10px;color:rgba(237,232,223,0.28);margin-left:4px;}
 .moment-more{font-size:10px;color:rgba(201,168,76,0.5);margin-left:auto;cursor:pointer;}
 .moment-list{display:flex;flex-direction:column;}
-.moment-item{padding:11px 0;border-bottom:0.5px solid rgba(237,232,223,0.05);cursor:pointer;}
+.moment-item{padding:11px 0;border-bottom:0.5px solid rgba(237,232,223,0.05);}
 .moment-item:last-child{border:none;}
 .moment-item:hover .moment-text{color:rgba(237,232,223,0.88);}
-.moment-meta-row{display:flex;align-items:center;gap:6px;margin-bottom:5px;}
-.moment-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;flex-shrink:0;}
+.moment-meta-row{display:flex;align-items:center;gap:5px;margin-bottom:5px;flex-wrap:wrap;}
+.moment-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:500;flex-shrink:0;}
 .moment-user{font-size:10px;color:rgba(237,232,223,0.5);}
 .moment-film{font-size:10px;color:rgba(201,168,76,0.5);}
 .moment-venue{font-size:10px;color:rgba(237,232,223,0.25);}
 .moment-time{font-size:10px;color:rgba(237,232,223,0.2);margin-left:auto;}
 .moment-text{font-family:Georgia,serif;font-size:13px;color:rgba(237,232,223,0.68);line-height:1.5;font-style:italic;transition:color .2s;margin-bottom:4px;}
-.moment-likes{font-size:10px;color:rgba(237,232,223,0.22);display:flex;justify-content:flex-end;}
-/* 行动入口 */
+.moment-likes{font-size:10px;color:rgba(237,232,223,0.22);display:flex;justify-content:flex-end;cursor:pointer;}
+.moment-likes:hover{color:rgba(201,168,76,0.5);}
+.moment-empty{color:rgba(237,232,223,0.2);font-size:12px;padding:20px 0;}
 .action-bar{background:#1a1810;border:0.5px solid rgba(201,168,76,0.1);border-radius:3px;padding:14px 20px;display:flex;align-items:center;gap:16px;}
 .action-icon{width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.1);border:0.5px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
 .action-body{flex:1;}
 .action-label{font-size:13px;color:rgba(237,232,223,0.7);margin-bottom:2px;}
 .action-sub{font-size:11px;color:rgba(237,232,223,0.3);}
-.action-btn{background:#c9a84c;color:#161616;font-size:11px;font-weight:500;padding:9px 20px;border-radius:2px;cursor:pointer;white-space:nowrap;flex-shrink:0;border:none;transition:opacity .2s;}
+.action-btn{background:#c9a84c;color:#161616;font-size:11px;font-weight:500;padding:9px 20px;border-radius:2px;cursor:pointer;white-space:nowrap;flex-shrink:0;border:none;transition:opacity .2s;font-family:inherit;}
 .action-btn:hover{opacity:.88;}
 
-/* ── 6. 线上继续 ── */
+/* 线上继续 */
 .online-sec{background:#131310;padding:32px 36px;}
 .online-tag{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(201,168,76,0.45);margin-bottom:8px;}
 .online-title{font-family:Georgia,serif;font-size:20px;color:rgba(237,232,223,0.82);margin-bottom:4px;}
@@ -173,13 +156,41 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 .oc-desc{font-size:10px;color:rgba(237,232,223,0.28);line-height:1.6;margin-bottom:12px;}
 .oc-foot{display:flex;align-items:center;justify-content:space-between;}
 .oc-cnt{font-size:10px;color:rgba(237,232,223,0.2);}
-.oc-enter{font-size:10px;color:rgba(201,168,76,0.48);cursor:pointer;}
+.oc-enter{font-size:10px;color:rgba(201,168,76,0.48);}
 
-/* FOOTER */
+/* footer */
 .footer{background:#161616;padding:22px 36px;border-top:0.5px solid rgba(237,232,223,0.05);display:flex;align-items:center;justify-content:space-between;}
 .footer-logo{font-family:Georgia,serif;font-size:15px;color:rgba(237,232,223,0.35);}
 .footer-logo em{color:rgba(201,168,76,0.35);font-style:italic;}
 .footer-links{display:flex;gap:20px;font-size:11px;color:rgba(237,232,223,0.2);}
+
+/* 弹窗 */
+.modal-bg{position:fixed;inset:0;background:rgba(10,8,5,0.85);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal{background:#1e1c16;border:0.5px solid rgba(237,232,223,0.1);border-radius:4px;width:420px;max-width:92vw;padding:28px 28px 24px;}
+.modal-title{font-family:Georgia,serif;font-size:18px;color:#ede8df;margin-bottom:20px;}
+.modal-field{margin-bottom:14px;}
+.modal-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,232,223,0.35);margin-bottom:6px;}
+.modal-input{width:100%;background:#161614;border:0.5px solid rgba(237,232,223,0.12);color:#ede8df;font-size:13px;padding:9px 12px;border-radius:2px;font-family:inherit;outline:none;transition:border-color .2s;}
+.modal-input:focus{border-color:rgba(201,168,76,0.4);}
+.modal-input::placeholder{color:rgba(237,232,223,0.2);}
+.modal-textarea{resize:vertical;min-height:72px;}
+.modal-suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.sug-item{font-size:11px;padding:4px 10px;border:0.5px solid rgba(237,232,223,0.1);border-radius:2px;color:rgba(237,232,223,0.45);cursor:pointer;transition:all .15s;}
+.sug-item:hover{border-color:rgba(201,168,76,0.3);color:rgba(201,168,76,0.7);}
+.sug-item.sel{border-color:#c9a84c;color:#c9a84c;background:rgba(201,168,76,0.06);}
+.modal-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+.modal-cancel{font-size:12px;color:rgba(237,232,223,0.35);cursor:pointer;padding:9px 16px;}
+.modal-submit{background:#c9a84c;color:#161616;font-size:12px;font-weight:500;padding:9px 22px;border-radius:2px;cursor:pointer;border:none;font-family:inherit;transition:opacity .2s;}
+.modal-submit:hover{opacity:.88;}
+.modal-submit:disabled{opacity:.4;cursor:default;}
+.modal-char{font-size:10px;color:rgba(237,232,223,0.25);text-align:right;margin-top:4px;}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);padding:10px 22px;font-size:13px;border:0.5px solid rgba(237,232,223,0.12);background:#1e1c16;color:rgba(237,232,223,0.7);opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:rgba(201,168,76,0.3);color:#c9a84c;}
+.toast.err{border-color:rgba(180,80,80,0.3);color:#c87878;}
 </style>
 </head>
 <body>
@@ -188,16 +199,16 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 <div class="banner">
   <div class="banner-bg"></div>
   <div class="banner-inner">
-    <div class="banner-tag" id="banner-tag">第二十八届</div>
+    <div class="banner-tag">第二十八届</div>
     <div class="banner-title">上海国际电影节</div>
     <div class="banner-en">28TH SHANGHAI INTERNATIONAL FILM FESTIVAL</div>
     <div class="banner-meta">
       <span>2026.06.14 — 06.23 · 上海</span>
-      <div class="banner-status"><span class="pulse"></span><span id="banner-status">影展进行中 · 第5天</span></div>
+      <div class="banner-status"><span class="pulse"></span><span id="banner-status">加载中…</span></div>
     </div>
     <div class="banner-btns" id="banner-btns">
-      <div class="btn-gold" onclick="navigate('page-map')">去打卡 / 记录现场 ◎</div>
-      <div class="btn-dim">创建我的片单 +</div>
+      <div class="btn-gold" onclick="openCheckinModal()">去打卡 / 记录现场 ◎</div>
+      <div class="btn-dim" onclick="openListModal()">创建我的片单 +</div>
     </div>
   </div>
 </div>
@@ -206,36 +217,10 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 <div class="section">
   <div class="sec-hdr">
     <div class="sec-title">大家正在怎么选</div>
-    <div class="sec-more">查看全部 ›</div>
+    <div class="sec-more" onclick="openListModal()">创建片单 +</div>
   </div>
-  <div class="plan-grid">
-    <div class="plan-card">
-      <div class="plan-bg" style="background-image:url('https://image.tmdb.org/t/p/w500/8OKmBV5BUFzmozIC3pPWKHy17kx.jpg');"></div>
-      <div class="plan-grad"></div>
-      <div class="plan-inner">
-        <div class="plan-user"><div class="plan-av">L</div><span class="plan-uname">Luna</span></div>
-        <div class="plan-tagline">只看大师的新作和修复版</div>
-        <div class="plan-foot"><span class="plan-meta">16部 · 235人关注</span><span class="plan-likes">♡ 235</span></div>
-      </div>
-    </div>
-    <div class="plan-card">
-      <div class="plan-bg" style="background-image:url('https://image.tmdb.org/t/p/w500/nKGhCQ5FqXjcSfmXrnXxLAKQnvg.jpg');"></div>
-      <div class="plan-grad"></div>
-      <div class="plan-inner">
-        <div class="plan-user"><div class="plan-av">M</div><span class="plan-uname">Morse</span></div>
-        <div class="plan-tagline">主竞赛优先，再慢慢补</div>
-        <div class="plan-foot"><span class="plan-meta">22部 · 412人关注</span><span class="plan-likes">♡ 412</span></div>
-      </div>
-    </div>
-    <div class="plan-card">
-      <div class="plan-bg" style="background-image:url('https://image.tmdb.org/t/p/w500/6fgUHRsAkXIMxCjR8DgkFpyFPhH.jpg');"></div>
-      <div class="plan-grad"></div>
-      <div class="plan-inner">
-        <div class="plan-user"><div class="plan-av">陈</div><span class="plan-uname">陈小姐</span></div>
-        <div class="plan-tagline">只看亚洲新导演的第一或第二部</div>
-        <div class="plan-foot"><span class="plan-meta">12部 · 143人关注</span><span class="plan-likes">♡ 143</span></div>
-      </div>
-    </div>
+  <div class="plan-grid" id="plan-grid">
+    <div class="plan-empty">加载中…</div>
   </div>
 </div>
 
@@ -245,68 +230,9 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
     <div class="sec-title">选片视角</div>
     <div class="sec-more">查看全部 ›</div>
   </div>
-  <div class="cat-tabs" id="cat-tabs">
-    <div class="cat-tab active" onclick="switchCat(this)">本届必看</div>
-    <div class="cat-tab" onclick="switchCat(this)">大银幕优先</div>
-    <div class="cat-tab" onclick="switchCat(this)">已有口碑</div>
-    <div class="cat-tab" onclick="switchCat(this)">导演在现场</div>
-    <div class="cat-tab" onclick="switchCat(this)">修复重见</div>
-    <div class="cat-tab" onclick="switchCat(this)">散场后会想聊</div>
-  </div>
+  <div class="cat-tabs" id="cat-tabs"></div>
   <div class="films-grid" id="films-grid">
-    <div class="film-card">
-      <div class="film-poster fp1">
-        <img src="https://image.tmdb.org/t/p/w300/8OKmBV5BUFzmozIC3pPWKHy17kx.jpg"
-          style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.88);"
-          onerror="this.style.display='none'">
-        <div class="film-add-btn" onclick="event.stopPropagation()">+</div>
-        <div class="film-badge-sm">主竞赛</div>
-      </div>
-      <div class="film-name">《河边的错误》</div>
-      <div class="film-reason">主竞赛最值得排进计划的一部，散场后话很多。</div>
-    </div>
-    <div class="film-card">
-      <div class="film-poster fp2">
-        <img src="https://image.tmdb.org/t/p/w300/nKGhCQ5FqXjcSfmXrnXxLAKQnvg.jpg"
-          style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.88);"
-          onerror="this.style.display='none'">
-        <div class="film-add-btn" onclick="event.stopPropagation()">+</div>
-        <div class="film-badge-sm">亚洲新片</div>
-      </div>
-      <div class="film-name">《狗阵》</div>
-      <div class="film-reason">管虎沉寂多年后的回归，值得在大银幕等待。</div>
-    </div>
-    <div class="film-card">
-      <div class="film-poster fp3">
-        <img src="https://image.tmdb.org/t/p/w300/kFz9GgU0N7oUygJqiJj7AFRsHn8.jpg"
-          style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.88);"
-          onerror="this.style.display='none'">
-        <div class="film-add-btn" onclick="event.stopPropagation()">+</div>
-        <div class="film-badge-sm">导演在场</div>
-      </div>
-      <div class="film-name">《默杀》</div>
-      <div class="film-reason">映后导演在场，这场几乎不会再有第二次。</div>
-    </div>
-    <div class="film-card">
-      <div class="film-poster fp4">
-        <img src="https://image.tmdb.org/t/p/w300/6fgUHRsAkXIMxCjR8DgkFpyFPhH.jpg"
-          style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.88);"
-          onerror="this.style.display='none'">
-        <div class="film-add-btn" onclick="event.stopPropagation()">+</div>
-        <div class="film-badge-sm">名导新作</div>
-      </div>
-      <div class="film-name">《好东西》</div>
-      <div class="film-reason">邵艺辉新作，口碑已在柏林验证，上影节首映。</div>
-    </div>
-    <div class="film-card">
-      <div class="film-poster fp5">
-        <div class="film-poster-fb">悲</div>
-        <div class="film-add-btn" onclick="event.stopPropagation()">+</div>
-        <div class="film-badge-sm">4K修复</div>
-      </div>
-      <div class="film-name">《悲情城市》4K修复版</div>
-      <div class="film-reason">只有这一次机会在大银幕看到这个版本。</div>
-    </div>
+    <div class="loading-txt" style="grid-column:1/-1">加载影片…</div>
   </div>
 </div>
 
@@ -314,60 +240,11 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 <div class="section" style="padding-top:0;">
   <div class="sec-hdr">
     <div class="sec-title">现场打卡</div>
-    <div class="sec-more" onclick="navigate('page-map')">去打卡 ›</div>
+    <div class="sec-more" onclick="openCheckinModal()">去打卡 ›</div>
   </div>
-  <div class="checkin-sub">与 <span id="checkin-count">2,857</span> 位影迷一起记录此刻</div>
+  <div class="checkin-sub">与 <span id="checkin-count">—</span> 位影迷一起记录此刻</div>
   <div class="checkin-scroll" id="checkin-scroll">
-    <div class="ci-card" onclick="navigate('page-map')">
-      <div class="ci-img"><div class="ci-fb ci-fb-1"></div>
-        <div class="ci-user-row"><div class="ci-av">小</div><span class="ci-uname">小圆</span></div>
-        <div class="ci-venue">大光明 · 10:15</div>
-      </div>
-      <div class="ci-body">
-        <div class="ci-quote">「开场灯光亮起的那一刻，整个影厅安静了。」</div>
-        <div class="ci-foot"><span class="ci-likes">♡ 23</span><span class="ci-map-link">在地图上看 →</span></div>
-      </div>
-    </div>
-    <div class="ci-card" onclick="navigate('page-map')">
-      <div class="ci-img"><div class="ci-fb ci-fb-2"></div>
-        <div class="ci-user-row"><div class="ci-av">树</div><span class="ci-uname">阿树</span></div>
-        <div class="ci-venue">和平影都 · 13:40</div>
-      </div>
-      <div class="ci-body">
-        <div class="ci-quote">「4K修复版声音把整个影厅都填满了。」</div>
-        <div class="ci-foot"><span class="ci-likes">♡ 18</span><span class="ci-map-link">在地图上看 →</span></div>
-      </div>
-    </div>
-    <div class="ci-card" onclick="navigate('page-map')">
-      <div class="ci-img"><div class="ci-fb ci-fb-3"></div>
-        <div class="ci-user-row"><div class="ci-av">M</div><span class="ci-uname">Morse</span></div>
-        <div class="ci-venue">大光明 · 15:20</div>
-      </div>
-      <div class="ci-body">
-        <div class="ci-quote">「映后导演来了，站在台上说了三个字就哭了。」</div>
-        <div class="ci-foot"><span class="ci-likes">♡ 41</span><span class="ci-map-link">在地图上看 →</span></div>
-      </div>
-    </div>
-    <div class="ci-card" onclick="navigate('page-map')">
-      <div class="ci-img"><div class="ci-fb ci-fb-4"></div>
-        <div class="ci-user-row"><div class="ci-av">L</div><span class="ci-uname">Luna</span></div>
-        <div class="ci-venue">国泰电影院 · 19:00</div>
-      </div>
-      <div class="ci-body">
-        <div class="ci-quote">「排队40分钟。进去的那一刻觉得值了。」</div>
-        <div class="ci-foot"><span class="ci-likes">♡ 31</span><span class="ci-map-link">在地图上看 →</span></div>
-      </div>
-    </div>
-    <div class="ci-card" onclick="navigate('page-map')">
-      <div class="ci-img"><div class="ci-fb ci-fb-5"></div>
-        <div class="ci-user-row"><div class="ci-av">c</div><span class="ci-uname">cinephile_77</span></div>
-        <div class="ci-venue">SFC上影影城 · 21:30</div>
-      </div>
-      <div class="ci-body">
-        <div class="ci-quote">「今晚的上海很适合看电影。」</div>
-        <div class="ci-foot"><span class="ci-likes">♡ 27</span><span class="ci-map-link">在地图上看 →</span></div>
-      </div>
-    </div>
+    <div class="ci-empty">加载打卡记录…</div>
   </div>
 </div>
 
@@ -381,17 +258,15 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
     <div class="mod-more">进入全部讨论 →</div>
   </div>
   <div class="disc-cols">
-    <!-- 左：今日最热 -->
     <div class="hot-col">
       <div class="hot-hdr">
         <span style="font-size:14px;">🔥</span>
         <span class="hot-label">今日最热讨论</span>
-        <span class="hot-live">正在发生的 3 个讨论</span>
+        <span class="hot-live" id="disc-live"></span>
         <span class="disc-enter">查看全部 →</span>
       </div>
-      <!-- 第一条：配图 -->
       <div class="disc-card-hero">
-        <div class="dch-bg" style="background-image:url('https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=800&q=70');"></div>
+        <div class="dch-bg" style="background:linear-gradient(135deg,#1c1408,#0e0c06);"></div>
         <div class="dch-grad"></div>
         <div class="dch-inner">
           <div>
@@ -401,86 +276,49 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
           </div>
           <div class="disc-foot">
             <div style="display:flex;align-items:center;">
-              <div style="display:flex;">
-                <div class="disc-av av-a">L</div><div class="disc-av av-b">M</div>
-                <div class="disc-av av-c">陈</div><div class="disc-av av-d">树</div>
-              </div>
+              <div style="display:flex;"><div class="disc-av av-a">L</div><div class="disc-av av-b">M</div><div class="disc-av av-c">陈</div><div class="disc-av av-d">树</div></div>
               <span class="disc-from">来自 大光明 20:15 场后</span>
             </div>
             <span class="disc-enter">进入讨论 →</span>
           </div>
         </div>
       </div>
-      <!-- 第二条：纯文字 -->
       <div class="disc-card-text">
         <span class="disc-tag">聊聊这届</span>
         <div class="disc-q-text">今年金爵奖，谁最有可能拿下最佳影片？</div>
         <div class="disc-text-foot">
-          <div style="display:flex;align-items:center;">
-            <div style="display:flex;"><div class="disc-av av-b">M</div><div class="disc-av av-c">陈</div><div class="disc-av av-a">L</div></div>
-            <span class="disc-stat-sm">156 条讨论 · 1,245 人参与</span>
-          </div>
+          <div style="display:flex;align-items:center;"><div style="display:flex;"><div class="disc-av av-b">M</div><div class="disc-av av-c">陈</div><div class="disc-av av-a">L</div></div><span class="disc-stat-sm">156 条 · 1,245 人</span></div>
           <span class="disc-enter">进入讨论 →</span>
         </div>
       </div>
-      <!-- 第三条：纯文字 -->
       <div class="disc-card-text">
         <span class="disc-tag">我在现场</span>
         <div class="disc-q-text">今天的映后谈，有哪些打动你的瞬间？</div>
         <div class="disc-text-foot">
-          <div style="display:flex;align-items:center;">
-            <div style="display:flex;"><div class="disc-av av-d">树</div><div class="disc-av av-a">L</div><div class="disc-av av-b">M</div></div>
-            <span class="disc-stat-sm">98 条讨论 · 672 人参与</span>
-          </div>
+          <div style="display:flex;align-items:center;"><div style="display:flex;"><div class="disc-av av-d">树</div><div class="disc-av av-a">L</div><div class="disc-av av-b">M</div></div><span class="disc-stat-sm">98 条 · 672 人</span></div>
           <span class="disc-enter">进入讨论 →</span>
         </div>
       </div>
     </div>
-    <!-- 右：散场一句话 -->
     <div>
       <div class="moment-hdr">
         <span style="font-size:13px;">💬</span>
         <span class="moment-title">最新散场一句话</span>
-        <span class="moment-sub">刚看完的人，都在说什么</span>
-        <span class="moment-more">查看更多 →</span>
+        <span class="moment-sub">刚看完的人</span>
+        <span class="moment-more" onclick="openMomentModal()">+ 留下一句</span>
       </div>
-      <div class="moment-list">
-        <div class="moment-item">
-          <div class="moment-meta-row"><div class="moment-av av-a">L</div><span class="moment-user">@Luna</span><span class="moment-film">《狗阵》</span><span class="moment-venue">和平影都</span><span class="moment-time">10 分钟前</span></div>
-          <div class="moment-text">「灯亮了很久，没人先走。」</div>
-          <div class="moment-likes">♡ 24</div>
-        </div>
-        <div class="moment-item">
-          <div class="moment-meta-row"><div class="moment-av av-b">M</div><span class="moment-user">@Morse</span><span class="moment-film">《默杀》</span><span class="moment-venue">大光明</span><span class="moment-time">18 分钟前</span></div>
-          <div class="moment-text">「映后导演来了，站在台上说了三个字就哭了。」</div>
-          <div class="moment-likes">♡ 31</div>
-        </div>
-        <div class="moment-item">
-          <div class="moment-meta-row"><div class="moment-av av-c">c</div><span class="moment-user">@cinephile_77</span><span class="moment-film">《默杀》</span><span class="moment-venue">SFC上影影城</span><span class="moment-time">25 分钟前</span></div>
-          <div class="moment-text">「有些镜头会在脑子里反复出现，睡不着。」</div>
-          <div class="moment-likes">♡ 27</div>
-        </div>
-        <div class="moment-item">
-          <div class="moment-meta-row"><div class="moment-av av-d">小</div><span class="moment-user">@小圆</span><span class="moment-film">《悲情城市》修复版</span><span class="moment-venue">大光明</span><span class="moment-time">32 分钟前</span></div>
-          <div class="moment-text">「修复版的声音太震了，起了一身鸡皮疙瘩。」</div>
-          <div class="moment-likes">♡ 18</div>
-        </div>
-        <div class="moment-item">
-          <div class="moment-meta-row"><div class="moment-av av-b">阿</div><span class="moment-user">@阿树</span><span class="moment-film">《乘船而去》</span><span class="moment-venue">天出电影院</span><span class="moment-time">41 分钟前</span></div>
-          <div class="moment-text">「后劲好大，走出影院还在发呆。」</div>
-          <div class="moment-likes">♡ 16</div>
-        </div>
+      <div class="moment-list" id="moment-list">
+        <div class="moment-empty">加载中…</div>
       </div>
     </div>
   </div>
-  <!-- 行动入口 -->
   <div class="action-bar">
     <div class="action-icon">✏️</div>
     <div class="action-body">
       <div class="action-label">刚刚看完？留下一句散场感受...</div>
       <div class="action-sub">这句话会留在这届影展的记忆里</div>
     </div>
-    <button class="action-btn">去记录一句 →</button>
+    <button class="action-btn" onclick="openMomentModal()">去记录一句 →</button>
   </div>
 </div>
 
@@ -490,24 +328,9 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
   <div class="online-title">影展不会在散场后结束。</div>
   <div class="online-sub">那些值得被记住的片单，都在这里。</div>
   <div class="online-cards">
-    <div class="oc">
-      <div class="oc-src">历届遗珠</div>
-      <div class="oc-title">上影节那些年，错过的那些片</div>
-      <div class="oc-desc">从第一届到今天，那些被低估或遗忘的影片，值得被重新看见。</div>
-      <div class="oc-foot"><span class="oc-cnt">128 人关注</span><span class="oc-enter">进入片单 →</span></div>
-    </div>
-    <div class="oc">
-      <div class="oc-src">亚新延伸</div>
-      <div class="oc-title">亚洲新浪潮的今天和明天</div>
-      <div class="oc-desc">本届亚新单元之后，想继续追这些导演的下一部作品。</div>
-      <div class="oc-foot"><span class="oc-cnt">186 人关注</span><span class="oc-enter">进入片单 →</span></div>
-    </div>
-    <div class="oc">
-      <div class="oc-src">修复经典</div>
-      <div class="oc-title">修复的意义：经典如何重生</div>
-      <div class="oc-desc">看过修复版《悲情城市》之后，想把所有修复版经典都看一遍。</div>
-      <div class="oc-foot"><span class="oc-cnt">241 人关注</span><span class="oc-enter">进入片单 →</span></div>
-    </div>
+    <div class="oc"><div class="oc-src">历届遗珠</div><div class="oc-title">上影节那些年，错过的那些片</div><div class="oc-desc">从第一届到今天，那些被低估或遗忘的影片，值得被重新看见。</div><div class="oc-foot"><span class="oc-cnt" id="oc-cnt-0">— 人关注</span><span class="oc-enter">进入片单 →</span></div></div>
+    <div class="oc"><div class="oc-src">亚新延伸</div><div class="oc-title">亚洲新浪潮的今天和明天</div><div class="oc-desc">本届亚新单元之后，想继续追这些导演的下一部作品。</div><div class="oc-foot"><span class="oc-cnt" id="oc-cnt-1">— 人关注</span><span class="oc-enter">进入片单 →</span></div></div>
+    <div class="oc"><div class="oc-src">修复经典</div><div class="oc-title">修复的意义：经典如何重生</div><div class="oc-desc">看过修复版《悲情城市》之后，想把所有修复版经典都看一遍。</div><div class="oc-foot"><span class="oc-cnt" id="oc-cnt-2">— 人关注</span><span class="oc-enter">进入片单 →</span></div></div>
   </div>
 </div>
 
@@ -516,75 +339,484 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
   <div class="footer-links"><span>关于我们</span><span>使用条款</span><span>隐私政策</span><span>联系我们</span></div>
 </div>
 
+<!-- 打卡弹窗 -->
+<div class="modal-bg" id="checkin-modal">
+  <div class="modal">
+    <div class="modal-title">现场打卡</div>
+    <div class="modal-field">
+      <div class="modal-label">影片</div>
+      <input class="modal-input" id="ci-film" placeholder="搜索或输入片名…" oninput="filmSearch(this.value,'ci')">
+      <div class="modal-suggest" id="ci-film-sug"></div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">影院</div>
+      <input class="modal-input" id="ci-venue" placeholder="大光明 / 和平影都…">
+      <div class="modal-suggest">
+        <span class="sug-item" onclick="selVenue(this,'ci-venue')">大光明</span>
+        <span class="sug-item" onclick="selVenue(this,'ci-venue')">和平影都</span>
+        <span class="sug-item" onclick="selVenue(this,'ci-venue')">国泰电影院</span>
+        <span class="sug-item" onclick="selVenue(this,'ci-venue')">SFC上影影城</span>
+        <span class="sug-item" onclick="selVenue(this,'ci-venue')">天山电影院</span>
+      </div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">一句现场感受（选填）</div>
+      <textarea class="modal-input modal-textarea" id="ci-quote" placeholder="此刻的影院，此刻的你…" oninput="updateChar(this,'ci-char',100)" maxlength="100"></textarea>
+      <div class="modal-char" id="ci-char">0 / 100</div>
+    </div>
+    <div class="modal-foot">
+      <span class="modal-cancel" onclick="closeModal('checkin-modal')">取消</span>
+      <button class="modal-submit" id="ci-btn" onclick="submitCheckin()">提交打卡</button>
+    </div>
+  </div>
+</div>
+
+<!-- 散场一句话弹窗 -->
+<div class="modal-bg" id="moment-modal">
+  <div class="modal">
+    <div class="modal-title">散场一句话</div>
+    <div class="modal-field">
+      <div class="modal-label">刚看完的影片</div>
+      <input class="modal-input" id="mo-film" placeholder="搜索或输入片名…" oninput="filmSearch(this.value,'mo')">
+      <div class="modal-suggest" id="mo-film-sug"></div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">影院（选填）</div>
+      <input class="modal-input" id="mo-venue" placeholder="在哪里看的？">
+      <div class="modal-suggest">
+        <span class="sug-item" onclick="selVenue(this,'mo-venue')">大光明</span>
+        <span class="sug-item" onclick="selVenue(this,'mo-venue')">和平影都</span>
+        <span class="sug-item" onclick="selVenue(this,'mo-venue')">国泰电影院</span>
+        <span class="sug-item" onclick="selVenue(this,'mo-venue')">SFC上影影城</span>
+        <span class="sug-item" onclick="selVenue(this,'mo-venue')">天山电影院</span>
+      </div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">散场感受（最多 100 字）</div>
+      <textarea class="modal-input modal-textarea" id="mo-content" placeholder="走出影院的那一刻，你想说什么…" oninput="updateChar(this,'mo-char',100)" maxlength="100"></textarea>
+      <div class="modal-char" id="mo-char">0 / 100</div>
+    </div>
+    <div class="modal-foot">
+      <span class="modal-cancel" onclick="closeModal('moment-modal')">取消</span>
+      <button class="modal-submit" id="mo-btn" onclick="submitMoment()">留下这句话</button>
+    </div>
+  </div>
+</div>
+
+<!-- 创建片单弹窗 -->
+<div class="modal-bg" id="list-modal">
+  <div class="modal">
+    <div class="modal-title">创建片单</div>
+    <div class="modal-field">
+      <div class="modal-label">片单标题</div>
+      <input class="modal-input" id="list-title" placeholder="你的策展宣言…" maxlength="40">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">描述（选填）</div>
+      <textarea class="modal-input modal-textarea" id="list-desc" placeholder="这个片单是关于什么的…" maxlength="200" style="min-height:60px;"></textarea>
+    </div>
+    <div class="modal-foot">
+      <span class="modal-cancel" onclick="closeModal('list-modal')">取消</span>
+      <button class="modal-submit" id="list-btn" onclick="submitList()">创建片单</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-/* navigate：兼容 iframe 和独立运行 */
-function navigate(page) {
+const SB   = 'https://dirrnojiybbwotuqeqww.supabase.co';
+const KEY  = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
+const FEST = 'siff2026';
+const TMDB = 'https://image.tmdb.org/t/p/w300';
+const BGS  = ['linear-gradient(135deg,#1c1408,#120e04)',
+              'linear-gradient(135deg,#0e1018,#0a0c12)',
+              'linear-gradient(135deg,#0c1810,#080e0a)',
+              'linear-gradient(135deg,#181006,#120c04)',
+              'linear-gradient(135deg,#100818,#0c0614)'];
+
+let _user = null;
+let _siffFilms = [];
+let _selFilm = {};
+
+// ── Supabase REST ──────────────────────────
+async function sb(path, opts = {}) {
+  const r = await fetch(SB + path, {
+    ...opts,
+    headers: {
+      'apikey': KEY, 'Authorization': 'Bearer ' + KEY,
+      'Content-Type': 'application/json',
+      ...(opts.prefer ? { 'Prefer': opts.prefer } : {}),
+      ...(opts.headers || {})
+    }
+  });
+  if (r.status === 204) return null;
+  const d = await r.json().catch(() => null);
+  if (!r.ok) throw new Error((d && d.message) || r.statusText);
+  return d;
+}
+
+// ── Auth（从 localStorage 读取 Supabase session）──
+function initUser() {
   try {
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({ type: 'navigate', page: page }, '*');
-    } else {
-      window.location.href = page + '.html';
+    const key = Object.keys(localStorage).find(k => k.includes('auth-token') && k.includes('supabase'));
+    if (key) {
+      const p = JSON.parse(localStorage.getItem(key));
+      _user = p?.user || null;
     }
   } catch(e) {}
 }
 
-/* 选片视角 tab 切换 */
-function switchCat(el) {
-  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
+// ── navigate ───────────────────────────────
+function navigate(page) {
+  try {
+    if (window.parent && window.parent !== window) window.parent.postMessage({ type:'navigate', page }, '*');
+    else window.location.href = page + '.html';
+  } catch(e) {}
 }
 
-/* 打卡横向拖拽 */
-(function() {
-  var el = document.getElementById('checkin-scroll');
-  if (!el) return;
-  var down = false, startX = 0, startScroll = 0;
-  el.addEventListener('mousedown', function(e) { down=true; startX=e.pageX; startScroll=el.scrollLeft; });
-  window.addEventListener('mousemove', function(e) { if(!down) return; el.scrollLeft = startScroll-(e.pageX-startX)*1.2; });
-  window.addEventListener('mouseup', function() { down=false; });
-})();
+// ── toast ──────────────────────────────────
+let _tt;
+function toast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show' + (type ? ' '+type : '');
+  clearTimeout(_tt); _tt = setTimeout(() => t.className = 'toast', 2800);
+}
 
-/* Supabase：读取 festival_config 更新 banner 阶段状态 */
-const SUPABASE_URL = 'https://dirrnojiybbwotuqeqww.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
+// ── modal ──────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(el =>
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); })
+);
 
+function requireLogin(cb) {
+  if (!_user) { toast('请先登录', 'err'); setTimeout(() => navigate('page-auth'), 800); return; }
+  cb();
+}
+function openCheckinModal() { requireLogin(() => openModal('checkin-modal')); }
+function openMomentModal()  { requireLogin(() => openModal('moment-modal')); }
+function openListModal()    { requireLogin(() => openModal('list-modal')); }
+
+// ── helpers ────────────────────────────────
+function updateChar(el, charId, max) {
+  document.getElementById(charId).textContent = el.value.length + ' / ' + max;
+}
+function selVenue(el, inputId) {
+  document.getElementById(inputId).value = el.textContent;
+  el.closest('.modal-suggest').querySelectorAll('.sug-item').forEach(i => i.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function avColor(str) {
+  const sets = [
+    ['rgba(201,168,76,.25)','#c9a84c'],['rgba(100,140,200,.25)','rgba(120,160,220,.9)'],
+    ['rgba(160,80,120,.25)','rgba(180,100,140,.9)'],['rgba(80,140,100,.25)','rgba(100,180,120,.9)']
+  ];
+  let h = 0; for (const c of (str||'?')) h = (h*31+c.charCodeAt(0))&0xffff;
+  return sets[h % sets.length];
+}
+function ago(d) {
+  const s = (Date.now()-new Date(d))/1000;
+  return s<60?'刚刚':s<3600?Math.floor(s/60)+' 分钟前':s<86400?Math.floor(s/3600)+' 小时前':Math.floor(s/86400)+' 天前';
+}
+
+// ── film search ─────────────────────────────
+function filmSearch(val, prefix) {
+  const sug = document.getElementById(prefix+'-film-sug');
+  _selFilm[prefix] = null;
+  if (!val.trim()) { sug.innerHTML = ''; return; }
+  const hits = _siffFilms.filter(f => f.title.includes(val) || (f.title_en||'').toLowerCase().includes(val.toLowerCase())).slice(0,6);
+  sug.innerHTML = hits.map(f =>
+    `<span class="sug-item" onclick="pickFilm(this,'${prefix}','${f.id}','${f.title.replace(/'/g,"\\'")}',${f.tmdb_id||'null'})">${f.title}${f.year?' ('+f.year+')':''}</span>`
+  ).join('');
+}
+function pickFilm(el, prefix, id, title, tmdbId) {
+  _selFilm[prefix] = { id, title, tmdbId: tmdbId !== 'null' ? Number(tmdbId) : null };
+  document.getElementById(prefix+'-film').value = title;
+  el.closest('.modal-suggest').innerHTML = '';
+}
+
+// ── 提交打卡 ───────────────────────────────
+async function submitCheckin() {
+  const film  = document.getElementById('ci-film').value.trim();
+  const venue = document.getElementById('ci-venue').value.trim();
+  const quote = document.getElementById('ci-quote').value.trim();
+  if (!film) { toast('请填写影片名','err'); return; }
+  const btn = document.getElementById('ci-btn');
+  btn.disabled = true; btn.textContent = '提交中…';
+  try {
+    await sb('/rest/v1/offline_checkins', {
+      method:'POST', prefer:'return=minimal',
+      body: JSON.stringify({
+        user_id: _user.id, festival: FEST,
+        siff_film_id: _selFilm.ci?.id || null,
+        film_title: film, tmdb_id: _selFilm.ci?.tmdbId || null,
+        venue: venue||null, quote: quote||null, is_public: true
+      })
+    });
+    closeModal('checkin-modal');
+    toast('打卡成功 ✓','ok');
+    document.getElementById('ci-film').value=''; document.getElementById('ci-quote').value='';
+    loadCheckins();
+  } catch(e) { toast('提交失败：'+e.message,'err'); }
+  finally { btn.disabled=false; btn.textContent='提交打卡'; }
+}
+
+// ── 提交一句话 ─────────────────────────────
+async function submitMoment() {
+  const film    = document.getElementById('mo-film').value.trim();
+  const venue   = document.getElementById('mo-venue').value.trim();
+  const content = document.getElementById('mo-content').value.trim();
+  if (!film)    { toast('请填写影片名','err'); return; }
+  if (!content) { toast('请写下你的感受','err'); return; }
+  const btn = document.getElementById('mo-btn');
+  btn.disabled=true; btn.textContent='提交中…';
+  try {
+    await sb('/rest/v1/moments', {
+      method:'POST', prefer:'return=minimal',
+      body: JSON.stringify({
+        user_id: _user.id, festival: FEST,
+        siff_film_id: _selFilm.mo?.id||null,
+        film_title: film, tmdb_id: _selFilm.mo?.tmdbId||null,
+        venue: venue||null, content
+      })
+    });
+    closeModal('moment-modal');
+    toast('已留下这句话 ✓','ok');
+    document.getElementById('mo-film').value=''; document.getElementById('mo-content').value='';
+    loadMoments();
+  } catch(e) { toast('提交失败：'+e.message,'err'); }
+  finally { btn.disabled=false; btn.textContent='留下这句话'; }
+}
+
+// ── 提交片单 ───────────────────────────────
+async function submitList() {
+  const title = document.getElementById('list-title').value.trim();
+  const desc  = document.getElementById('list-desc').value.trim();
+  if (!title) { toast('请填写片单标题','err'); return; }
+  const btn = document.getElementById('list-btn');
+  btn.disabled=true; btn.textContent='创建中…';
+  try {
+    await sb('/rest/v1/user_lists', {
+      method:'POST', prefer:'return=minimal',
+      body: JSON.stringify({ user_id:_user.id, title, description:desc||null, festival:FEST, is_public:true })
+    });
+    closeModal('list-modal');
+    toast('片单创建成功 ✓','ok');
+    document.getElementById('list-title').value='';
+    loadUserLists();
+  } catch(e) { toast('创建失败：'+e.message,'err'); }
+  finally { btn.disabled=false; btn.textContent='创建片单'; }
+}
+
+// ── 加载 Banner 阶段 ───────────────────────
 async function loadPhase() {
   try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/festival_config?festival=eq.siff2026&select=*`,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
-    );
-    const data = await res.json();
-    if (!data || !data.length) return;
-    const cfg = data[0];
-    const now = new Date();
+    const data = await sb(`/rest/v1/festival_config?festival=eq.${FEST}&select=*`);
+    if (!data?.length) return;
+    const cfg = data[0], now = new Date();
     let phase = cfg.status;
     if (cfg.auto_switch) {
       const s = new Date(cfg.start_date), e = new Date(cfg.end_date);
-      if (now < s) phase = 'pre';
-      else if (now <= e) phase = 'during';
-      else phase = 'post';
+      phase = now < s ? 'pre' : now <= e ? 'during' : 'post';
     }
     const statusEl = document.getElementById('banner-status');
     const btnsEl   = document.getElementById('banner-btns');
     if (phase === 'pre') {
       const days = Math.max(0, Math.ceil((new Date(cfg.start_date)-now)/86400000));
-      statusEl.textContent = `展前选片中 · ${days}天后开幕`;
-      btnsEl.innerHTML = `<div class="btn-gold">创建我的片单 +</div><div class="btn-dim">查看展映单元</div>`;
+      statusEl.textContent = `展前选片中 · ${days} 天后开幕`;
+      btnsEl.innerHTML = `<div class="btn-gold" onclick="openListModal()">创建我的片单 +</div><div class="btn-dim">查看展映单元</div>`;
     } else if (phase === 'during') {
       const day = Math.ceil((now-new Date(cfg.start_date))/86400000);
-      statusEl.textContent = `影展进行中 · 第${day}天`;
-      btnsEl.innerHTML = `<div class="btn-gold" onclick="navigate('page-map')">去打卡 / 记录现场 ◎</div><div class="btn-dim">创建我的片单 +</div>`;
+      statusEl.textContent = `影展进行中 · 第 ${day} 天`;
     } else {
       statusEl.textContent = '影展已结束';
       btnsEl.innerHTML = `<div class="btn-gold">查看影展回顾</div>`;
     }
-  } catch(e) {
-    console.warn('festival_config 读取失败:', e);
-  }
+  } catch(e) { document.getElementById('banner-status').textContent = '上海 · 六月'; }
 }
 
-document.addEventListener('DOMContentLoaded', loadPhase);
+// ── 加载社区片单 ───────────────────────────
+async function loadUserLists() {
+  const grid = document.getElementById('plan-grid');
+  try {
+    const data = await sb(`/rest/v1/user_lists?festival=eq.${FEST}&is_public=eq.true&select=*,user:profiles(username,display_name)&order=follower_count.desc&limit=3`);
+    if (!data?.length) {
+      grid.innerHTML = `<div class="plan-empty">还没有片单，来创建第一个</div>`; return;
+    }
+    grid.innerHTML = data.map((list, i) => {
+      const uname = list.user?.display_name || list.user?.username || '影迷';
+      const [bg, fg] = avColor(uname);
+      return `<div class="plan-card">
+        <div class="plan-bg" style="background:${BGS[i%5]};"></div>
+        <div class="plan-grad"></div>
+        <div class="plan-inner">
+          <div class="plan-user"><div class="plan-av" style="background:${bg};color:${fg};">${uname[0]}</div><span class="plan-uname">@${list.user?.username||'影迷'}</span></div>
+          <div class="plan-tagline">${list.title}</div>
+          <div class="plan-foot"><span class="plan-meta">${list.film_count} 部 · ${list.follower_count} 人关注</span></div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { grid.innerHTML = `<div class="plan-empty">暂无数据</div>`; }
+}
+
+// ── 加载选片视角 ───────────────────────────
+let _allFilms = [];
+async function loadFilmsView() {
+  const tabsEl = document.getElementById('cat-tabs');
+  const gridEl = document.getElementById('films-grid');
+  try {
+    _allFilms = await sb(`/rest/v1/siff_films?festival=eq.${FEST}&select=*&order=order_index`) || [];
+    _siffFilms = _allFilms; // 共用给弹窗搜索
+    if (!_allFilms.length) {
+      gridEl.innerHTML = `<div class="loading-txt" style="grid-column:1/-1">暂无影片数据</div>`; return;
+    }
+    const sections = [...new Set(_allFilms.map(f=>f.section).filter(Boolean))];
+    tabsEl.innerHTML = sections.map((s,i)=>
+      `<div class="cat-tab${i===0?' active':''}" onclick="switchSec(this,'${s}')">${s}</div>`
+    ).join('');
+    renderFilms(sections[0]||'');
+  } catch(e) { gridEl.innerHTML = `<div class="loading-txt" style="grid-column:1/-1">加载失败</div>`; }
+}
+function switchSec(el, sec) {
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active'); renderFilms(sec);
+}
+function renderFilms(sec) {
+  const gridEl = document.getElementById('films-grid');
+  const films = _allFilms.filter(f=>f.section===sec).slice(0,5);
+  if (!films.length) { gridEl.innerHTML=`<div class="loading-txt" style="grid-column:1/-1">暂无影片</div>`; return; }
+  gridEl.innerHTML = films.map((f,i) => {
+    const poster = f.poster_path
+      ? `<img src="${TMDB}${f.poster_path}" alt="${f.title}" style="width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.88);" onerror="this.style.display='none'">`
+      : `<div class="film-poster-fb">${f.title[0]}</div>`;
+    return `<div class="film-card">
+      <div class="film-poster" style="background:${BGS[i%5]};">
+        ${poster}
+        <div class="film-add-btn" onclick="event.stopPropagation();quickAdd(${f.tmdb_id||'null'},'${f.title.replace(/'/g,"\\'")}','${f.poster_path||''}')">+</div>
+        ${f.badge?`<div class="film-badge-sm">${f.badge}</div>`:''}
+      </div>
+      <div class="film-name">${f.title}</div>
+      ${f.note?`<div class="film-reason">${f.note}</div>`:''}
+    </div>`;
+  }).join('');
+}
+async function quickAdd(tmdbId, title, posterPath) {
+  requireLogin(async () => {
+    try {
+      const lists = await sb(`/rest/v1/user_lists?user_id=eq.${_user.id}&festival=eq.${FEST}&select=id,title&limit=1`);
+      if (!lists?.length) { toast('请先创建片单','err'); openListModal(); return; }
+      await sb('/rest/v1/user_list_films', {
+        method:'POST', prefer:'return=minimal',
+        body: JSON.stringify({ list_id:lists[0].id, tmdb_id:tmdbId, title, poster_path:posterPath||null })
+      });
+      toast(`已加入「${lists[0].title}」✓`,'ok');
+    } catch(e) {
+      if ((e.message||'').includes('23505')) toast('已在片单中','');
+      else toast('加入失败','err');
+    }
+  });
+}
+
+// ── 加载打卡 ───────────────────────────────
+async function loadCheckins() {
+  const scroll = document.getElementById('checkin-scroll');
+  try {
+    const data = await sb(`/rest/v1/offline_checkins?festival=eq.${FEST}&is_public=eq.true&select=*,user:profiles(username,display_name)&order=created_at.desc&limit=10`);
+    if (!data?.length) {
+      scroll.innerHTML = `<div class="ci-empty">还没有打卡，来第一个</div>`;
+      document.getElementById('checkin-count').textContent = '0'; return;
+    }
+    document.getElementById('checkin-count').textContent = data.length.toLocaleString();
+    scroll.innerHTML = data.map((ci,i) => {
+      const uname = ci.user?.display_name||ci.user?.username||'影迷';
+      const [bg,fg] = avColor(uname);
+      return `<div class="ci-card">
+        <div class="ci-img" style="background:${BGS[i%5]};">
+          <div class="ci-user-row"><div class="ci-av" style="background:${bg};color:${fg};">${uname[0]}</div><span class="ci-uname">@${ci.user?.username||'影迷'}</span></div>
+          <div class="ci-venue">${ci.venue||''} · ${ago(ci.created_at)}</div>
+        </div>
+        <div class="ci-body">
+          <div class="ci-quote">「${ci.quote||ci.film_title}」</div>
+          <div class="ci-foot">
+            <span class="ci-likes" onclick="likeRow(this,'offline_checkins','${ci.id}')">♡ ${ci.like_count||0}</span>
+            <span class="ci-map-link" onclick="navigate('page-map')">在地图上看 →</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { scroll.innerHTML = `<div class="ci-empty">加载失败</div>`; }
+}
+
+// ── 加载一句话 ─────────────────────────────
+async function loadMoments() {
+  const list = document.getElementById('moment-list');
+  try {
+    const data = await sb(`/rest/v1/moments?festival=eq.${FEST}&select=*,user:profiles(username,display_name)&order=created_at.desc&limit=5`);
+    if (!data?.length) { list.innerHTML = `<div class="moment-empty">还没有人留下感受</div>`; return; }
+    document.getElementById('disc-live').textContent = data.length + ' 条新感受';
+    list.innerHTML = data.map(m => {
+      const uname = m.user?.display_name||m.user?.username||'影迷';
+      const [bg,fg] = avColor(uname);
+      return `<div class="moment-item">
+        <div class="moment-meta-row">
+          <div class="moment-av" style="background:${bg};color:${fg};">${uname[0]}</div>
+          <span class="moment-user">@${m.user?.username||'影迷'}</span>
+          <span class="moment-film">《${m.film_title}》</span>
+          ${m.venue?`<span class="moment-venue">${m.venue}</span>`:''}
+          <span class="moment-time">${ago(m.created_at)}</span>
+        </div>
+        <div class="moment-text">「${m.content}」</div>
+        <div class="moment-likes" onclick="likeRow(this,'moments','${m.id}')">♡ ${m.like_count||0}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { list.innerHTML = `<div class="moment-empty">加载失败</div>`; }
+}
+
+// ── 点赞（通用）────────────────────────────
+async function likeRow(el, table, id) {
+  try {
+    await sb('/rest/v1/rpc/increment_like', {
+      method:'POST', body: JSON.stringify({ table_name:table, row_id:id })
+    });
+    const n = parseInt(el.textContent.replace(/\D/g,''))||0;
+    el.textContent = '♡ '+(n+1);
+  } catch(e) {}
+}
+
+// ── 线上继续片单数字 ───────────────────────
+async function loadOnlineCounts() {
+  try {
+    const data = await sb(`/rest/v1/user_lists?festival=eq.${FEST}&is_public=eq.true&select=follower_count&order=follower_count.desc&limit=3`);
+    (data||[]).forEach((d,i) => {
+      const el = document.getElementById('oc-cnt-'+i);
+      if (el) el.textContent = d.follower_count + ' 人关注';
+    });
+  } catch(e) {}
+}
+
+// ── 拖拽横滚 ───────────────────────────────
+(function() {
+  const el = document.getElementById('checkin-scroll');
+  let down=false, sx=0, ss=0;
+  el.addEventListener('mousedown', e=>{down=true;sx=e.pageX;ss=el.scrollLeft;});
+  window.addEventListener('mousemove', e=>{if(!down)return;el.scrollLeft=ss-(e.pageX-sx)*1.2;});
+  window.addEventListener('mouseup', ()=>{down=false;});
+})();
+
+// ── 初始化 ─────────────────────────────────
+async function init() {
+  initUser();
+  await Promise.all([
+    loadPhase(),
+    loadUserLists(),
+    loadFilmsView(),
+    loadCheckins(),
+    loadMoments(),
+    loadOnlineCounts(),
+  ]);
+}
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
