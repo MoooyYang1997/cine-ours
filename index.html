@@ -144,8 +144,9 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
     <div class="nl on" id="nl-home"      onclick="go('home')">首页</div>
     <div class="nl"    id="nl-map"       onclick="go('map')">世界地图</div>
     <div class="nl"    id="nl-festivals" onclick="go('festivals')">电影节</div>
-    <div class="nl"    id="nl-creator"   onclick="go('creator')">创作</div>
-    <div class="nl"    id="nl-history"   onclick="go('history')">影史今天<span class="tdot"></span></div>
+    <div class="nl"    id="nl-creator"   onclick="go('creator')"   style="display:none">创作</div>
+    <div class="nl"    id="nl-history"   onclick="go('history')"   style="display:none">影史今天<span class="tdot"></span></div>
+    <div class="nl"    id="nl-offline"   onclick="go('offline-festival')">上影节专区</div>
   </div>
   <div class="nav-r">
     <div class="nav-icon-btn" onclick="openSearch()">
@@ -248,7 +249,7 @@ const PAGES = {
   history:           {src:'page-history.html',           nav:'nl-history',   label:'影史今天',     bc:null},
   profile:           {src:'page-profile.html',           nav:null,           label:'个人主页',     bc:null},
   auth:              {src:'page-auth.html',               nav:null,           label:'加入',         bc:null},
-  'offline-festival':{src:'page-offline-festival.html', nav:null,           label:'线下影展',     bc:null},
+  'offline-festival':{src:'page-offline-festival.html', nav:'nl-offline',   label:'上影节专区',   bc:null},
 };
 
 const SEARCH = [
