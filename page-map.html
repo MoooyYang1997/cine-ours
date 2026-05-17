@@ -52,6 +52,23 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
 .sb-srch svg{flex-shrink:0;opacity:0.28}
 #sb-inp{background:none;border:none;outline:none;font-size:10px;color:rgba(237,232,223,1);width:100%;font-style:italic;font-family:inherit}
 #sb-inp::placeholder{color:rgba(237,232,223,0.16)}
+#city-tabs{
+  display:flex;flex-wrap:wrap;gap:5px;
+  padding:8px 14px 6px;
+  border-bottom:1px solid rgba(255,255,255,0.032);
+  flex-shrink:0;
+}
+.ct{
+  font-size:9px;padding:3px 8px;border-radius:2px;
+  border:1px solid rgba(255,255,255,0.1);
+  color:rgba(237,232,223,0.38);cursor:pointer;
+  letter-spacing:0.06em;transition:all 0.2s;white-space:nowrap;
+}
+.ct:hover{color:rgba(237,232,223,0.7);border-color:rgba(255,255,255,0.2)}
+.ct.active{
+  color:rgba(201,168,76,0.88);border-color:rgba(201,168,76,0.4);
+  background:rgba(201,168,76,0.06);
+}
 .sb-hint{padding:5px 14px;border-bottom:1px solid rgba(255,255,255,0.032);font-size:8px;color:rgba(237,232,223,0.18);font-style:italic;flex-shrink:0}
 
 /* place list */
@@ -209,6 +226,11 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
 .bf-in{padding:10px 12px 11px}
 .bf-nm{font-size:12px;color:rgba(237,232,223,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px;transition:color 0.2s}
 .bf.on .bf-nm{color:rgba(237,232,223,0.88)}
+.bf-fm{
+  font-size:8.5px;color:rgba(201,168,76,0.52);font-style:italic;
+  margin-bottom:4px;letter-spacing:0.03em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
 .bf-qu{font-size:10px;color:rgba(237,232,223,0.22);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--serif);transition:color 0.2s}
 .bf.on .bf-qu{color:rgba(201,168,76,0.5)}
 
@@ -230,6 +252,14 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
           <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="rgba(237,232,223,0.38)" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>
           <input id="sb-inp" type="text" placeholder="搜索城市、影院或电影地标" oninput="doFilter(this.value)">
         </div>
+      </div>
+      <div id="city-tabs">
+        <span class="ct active" onclick="filterCity('')">全部</span>
+        <span class="ct" onclick="filterCity('香港')">香港</span>
+        <span class="ct" onclick="filterCity('柏林')">柏林</span>
+        <span class="ct" onclick="filterCity('巴黎')">巴黎</span>
+        <span class="ct" onclick="filterCity('东京')">东京</span>
+        <span class="ct" onclick="filterCity('纽约')">纽约</span>
       </div>
       <div class="sb-hint">刚刚有人在世界某处留下了记录</div>
       <div id="pl"></div>
@@ -346,7 +376,7 @@ var CITIES=[
   {zh:'纽约', lng:-74.001, lat:40.724},
 ];
 
-var active=PL[0], proj, svgSel, zoomBeh;
+var active=PL[0], activeCity='', proj, svgSel, zoomBeh;
 
 /* ── 地图初始化 ── */
 function buildMap(){
@@ -511,9 +541,21 @@ function fillCard(p){
 }
 
 /* ── 左侧列表 ── */
+function filterCity(city){
+  activeCity=city;
+  document.querySelectorAll('.ct').forEach(function(el){
+    el.classList.toggle('active', el.textContent===(city||'全部'));
+  });
+  doFilter(document.getElementById('sb-inp').value);
+}
+
 function doFilter(v){
   var list=document.getElementById('pl');
-  var items=PL.filter(function(p){return p.nm.indexOf(v)>-1||p.cy.indexOf(v)>-1||(p.fm&&p.fm.indexOf(v)>-1);});
+  var items=PL.filter(function(p){
+    var matchSearch=p.nm.indexOf(v)>-1||p.cy.indexOf(v)>-1||(p.fm&&p.fm.indexOf(v)>-1);
+    var matchCity=activeCity===''||p.cy===activeCity;
+    return matchSearch&&matchCity;
+  });
   list.innerHTML=items.map(function(p){
     var on=p.id===active.id?' on':'';
     var sub=p.tp==='fl'?'\u300a'+p.fm+'\u300b\u00b7 '+p.cy:p.cy;
@@ -544,9 +586,15 @@ function renderRow(cid,places,sty){
     var imgH=p.img
       ?'<img src="'+p.img+'" alt="'+p.nm+'" loading="lazy" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.55) saturate(0.7);display:block"/>'
       :'<div class="bf-'+(sty==='w'?'pw':'pc')+'"><div class="bf-gr"></div></div>';
+    var filmInfo='';
+    if(p.tp==='fl'&&p.fm){
+      filmInfo='<div class="bf-fm">\u300a'+p.fm+'\u300b '+p.fy+' \u00b7 '+p.dr+'</div>';
+    }
     return '<div class="bf'+on+'" onclick="pick(\''+p.id+'\')">'
       +'<div class="bf-img">'+imgH+'<span class="bf-tp">'+tp+'</span></div>'
-      +'<div class="bf-in"><div class="bf-nm">'+p.nm+'</div><div class="bf-qu">\u201c'+p.q+'\u201d</div></div>'
+      +'<div class="bf-in"><div class="bf-nm">'+p.nm+'</div>'
+      +filmInfo
+      +'<div class="bf-qu">\u201c'+p.q+'\u201d</div></div>'
       +'</div>';
   }).join('');
 }
