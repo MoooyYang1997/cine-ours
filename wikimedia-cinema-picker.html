@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>CineOurs · Wikimedia 影院选图器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0c0c0c;--bg2:#141414;--bg3:#1a1a1a;
+  --gold:#c9a84c;--gold2:rgba(201,168,76,0.12);
+  --purple:#a78bfa;--purple2:rgba(167,139,250,0.12);
+  --text:rgba(237,232,223,1);--text2:rgba(237,232,223,0.5);
+  --text3:rgba(237,232,223,0.22);--text4:rgba(237,232,223,0.08);
+  --green:#4ade80;--border:rgba(255,255,255,0.07);
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;min-height:100vh;overflow:hidden}
+
+/* ── HEADER ── */
+.hd{display:flex;align-items:center;gap:16px;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--bg)}
+.hd-logo{font-family:Georgia,serif;color:var(--purple);font-size:15px;font-weight:normal;letter-spacing:.1em}
+.hd-sub{font-size:9px;color:var(--text3);letter-spacing:.08em;margin-top:1px}
+.hd-mid{flex:1;padding:0 24px}
+.search-wrap{position:relative;max-width:400px}
+.search-input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 36px 7px 12px;font-size:11px;border-radius:2px;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:rgba(167,139,250,0.4)}
+.search-input::placeholder{color:var(--text3)}
+.search-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:2px}
+.search-btn:hover{color:var(--purple)}
+.hd-stats{display:flex;gap:16px;align-items:center}
+.stat{text-align:center}
+.stat-n{font-family:Georgia,serif;font-size:16px;color:var(--purple)}
+.stat-l{font-size:9px;color:var(--text3)}
+.prog-wrap{width:80px;height:2px;background:rgba(255,255,255,0.05);border-radius:1px}
+.prog-fill{height:100%;background:var(--purple);border-radius:1px;transition:width .4s}
+.btn-export{background:var(--purple2);border:1px solid rgba(167,139,250,0.3);color:var(--purple);padding:6px 14px;font-size:10px;letter-spacing:.07em;cursor:pointer;border-radius:2px;transition:all .2s;margin-left:8px}
+.btn-export:hover{background:rgba(167,139,250,0.2)}
+
+/* ── LAYOUT ── */
+.layout{display:flex;height:calc(100vh - 57px)}
+
+/* ── SIDEBAR ── */
+.sidebar{width:260px;flex-shrink:0;border-right:1px solid var(--border);overflow-y:auto;background:var(--bg)}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+.city-label{padding:8px 14px 5px;font-size:8.5px;letter-spacing:.14em;color:var(--purple);opacity:.55;position:sticky;top:0;background:var(--bg);border-bottom:1px solid rgba(255,255,255,0.04);z-index:1}
+.cinema-row{padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s;position:relative}
+.cinema-row:hover{background:rgba(255,255,255,0.025)}
+.cinema-row.active{background:var(--purple2);border-left:2px solid var(--purple)}
+.cinema-row.done .cr-name::after{content:' ✓';color:var(--green);font-size:9px}
+.cr-name{font-size:11.5px;color:var(--text);line-height:1.4}
+.cr-en{font-size:9.5px;color:var(--text3);margin-top:1px;font-style:italic}
+.cr-type{display:inline-block;font-size:7.5px;letter-spacing:.05em;padding:1px 5px;border-radius:2px;margin-top:3px;border:1px solid rgba(167,139,250,0.18);color:rgba(167,139,250,0.55);background:rgba(167,139,250,0.06)}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* cinema header */
+.cinema-hd{padding:18px 24px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.ch-name{font-family:Georgia,serif;font-size:19px;color:var(--text);margin-bottom:3px}
+.ch-en{font-size:11px;color:var(--purple);margin-bottom:2px;font-style:italic}
+.ch-meta{font-size:9.5px;color:var(--text3);display:flex;gap:10px;flex-wrap:wrap}
+.ch-tag{padding:1px 6px;border:1px solid var(--border);border-radius:2px}
+
+/* controls */
+.controls{padding:12px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.ctrl-label{font-size:9px;color:var(--text3);letter-spacing:.06em}
+.query-pills{display:flex;gap:6px;flex-wrap:wrap}
+.qpill{padding:4px 10px;font-size:9.5px;border:1px solid var(--border);border-radius:12px;color:var(--text2);cursor:pointer;transition:all .18s;white-space:nowrap}
+.qpill:hover{border-color:rgba(167,139,250,0.3);color:var(--purple)}
+.qpill.active{border-color:rgba(167,139,250,0.4);color:var(--purple);background:var(--purple2)}
+.sort-btns{margin-left:auto;display:flex;gap:4px}
+.sort-btn{padding:4px 9px;font-size:9px;border:1px solid var(--border);color:var(--text3);cursor:pointer;border-radius:2px;background:none;transition:all .15s}
+.sort-btn.active{border-color:rgba(167,139,250,0.3);color:var(--purple)}
+
+/* image area */
+.img-scroll{flex:1;overflow-y:auto;padding:20px 24px}
+.img-scroll::-webkit-scrollbar{width:3px}
+.img-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+
+.state-loading{display:flex;align-items:center;gap:10px;color:var(--text3);font-size:11px;padding:40px 0}
+.spin{width:14px;height:14px;border:1px solid rgba(255,255,255,0.1);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.state-empty{padding:40px 0;color:var(--text3);font-size:11px}
+.state-error{padding:20px 0;color:#f87171;font-size:11px;line-height:1.7}
+
+/* selected bar */
+.sel-bar{border-bottom:1px solid rgba(74,222,128,0.15);background:rgba(74,222,128,0.04);padding:10px 24px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sel-bar.hidden{display:none}
+.sel-thumbs{display:flex;gap:8px}
+.sel-thumb{position:relative;width:72px;height:50px;border-radius:2px;overflow:hidden;border:1px solid rgba(74,222,128,0.3);cursor:pointer;flex-shrink:0}
+.sel-thumb img{width:100%;height:100%;object-fit:cover}
+.sel-thumb .rm{position:absolute;top:2px;right:2px;width:14px;height:14px;background:rgba(0,0,0,0.7);border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;color:#f87171;opacity:0;transition:opacity .15s}
+.sel-thumb:hover .rm{opacity:1}
+.sel-info{flex:1;font-size:9px;color:rgba(74,222,128,0.7)}
+.sel-count{font-family:Georgia,serif;font-size:14px;color:var(--green)}
+.btn-confirm-sel{background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.3);color:var(--green);padding:5px 12px;font-size:9px;letter-spacing:.06em;cursor:pointer;border-radius:2px;transition:all .2s}
+.btn-confirm-sel:hover{background:rgba(74,222,128,0.2)}
+.btn-clear-sel{background:none;border:1px solid var(--border);color:var(--text3);padding:5px 10px;font-size:9px;cursor:pointer;border-radius:2px}
+
+/* image grid */
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:4px}
+.img-card{position:relative;border-radius:3px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .18s;background:var(--bg3)}
+.img-card:hover{border-color:rgba(167,139,250,0.35)}
+.img-card.selected{border-color:var(--purple)}
+.img-card.selected .sel-badge{opacity:1}
+.img-card img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;transition:opacity .2s}
+.img-card img.loading-img{opacity:.4}
+.sel-badge{position:absolute;top:6px;right:6px;background:var(--purple);color:#0c0c0c;font-size:8px;font-weight:bold;padding:2px 6px;border-radius:2px;opacity:0;transition:opacity .2s;letter-spacing:.05em}
+.img-meta{padding:5px 7px;font-size:8px;color:var(--text3);line-height:1.5;display:flex;justify-content:space-between}
+.img-size{color:rgba(167,139,250,0.4)}
+.img-author{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
+
+/* result count */
+.result-count{font-size:9px;color:var(--text3);margin-bottom:12px}
+
+/* empty state */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;color:var(--text3)}
+.empty-icon{font-size:36px;opacity:.25}
+
+/* ── EXPORT PANEL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.export-box{background:#141414;border:1px solid var(--border);border-radius:4px;width:720px;max-height:82vh;display:flex;flex-direction:column;overflow:hidden}
+.exp-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.exp-title{font-family:Georgia,serif;color:var(--purple);font-size:14px;font-weight:normal}
+.exp-close{margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:2px}
+.exp-body{flex:1;overflow-y:auto;padding:16px 22px}
+.exp-tabs{display:flex;gap:6px;margin-bottom:16px}
+.exp-tab{padding:5px 12px;font-size:9.5px;border:1px solid var(--border);color:var(--text2);cursor:pointer;border-radius:2px;transition:all .18s}
+.exp-tab.active{border-color:rgba(167,139,250,0.35);color:var(--purple);background:var(--purple2)}
+.exp-code{background:#0a0a0a;border:1px solid var(--border);border-radius:3px;padding:14px;font-family:monospace;font-size:9.5px;color:var(--text2);white-space:pre;overflow-x:auto;line-height:1.75;max-height:400px;overflow-y:auto}
+.exp-preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.prev-card{background:var(--bg3);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.prev-card img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.prev-info{padding:6px 8px}
+.prev-name{font-size:10px;color:var(--text);margin-bottom:2px}
+.prev-city{font-size:8.5px;color:var(--text3)}
+.exp-footer{padding:12px 22px;border-top:1px solid var(--border);display:flex;gap:8px}
+.btn-copy{background:var(--purple2);border:1px solid rgba(167,139,250,0.3);color:var(--purple);padding:6px 14px;font-size:10px;cursor:pointer;border-radius:2px;transition:all .2s}
+.btn-copy:hover{background:rgba(167,139,250,0.2)}
+.btn-dl{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);color:var(--gold);padding:6px 14px;font-size:10px;cursor:pointer;border-radius:2px}
+.btn-cancel{background:none;border:1px solid var(--border);color:var(--text3);padding:6px 12px;font-size:10px;cursor:pointer;border-radius:2px}
+
+/* pending badge */
+.pending-dot{width:5px;height:5px;border-radius:50%;background:rgba(167,139,250,0.4);display:inline-block;margin-right:4px}
+
+/* ── URL STRIP ── */
+.url-strip{flex-shrink:0;padding:14px 24px 16px;border-top:1px solid var(--border);background:rgba(255,255,255,0.015)}
+.url-strip-divider{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.url-strip-line{flex:1;height:1px;background:var(--border)}
+.url-strip-label{font-size:9px;color:var(--text3);letter-spacing:.06em;white-space:nowrap}
+.url-strip-hint{font-size:8.5px;color:var(--text3);margin-bottom:10px;line-height:1.6}
+.url-strip-row{display:flex;gap:8px}
+.url-strip-input{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 10px;font-size:10.5px;border-radius:2px;outline:none;font-family:monospace;transition:border-color .2s}
+.url-strip-input:focus{border-color:rgba(167,139,250,0.4)}
+.url-strip-input::placeholder{color:var(--text3);font-family:sans-serif;font-size:10px}
+.url-strip-btn{padding:7px 14px;font-size:10px;background:var(--purple2);border:1px solid rgba(167,139,250,0.3);color:var(--purple);cursor:pointer;border-radius:2px;white-space:nowrap;transition:all .18s;flex-shrink:0}
+.url-strip-btn:hover{background:rgba(167,139,250,0.2)}
+.url-preview-box{margin-top:10px;display:flex;gap:12px;align-items:flex-start;padding:11px;background:var(--bg3);border-radius:3px;border:1px solid var(--border)}
+.url-prev-thumb{width:120px;height:80px;flex-shrink:0;border-radius:2px;overflow:hidden;background:var(--bg2);object-fit:cover}
+.url-prev-body{flex:1;min-width:0}
+.url-prev-ok{font-size:9px;color:var(--green);margin-bottom:4px}
+.url-prev-url{font-size:8px;color:var(--text3);font-family:monospace;word-break:break-all;line-height:1.5;margin-bottom:8px}
+.url-prev-add{padding:5px 12px;font-size:9px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);color:var(--green);cursor:pointer;border-radius:2px;transition:all .18s}
+.url-prev-add:hover{background:rgba(74,222,128,0.18)}
+.url-prev-err{font-size:9px;color:#f87171;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div>
+    <div class="hd-logo">Wikimedia · 影院选图器</div>
+    <div class="hd-sub">CineOurs World Map · cinema / festival_venue 类型</div>
+  </div>
+  <div class="hd-mid">
+    <div class="search-wrap">
+      <input class="search-input" id="customSearch" placeholder="手动搜索 Wikimedia（英文效果更好）…" onkeydown="if(event.key==='Enter')runCustomSearch()">
+      <button class="search-btn" onclick="runCustomSearch()">⌕</button>
+    </div>
+  </div>
+  <div class="hd-stats">
+    <div class="stat"><div class="stat-n" id="cntDone">0</div><div class="stat-l">已选</div></div>
+    <div class="stat"><div class="stat-n" id="cntTotal">0</div><div class="stat-l">总计</div></div>
+    <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+  <button class="btn-export" onclick="openExport()">导出结果 →</button>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar"></div>
+
+  <!-- MAIN -->
+  <div class="main" id="main">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;color:var(--text3)" id="welcomeState">
+      <div style="font-size:32px;opacity:.2">🎞</div>
+      <div>从左侧选择一个影院开始选图</div>
+      <div style="font-size:10px;color:var(--text3);opacity:.6">Wikimedia Commons · CC授权实景图片</div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT OVERLAY -->
+<div class="overlay" id="exportOverlay">
+  <div class="export-box">
+    <div class="exp-hd">
+      <div class="exp-title">导出影院图片配置</div>
+      <div style="font-size:9px;color:var(--text3);margin-left:12px" id="expSummary"></div>
+      <button class="exp-close" onclick="closeExport()">✕</button>
+    </div>
+    <div class="exp-body">
+      <div class="exp-tabs">
+        <div class="exp-tab active" onclick="switchExpTab('preview',this)">预览</div>
+        <div class="exp-tab" onclick="switchExpTab('js',this)">JS 代码</div>
+        <div class="exp-tab" onclick="switchExpTab('json',this)">JSON</div>
+        <div class="exp-tab" onclick="switchExpTab('pending',this)">待处理</div>
+      </div>
+      <div id="expContent"></div>
+    </div>
+    <div class="exp-footer">
+      <button class="btn-copy" onclick="copyExp()">复制代码</button>
+      <button class="btn-dl" onclick="downloadExp()">下载 JSON</button>
+      <button class="btn-cancel" onclick="closeExport()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="../data/places.js"></script>
+<script>
+// PL from ../data/places.js (tp === 'ci' = 影院现场)
+function isCinema(p){return p.tp==='ci';}
+function cinemaQueries(p){return [p.nm,p.nm+' exterior',p.nm+' '+p.cy];}
+
+const TYPE_LABELS = {
+  cinema:'影院', festival_venue:'影展场馆', film_archive:'电影资料馆',
+  historic_cinema:'历史影院', arthouse_cinema:'艺术院线', film_institution:'电影机构'
+};
+
+// ── State ──
+const selections = {}; // cinemaId -> [{url, title, author, size}]
+const wikiCache = {};  // queryKey -> results
+let current = null;
+let currentQueryIdx = 0;
+let expTab = 'preview';
+
+// ── INIT ──
+function init() {
+  buildSidebar();
+  document.getElementById('cntTotal').textContent = PL.filter(isCinema).length;
+}
+
+function buildSidebar() {
+  const sb = document.getElementById('sidebar');
+  const cities = [...new Set(PL.filter(isCinema).map(c => c.cy))];
+  sb.innerHTML = '';
+  cities.forEach(city => {
+    const items = PL.filter(c => isCinema(c) && c.cy === city);
+    const grp = document.createElement('div');
+    grp.innerHTML = `<div class="city-label">${city}</div>`;
+    items.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'cinema-row';
+      row.id = 'row-' + c.id;
+      const hasSel = selections[c.id] && selections[c.id].length > 0;
+      row.innerHTML = `
+        <div class="cr-name">${hasSel ? '✓ ' : ''}<span>${c.nm}</span></div>
+        <div class="cr-en">${c.cye}</div>
+        <div class="cr-type">${'影院现场'}</div>`;
+      row.onclick = () => selectCinema(c);
+      grp.appendChild(row);
+    });
+    sb.appendChild(grp);
+  });
+}
+
+function updateStats() {
+  const done = Object.values(selections).filter(s => s && s.length > 0).length;
+  document.getElementById('cntDone').textContent = done;
+  document.getElementById('progFill').style.width = (done / PL.filter(isCinema).length * 100) + '%';
+}
+
+// ── SELECT CINEMA ──
+async function selectCinema(cinema, queryIdx = 0) {
+  current = cinema;
+  currentQueryIdx = queryIdx;
+  document.querySelectorAll('.cinema-row').forEach(r => r.classList.remove('active'));
+  const row = document.getElementById('row-' + cinema.id);
+  if (row) { row.classList.add('active'); row.scrollIntoView({block:'nearest'}); }
+
+  const main = document.getElementById('main');
+  const sel = selections[cinema.id] || [];
+
+  main.innerHTML = `
+    <div class="cinema-hd">
+      <div class="ch-name">${cinema.nm}</div>
+      <div class="ch-en">${cinema.cye}</div>
+      <div class="ch-meta">
+        <span class="ch-tag">${cinema.cy} · ${cinema.co}</span>
+        <span class="ch-tag">${'影院现场'}</span>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctrl-label">搜索词：</div>
+      <div class="query-pills">
+        ${cinemaQueries(cinema).map((q,i) => `<div class="qpill ${i===queryIdx?'active':''}" onclick="selectCinema(current,${i})">${q}</div>`).join('')}
+      </div>
+      <div class="sort-btns">
+        <button class="sort-btn active" id="sortR" onclick="sortImages('relevance')">相关性</button>
+        <button class="sort-btn" id="sortS" onclick="sortImages('size')">尺寸↓</button>
+      </div>
+    </div>
+    <div class="sel-bar ${sel.length ? '' : 'hidden'}" id="selBar">
+      <div class="sel-thumbs" id="selThumbs"></div>
+      <div class="sel-info">
+        <div><span class="sel-count" id="selCount">0</span> 张已选</div>
+        <div style="font-size:8.5px;color:var(--text3);margin-top:2px">建议选 2–3 张不同角度</div>
+      </div>
+      <button class="btn-confirm-sel" onclick="confirmAndNext()">确认，下一个 →</button>
+      <button class="btn-clear-sel" onclick="clearSel()">清除重选</button>
+    </div>
+    <div class="img-scroll" id="imgArea">
+      <div class="state-loading"><div class="spin"></div>正在搜索 Wikimedia Commons…</div>
+    </div>
+    <div class="url-strip" id="urlStrip">
+      <div class="url-strip-divider">
+        <div class="url-strip-line"></div>
+        <div class="url-strip-label">或者直接粘贴图片 URL</div>
+        <div class="url-strip-line"></div>
+      </div>
+      <div class="url-strip-hint">支持：Wikimedia · Supabase Storage · 其他无防盗链图片（小红书/大众点评图片请先转存）</div>
+      <div class="url-strip-row">
+        <input class="url-strip-input" id="cinemaUrlInput"
+          placeholder="https://upload.wikimedia.org/… 或 https://xxxx.supabase.co/storage/…"
+          onkeydown="if(event.key==='Enter')previewCinemaUrl()">
+        <button class="url-strip-btn" onclick="previewCinemaUrl()">预览并添加</button>
+      </div>
+      <div id="cinemaUrlPreview"></div>
+    </div>`;
+
+  renderSelBar();
+  await loadWikimedia(cinema, queryIdx);
+}
+
+let currentSort = 'relevance';
+let currentResults = [];
+
+function sortImages(mode) {
+  currentSort = mode;
+  document.getElementById('sortR').classList.toggle('active', mode==='relevance');
+  document.getElementById('sortS').classList.toggle('active', mode==='size');
+  if (currentResults.length) renderGrid(currentResults);
+}
+
+async function loadWikimedia(cinema, queryIdx) {
+  const query = cinemaQueries(cinema)[queryIdx];
+  const cacheKey = query;
+  if (wikiCache[cacheKey]) { currentResults = wikiCache[cacheKey]; renderGrid(currentResults); return; }
+
+  try {
+    // Step 1: search for pages
+    const searchUrl = `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&srnamespace=6&srlimit=30&format=json&origin=*`;
+    const searchRes = await fetch(searchUrl);
+    const searchData = await searchRes.json();
+    const pages = (searchData.query?.search || []);
+
+    if (!pages.length) {
+      document.getElementById('imgArea').innerHTML = `<div class="state-empty">「${query}」未找到图片，试试其他搜索词或手动输入。</div>`;
+      return;
+    }
+
+    // Step 2: get image info for each result
+    const titles = pages.map(p => p.title).join('|');
+    const infoUrl = `https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(titles)}&prop=imageinfo&iiprop=url|size|extmetadata&iiurlwidth=600&format=json&origin=*`;
+    const infoRes = await fetch(infoUrl);
+    const infoData = await infoRes.json();
+
+    const results = [];
+    const pagesObj = infoData.query?.pages || {};
+    for (const pageId in pagesObj) {
+      const page = pagesObj[pageId];
+      const ii = page.imageinfo?.[0];
+      if (!ii || !ii.thumburl) continue;
+      const ext = page.title.split('.').pop().toLowerCase();
+      if (!['jpg','jpeg','png','webp'].includes(ext)) continue;
+      const author = ii.extmetadata?.Artist?.value?.replace(/<[^>]+>/g,'').slice(0,40) || 'Unknown';
+      const license = ii.extmetadata?.LicenseShortName?.value || '';
+      const w = ii.width, h = ii.height;
+      if (w < 400 || h < 300) continue; // skip tiny images
+      results.push({
+        thumb: ii.thumburl,
+        full: ii.url,
+        title: page.title.replace('File:',''),
+        author, license, w, h,
+        score: w * h // for size sort
+      });
+    }
+
+    wikiCache[cacheKey] = results;
+    currentResults = results;
+    renderGrid(results);
+  } catch(e) {
+    document.getElementById('imgArea').innerHTML = `
+      <div class="state-error">
+        加载失败：${e.message}<br>
+        <small>Wikimedia Commons API 可能暂时不可访问，请稍后重试。</small>
+      </div>`;
+  }
+}
+
+function renderGrid(rawResults) {
+  const area = document.getElementById('imgArea');
+  if (!area) return;
+  let results = [...rawResults];
+  if (currentSort === 'size') results.sort((a,b) => b.score - a.score);
+
+  if (!results.length) {
+    area.innerHTML = `<div class="state-empty">未找到符合条件的图片，请尝试其他搜索词。</div>`;
+    return;
+  }
+
+  const sel = selections[current?.id] || [];
+  area.innerHTML = `
+    <div class="result-count">${results.length} 张图片 · CC授权 · 点击选择，可多选</div>
+    <div class="img-grid">${results.map(img => {
+      const isSel = sel.some(s => s.full === img.full);
+      return `<div class="img-card ${isSel?'selected':''}" onclick="toggleImage(${JSON.stringify(img).replace(/"/g,'&quot;')})">
+        <div class="sel-badge">✓ 已选</div>
+        <img src="${img.thumb}" loading="lazy" onerror="this.closest('.img-card').style.display='none'">
+        <div class="img-meta">
+          <span class="img-author" title="${img.author}">© ${img.author}</span>
+          <span class="img-size">${img.w}×${img.h}</span>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function toggleImage(img) {
+  if (!current) return;
+  if (!selections[current.id]) selections[current.id] = [];
+  const sel = selections[current.id];
+  const idx = sel.findIndex(s => s.full === img.full);
+  if (idx >= 0) sel.splice(idx, 1);
+  else sel.push(img);
+  renderSelBar();
+  renderGrid(currentResults);
+  updateSidebarRow(current.id);
+  updateStats();
+}
+
+function renderSelBar() {
+  const sel = selections[current?.id] || [];
+  const bar = document.getElementById('selBar');
+  const thumbsEl = document.getElementById('selThumbs');
+  const countEl = document.getElementById('selCount');
+  if (!bar || !thumbsEl) return;
+  bar.classList.toggle('hidden', sel.length === 0);
+  if (countEl) countEl.textContent = sel.length;
+  if (thumbsEl) {
+    thumbsEl.innerHTML = sel.map((img, i) => `
+      <div class="sel-thumb" onclick="toggleImage(${JSON.stringify(img).replace(/"/g,'&quot;')})">
+        <img src="${img.thumb}">
+        <div class="rm">✕</div>
+      </div>`).join('');
+  }
+}
+
+function confirmAndNext() {
+  if (!current) return;
+  const currentIdx = PL.filter(isCinema).findIndex(c => c.id === current.id);
+  const next = PL.filter(isCinema).slice(currentIdx+1).find(c => !selections[c.id]?.length)
+             || PL.filter(isCinema).find(c => !selections[c.id]?.length);
+  if (next) selectCinema(next);
+}
+
+function clearSel() {
+  if (!current) return;
+  selections[current.id] = [];
+  renderSelBar();
+  renderGrid(currentResults);
+  updateSidebarRow(current.id);
+  updateStats();
+}
+
+function updateSidebarRow(id) {
+  const cinema = PL.find(c => c.id === id);
+  const row = document.getElementById('row-' + id);
+  if (!row || !cinema) return;
+  const hasSel = selections[id] && selections[id].length > 0;
+  row.querySelector('.cr-name').innerHTML = `${hasSel ? '✓ ' : ''}<span>${cinema.nm}</span>`;
+}
+
+// ── CUSTOM SEARCH ──
+async function runCustomSearch() {
+  const q = document.getElementById('customSearch').value.trim();
+  if (!q || !current) return;
+  const cacheKey = q;
+  document.getElementById('imgArea').innerHTML = `<div class="state-loading"><div class="spin"></div>搜索中…</div>`;
+  currentSort = 'relevance';
+  // temporarily inject query
+  const fakeResult = await fetchWikimediaQuery(q);
+  currentResults = fakeResult;
+  renderGrid(fakeResult);
+}
+
+async function fetchWikimediaQuery(query) {
+  try {
+    if (wikiCache[query]) return wikiCache[query];
+    const searchUrl = `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&srnamespace=6&srlimit=30&format=json&origin=*`;
+    const searchRes = await fetch(searchUrl);
+    const searchData = await searchRes.json();
+    const pages = searchData.query?.search || [];
+    if (!pages.length) return [];
+    const titles = pages.map(p => p.title).join('|');
+    const infoUrl = `https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(titles)}&prop=imageinfo&iiprop=url|size|extmetadata&iiurlwidth=600&format=json&origin=*`;
+    const infoRes = await fetch(infoUrl);
+    const infoData = await infoRes.json();
+    const results = [];
+    for (const pid in infoData.query?.pages || {}) {
+      const page = infoData.query.pages[pid];
+      const ii = page.imageinfo?.[0];
+      if (!ii?.thumburl) continue;
+      const ext = page.title.split('.').pop().toLowerCase();
+      if (!['jpg','jpeg','png','webp'].includes(ext)) continue;
+      const author = ii.extmetadata?.Artist?.value?.replace(/<[^>]+>/g,'').slice(0,40) || 'Unknown';
+      const license = ii.extmetadata?.LicenseShortName?.value || '';
+      const w = ii.width, h = ii.height;
+      if (w < 400 || h < 300) continue;
+      results.push({ thumb: ii.thumburl, full: ii.url, title: page.title.replace('File:',''), author, license, w, h, score: w*h });
+    }
+    wikiCache[query] = results;
+    return results;
+  } catch(e) { return []; }
+}
+
+// ── EXPORT ──
+let expContent = '';
+function openExport() {
+  document.getElementById('expSummary').textContent =
+    `已选 ${Object.values(selections).filter(s=>s&&s.length>0).length} / ${PL.filter(isCinema).length} 个影院`;
+  renderExpTab(expTab);
+  document.getElementById('exportOverlay').classList.add('open');
+}
+function closeExport() { document.getElementById('exportOverlay').classList.remove('open'); }
+function switchExpTab(tab, el) {
+  expTab = tab;
+  document.querySelectorAll('.exp-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderExpTab(tab);
+}
+function renderExpTab(tab) {
+  const cont = document.getElementById('expContent');
+  const done = PL.filter(c => isCinema(c) && selections[c.id]?.length > 0);
+  const pending = PL.filter(c => isCinema(c) && !selections[c.id]?.length);
+  if (tab === 'preview') {
+    cont.innerHTML = `<div class="exp-preview">${done.map(c => {
+      const imgs = selections[c.id];
+      return `<div class="prev-card">
+        <img src="${imgs[0].thumb}" onerror="this.style.display='none'">
+        <div class="prev-info">
+          <div class="prev-name">${c.nm}</div>
+          <div class="prev-city">${c.cy} · ${imgs.length}张</div>
+        </div>
+      </div>`;
+    }).join('')}${!done.length?'<div style="color:var(--text3);font-size:11px;padding:20px">还没有选图</div>':''}</div>`;
+  } else if (tab === 'js') {
+    expContent = `// CineOurs · 影院图片配置\n// 已选 ${done.length}/${PL.filter(isCinema).length} · ${new Date().toLocaleDateString('zh-CN')}\n\nconst CINEMA_IMAGES = {\n${done.map(c => {
+      const imgs = selections[c.id];
+      return `  "${c.id}": [\n${imgs.map(img => `    { url: "${img.full}", thumb: "${img.thumb}", credit: "${img.author}" }`).join(',\n')}\n  ]`;
+    }).join(',\n')}\n};\n\n// 待处理 (${pending.length})\n${pending.map(c => `// ${c.cy} · ${c.nm}`).join('\n')}`;
+    cont.innerHTML = `<div class="exp-code">${escHtml(expContent)}</div>`;
+  } else if (tab === 'json') {
+    const obj = {};
+    done.forEach(c => { obj[c.id] = (selections[c.id]||[]).map(img => ({url:img.full, thumb:img.thumb, credit:img.author, license:img.license})); });
+    expContent = JSON.stringify(obj, null, 2);
+    cont.innerHTML = `<div class="exp-code">${escHtml(expContent)}</div>`;
+  } else {
+    cont.innerHTML = `<div style="font-size:10px;color:var(--text3);line-height:2">${pending.map(c =>`<div><span class="pending-dot"></span>${c.cy} · <span style="color:var(--text)">${c.nm}</span> · ${c.cye}</div>`).join('')}${!pending.length?'<div style="color:var(--green)">全部完成 🎉</div>':''}</div>`;
+  }
+}
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function copyExp() {
+  const code = document.querySelector('.exp-code')?.textContent || expContent;
+  navigator.clipboard.writeText(code);
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent = '已复制 ✓'; setTimeout(()=>btn.textContent='复制代码',2000);
+}
+function downloadExp() {
+  const obj = {};
+  PL.filter(c=>isCinema(c)&&selections[c.id]?.length>0).forEach(c=>{
+    obj[c.id]={name:c.nm,city:c.cy,images:(selections[c.id]||[]).map(img=>({url:img.full,thumb:img.thumb,credit:img.author,license:img.license}))};
+  });
+  const blob = new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `cineours-cinema-images-${new Date().toISOString().slice(0,10)}.json`; a.click();
+}
+
+// ── URL 手动添加 ──
+async function previewCinemaUrl() {
+  const input = document.getElementById('cinemaUrlInput');
+  const url = input?.value?.trim();
+  if (!url) return;
+  const area = document.getElementById('cinemaUrlPreview');
+  area.innerHTML = `<div class="state-loading" style="padding:12px 0"><div class="spin"></div>检查图片…</div>`;
+  try {
+    await new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res();
+      img.onerror = () => rej(new Error('无法加载图片，检查 URL 是否正确或有防盗链'));
+      img.src = url;
+      setTimeout(() => rej(new Error('加载超时（8s）')), 8000);
+    });
+    area.innerHTML = `
+      <div class="url-preview-box">
+        <img class="url-prev-thumb" src="${url}" onerror="this.style.background='#2a2a2a'">
+        <div class="url-prev-body">
+          <div class="url-prev-ok">✓ 图片可正常加载</div>
+          <div class="url-prev-url">${url}</div>
+          <button class="url-prev-add" onclick="addCinemaUrl('${url.replace(/'/g,"\\'")}')">添加此图 ✓</button>
+        </div>
+      </div>`;
+  } catch(e) {
+    area.innerHTML = `<div class="url-prev-err">✕ ${e.message}</div>`;
+  }
+}
+
+function addCinemaUrl(url) {
+  if (!current) return;
+  if (!selections[current.id]) selections[current.id] = [];
+  if (!selections[current.id].some(s => s.full === url)) {
+    selections[current.id].push({ full: url, thumb: url, title: '手动添加', author: '—', license: '—', w: 0, h: 0 });
+  }
+  // clear input and preview
+  const input = document.getElementById('cinemaUrlInput');
+  const preview = document.getElementById('cinemaUrlPreview');
+  if (input) input.value = '';
+  if (preview) preview.innerHTML = `<div style="font-size:9px;color:var(--green);padding:6px 0">✓ 已添加</div>`;
+  renderSelBar();
+  updateSidebarRow(current.id);
+  updateStats();
+  setTimeout(() => { if (preview) preview.innerHTML = ''; }, 2000);
+}
+
+init();
+</script>
+</body>
+</html>

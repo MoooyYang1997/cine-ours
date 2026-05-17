@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>CineOurs · 电影地标选图器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0c0c0c;--bg2:#141414;--bg3:#1a1a1a;
+  --gold:#c9a84c;--gold2:rgba(201,168,76,0.12);
+  --text:rgba(237,232,223,1);--text2:rgba(237,232,223,0.5);--text3:rgba(237,232,223,0.22);
+  --green:#4ade80;--border:rgba(255,255,255,0.07);
+  --unsplash:#4a9eff;--unsplash2:rgba(74,158,255,0.1);
+  --tmdb:#01b4e4;--tmdb2:rgba(1,180,228,0.1);
+  --manual:#f59e0b;--manual2:rgba(245,158,11,0.08);
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;min-height:100vh;overflow:hidden}
+
+/* ── HEADER ── */
+.hd{display:flex;align-items:center;gap:14px;padding:12px 22px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0}
+.hd-title{font-family:Georgia,serif;color:var(--gold);font-size:14px;font-weight:normal;letter-spacing:.1em}
+.hd-sub{font-size:8.5px;color:var(--text3);letter-spacing:.07em;margin-top:1px}
+.hd-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.hd-stats{display:flex;gap:14px}
+.stat{text-align:center}
+.stat-n{font-family:Georgia,serif;font-size:15px;color:var(--gold)}
+.stat-l{font-size:8.5px;color:var(--text3)}
+.prog-wrap{width:70px;height:2px;background:rgba(255,255,255,0.05);border-radius:1px;align-self:center}
+.prog-fill{height:100%;background:var(--gold);border-radius:1px;transition:width .4s}
+.btn-export{background:var(--gold2);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:5px 13px;font-size:9.5px;letter-spacing:.07em;cursor:pointer;border-radius:2px;transition:all .2s}
+.btn-export:hover{background:rgba(201,168,76,0.2)}
+
+/* ── LAYOUT ── */
+.body-wrap{display:flex;height:calc(100vh - 53px)}
+
+/* ── SIDEBAR ── */
+.sidebar{width:268px;flex-shrink:0;border-right:1px solid var(--border);overflow-y:auto;background:var(--bg)}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+.city-label{padding:7px 13px 4px;font-size:8.5px;letter-spacing:.13em;color:var(--gold);opacity:.55;position:sticky;top:0;background:var(--bg);border-bottom:1px solid rgba(255,255,255,0.04);z-index:1}
+.film-row{padding:9px 13px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s;position:relative}
+.film-row:hover{background:rgba(255,255,255,0.025)}
+.film-row.active{background:var(--gold2);border-left:2px solid var(--gold)}
+.fr-place{font-size:11px;color:var(--text);line-height:1.4}
+.fr-film{font-size:9.5px;color:var(--text3);margin-top:1px}
+.fr-done{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--green);font-size:10px}
+.src-badge{display:inline-block;font-size:7px;padding:1px 4px;border-radius:2px;margin-left:5px;vertical-align:middle;letter-spacing:.04em}
+.src-tmdb{background:var(--tmdb2);color:var(--tmdb);border:1px solid rgba(1,180,228,0.2)}
+.src-unsplash{background:var(--unsplash2);color:var(--unsplash);border:1px solid rgba(74,158,255,0.2)}
+.src-manual{background:var(--manual2);color:var(--manual);border:1px solid rgba(245,158,11,0.2)}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* film header */
+.film-hd{padding:16px 22px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.fh-place{font-family:Georgia,serif;font-size:18px;color:var(--text);margin-bottom:3px}
+.fh-film{font-size:11px;color:var(--gold);margin-bottom:2px}
+.fh-meta{font-size:9px;color:var(--text3)}
+
+/* source tabs */
+.source-bar{display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0}
+.src-tab{padding:10px 20px;font-size:10px;letter-spacing:.07em;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .18s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.src-tab:hover{color:var(--text2)}
+.src-tab.active-tmdb{color:var(--tmdb);border-bottom-color:var(--tmdb)}
+.src-tab.active-unsplash{color:var(--unsplash);border-bottom-color:var(--unsplash)}
+.src-tab.active-manual{color:var(--manual);border-bottom-color:var(--manual)}
+.src-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-tmdb{background:var(--tmdb)}
+.dot-unsplash{background:var(--unsplash)}
+.dot-manual{background:var(--manual)}
+
+/* selected bar */
+.sel-bar{padding:9px 22px;border-bottom:1px solid rgba(74,222,128,0.12);background:rgba(74,222,128,0.03);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sel-bar.hidden{display:none}
+.sel-thumbs{display:flex;gap:6px}
+.sel-thumb{width:80px;height:46px;border-radius:2px;overflow:hidden;border:1px solid rgba(74,222,128,0.25);cursor:pointer;flex-shrink:0;position:relative}
+.sel-thumb img{width:100%;height:100%;object-fit:cover}
+.sel-thumb-rm{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;color:transparent;font-size:16px;transition:all .15s}
+.sel-thumb:hover .sel-thumb-rm{background:rgba(0,0,0,0.6);color:#f87171}
+.sel-label{font-size:9px;color:rgba(74,222,128,0.7)}
+.sel-count-n{font-family:Georgia,serif;font-size:14px;color:var(--green)}
+.btn-next{background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);color:var(--green);padding:5px 12px;font-size:9px;letter-spacing:.06em;cursor:pointer;border-radius:2px;transition:all .18s;margin-left:auto}
+.btn-next:hover{background:rgba(74,222,128,0.18)}
+.btn-clr{background:none;border:1px solid var(--border);color:var(--text3);padding:5px 9px;font-size:9px;cursor:pointer;border-radius:2px;margin-left:6px}
+
+/* content area */
+.content{flex:1;overflow-y:auto;padding:18px 22px}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.07);border-radius:2px}
+
+/* sub-controls */
+.sub-controls{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.ctrl-search{display:flex;gap:6px;flex:1;min-width:200px}
+.ctrl-input{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 10px;font-size:11px;border-radius:2px;outline:none;transition:border-color .2s}
+.ctrl-input:focus{border-color:rgba(201,168,76,0.35)}
+.ctrl-input::placeholder{color:var(--text3)}
+.ctrl-input.unsplash-inp:focus{border-color:rgba(74,158,255,0.35)}
+.ctrl-btn{padding:6px 12px;font-size:10px;border:1px solid var(--border);color:var(--text2);cursor:pointer;border-radius:2px;background:none;transition:all .18s;white-space:nowrap}
+.ctrl-btn:hover{border-color:rgba(201,168,76,0.3);color:var(--gold)}
+.ctrl-btn.unsplash{color:var(--unsplash);border-color:rgba(74,158,255,0.25);background:var(--unsplash2)}
+.result-info{font-size:9px;color:var(--text3)}
+.sort-btns{display:flex;gap:4px;margin-left:auto}
+.sort-btn{padding:4px 8px;font-size:8.5px;border:1px solid var(--border);color:var(--text3);cursor:pointer;border-radius:2px;background:none;transition:all .15s}
+.sort-btn.active{border-color:rgba(201,168,76,0.3);color:var(--gold)}
+
+/* image grid */
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.img-card{position:relative;border-radius:3px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .18s;background:var(--bg3)}
+.img-card:hover{border-color:rgba(201,168,76,0.3)}
+.img-card.selected{border-color:var(--gold)}
+.img-card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.img-card-overlay{position:absolute;inset:0;background:rgba(201,168,76,0);transition:background .18s;display:flex;align-items:center;justify-content:center}
+.img-card:hover .img-card-overlay{background:rgba(201,168,76,0.06)}
+.img-card.selected .img-card-overlay{background:rgba(201,168,76,0.08)}
+.sel-check{position:absolute;top:7px;right:7px;width:20px;height:20px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;color:#0c0c0c;font-weight:bold;opacity:0;transition:opacity .15s}
+.img-card.selected .sel-check{opacity:1}
+.img-meta{padding:5px 8px;font-size:8px;color:var(--text3);display:flex;justify-content:space-between;align-items:center;gap:6px}
+.img-credit{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.img-size{color:rgba(255,255,255,0.15);flex-shrink:0}
+.img-src-tag{font-size:7px;padding:1px 4px;border-radius:2px;flex-shrink:0}
+
+/* manual panel */
+.manual-panel{padding:8px 0}
+.manual-section{margin-bottom:24px}
+.manual-title{font-size:10px;color:var(--manual);letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.manual-title::before{content:'';width:3px;height:10px;background:var(--manual);border-radius:1px;display:inline-block}
+.manual-hint{font-size:9px;color:var(--text3);line-height:1.7;margin-bottom:12px;padding:8px 12px;background:rgba(245,158,11,0.05);border-left:2px solid rgba(245,158,11,0.2);border-radius:0 2px 2px 0}
+.url-row{display:flex;gap:8px;margin-bottom:8px}
+.url-input{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 10px;font-size:11px;border-radius:2px;outline:none;font-family:monospace;transition:border-color .2s}
+.url-input:focus{border-color:rgba(245,158,11,0.4)}
+.url-input::placeholder{color:var(--text3);font-family:sans-serif}
+.btn-preview{padding:7px 14px;font-size:10px;background:var(--manual2);border:1px solid rgba(245,158,11,0.3);color:var(--manual);cursor:pointer;border-radius:2px;white-space:nowrap;transition:all .18s}
+.btn-preview:hover{background:rgba(245,158,11,0.18)}
+.url-preview{margin-top:10px;display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--bg3);border-radius:3px;border:1px solid var(--border)}
+.url-prev-img{width:160px;flex-shrink:0;border-radius:2px;overflow:hidden;aspect-ratio:16/9;background:var(--bg2)}
+.url-prev-img img{width:100%;height:100%;object-fit:cover}
+.url-prev-info{flex:1;min-width:0}
+.url-prev-label{font-size:9px;color:var(--text3);margin-bottom:5px}
+.url-prev-url{font-size:8.5px;color:var(--text2);font-family:monospace;word-break:break-all;line-height:1.5;margin-bottom:8px}
+.btn-add-url{padding:5px 12px;font-size:9px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);color:var(--green);cursor:pointer;border-radius:2px;transition:all .18s}
+.btn-add-url:hover{background:rgba(74,222,128,0.18)}
+.url-error{color:#f87171;font-size:9px;margin-top:6px}
+
+/* unsplash suggested queries */
+.query-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.qpill{padding:4px 10px;font-size:9.5px;border:1px solid var(--border);border-radius:12px;color:var(--text3);cursor:pointer;transition:all .18s}
+.qpill:hover{border-color:rgba(74,158,255,0.3);color:var(--unsplash)}
+.qpill.active{border-color:rgba(74,158,255,0.4);color:var(--unsplash);background:var(--unsplash2)}
+
+/* states */
+.state-loading{display:flex;align-items:center;gap:10px;color:var(--text3);font-size:11px;padding:40px 0}
+.spin{width:13px;height:13px;border:1px solid rgba(255,255,255,0.1);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+.spin.blue{border-top-color:var(--unsplash)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.state-empty{padding:32px 0;color:var(--text3);font-size:11px;line-height:1.8}
+.state-welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;color:var(--text3)}
+.welcome-icon{font-size:32px;opacity:.2}
+
+/* export overlay */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:300;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.exp-box{background:#141414;border:1px solid var(--border);border-radius:4px;width:720px;max-height:84vh;display:flex;flex-direction:column}
+.exp-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center}
+.exp-title{font-family:Georgia,serif;color:var(--gold);font-size:14px;font-weight:normal}
+.exp-close{margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.exp-tabs{display:flex;gap:4px;padding:12px 20px 0}
+.exp-tab{padding:5px 12px;font-size:9.5px;border:1px solid var(--border);color:var(--text2);cursor:pointer;border-radius:2px;transition:all .18s}
+.exp-tab.active{border-color:rgba(201,168,76,0.35);color:var(--gold);background:var(--gold2)}
+.exp-body{flex:1;overflow-y:auto;padding:14px 20px}
+.exp-code{background:#0a0a0a;border:1px solid var(--border);border-radius:3px;padding:14px;font-family:monospace;font-size:9.5px;color:var(--text2);white-space:pre;overflow-x:auto;line-height:1.75;max-height:420px;overflow-y:auto}
+.exp-prev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.exp-prev-card{background:var(--bg3);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.exp-prev-card img{width:100%;aspect-ratio:16/9;object-fit:cover}
+.exp-prev-info{padding:6px 8px}
+.exp-prev-name{font-size:10px;color:var(--text);margin-bottom:1px}
+.exp-prev-city{font-size:8px;color:var(--text3)}
+.exp-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px}
+.btn-copy{background:var(--gold2);border:1px solid rgba(201,168,76,0.3);color:var(--gold);padding:6px 14px;font-size:10px;cursor:pointer;border-radius:2px}
+.btn-dl{background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);color:#a78bfa;padding:6px 14px;font-size:10px;cursor:pointer;border-radius:2px}
+.btn-cancel{background:none;border:1px solid var(--border);color:var(--text3);padding:6px 12px;font-size:10px;cursor:pointer;border-radius:2px}
+
+.pending-list{font-size:10px;color:var(--text3);line-height:2.2}
+.pending-item{display:flex;align-items:center;gap:8px}
+.pending-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.15);flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div>
+    <div class="hd-title">电影地标 · 选图器</div>
+    <div class="hd-sub">TMDB 横版剧照 · Unsplash 地景图 + 手动 URL · CineOurs World Map</div>
+  </div>
+  <div class="hd-right">
+    <div class="hd-stats">
+      <div class="stat"><div class="stat-n" id="cntDone">0</div><div class="stat-l">已选</div></div>
+      <div class="stat"><div class="stat-n" id="cntTotal">0</div><div class="stat-l">总计</div></div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <button class="btn-export" onclick="openExport()">导出结果 →</button>
+  </div>
+</div>
+
+<div class="body-wrap">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="main" id="main">
+    <div class="state-welcome" id="welcomeState">
+      <div class="welcome-icon">🎬</div>
+      <div>从左侧选择一个地标开始选图</div>
+      <div style="font-size:9.5px;color:var(--text3);opacity:.6;margin-top:2px">TMDB 剧照 · Unsplash 地景（含手动 URL）两源切换</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="exportOverlay">
+  <div class="exp-box">
+    <div class="exp-hd">
+      <div class="exp-title">导出电影地标图片配置</div>
+      <div style="font-size:9px;color:var(--text3);margin-left:12px" id="expSummary"></div>
+      <button class="exp-close" onclick="closeExport()">✕</button>
+    </div>
+    <div class="exp-tabs">
+      <div class="exp-tab active" onclick="switchExpTab('preview',this)">预览</div>
+      <div class="exp-tab" onclick="switchExpTab('js',this)">JS 代码</div>
+      <div class="exp-tab" onclick="switchExpTab('json',this)">JSON</div>
+      <div class="exp-tab" onclick="switchExpTab('pending',this)">待处理</div>
+    </div>
+    <div class="exp-body" id="expBody"></div>
+    <div class="exp-footer">
+      <button class="btn-copy" onclick="copyExp()">复制代码</button>
+      <button class="btn-dl" onclick="downloadExp()">下载 JSON</button>
+      <button class="btn-cancel" onclick="closeExport()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="../data/places.js"></script>
+<script>
+const TMDB_KEY = '68d50b44ac8b8e22f5426fc17fe4fe90';
+const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+const UNSPLASH_ACCESS = 'FDqPGCCgSVM5-z5hDMSYm_s09Lf8Br16HQ7f9bFdCHQ'; // demo key — replace with yours
+
+// PL from ../data/places.js (tp === 'fl' = 电影地标)
+function isFilm(p){return p.tp==='fl';}
+function unsplashQueries(p){return [p.nm+' '+p.cy,p.cy+' cinematic street',p.co+' film location'];}
+
+// ── State ──
+const selections = {};    // id -> [{url,thumb,source,credit,w,h}]
+const tmdbCache = {};
+const unsplashCache = {};
+let current = null;
+let activeSource = 'tmdb'; // 'tmdb' | 'unsplash'
+let currentResults = [];
+let currentSort = 'relevance';
+let manualPreviewUrl = null;
+let expTabName = 'preview';
+
+// ── SIDEBAR ──
+function buildSidebar() {
+  const sb = document.getElementById('sidebar');
+  const cities = [...new Set(PL.filter(isFilm).map(p => p.cy))];
+  sb.innerHTML = '';
+  cities.forEach(city => {
+    const grp = document.createElement('div');
+    grp.innerHTML = `<div class="city-label">${city}</div>`;
+    PL.filter(p => isFilm(p) && p.cy === city).forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'film-row';
+      row.id = 'srow-' + p.id;
+      updateRowHTML(row, p);
+      row.onclick = () => selectPlace(p);
+      grp.appendChild(row);
+    });
+    sb.appendChild(grp);
+  });
+  document.getElementById('cntTotal').textContent = PL.filter(isFilm).length;
+}
+
+function updateRowHTML(row, p) {
+  const sel = selections[p.id];
+  const hasSel = sel && sel.length > 0;
+  const srcTag = hasSel ? `<span class="src-badge src-${sel[0].source}">${srcLabel(sel[0].source)}</span>` : '';
+  row.innerHTML = `
+    <div class="fr-place">${p.nm}${srcTag}</div>
+    <div class="fr-film">《${p.fm}》${p.fy||''} · ${p.dr}</div>
+    ${hasSel ? '<div class="fr-done">✓</div>' : ''}`;
+}
+
+function srcLabel(s) { return s==='tmdb'?'TMDB':s==='unsplash'?'Unsplash':s==='manual'?'URL':'URL'; }
+
+function refreshRow(id) {
+  const p = PL.find(x => x.id === id);
+  const row = document.getElementById('srow-' + id);
+  if (p && row) updateRowHTML(row, p);
+}
+
+function updateStats() {
+  const done = Object.values(selections).filter(s => s && s.length > 0).length;
+  document.getElementById('cntDone').textContent = done;
+  document.getElementById('progFill').style.width = (done / PL.filter(isFilm).length * 100) + '%';
+}
+
+// ── SELECT PLACE ──
+function selectPlace(place, src) {
+  current = place;
+  src = src || activeSource;
+  activeSource = src;
+  document.querySelectorAll('.film-row').forEach(r => r.classList.remove('active'));
+  const row = document.getElementById('srow-' + place.id);
+  if (row) { row.classList.add('active'); row.scrollIntoView({block:'nearest'}); }
+  renderMain(place, src);
+}
+
+function renderMain(place, src) {
+  const main = document.getElementById('main');
+  main.innerHTML = `
+    <div class="film-hd">
+      <div class="fh-place">${place.nm}</div>
+      <div class="fh-film">《${place.fm}》${place.fy ? '· ' + place.fy : ''} · ${place.fm}</div>
+      <div class="fh-meta">${place.dr} · ${place.cy}</div>
+    </div>
+    <div class="source-bar">
+      <div class="src-tab ${src==='tmdb'?'active-tmdb':''}" id="tab-tmdb" onclick="switchSource('tmdb')">
+        <div class="src-dot dot-tmdb"></div>TMDB 横版剧照
+      </div>
+      <div class="src-tab ${src==='unsplash'?'active-unsplash':''}" id="tab-unsplash" onclick="switchSource('unsplash')">
+        <div class="src-dot dot-unsplash"></div>Unsplash · 地景图
+      </div>
+    </div>
+    <div class="sel-bar ${hasSel()?'':'hidden'}" id="selBar"></div>
+    <div class="content" id="contentArea">
+      <div class="state-loading"><div class="spin ${src==='unsplash'?'blue':''}"></div>加载中…</div>
+    </div>`;
+  renderSelBar();
+  if (src === 'tmdb') loadTMDB(place);
+  else renderUnsplashPanel(place);
+}
+
+function hasSel() { return current && selections[current.id] && selections[current.id].length > 0; }
+
+function switchSource(src) {
+  activeSource = src;
+  document.querySelectorAll('.src-tab').forEach(t => {
+    t.className = 'src-tab' + (t.id==='tab-'+src ? ' active-'+src : '');
+  });
+  if (!current) return;
+  if (src === 'tmdb') {
+    document.getElementById('contentArea').innerHTML = `<div class="state-loading"><div class="spin"></div>加载中…</div>`;
+    loadTMDB(current);
+  } else {
+    renderUnsplashPanel(current);
+  }
+}
+
+// ── TMDB ──
+async function loadTMDB(place) {
+  const key = place.fm + '_' + place.fy;
+  if (tmdbCache[key]) { currentResults = tmdbCache[key]; renderGrid(currentResults, 'tmdb'); return; }
+  try {
+    // search with year
+    let movies = await tmdbSearch(place.fm, place.fy);
+    // fallback: no year
+    if (!movies.length) movies = await tmdbSearch(place.fm, null);
+    // fallback: Chinese title
+    if (!movies.length && place.fm) movies = await tmdbSearch(place.fm, null);
+    if (!movies.length) {
+      document.getElementById('contentArea').innerHTML = `<div class="state-empty">TMDB 未找到《${place.fm}》的剧照<br>切换到 Unsplash 或手动 URL</div>`;
+      return;
+    }
+    const allBackdrops = [];
+    const seen = new Set();
+    for (const m of movies.slice(0, 4)) {
+      const imgRes = await fetch(`https://api.themoviedb.org/3/movie/${m.id}/images?api_key=${TMDB_KEY}`);
+      const imgData = await imgRes.json();
+      // main backdrop
+      if (m.backdrop_path) {
+        const url = TMDB_IMG + 'w780' + m.backdrop_path;
+        if (!seen.has(url)) { seen.add(url); allBackdrops.push({url, thumb:url, source:'tmdb', credit:'TMDB', w:1280, h:720, vote:0}); }
+      }
+      for (const b of (imgData.backdrops || []).slice(0, 15)) {
+        const url = TMDB_IMG + 'w780' + b.file_path;
+        if (!seen.has(url) && b.width >= 800) {
+          seen.add(url);
+          allBackdrops.push({url, thumb:url, source:'tmdb', credit:'TMDB', w:b.width, h:b.height, vote:b.vote_average||0});
+        }
+      }
+    }
+    tmdbCache[key] = allBackdrops;
+    currentResults = allBackdrops;
+    renderGrid(allBackdrops, 'tmdb');
+  } catch(e) {
+    document.getElementById('contentArea').innerHTML = `<div class="state-empty">加载失败：${e.message}<br><small>检查网络或切换到其他图源</small></div>`;
+  }
+}
+
+async function tmdbSearch(query, year) {
+  const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(query)}${year?'&year='+year:''}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  return data.results || [];
+}
+
+
+
+// ── UNSPLASH + 手动URL 合并面板 ──
+function renderUnsplashPanel(place) {
+  const queries = unsplashQueries(place);
+  const content = document.getElementById('contentArea');
+  content.innerHTML = `
+    <!-- 预设搜索词 -->
+    <div class="query-pills" id="qpills">${queries.map((q,i) =>
+      `<div class="qpill ${i===0?'active':''}" onclick="runUnsplash('${q.replace(/'/g,"\\'")}',this)">${q}</div>`
+    ).join('')}</div>
+
+    <!-- 自定义搜索 -->
+    <div class="sub-controls" style="margin-bottom:14px">
+      <div class="ctrl-search">
+        <input class="ctrl-input unsplash-inp" id="unsplashInput"
+          placeholder="自定义搜索词（英文效果更好）…"
+          onkeydown="if(event.key==='Enter')runUnsplash(this.value,null)">
+        <button class="ctrl-btn unsplash"
+          onclick="runUnsplash(document.getElementById('unsplashInput').value,null)">搜索</button>
+      </div>
+    </div>
+
+    <!-- 搜索结果 -->
+    <div id="unsplashResults">
+      <div class="state-loading"><div class="spin blue"></div>搜索中…</div>
+    </div>
+
+    <!-- 分割线 -->
+    <div style="margin:22px 0 16px;display:flex;align-items:center;gap:10px">
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+      <div style="font-size:9px;color:var(--text3);letter-spacing:.06em">或者直接粘贴图片 URL</div>
+      <div style="flex:1;height:1px;background:var(--border)"></div>
+    </div>
+
+    <!-- 手动 URL 输入 -->
+    <div style="margin-bottom:6px;font-size:8.5px;color:var(--text3);line-height:1.8">
+      支持：Unsplash · TMDB · Supabase Storage · 其他无防盗链图片
+    </div>
+    <div class="url-row">
+      <input class="url-input" id="manualUrl"
+        placeholder="https://images.unsplash.com/photo-… 或 https://image.tmdb.org/t/p/w780/…"
+        onkeydown="if(event.key==='Enter')previewUrl()">
+      <button class="btn-preview" onclick="previewUrl()">预览并添加</button>
+    </div>
+    <div id="urlPreviewArea"></div>`;
+
+  runUnsplash(queries[0], null, true);
+}
+
+async function runUnsplash(query, pillEl, silent) {
+  if (!query || !query.trim()) return;
+  if (pillEl) {
+    document.querySelectorAll('.qpill').forEach(p => p.classList.remove('active'));
+    pillEl.classList.add('active');
+  }
+  const resultsEl = document.getElementById('unsplashResults');
+  if (!resultsEl) return;
+  if (!silent) resultsEl.innerHTML = `<div class="state-loading"><div class="spin blue"></div>搜索「${query}」…</div>`;
+
+  const cKey = 'us_' + query;
+  if (unsplashCache[cKey]) { currentResults = unsplashCache[cKey]; renderGrid(unsplashCache[cKey], 'unsplash'); return; }
+
+  try {
+    const res = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=24&orientation=landscape&client_id=${UNSPLASH_ACCESS}`, {
+      mode: 'cors',
+      headers: { 'Accept-Version': 'v1', 'Accept': 'application/json' }
+    });
+    const data = await res.json();
+    if (!data.results) throw new Error('API 返回异常');
+    const imgs = (data.results || []).map(p => ({
+      url: p.urls.regular, thumb: p.urls.small,
+      source: 'unsplash', credit: p.user.name,
+      w: p.width, h: p.height
+    }));
+    unsplashCache[cKey] = imgs;
+    currentResults = imgs;
+    renderGrid(imgs, 'unsplash');
+  } catch(e) {
+    const isCors = e.message.includes('fetch') || e.message.includes('Failed') || e.message.includes('Network');
+    if (resultsEl) resultsEl.innerHTML = `
+      <div class="state-empty" style="padding:16px 0">
+        ${isCors ? `
+          <strong style="color:var(--manual)">⚠️ 浏览器跨域限制（CORS）</strong><br><br>
+          本地直接打开 HTML 文件无法调用 Unsplash API。<br>
+          <strong style="color:var(--text2);font-size:10px">解决方法（选一个）：</strong>
+          <div style="font-size:9px;color:var(--text3);line-height:2.2;margin-top:8px">
+            ① 在 Cursor 终端运行：<code style="color:var(--gold)">python3 -m http.server 8080</code><br>
+            &nbsp;&nbsp;&nbsp;然后浏览器打开 <code style="color:var(--gold)">http://localhost:8080/film-image-picker.html</code><br>
+            ② 或直接在下方粘贴 Unsplash 图片 URL（去 unsplash.com 找图，右键复制图片地址）
+          </div>
+        ` : `搜索失败：${e.message}<br><small>或直接在下方粘贴图片 URL</small>`}
+      </div>`;
+  }
+}
+
+function renderManualSelectedHTML() {
+  const sel = selections[current?.id] || [];
+  if (!sel.length) return `<div style="font-size:10px;color:var(--text3)">还没有选图，粘贴 URL 后点预览确认</div>`;
+  return sel.map((img,i) => `
+    <div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <img src="${img.thumb||img.url}" style="width:100px;height:56px;object-fit:cover;border-radius:2px;flex-shrink:0">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:8.5px;color:var(--text2);font-family:monospace;word-break:break-all;line-height:1.5">${img.url}</div>
+        <span class="src-badge src-${img.source}">${srcLabel(img.source)}</span>
+      </div>
+      <button onclick="removeImg(${i})" style="background:none;border:1px solid rgba(248,113,113,0.2);color:#f87171;padding:3px 8px;font-size:9px;cursor:pointer;border-radius:2px;flex-shrink:0">移除</button>
+    </div>`).join('');
+}
+
+function removeImg(idx) {
+  if (!current || !selections[current.id]) return;
+  selections[current.id].splice(idx, 1);
+  const ms = document.getElementById('manualSelected');
+  if (ms) ms.innerHTML = renderManualSelectedHTML();
+  renderSelBar();
+  refreshRow(current.id);
+  updateStats();
+}
+
+async function previewUrl() {
+  const input = document.getElementById('manualUrl');
+  const url = input?.value?.trim();
+  if (!url) return;
+  const area = document.getElementById('urlPreviewArea');
+  area.innerHTML = `<div class="state-loading" style="padding:16px 0"><div class="spin"></div>检查图片…</div>`;
+  try {
+    await new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res({w:img.naturalWidth, h:img.naturalHeight});
+      img.onerror = () => rej(new Error('无法加载图片，检查 URL 是否正确或有防盗链'));
+      img.src = url;
+      setTimeout(() => rej(new Error('加载超时')), 8000);
+    });
+    const src = url.includes('unsplash') ? 'unsplash' : url.includes('tmdb') ? 'tmdb' : 'manual';
+    area.innerHTML = `
+      <div class="url-preview">
+        <div class="url-prev-img"><img src="${url}" onerror="this.parentElement.style.background='#2a2a2a'"></div>
+        <div class="url-prev-info">
+          <div class="url-prev-label">✓ 图片可正常加载</div>
+          <div class="url-prev-url">${url}</div>
+          <span class="src-badge src-${src}">${srcLabel(src)}</span>
+          <br><br>
+          <button class="btn-add-url" onclick="addManualUrl('${url.replace(/'/g,"\\'")}','${src}')">添加此图 ✓</button>
+        </div>
+      </div>`;
+  } catch(e) {
+    area.innerHTML = `<div class="url-error">✕ ${e.message}</div>`;
+  }
+}
+
+function addManualUrl(url, src) {
+  if (!current) return;
+  if (!selections[current.id]) selections[current.id] = [];
+  const exists = selections[current.id].some(s => s.url === url);
+  if (!exists) selections[current.id].push({url, thumb:url, source:src, credit:'', w:0, h:0});
+  document.getElementById('manualUrl').value = '';
+  document.getElementById('urlPreviewArea').innerHTML = '';
+  const ms = document.getElementById('manualSelected');
+  if (ms) ms.innerHTML = renderManualSelectedHTML();
+  renderSelBar();
+  refreshRow(current.id);
+  updateStats();
+}
+
+// ── GRID ──
+function renderGrid(results, src) {
+  const area = document.getElementById(src==='unsplash' ? 'unsplashResults' : 'contentArea');
+  if (!area) return;
+  if (!results.length) { area.innerHTML = `<div class="state-empty">未找到图片，试试其他搜索词</div>`; return; }
+  const sorted = currentSort==='size' ? [...results].sort((a,b)=>b.w*b.h-a.w*a.h) : results;
+  const sel = selections[current?.id] || [];
+  area.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div class="result-info">${sorted.length} 张 · 横版 · 点击选择</div>
+      <div class="sort-btns" style="margin-left:auto">
+        <button class="sort-btn ${currentSort==='relevance'?'active':''}" onclick="setSort('relevance')">相关性</button>
+        <button class="sort-btn ${currentSort==='size'?'active':''}" onclick="setSort('size')">尺寸↓</button>
+      </div>
+    </div>
+    <div class="img-grid">${sorted.map(img => {
+      const isSel = sel.some(s => s.url === img.url);
+      const srcTag = `<span class="img-src-tag src-${img.source}">${srcLabel(img.source)}</span>`;
+      return `<div class="img-card ${isSel?'selected':''}" onclick='toggleImg(${JSON.stringify(img)})'>
+        <div class="sel-check">✓</div>
+        <img src="${img.thumb}" loading="lazy" onerror="this.closest('.img-card').style.display='none'">
+        <div class="img-meta">
+          <span class="img-credit">© ${img.credit}</span>
+          <span style="display:flex;gap:4px;align-items:center">${srcTag}<span class="img-size">${img.w}×${img.h}</span></span>
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+}
+
+function setSort(s) {
+  currentSort = s;
+  if (currentResults.length) renderGrid(currentResults, activeSource);
+}
+
+function toggleImg(img) {
+  if (!current) return;
+  if (!selections[current.id]) selections[current.id] = [];
+  const sel = selections[current.id];
+  const idx = sel.findIndex(s => s.url === img.url);
+  if (idx >= 0) sel.splice(idx, 1);
+  else sel.push(img);
+  renderSelBar();
+  if (currentResults.length) renderGrid(currentResults, activeSource);
+  refreshRow(current.id);
+  updateStats();
+}
+
+// ── SEL BAR ──
+function renderSelBar() {
+  const bar = document.getElementById('selBar');
+  if (!bar) return;
+  const sel = selections[current?.id] || [];
+  bar.classList.toggle('hidden', sel.length === 0);
+  if (!sel.length) return;
+  bar.innerHTML = `
+    <div class="sel-thumbs">${sel.map((img,i) => `
+      <div class="sel-thumb" onclick='toggleImg(${JSON.stringify(img)})'>
+        <img src="${img.thumb||img.url}">
+        <div class="sel-thumb-rm">✕</div>
+      </div>`).join('')}</div>
+    <div>
+      <div class="sel-label"><span class="sel-count-n">${sel.length}</span> 张已选</div>
+      <div style="font-size:8px;color:var(--text3);margin-top:1px">建议选 1–2 张最能代表地点的</div>
+    </div>
+    <button class="btn-next" onclick="goNext()">确认，下一个 →</button>
+    <button class="btn-clr" onclick="clearSel()">清除</button>`;
+}
+
+function goNext() {
+  const idx = PL.findIndex(p => p.id === current?.id);
+  const next = PL.filter(isFilm).slice(PL.filter(isFilm).findIndex(p=>p.id===current?.id)+1).find(p => !selections[p.id]?.length)
+             || PL.filter(isFilm).find(p => !selections[p.id]?.length);
+  const src = activeSource === 'tmdb' ? 'tmdb' : 'unsplash';
+  if (next) selectPlace(next, src);
+}
+
+function clearSel() {
+  if (!current) return;
+  selections[current.id] = [];
+  renderSelBar();
+  if (currentResults.length) renderGrid(currentResults, activeSource);
+  refreshRow(current.id);
+  updateStats();
+}
+
+// ── EXPORT ──
+function openExport() {
+  document.getElementById('expSummary').textContent =
+    `已选 ${Object.values(selections).filter(s=>s&&s.length>0).length} / ${PL.filter(isFilm).length}`;
+  renderExpTab(expTabName);
+  document.getElementById('exportOverlay').classList.add('open');
+}
+function closeExport() { document.getElementById('exportOverlay').classList.remove('open'); }
+function switchExpTab(tab, el) {
+  expTabName = tab;
+  document.querySelectorAll('.exp-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderExpTab(tab);
+}
+function renderExpTab(tab) {
+  const body = document.getElementById('expBody');
+  const done = PL.filter(p => isFilm(p) && selections[p.id]?.length > 0);
+  const pending = PL.filter(p => isFilm(p) && !selections[p.id]?.length);
+  if (tab === 'preview') {
+    body.innerHTML = `<div class="exp-prev-grid">${done.map(p => {
+      const img = selections[p.id][0];
+      return `<div class="exp-prev-card">
+        <img src="${img.thumb||img.url}" onerror="this.style.display='none'">
+        <div class="exp-prev-info">
+          <div class="exp-prev-name">${p.nm}</div>
+          <div class="exp-prev-city">${p.cy} · <span class="src-badge src-${img.source}">${srcLabel(img.source)}</span></div>
+        </div>
+      </div>`;
+    }).join('')}${!done.length?'<div style="color:var(--text3);font-size:11px;padding:20px">还没有选图</div>':''}</div>`;
+  } else if (tab === 'js') {
+    const code = `// CineOurs · 电影地标图片配置\n// 已选 ${done.length}/${PL.filter(isFilm).length} · ${new Date().toLocaleDateString('zh-CN')}\n\nconst PLACE_IMAGES = {\n${done.map(p => {
+      const imgs = selections[p.id];
+      return `  // ${p.cy} · ${p.nm}\n  "${p.id}": [\n${imgs.map(img =>
+        `    { url: "${img.url}", thumb: "${img.thumb}", source: "${img.source}", credit: "${img.credit}" }`
+      ).join(',\n')}\n  ]`;
+    }).join(',\n\n')}\n};\n\n// 待处理 (${pending.length}条)\n${pending.map(p=>`// ${p.cy} · ${p.nm} · 《${p.fm}》`).join('\n')}`;
+    body.innerHTML = `<div class="exp-code">${escH(code)}</div>`;
+  } else if (tab === 'json') {
+    const obj = {};
+    done.forEach(p => { obj[p.id] = (selections[p.id]||[]).map(img => ({url:img.url,thumb:img.thumb,source:img.source,credit:img.credit})); });
+    body.innerHTML = `<div class="exp-code">${escH(JSON.stringify(obj,null,2))}</div>`;
+  } else {
+    body.innerHTML = `<div class="pending-list">${pending.map(p =>
+      `<div class="pending-item"><span class="pending-dot"></span>${p.cy} · <span style="color:var(--text)">${p.nm}</span> · 《${p.fm}》</div>`
+    ).join('')}${!pending.length?'<div style="color:var(--green);font-size:11px">全部完成 🎉</div>':''}</div>`;
+  }
+}
+function escH(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function copyExp(){
+  const code = document.querySelector('.exp-code')?.textContent||'';
+  navigator.clipboard.writeText(code);
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent='已复制 ✓'; setTimeout(()=>btn.textContent='复制代码',2000);
+}
+function downloadExp(){
+  const obj={};
+  PL.filter(p=>isFilm(p)&&selections[p.id]?.length>0).forEach(p=>{
+    obj[p.id]={place:p.nm,city:p.cy,film:p.fm,images:(selections[p.id]||[]).map(img=>({url:img.url,thumb:img.thumb,source:img.source,credit:img.credit}))};
+  });
+  const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`cineours-place-images-${new Date().toISOString().slice(0,10)}.json`;a.click();
+}
+
+buildSidebar();
+</script>
+</body>
+</html>
