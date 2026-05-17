@@ -253,14 +253,7 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
           <input id="sb-inp" type="text" placeholder="搜索城市、影院或电影地标" oninput="doFilter(this.value)">
         </div>
       </div>
-      <div id="city-tabs">
-        <span class="ct active" onclick="filterCity('')">全部</span>
-        <span class="ct" onclick="filterCity('香港')">香港</span>
-        <span class="ct" onclick="filterCity('柏林')">柏林</span>
-        <span class="ct" onclick="filterCity('巴黎')">巴黎</span>
-        <span class="ct" onclick="filterCity('东京')">东京</span>
-        <span class="ct" onclick="filterCity('纽约')">纽约</span>
-      </div>
+      <div id="city-tabs"></div>
       <div class="sb-hint">刚刚有人在世界某处留下了记录</div>
       <div id="pl"></div>
       <div class="sb-foot"><div class="sb-foot-t">正在接收世界各地的电影信号</div></div>
@@ -541,10 +534,28 @@ function fillCard(p){
 }
 
 /* ── 左侧列表 ── */
+function filterCityList(){
+  var seen={}, list=[];
+  CITIES.forEach(function(c){ if(!seen[c.zh]){ seen[c.zh]=1; list.push(c.zh); } });
+  PL.forEach(function(p){ if(!seen[p.cy]){ seen[p.cy]=1; list.push(p.cy); } });
+  return list;
+}
+
+function buildCityTabs(){
+  var el=document.getElementById('city-tabs');
+  if(!el)return;
+  var html='<span class="ct'+(activeCity===''?' active':'')+'" data-city="" onclick="filterCity(\'\')">全部</span>';
+  filterCityList().forEach(function(cy){
+    var esc=cy.replace(/'/g,'\\\'');
+    html+='<span class="ct'+(activeCity===cy?' active':'')+'" data-city="'+cy+'" onclick="filterCity(\''+esc+'\')">'+cy+'</span>';
+  });
+  el.innerHTML=html;
+}
+
 function filterCity(city){
   activeCity=city;
   document.querySelectorAll('.ct').forEach(function(el){
-    el.classList.toggle('active', el.textContent===(city||'全部'));
+    el.classList.toggle('active',(el.getAttribute('data-city')||'')===city);
   });
   doFilter(document.getElementById('sb-inp').value);
 }
@@ -609,6 +620,7 @@ function initDrag(el){
 
 /* ── 初始化 ── */
 function bootMapPage(){
+  buildCityTabs();
   doFilter('');
   fillStrip(active.cy);
   fillCard(active);
