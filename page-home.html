@@ -662,7 +662,7 @@
       if(ctaBD){
         ctaBD.addEventListener('mouseenter',ctaLightOn);
         ctaBD.addEventListener('mouseleave',ctaLightOff);
-        ctaBD.addEventListener('click',function(){nav('page-festivals');});
+        ctaBD.addEventListener('click',function(){nav('page-festival-detail');});
       }
       /* 自动演示一次 */
       setTimeout(function(){
@@ -752,13 +752,13 @@
               eye:   '最新资讯',
               title:  n0.title   || '第28届上影节征片进行中',
               sub:    n0.summary || '主竞赛 · 亚洲新人 · 纪录片',
-              url:    ''
+              section: 'sec-films'
             },
             {
               eye:   '评审预测',
               title: '谁会摘得金爵奖？',
               sub:   '提前预测 · 加入讨论',
-              url:   ''
+              section: 'sec-discuss'
             }
           ];
         },
@@ -768,13 +768,13 @@
               eye:'放映后讨论',
               title:'今天看了哪部？说说感受',
               sub:  '加入讨论 · 实时更新',
-              url:  ''
+              section: 'sec-discuss'
             },
             {
               eye:'奖项预测',
               title:'谁会摘得金爵奖？',
               sub:  '预测截止颁奖前夜',
-              url:  ''
+              section: 'sec-discuss'
             }
           ];
         },
@@ -784,13 +784,13 @@
               eye:'颁奖回顾',
               title:'金爵奖完整获奖名单',
               sub:  '查看所有单元结果',
-              url:  ''
+              section: 'sec-films'
             },
             {
               eye:'你的片单',
               title:'这届上影节，你看了几部？',
               sub:  '生成你的专属观影记录',
-              url:  ''
+              section: 'sec-lists'
             }
           ];
         }
@@ -812,7 +812,14 @@
           if(subEl) subEl.textContent = item.sub;
           if(cardEl){
             cardEl.addEventListener('click', function(){
-              nav('page-offline-festival');
+              try{
+                if(window.parent && window.parent !== window){
+                  window.parent.postMessage({
+                    type: 'navigateAndScroll',
+                    payload: { page: 'offline-festival', section: item.section }
+                  }, '*');
+                }
+              }catch(e){ window.location.href = 'page-offline-festival.html'; }
             });
           }
         });

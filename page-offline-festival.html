@@ -205,7 +205,7 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 <body>
 
 <!-- 1. BANNER -->
-<div class="banner">
+<div class="banner" id="sec-banner">
   <div class="banner-bg"></div>
   <div class="banner-inner">
     <div class="banner-tag">第二十八届</div>
@@ -223,7 +223,7 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 </div>
 
 <!-- 2. 社区片单 -->
-<div class="section">
+<div class="section" id="sec-lists">
   <div class="sec-hdr">
     <div><div class="sec-title">大家正在怎么选</div></div>
     <div class="sec-more" onclick="openListModal()">创建片单 +</div>
@@ -236,7 +236,7 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 <div class="divider"></div>
 
 <!-- 3. 选片视角（Cine Ours 策展） -->
-<div class="section">
+<div class="section" id="sec-films" style="padding-top:0;">
   <div class="sec-hdr">
     <div>
       <div class="area-tag">Cine Ours 策展视角</div>
@@ -270,7 +270,7 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 <div class="divider"></div>
 
 <!-- 5. 现场打卡 -->
-<div class="section">
+<div class="section" id="sec-checkin" style="padding-top:0;">
   <div class="sec-hdr">
     <div><div class="sec-title">现场打卡</div></div>
     <div class="sec-more" onclick="openCheckinModal()">去打卡 ›</div>
@@ -284,7 +284,7 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 <div class="divider"></div>
 
 <!-- 6. 散场后讨论 -->
-<div class="discuss-section">
+<div class="discuss-section" id="sec-discuss">
   <div class="mod-hdr">
     <div>
       <div class="mod-title">散场后，大家都在谈论什么</div>
@@ -868,6 +868,14 @@ async function init() {
   initDrag('checkin-scroll');
 }
 document.addEventListener('DOMContentLoaded', init);
+
+// ── 接收来自 shell 的 scrollTo 指令 ──────────────
+window.addEventListener('message', function(e) {
+  var data = e.data || {};
+  if (data.type !== 'scrollTo') return;
+  var el = data.section ? document.getElementById(data.section) : null;
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 </script>
 </body>
 </html>

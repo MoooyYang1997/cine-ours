@@ -483,6 +483,21 @@ window.addEventListener('message', e => {
     const dest = typeof raw === 'string' && raw.indexOf('page-') === 0 ? raw.slice(5) : raw;
     go(dest);
   }
+  if (type === 'navigateAndScroll') {
+    const dest = payload && payload.page;
+    const section = payload && payload.section;
+    if (!dest) return;
+    const wasLoaded = loaded.has(dest);
+    go(dest);
+    if (section) {
+      const frame = document.getElementById('f-' + dest);
+      const doScroll = () => {
+        if (frame && frame.contentWindow)
+          frame.contentWindow.postMessage({ type: 'scrollTo', section }, '*');
+      };
+      setTimeout(doScroll, wasLoaded ? 200 : 900);
+    }
+  }
   if (type === 'toast')    showToast(payload.msg);
   if (type === 'login')    { setAuth(true); go('home'); showToast('欢迎回来 余小舟'); }
   if (type === 'logout')   logout();
