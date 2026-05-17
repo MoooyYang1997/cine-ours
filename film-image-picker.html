@@ -235,15 +235,46 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   </div>
 </div>
 
-<script src="../data/places.js"></script>
 <script>
 const TMDB_KEY = '68d50b44ac8b8e22f5426fc17fe4fe90';
 const TMDB_IMG = 'https://image.tmdb.org/t/p/';
 const UNSPLASH_ACCESS = 'FDqPGCCgSVM5-z5hDMSYm_s09Lf8Br16HQ7f9bFdCHQ'; // demo key — replace with yours
 
-// PL from ../data/places.js (tp === 'fl' = 电影地标)
+// PL from data/places.js (tp === 'fl' = 电影地标)
 function isFilm(p){return p.tp==='fl';}
 function unsplashQueries(p){return [p.nm+' '+p.cy,p.cy+' cinematic street',p.co+' film location'];}
+
+function loadPlacesScript(cb){
+  if(typeof PL!=='undefined'&&PL.length){cb();return;}
+  var paths=[
+    new URL('data/places.js',location.href).href,
+    'data/places.js',
+    './data/places.js'
+  ];
+  var i=0;
+  function next(){
+    if(typeof PL!=='undefined'&&PL.length){cb();return;}
+    if(i>=paths.length){cb();return;}
+    var s=document.createElement('script');
+    s.src=paths[i++];
+    s.onload=function(){cb();};
+    s.onerror=next;
+    document.head.appendChild(s);
+  }
+  next();
+}
+
+function startPicker(){
+  try{
+    buildSidebar();
+    updateStats();
+  }catch(e){
+    console.error(e);
+    var sb=document.getElementById('sidebar');
+    if(sb)sb.innerHTML='<div style="padding:14px;font-size:11px;color:#f87171">加载失败: '+e.message+'</div>';
+    document.getElementById('cntTotal').textContent='0';
+  }
+}
 
 // ── State ──
 const selections = {};    // id -> [{url,thumb,source,credit,w,h}]
@@ -259,6 +290,11 @@ let expTabName = 'preview';
 // ── SIDEBAR ──
 function buildSidebar() {
   const sb = document.getElementById('sidebar');
+  if (typeof PL === 'undefined' || !PL.length) {
+    sb.innerHTML = '<div style="padding:14px;font-size:11px;color:rgba(201,168,76,0.85);line-height:1.6">未加载 data/places.js<br><br>请启动本地服务后打开：<br><code style="color:rgba(237,232,223,0.55);font-size:10px;line-height:1.5">cd ~/Downloads/cine-ours-site1.0<br>python3 -m http.server 8080</code><br><br><code style="color:rgba(237,232,223,0.55);font-size:10px">http://localhost:8080/film-image-picker.html</code></div>';
+    document.getElementById('cntTotal').textContent = '0';
+    return;
+  }
   const cities = [...new Set(PL.filter(isFilm).map(p => p.cy))];
   sb.innerHTML = '';
   cities.forEach(city => {
@@ -297,8 +333,9 @@ function refreshRow(id) {
 
 function updateStats() {
   const done = Object.values(selections).filter(s => s && s.length > 0).length;
+  const total = (typeof PL !== 'undefined') ? PL.filter(isFilm).length : 0;
   document.getElementById('cntDone').textContent = done;
-  document.getElementById('progFill').style.width = (done / PL.filter(isFilm).length * 100) + '%';
+  document.getElementById('progFill').style.width = (total ? done / total * 100 : 0) + '%';
 }
 
 // ── SELECT PLACE ──
@@ -715,7 +752,7 @@ function downloadExp(){
   a.download=`cineours-place-images-${new Date().toISOString().slice(0,10)}.json`;a.click();
 }
 
-buildSidebar();
+loadPlacesScript(startPicker);
 </script>
 </body>
 </html>

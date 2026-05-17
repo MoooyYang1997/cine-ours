@@ -226,7 +226,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   </div>
 </div>
 
-<script src="../data/places.js"></script>
+<script src="data/places.js"></script>
 <script>
 // PL from ../data/places.js (tp === 'ci' = 影院现场)
 function isCinema(p){return p.tp==='ci';}
@@ -247,11 +247,16 @@ let expTab = 'preview';
 // ── INIT ──
 function init() {
   buildSidebar();
-  document.getElementById('cntTotal').textContent = PL.filter(isCinema).length;
+  var total = (typeof PL !== 'undefined' && PL.length) ? PL.filter(isCinema).length : 0;
+  document.getElementById('cntTotal').textContent = total;
 }
 
 function buildSidebar() {
   const sb = document.getElementById('sidebar');
+  if (typeof PL === 'undefined' || !PL.length) {
+    sb.innerHTML = '<div style="padding:14px;font-size:11px;color:rgba(168,120,220,0.9);line-height:1.6">未加载地点数据。<br>请在项目目录启动本地服务：<br><code style="color:rgba(237,232,223,0.5)">python3 -m http.server 8080</code></div>';
+    return;
+  }
   const cities = [...new Set(PL.filter(isCinema).map(c => c.cy))];
   sb.innerHTML = '';
   cities.forEach(city => {
