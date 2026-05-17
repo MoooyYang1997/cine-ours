@@ -1,0 +1,117 @@
+name: Sync SIFF Films
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 UTC 00:00（北京时间早上 8 点）
+  workflow_dispatch:       # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync SIFF film catalog to Supabase
+        run: |
+          node << 'SCRIPT'
+          const SUPABASE_URL = process.env.SUPABASE_URL;
+          const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+          const FESTIVAL = 'siff2026';
+
+          const SECTIONS = [
+            { name: 'SIFF狂想曲',              url: 'https://www.siff.com/content?aid=101260514144734824620519834783749932' },
+            { name: '影像无限',                 url: 'https://www.siff.com/content?aid=101260514150129824624022640660485578' },
+            { name: '影史推荐',                 url: 'https://www.siff.com/content?aid=101260512162633823920652560896005012' },
+            { name: '向大师致敬｜特别纪念',     url: 'https://www.siff.com/content?aid=101260424112521817321871199440901496' },
+            { name: '新视野｜IMAX',             url: 'https://www.siff.com/content?aid=101260516170059825378869698629637281' },
+            { name: '新视野｜杜比视界',         url: 'https://www.siff.com/content?aid=101260509155512822825602053574661668' },
+            { name: '科幻电影周',               url: 'https://www.siff.com/content?aid=101260509154717822823607557165061695' },
+            { name: '向大师致敬｜肯·洛奇',     url: 'https://www.siff.com/content?aid=101260508181214822497699747074053715' },
+            { name: '放大',                     url: 'https://www.siff.com/content?aid=101260507144438822083066905235461219' },
+            { name: '名导新作',                 url: 'https://www.siff.com/content?aid=101260507141635822076005580541957044' },
+            { name: '年度亚洲电影',             url: 'https://www.siff.com/content?aid=101260507144348822082856326008837904' },
+            { name: '向大师致敬｜比利·怀尔德', url: 'https://www.siff.com/content?aid=101260430171813819585000419627013579' },
+            { name: 'SIFF动画',                 url: 'https://www.siff.com/content?aid=101260428132927818802655823400965832' },
+            { name: '"一带一路"电影周',         url: 'https://www.siff.com/content?aid=101260427110556818404151573614597634' },
+            { name: '影展精粹',                 url: 'https://www.siff.com/content?aid=101260423202712817095844980330501467' },
+            { name: '特别策划｜陀思妥耶夫斯基', url: 'https://www.siff.com/content?aid=101260423200413817090059680354309701' },
+          ];
+
+          function parseFilms(html, section) {
+            const films = [];
+            const re = /!\[[^\]]*\]\((https:\/\/www\.siff\.com\/files\/[^)]+)\)\s*\n+\s*([^\n]+)/g;
+            let m, idx = 0;
+            while ((m = re.exec(html)) !== null) {
+              const siffImg = m[1].trim();
+              const caption = m[2].replace(/\s+/g, ' ').trim();
+              if (caption.startsWith('注：')) continue;
+              const parts = caption.split(/[|｜]/).map(p => p.trim()).filter(Boolean);
+              if (parts.length < 2) continue;
+              const title = parts[0];
+              const titleEn = parts[1] || null;
+              const yearStr = parts[parts.length - 1];
+              const year = /^\d{4}$/.test(yearStr) ? parseInt(yearStr) : null;
+              if (!title || title.startsWith('注：')) continue;
+              films.push({ title, title_en: titleEn, year, siff_img: siffImg, section, order_index: idx++ });
+            }
+            return films;
+          }
+
+          async function fetchSection(s) {
+            try {
+              const r = await fetch(s.url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+              if (!r.ok) throw new Error(`HTTP ${r.status}`);
+              return parseFilms(await r.text(), s.name);
+            } catch(e) {
+              console.log(`跳过 ${s.name}: ${e.message}`);
+              return [];
+            }
+          }
+
+          async function getExisting() {
+            const r = await fetch(`${SUPABASE_URL}/rest/v1/siff_films?festival=eq.${FESTIVAL}&select=title,section`, {
+              headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+            });
+            const data = await r.json();
+            const set = new Set();
+            (data || []).forEach(f => set.add(`${f.section}||${f.title}`));
+            return set;
+          }
+
+          async function insert(films) {
+            const r = await fetch(`${SUPABASE_URL}/rest/v1/siff_films`, {
+              method: 'POST',
+              headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+              },
+              body: JSON.stringify(films.map(f => ({ ...f, festival: FESTIVAL })))
+            });
+            return r.ok;
+          }
+
+          async function main() {
+            console.log('开始同步 SIFF 片单…');
+            const existing = await getExisting();
+            console.log(`数据库现有 ${existing.size} 条记录`);
+            let totalNew = 0;
+            for (const s of SECTIONS) {
+              const films = await fetchSection(s);
+              const newFilms = films.filter(f => !existing.has(`${f.section}||${f.title}`));
+              if (newFilms.length) {
+                await insert(newFilms);
+                console.log(`${s.name}: 新增 ${newFilms.length} 部`);
+                totalNew += newFilms.length;
+              } else {
+                console.log(`${s.name}: 无新增`);
+              }
+              await new Promise(r => setTimeout(r, 600));
+            }
+            console.log(`同步完成，共新增 ${totalNew} 部影片`);
+          }
+
+          main().catch(e => { console.error(e); process.exit(1); });
+          SCRIPT
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
