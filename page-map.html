@@ -317,6 +317,19 @@ var PL=[
   {id:'lnc', tp:'ci',nm:'Film at Lincoln Center',cy:'纽约',cye:'NEW YORK',co:'美国',q:'在纽约看完电影走出来，城市本身就是续集。',u:'@Maya · 记录于此',lk:61,lng:-73.983,lat:40.771,img:null},
 ];
 
+var PLACE_IMG_SLUGS={esc:'escalator-hk',ck:'chunking-mansion',shi:'shibuya-cross'};
+function applyPlaceImages(db){
+  PL.forEach(function(p){
+    if(p.img)return;
+    var slug=PLACE_IMG_SLUGS[p.id],row=slug?db[slug]:null;
+    if(!row){for(var k in db){if(db[k].place===p.nm){row=db[k];break;}}}
+    if(row&&row.images&&row.images.length){
+      var im=row.images[0];
+      p.img=im.thumb||im.url;
+    }
+  });
+}
+
 var CITIES=[
   {zh:'香港', lng:114.172,lat:22.295},
   {zh:'柏林', lng:13.405, lat:52.52},
@@ -540,11 +553,18 @@ function initDrag(el){
 }
 
 /* ── 初始化 ── */
-doFilter('');
-fillStrip(active.cy);
-fillCard(active);
-setTimeout(function(){document.getElementById('fc').classList.add('vis');},500);
-setTimeout(buildMap,100);
+function bootMapPage(){
+  doFilter('');
+  fillStrip(active.cy);
+  fillCard(active);
+  setTimeout(function(){document.getElementById('fc').classList.add('vis');},500);
+  setTimeout(buildMap,100);
+}
+fetch('data/place-images.json')
+  .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
+  .then(function(db){applyPlaceImages(db);})
+  .catch(function(){})
+  .finally(function(){bootMapPage();});
 </script>
 </body>
 </html>
