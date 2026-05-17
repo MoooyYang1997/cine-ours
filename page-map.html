@@ -365,11 +365,23 @@ var PL=[
 ];
 
 var PLACE_IMG_SLUGS={esc:'escalator-hk',ck:'chunking-mansion',tsk:'star-ferry',szh:'suzhou-creek',gdt:'guling-st',xmt:'ximending',sbk:'shibuya-cross',trv:'trevi',cnp:'croisette'};
+var CINEMA_IMG_SLUGS={hkcc:'hkcec',bwy:'kubrick-hk',dgm:'daguangming',gdt2:'spot-taipei',bab:'babylon-kino',cin:'cinematheque',pnt:'pantheon-cinema'};
 function applyPlaceImages(db){
   PL.forEach(function(p){
     if(p.img)return;
     var slug=PLACE_IMG_SLUGS[p.id],row=slug?db[slug]:null;
     if(!row){for(var k in db){if(db[k].place===p.nm){row=db[k];break;}}}
+    if(row&&row.images&&row.images.length){
+      var im=row.images[0];
+      p.img=im.thumb||im.url;
+    }
+  });
+}
+function applyCinemaImages(db){
+  PL.forEach(function(p){
+    if(p.img||p.tp!=='ci')return;
+    var slug=CINEMA_IMG_SLUGS[p.id],row=slug?db[slug]:null;
+    if(!row){for(var k in db){if(db[k].name===p.nm){row=db[k];break;}}}
     if(row&&row.images&&row.images.length){
       var im=row.images[0];
       p.img=im.thumb||im.url;
@@ -612,11 +624,13 @@ function bootMapPage(){
   setTimeout(function(){document.getElementById('fc').classList.add('vis');},500);
   setTimeout(buildMap,100);
 }
-fetch('data/place-images.json')
-  .then(function(r){return r.ok?r.json():Promise.reject(r.status);})
-  .then(function(db){applyPlaceImages(db);})
-  .catch(function(){})
-  .finally(function(){bootMapPage();});
+Promise.all([
+  fetch('data/place-images.json').then(function(r){return r.ok?r.json():{}}).catch(function(){return {};}),
+  fetch('data/cinema-images.json').then(function(r){return r.ok?r.json():{}}).catch(function(){return {};})
+]).then(function(dbs){
+  applyPlaceImages(dbs[0]);
+  applyCinemaImages(dbs[1]);
+}).finally(function(){bootMapPage();});
 </script>
 </body>
 </html>
