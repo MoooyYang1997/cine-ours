@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CineOurs 豆瓣选图
 // @namespace    cineours
-// @version      1.1
+// @version      1.2
 // @match        https://movie.douban.com/*
 // @run-at       document-idle
 // @grant        GM_xmlhttpRequest
@@ -72,39 +72,64 @@ function imgBestSrc(img) {
   return img.currentSrc || img.src || img.getAttribute('data-src') || ''
 }
 
+function minImgSize() {
+  return /\/photos\/photo\//.test(location.pathname) ? 80 : 200
+}
+
 function attachPlusButton(img) {
   if (img.dataset.cineours === '1') return true
-  if (!imgBestSrc(img) || imgBestSrc(img).startsWith('data:')) return false
-  if (imgVisibleSize(img) < 200) return false
+  const src = imgBestSrc(img)
+  if (!src || src.startsWith('data:')) return false
+
+  const rect = img.getBoundingClientRect()
+  const vis = Math.max(imgVisibleSize(img), rect.width, rect.height)
+  if (vis < minImgSize()) return false
 
   img.dataset.cineours = '1'
 
   const btn = document.createElement('button')
   btn.textContent = '+'
   btn.title = 'CineOurs 选图上传'
+  btn.className = 'cineours-plus-btn'
   btn.style.cssText = `
-    position:absolute;
-    top:6px;right:6px;
+    position:fixed;
     background:#D4AF37;color:#000;
     border:none;border-radius:50%;
     width:28px;height:28px;
     font-size:18px;font-weight:bold;
-    cursor:pointer;z-index:99999;
-    box-shadow:0 2px 8px rgba(0,0,0,0.35);
+    cursor:pointer;
+    z-index:2147483647;
+    box-shadow:0 2px 8px rgba(0,0,0,0.45);
+    pointer-events:auto;
   `
 
-  const wrap = img.parentElement
-  if (!wrap || wrap === document.body) return false
-  if (getComputedStyle(wrap).position === 'static') {
-    wrap.style.position = 'relative'
+  const placeBtn = () => {
+    const r = img.getBoundingClientRect()
+    if (r.width < 40 || r.height < 40) {
+      btn.style.display = 'none'
+      return
+    }
+    btn.style.display = 'block'
+    btn.style.left = `${Math.max(4, r.right - 32)}px`
+    btn.style.top = `${Math.max(4, r.top + 6)}px`
   }
-  wrap.appendChild(btn)
+
+  placeBtn()
+  const onReflow = () => placeBtn()
+  window.addEventListener('scroll', onReflow, { passive: true })
+  window.addEventListener('resize', onReflow)
+  btn._coDetach = () => {
+    window.removeEventListener('scroll', onReflow)
+    window.removeEventListener('resize', onReflow)
+  }
 
   btn.addEventListener('click', (e) => {
     e.preventDefault()
     e.stopPropagation()
-    showPicker(imgBestSrc(img), btn)
+    showPicker(src, btn)
   })
+
+  document.body.appendChild(btn)
   return true
 }
 
@@ -136,20 +161,29 @@ function watchImage(img) {
 }
 
 function injectButtons() {
-  const sel = [
-    'img[src*="doubanio"]',
-    'img[src*="douban.com"]',
-    '#content img',
-    '.photo-show img',
-    '.mainphoto img',
-    'img'
-  ].join(',')
-  document.querySelectorAll(sel).forEach(watchImage)
+  document.querySelectorAll('img[src*="doubanio"], img[src*="douban.com"]').forEach(watchImage)
+}
+
+function injectPhotoHero() {
+  if (!/\/photos\/photo\//.test(location.pathname)) return
+  const imgs = [...document.querySelectorAll('img[src*="doubanio"]')]
+  if (!imgs.length) return
+  const hero = imgs.sort((a, b) => {
+    const ra = a.getBoundingClientRect()
+    const rb = b.getBoundingClientRect()
+    return (rb.width * rb.height) - (ra.width * ra.height)
+  })[0]
+  if (!hero) return
+  hero.dataset.cineoursWatch = ''
+  watchImage(hero)
 }
 
 function boot() {
   injectButtons()
+  injectPhotoHero()
 }
+
+console.log('[CineOurs] 豆瓣选图 v1.2 已加载', location.href)
 
 function showPicker(imgSrc, anchor) {
   document.getElementById('co-picker')?.remove()
