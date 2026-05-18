@@ -343,8 +343,9 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
 
   <!-- 左：头像 -->
   <div class="hero-l">
-    <div class="av-ring">余</div>
-    <div class="av-upload">更换照片</div>
+    <div class="av-ring" id="av-ring">余</div>
+    <input type="file" id="av-input" accept="image/*" style="display:none">
+    <div class="av-upload" id="av-upload-btn">更换照片</div>
     <div class="av-social">
       <div class="av-social-row">
         <div class="av-social-n">2.1k</div>
@@ -659,8 +660,11 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
 <!-- ══ 底部：品味图谱 + 勋章墙 ══ -->
 <div class="bottom-grid" id="badges-anchor">
   <div class="taste-block">
-    <div class="block-title">品味图谱</div>
-    <div style="font-size:11px;color:var(--ink4);font-style:italic;margin-bottom:14px">基于 847 部观影记录自动生成</div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px">
+      <div class="block-title">品味图谱</div>
+      <span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink4);border:1px solid var(--b);padding:2px 8px">自动生成</span>
+    </div>
+    <div style="font-size:11px;color:var(--ink4);font-style:italic;margin-bottom:14px">基于 <span id="taste-film-count">847</span> 部观影记录</div>
     <div class="taste-summary">他的观看偏向：<br>慢节奏、长镜头、城市孤独、战后日本电影。</div>
     <div class="taste-lbl" style="margin-top:0">风格偏好</div>
     <div class="tb-row"><div class="tb-lbl">视觉风格</div><div class="tb-bg"><div class="tb-fill" style="width:92%;background:var(--gold)"></div></div><div class="tb-val">92%</div></div>
@@ -828,6 +832,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
   </div>
 </div>
 
+<script src="supabase.js"></script>
 <script>
 // ── TAB 切换 ──
 function swTab(g,m,btn){
@@ -892,6 +897,241 @@ if(!window.shellNavigate){
     else window.parent.postMessage({type:'navigate',payload:{page:p}},'*');
   };
 }
+
+// ── 获取 URL 参数中的 uid ──────────────────
+function getTargetUid(){
+  try{
+    const p=new URLSearchParams(window.location.search);
+    return p.get('uid')||null;
+  }catch(e){return null;}
+}
+
+// ── 渲染头像 ──────────────────────────────
+function renderAvatar(profile){
+  const ring=document.getElementById('av-ring');
+  if(!ring)return;
+  if(profile?.avatar_url){
+    ring.innerHTML=`<img src="${profile.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+  } else {
+    const char=(profile?.display_name||profile?.username||'?')[0];
+    ring.textContent=char;
+  }
+}
+
+// ── 渲染个人信息 ───────────────────────────
+function renderProfile(profile){
+  if(!profile)return;
+  // 名字
+  const nameEl=document.querySelector('.hero-name');
+  if(nameEl) nameEl.innerHTML=`${profile.display_name||profile.username} <span class="hero-name-en">${profile.username||''}</span>`;
+  // handle
+  const handleEl=document.querySelector('.hero-handle');
+  if(handleEl) handleEl.textContent='@'+(profile.username||'');
+  // bio
+  const bioEl=document.querySelector('.hero-bio');
+  if(bioEl&&profile.bio) bioEl.textContent=profile.bio;
+  // 头像
+  renderAvatar(profile);
+}
+
+// ── 渲染统计数字 ───────────────────────────
+function renderStats(profile, placeCount, festCount, festivalCreated){
+  const cells=document.querySelectorAll('.hs-n');
+  if(cells[0]) cells[0].textContent=profile?.films_watched||0;
+  if(cells[1]) cells[1].textContent=placeCount||0;
+  if(cells[2]) cells[2].textContent=festivalCreated||profile?.festivals_created||0;
+  // 社交数字
+  const sns=document.querySelectorAll('.av-social-n');
+  // follower/following 暂无表，保留 mock
+}
+
+// ── 渲染本人/访客视角 ──────────────────────
+function renderViewMode(isSelf){
+  const uploadBtn=document.getElementById('av-upload-btn');
+  const actionsEl=document.querySelector('.hero-actions');
+  if(isSelf){
+    if(uploadBtn) uploadBtn.style.display='block';
+    if(actionsEl) actionsEl.innerHTML=`
+      <button class="btn-follow" style="background:var(--bg3);color:var(--ink2);border:1px solid var(--b2)" onclick="nav('page-auth')">编辑资料</button>
+    `;
+    // 显示「管理 →」按钮（创建的片单）
+    document.querySelectorAll('.cc-foot [data-manage]').forEach(el=>el.style.display='inline');
+  } else {
+    if(uploadBtn) uploadBtn.style.display='none';
+    // 隐藏管理操作
+    document.querySelectorAll('.cc-foot [data-manage]').forEach(el=>el.style.display='none');
+  }
+}
+
+// ── 渲染城市足迹 ───────────────────────────
+async function loadPlaceCheckins(uid){
+  try{
+    const sb=window._sb;
+    if(!sb)return;
+    const {data}=await sb.from('place_checkins').select('place_id').eq('user_id',uid);
+    if(!data||!data.length)return;
+    // 统计每个城市的打卡次数（place_id 前两位是城市代码，如 hk-, sh- 等）
+    const cityCount={};
+    data.forEach(r=>{
+      const city=r.place_id.split('-')[0];
+      cityCount[city]=(cityCount[city]||0)+1;
+    });
+    // 更新地图统计
+    const statsEls=document.querySelectorAll('.ms-n');
+    if(statsEls[0]) statsEls[0].textContent=Object.keys(cityCount).length;
+    if(statsEls[1]) statsEls[1].textContent=data.length;
+    return data.length;
+  }catch(e){console.warn('loadPlaceCheckins',e);}
+}
+
+// ── 渲染策展线索 ───────────────────────────
+async function loadCurations(uid){
+  try{
+    const sb=window._sb;
+    if(!sb)return;
+    // 我参与的
+    const {data:joined}=await sb
+      .from('festival_participants')
+      .select('festival_id, festivals(id,title,description,start_date,end_date,participant_count,film_count,creator:profiles(username))')
+      .eq('user_id',uid)
+      .limit(6);
+    // 我创建的
+    const {data:created}=await sb
+      .from('festivals')
+      .select('id,title,start_date,end_date,participant_count,film_count')
+      .eq('creator_id',uid)
+      .order('created_at',{ascending:false})
+      .limit(6);
+
+    if(joined&&joined.length){
+      const wrap=document.getElementById('wl-joined');
+      if(wrap){
+        const cards=joined.map(r=>{
+          const f=r.festivals;
+          if(!f)return'';
+          const char=(f.title||'?')[0];
+          return `<div class="wc">
+            <div class="wc-cover" style="background:#111009">${char}</div>
+            <div class="wc-body">
+              <div class="wc-ey">参与中</div>
+              <div class="wc-title">${f.title}</div>
+              <div class="wc-meta">${f.film_count||0}部 · @${f.creator?.username||''}</div>
+              <div class="wc-foot"><span class="wc-host"></span><span class="wc-prog">—</span></div>
+              <div class="wc-bar"><div class="wc-bar-f" style="width:0%"></div></div>
+            </div>
+          </div>`;
+        }).join('');
+        wrap.innerHTML=`<div class="wl-cards">${cards}</div>`;
+      }
+    }
+
+    if(created&&created.length){
+      const wrap=document.getElementById('wl-created');
+      if(wrap){
+        const cards=created.map((f,i)=>`
+          <div class="cc">
+            <div class="cc-top" style="background:var(--gold)"></div>
+            <div class="cc-ey" style="color:var(--ink3)">${f.end_date&&new Date(f.end_date)<new Date()?'已结束':'进行中'}</div>
+            <div class="cc-title">${f.title}</div>
+            <div class="cc-meta">${f.film_count||0}部影片</div>
+            <div class="cc-foot">
+              <div><div class="cc-n">${f.participant_count||0}</div><div class="cc-l">人参与</div></div>
+              <span style="font-size:11px;color:var(--gold);letter-spacing:.07em;text-transform:uppercase" data-manage>管理 →</span>
+            </div>
+          </div>`).join('');
+        wrap.innerHTML=`<div class="cc-cards">${cards}</div>`;
+      }
+    }
+    return created?.length||0;
+  }catch(e){console.warn('loadCurations',e);}
+}
+
+// ── 头像上传 ───────────────────────────────
+function initAvatarUpload(){
+  const input=document.getElementById('av-input');
+  const btn=document.getElementById('av-upload-btn');
+  const ring=document.getElementById('av-ring');
+  if(!input||!btn||!ring)return;
+
+  btn.addEventListener('click',()=>input.click());
+
+  input.addEventListener('change',async()=>{
+    const file=input.files[0];
+    if(!file)return;
+    // 本地预览
+    const url=URL.createObjectURL(file);
+    ring.innerHTML=`<img src="${url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    btn.textContent='上传中…';
+    try{
+      const sb=window._sb;
+      const uid=window.currentUser?.id;
+      if(!sb||!uid){btn.textContent='请先登录';return;}
+      const ext=file.name.split('.').pop();
+      const path=`${uid}/avatar.${ext}`;
+      // 上传到 Storage
+      const {error:upErr}=await sb.storage.from('avatars').upload(path,file,{upsert:true});
+      if(upErr)throw upErr;
+      // 获取公开 URL
+      const {data:{publicUrl}}=sb.storage.from('avatars').getPublicUrl(path);
+      // 更新 profile
+      await updateProfile({avatar_url:publicUrl});
+      btn.textContent='已更新';
+      setTimeout(()=>btn.textContent='更换照片',2000);
+    }catch(e){
+      console.error(e);
+      btn.textContent='上传失败';
+      setTimeout(()=>btn.textContent='更换照片',2000);
+    }
+  });
+}
+
+// ── 主初始化 ──────────────────────────────
+async function initPage(){
+  // 等待 supabase 就绪
+  const waitSB=()=>new Promise(res=>{
+    if(window._sb)return res();
+    window.addEventListener('supabase-ready',res,{once:true});
+  });
+  await waitSB();
+
+  const targetUid=getTargetUid();
+  const selfUid=window.currentUser?.id;
+  const uid=targetUid||selfUid;
+  const isSelf=!!selfUid&&(uid===selfUid||!targetUid);
+
+  // 渲染视角
+  renderViewMode(isSelf);
+
+  if(!uid)return; // 未登录且无目标用户，保留 mock 数据
+
+  // 加载 profile
+  try{
+    const profile=await getProfile(uid);
+    if(profile){
+      renderProfile(profile);
+      // 加载足迹和策展数据
+      const [placeCount,,createdCount]=await Promise.all([
+        loadPlaceCheckins(uid),
+        Promise.resolve(),
+        loadCurations(uid),
+      ]);
+      renderStats(profile,placeCount,0,createdCount);
+      const countEl=document.getElementById('taste-film-count');
+      if(countEl&&profile?.films_watched) countEl.textContent=profile.films_watched;
+    }
+  }catch(e){console.warn('initPage',e);}
+
+  // 仅本人可上传头像
+  if(isSelf) initAvatarUpload();
+}
+
+// 等 DOM + supabase 都就绪后执行
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',initPage);
+}else{
+  initPage();
+}
+
 </script>
 </body>
 </html>
