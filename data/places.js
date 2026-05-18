@@ -203,4 +203,38 @@ var PL=[
 {id:'dhv', tp:'fl', nm:'Dharavi', cy:'孟买', cye:'MUMBAI', co:'印度', fm:'贫民窟的百万富翁', fy:2008, dr:'丹尼·鲍尔', q:'城市最拥挤的地方，也藏着最顽强的生命。', u:'场景记录', lk:0, lng:72.854, lat:19.038, img:null},
 {id:'bbs', tp:'fl', nm:'Bandra Bandstand', cy:'孟买', cye:'MUMBAI', co:'印度', fm:'孟买日记', fy:2010, dr:'基兰·劳', q:'海边的人，都在等自己的故事开始。', u:'场景记录', lk:0, lng:72.819, lat:19.0464, img:null},
 {id:'mhbs', tp:'fl', nm:'Mehboob Studio', cy:'孟买', cye:'MUMBAI', co:'印度', q:'这里不是一部电影，而是无数电影的起点。', u:'场景记录', lk:0, lng:72.8255, lat:19.0535, img:null},
+
+// ── 巴黎新增（v3/v5）──
+{id:'s&co', tp:'fl', nm:'Shakespeare and Company', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'Richard Linklater', q:'他们在巴黎重新开始一场谈话。', u:'场景记录', lk:0, lng:2.3472, lat:48.8526, img:'https://www.rogerebert.com/wp-content/uploads/2024/03/Before-Sunset.jpg'},
+{id:'lpc2', tp:'fl', nm:'Le Pure Café', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'Richard Linklater', q:'有些话，只能隔了九年才说出口。', u:'场景记录', lk:0, lng:2.385, lat:48.8532, img:'https://tse4.mm.bing.net/th/id/OIP.uL89xHHLdviOuwGIMDI5CQHaEL?pid=Api'},
+{id:'sed', tp:'fl', nm:'Saint-Étienne-du-Mont', cy:'巴黎', cye:'PARIS', co:'法国', fm:'午夜巴黎', fy:2011, dr:'Woody Allen', q:'午夜之后，巴黎把他带回梦里。', u:'场景记录', lk:0, lng:2.3512, lat:48.8519, img:'https://tse2.mm.bing.net/th/id/OIP.NOckK71Hy5o1_XigJJYjIAHaEA?pid=Api'},
+{id:'rdg', tp:'fl', nm:'Rue Daguerre', cy:'巴黎', cye:'PARIS', co:'法国', fm:'达盖尔风情街', fy:1976, dr:'Agnès Varda', q:'一条街，也可以是一座小小的宇宙。', u:'场景记录', lk:0, lng:2.3267, lat:48.8338, img:'https://tse4.mm.bing.net/th/id/OIP.k64PD-kCeQ7Z3KCC36VoQQHaFA?pid=Api'},
+
+// ── 纽约新增（v3/v5）──
+{id:'dlk', tp:'fl', nm:'Delacorte Clock / Central Park', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'纽约的一个下雨天', fy:2019, dr:'Woody Allen', q:'雨让纽约变成一场旧电影。', u:'场景记录', lk:0, lng:-73.9762, lat:40.7694, img:'https://tse3.mm.bing.net/th/id/OIP.mG-MQWi959U0u3RWxkvSuAHaE8?r=0&pid=Api'},
+{id:'cni', tp:'fl', nm:'Coney Island', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'布鲁克林', fy:2015, dr:'John Crowley', q:'海边让他们短暂忘记离开的代价。', u:'场景记录', lk:0, lng:-73.9857, lat:40.5749, img:null},
+{id:'erw', tp:'fl', nm:'East River Waterfront', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'再次出发之纽约遇见你', fy:2013, dr:'John Carney', q:'他们在 East River 边重新听见彼此。', u:'场景记录', lk:0, lng:-73.9762, lat:40.7527, img:null},
+{id:'tmsq', tp:'fl', nm:'Times Square / 8th Avenue', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'出租车司机', fy:1976, dr:'Martin Scorsese', q:'纽约的霓虹，在他眼里越来越像一场病。', u:'场景记录', lk:0, lng:-73.9855, lat:40.7580, img:null},
+
+// ── 巴塞罗那 BARCELONA（新城市）──
+{id:'pgll', tp:'fl', nm:'Park Güell', cy:'巴塞罗那', cye:'BARCELONA', co:'西班牙', fm:'午夜巴塞罗那', fy:2008, dr:'Woody Allen', q:'巴塞罗那像一场还没开始的欲望。', u:'场景记录', lk:0, lng:2.1527, lat:41.4145, img:'https://images.openai.com/static-rsc-4/g4hM8qGhrSUr8j2vP6m9DAxZQX0MQXODI2EKKz4TMiROkANAKcGu2s-xifC1q_JT9XGIfRVCJd5fKulOd0OEq43CpnNfInZfPRWVsw0LM-YXFZDWt5UB8ZNe4mM4jIihuFFukdvRDz4dv6TPUDpYhYnIdT6ZA364p2KhfLcvyjg?purpose=inline'},
+{id:'pgll2', tp:'fl', nm:'Park Güell 蜥蜴喷泉', cy:'巴塞罗那', cye:'BARCELONA', co:'西班牙', fm:'午夜巴塞罗那', fy:2008, dr:'Woody Allen', q:'城市在高迪的曲线里慢慢展开。', u:'场景记录', lk:0, lng:2.1528, lat:41.4136, img:'https://tse1.mm.bing.net/th/id/OIP.JYDBYZfpZB7tjtjAkd-nTQHaHa?pid=Api'},
+
+// ── 尾道 ONOMICHI（新城市）──
+{id:'onj', tp:'fl', nm:'尾道 / 净土寺方向', cy:'尾道', cye:'ONOMICHI', co:'日本', fm:'东京物语', fy:1953, dr:'小津安二郎', q:'从这里出发的人，最后还是回到孤独里。', u:'场景记录', lk:0, lng:133.2005, lat:34.4089, img:'https://media.gqjapan.jp/photos/5d2710391e86ab00088f769d/master/w_1600%2Cc_limit/tokyo-monogatari-2013_g04.jpg'},
+{id:'onj2', tp:'fl', nm:'尾道街巷', cy:'尾道', cye:'ONOMICHI', co:'日本', fm:'东京物语', fy:1953, dr:'小津安二郎', q:'尾道的坡道和街巷里，时间走得很慢。', u:'场景记录', lk:0, lng:133.2012, lat:34.4082, img:'https://media.gqjapan.jp/photos/5d2710381e86ab00088f769b/master/w_1600%2Cc_limit/tokyo-monogatari-2013_g01.jpg'},
+{id:'onj3', tp:'fl', nm:'尾道木屋街巷', cy:'尾道', cye:'ONOMICHI', co:'日本', fm:'东京物语', fy:1953, dr:'小津安二郎', q:'旧木屋之间，是一家人迟来的告别。', u:'场景记录', lk:0, lng:133.2018, lat:34.4076, img:'https://media.gqjapan.jp/photos/5d27103962ac0800084c3cb3/master/w_1600%2Cc_limit/tokyo-monogatari-2013_g03.jpg'},
+
+// ── 东京新增（v4）──
+{id:'ebisu', tp:'fl', nm:'Ebisu-higashi Park 公厕', cy:'东京', cye:'TOKYO', co:'日本', fm:'完美的日子', fy:2023, dr:'Wim Wenders', q:'重复的一天，也可以是完整的一天。', u:'场景记录', lk:0, lng:139.7142, lat:35.6468, img:'https://tokyofox.net/wp-content/uploads/2024/02/perfect-days-shibuya-toilet-screenshot-12.jpg'},
+
+// ── 基隆 KEELUNG（新城市）──
+{id:'klb', tp:'fl', nm:'基隆中山陆桥', cy:'基隆', cye:'KEELUNG', co:'中国台湾', fm:'千禧曼波', fy:2001, dr:'侯孝贤', q:'回头看的青春，像一条发光的隧道。', u:'场景记录', lk:0, lng:121.7323, lat:25.1283, img:'https://www.deepfocusreview.com/wp-content/uploads/2024/08/Millennium-Mambo.png'},
+
+// ── 罗马新增（v4）──
+{id:'fap', tp:'fl', nm:'Fontana dell\'Acqua Paola', cy:'罗马', cye:'ROME', co:'意大利', fm:'绝美之城', fy:2013, dr:'Paolo Sorrentino', q:'罗马一开场，就像一场盛大的幻觉。', u:'场景记录', lk:0, lng:12.4648, lat:41.8927, img:'https://www.movieloci.com/img/1756-La-grande-bellezza/Nun-s-singings-miniature.jpg'},
+{id:'pcv', tp:'fl', nm:'Ponte Cavour', cy:'罗马', cye:'ROME', co:'意大利', fm:'绝美之城', fy:2013, dr:'Paolo Sorrentino', q:'罗马的夜晚，总在桥上显得更加空旷。', u:'场景记录', lk:0, lng:12.4658, lat:41.9043, img:'https://www.movieloci.com/img/1756-La-grande-bellezza/37079-The-Bridge-miniature.jpg'},
+
+// ── 重庆 CHONGQING（新城市）──
+{id:'fjj', tp:'fl', nm:'奉节 / 三峡库区', cy:'重庆', cye:'CHONGQING', co:'中国', fm:'三峡好人', fy:2006, dr:'贾樟柯', q:'拆迁中的城市，像一段还没说完就被推倒的生活。', u:'场景记录', lk:0, lng:109.4658, lat:31.0198, img:null},
 ];

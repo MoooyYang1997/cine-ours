@@ -484,6 +484,18 @@ var CITIES=[
   {zh:'墨西哥城', lng:-99.140, lat:19.433},
   {zh:'首尔', lng:126.971, lat:37.556},
   {zh:'孟买', lng:72.826, lat:19.020},
+  {zh:'巴塞罗那', cye:'BARCELONA', lng:2.153, lat:41.414},
+  {zh:'尾道', cye:'ONOMICHI', lng:133.201, lat:34.408},
+  {zh:'基隆', cye:'KEELUNG', lng:121.732, lat:25.128},
+  {zh:'重庆', cye:'CHONGQING', lng:109.466, lat:31.020},
+];
+
+/** 左侧城市筛选标签顺序（zh 与 PL[].cy 一致） */
+var CITY_TAB_ORDER=[
+  '香港','北京','上海','台北','基隆','重庆',
+  '柏林','巴黎','巴塞罗那','伦敦',
+  '东京','尾道','戛纳','罗马',
+  '洛杉矶','纽约','墨西哥城','首尔','孟买'
 ];
 
 var active=PL[0], activeCity='', proj, svgSel, zoomBeh;
@@ -1045,10 +1057,24 @@ function whenSbReady(fn){
 }
 
 /* ── 左侧列表 ── */
+function cityMeta(zh){
+  var c=CITIES.find(function(x){return x.zh===zh;});
+  if(c&&c.cye)return c.cye;
+  var p=PL.find(function(x){return x.cy===zh;});
+  return p&&p.cye||'';
+}
+
 function filterCityList(){
-  var seen={}, list=[];
-  CITIES.forEach(function(c){ if(!seen[c.zh]){ seen[c.zh]=1; list.push(c.zh); } });
-  PL.forEach(function(p){ if(!seen[p.cy]){ seen[p.cy]=1; list.push(p.cy); } });
+  var seen={}, available={};
+  CITIES.forEach(function(c){ available[c.zh]=1; });
+  PL.forEach(function(p){ if(p.cy)available[p.cy]=1; });
+  var list=[];
+  CITY_TAB_ORDER.forEach(function(cy){
+    if(available[cy]&&!seen[cy]){ seen[cy]=1; list.push(cy); }
+  });
+  Object.keys(available).forEach(function(cy){
+    if(!seen[cy]){ seen[cy]=1; list.push(cy); }
+  });
   return list;
 }
 
@@ -1058,7 +1084,9 @@ function buildCityTabs(){
   var html='<span class="ct'+(activeCity===''?' active':'')+'" data-city="" onclick="filterCity(\'\')">全部</span>';
   filterCityList().forEach(function(cy){
     var esc=cy.replace(/'/g,'\\\'');
-    html+='<span class="ct'+(activeCity===cy?' active':'')+'" data-city="'+cy+'" onclick="filterCity(\''+esc+'\')">'+cy+'</span>';
+    var en=cityMeta(cy);
+    var title=en?cy+' / '+en:cy;
+    html+='<span class="ct'+(activeCity===cy?' active':'')+'" data-city="'+cy+'" title="'+title.replace(/"/g,'&quot;')+'" onclick="filterCity(\''+esc+'\')">'+cy+'</span>';
   });
   el.innerHTML=html;
 }
@@ -1195,7 +1223,7 @@ window.pick=pick;
 window.filterCity=filterCity;
 window.doFilter=doFilter;
 window.selectCity=function(slug){
-  var map={hk:'香港',berlin:'柏林',tokyo:'东京',paris:'巴黎',nyc:'纽约',sp:'圣保罗',beijing:'北京',shanghai:'上海'};
+  var map={hk:'香港',berlin:'柏林',tokyo:'东京',paris:'巴黎',nyc:'纽约',sp:'圣保罗',beijing:'北京',shanghai:'上海',barcelona:'巴塞罗那',onomichi:'尾道',keelung:'基隆',chongqing:'重庆'};
   var zh=map[String(slug||'').toLowerCase()];
   if(zh)filterCity(zh);
 };

@@ -421,11 +421,21 @@ function wireFrame(frame) {
 }
 
 // ── AUTH ──────────────────────────────────────────────────────
-function setAuth(on) {
+function setAuth(on, profile) {
   loggedIn = on;
   document.getElementById('btn-login').style.display  = on ? 'none' : '';
   document.getElementById('btn-join').style.display   = on ? 'none' : '';
   document.getElementById('nav-av').style.display     = on ? 'flex' : 'none';
+  if (on && profile) {
+    // 更新头像字母
+    const av = document.getElementById('nav-av');
+    if (av) av.textContent = (profile.display_name || profile.username || '?')[0].toUpperCase();
+    // 更新下拉菜单
+    const umName   = document.querySelector('.um-name');
+    const umHandle = document.querySelector('.um-handle');
+    if (umName)   umName.textContent   = profile.display_name || profile.username || '';
+    if (umHandle) umHandle.textContent = '@' + (profile.username || '') + (profile.role ? ' · ' + profile.role : '');
+  }
 }
 function logout() {
   setAuth(false); closeUmenu(); go('home'); showToast('已退出登录');
@@ -520,7 +530,12 @@ window.addEventListener('message', e => {
     go(dest);
   }
   if (type === 'toast')    showToast(payload.msg);
-  if (type === 'login')    { setAuth(true); go('home'); showToast('欢迎回来 余小舟'); }
+  if (type === 'login') {
+    const prof = payload && payload.profile;
+    setAuth(true, prof);
+    go('home');
+    showToast('欢迎回来' + (prof ? ' ' + (prof.display_name || prof.username) : ''));
+  }
   if (type === 'logout')   logout();
 });
 
@@ -532,10 +547,37 @@ document.addEventListener('keydown', e => {
     const map={'1':'home','2':'map','3':'festivals','4':'creator','5':'history','6':'offline-festival'};
     if (map[e.key]) go(map[e.key]);
     if (e.key==='l'||e.key==='L') {
-      if (loggedIn) logout(); else { setAuth(true); showToast('已登录：余小舟'); }
+      if (loggedIn) logout(); else { setAuth(true); showToast('已登录'); }
     }
   }
 });
+
+// ── 从 Supabase 恢复登录状态 ──────────────────────────────────
+(function restoreAuth() {
+  const SUPA_URL = 'https://dirrnojiybbwotuqeqww.supabase.co';
+  const SUPA_KEY = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
+  const s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+  s.onload = async () => {
+    const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+    const { data: { session } } = await sb.auth.getSession();
+    if (session?.user) {
+      const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+      setAuth(true, profile);
+    }
+    // 监听登录/登出变化
+    sb.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN') {
+        const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+        setAuth(true, profile);
+      }
+      if (event === 'SIGNED_OUT') {
+        setAuth(false);
+      }
+    });
+  };
+  document.head.appendChild(s);
+})();
 
 // ── INIT ─────────────────────────────────────────────────────
 document.getElementById('f-home').addEventListener('load', function(){ wireFrame(this); });

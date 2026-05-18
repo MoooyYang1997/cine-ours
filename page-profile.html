@@ -1069,8 +1069,11 @@ function initAvatarUpload(){
       const ext=file.name.split('.').pop();
       const path=`${uid}/avatar.${ext}`;
       // 上传到 Storage
-      const {error:upErr}=await sb.storage.from('avatars').upload(path,file,{upsert:true});
-      if(upErr)throw upErr;
+      const {error:upErr}=await sb.storage.from('avatars').upload(path,file,{upsert:true,contentType:file.type});
+      if(upErr){
+        console.error('Storage upload error:',upErr);
+        throw upErr;
+      }
       // 获取公开 URL
       const {data:{publicUrl}}=sb.storage.from('avatars').getPublicUrl(path);
       // 更新 profile

@@ -748,5 +748,95 @@
     "id": "mhbs",
     "nm": "Mehboob Studio",
     "cy": "孟买"
+  },
+  {
+    "id": "s&co",
+    "nm": "Shakespeare and Company",
+    "cy": "巴黎"
+  },
+  {
+    "id": "lpc2",
+    "nm": "Le Pure Café",
+    "cy": "巴黎"
+  },
+  {
+    "id": "sed",
+    "nm": "Saint-Étienne-du-Mont",
+    "cy": "巴黎"
+  },
+  {
+    "id": "rdg",
+    "nm": "Rue Daguerre",
+    "cy": "巴黎"
+  },
+  {
+    "id": "dlk",
+    "nm": "Delacorte Clock / Central Park",
+    "cy": "纽约"
+  },
+  {
+    "id": "cni",
+    "nm": "Coney Island",
+    "cy": "纽约"
+  },
+  {
+    "id": "erw",
+    "nm": "East River Waterfront",
+    "cy": "纽约"
+  },
+  {
+    "id": "tmsq",
+    "nm": "Times Square / 8th Avenue",
+    "cy": "纽约"
+  },
+  {
+    "id": "pgll",
+    "nm": "Park Güell",
+    "cy": "巴塞罗那"
+  },
+  {
+    "id": "pgll2",
+    "nm": "Park Güell 蜥蜴喷泉",
+    "cy": "巴塞罗那"
+  },
+  {
+    "id": "onj",
+    "nm": "尾道 / 净土寺方向",
+    "cy": "尾道"
+  },
+  {
+    "id": "onj2",
+    "nm": "尾道街巷",
+    "cy": "尾道"
+  },
+  {
+    "id": "onj3",
+    "nm": "尾道木屋街巷",
+    "cy": "尾道"
+  },
+  {
+    "id": "ebisu",
+    "nm": "Ebisu-higashi Park 公厕",
+    "cy": "东京"
+  },
+  {
+    "id": "klb",
+    "nm": "基隆中山陆桥",
+    "cy": "基隆"
+  },
+  {
+    "id": "fap",
+    "nm": "Fontana dell'Acqua Paola",
+    "cy": "罗马"
+  },
+  {
+    "id": "pcv",
+    "nm": "Ponte Cavour",
+    "cy": "罗马"
+  },
+  {
+    "id": "fjj",
+    "nm": "奉节 / 三峡库区",
+    "cy": "重庆"
   }
 ]

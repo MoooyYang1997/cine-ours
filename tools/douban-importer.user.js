@@ -21,7 +21,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP'
 
 // 与 data/places.js 同步：部署后由 data/places-picker.json 自动提供（无需改油猴）
 const PLACES_JSON_URL = 'https://cine-ours.vercel.app/data/places-picker.json'
-const PLACE_CITY_ORDER = ['香港','上海','北京','台北','柏林','巴黎','东京','戛纳','罗马','洛杉矶','纽约','伦敦','墨西哥城','首尔','孟买']
+const PLACE_CITY_ORDER = ['香港','上海','北京','台北','基隆','重庆','柏林','巴黎','巴塞罗那','东京','尾道','戛纳','罗马','洛杉矶','纽约','伦敦','墨西哥城','首尔','孟买']
 
 let placesCache = null
 let placesLoading = null
