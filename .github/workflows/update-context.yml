@@ -1,0 +1,47 @@
+name: Update CONTEXT.md
+
+on:
+  schedule:
+    # 每天北京时间 00:00（UTC 前一天 16:00）
+    - cron: '0 16 * * *'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: '汇总日期 YYYY-MM-DD（留空=昨日）'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  update-context:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update CONTEXT.md from git history
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            node scripts/update-context.cjs --date "${{ github.event.inputs.date }}"
+          else
+            node scripts/update-context.cjs
+          fi
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CONTEXT.md
+          if git diff --staged --quiet; then
+            echo "CONTEXT.md 无变化，跳过提交"
+            exit 0
+          fi
+          git commit -m "$(cat <<EOF
+docs: 自动更新 CONTEXT 进度（北京时间）
+
+EOF
+)"
+          git push

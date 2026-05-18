@@ -83,19 +83,32 @@ data/place-images.json      # 取景地图片
 ---
 
 ## 当前状态
-<!-- 每次工作前更新 -->
-**上次完成：** 联动和导航打通（ic0/ic1 定向跳转、navigateAndScroll bridge、上影节 section IDs、导航栏 V1 四页）
+<!-- 由 scripts/update-context.cjs 每日 00:00 北京时间自动更新；也可手动运行 -->
+<!-- CONTEXT_STATUS_START -->
+**最近自动更新：** 2026-05-18 00:00 北京时间
+
+**上次完成（2026-05-18）：** 共 10 次提交。涉及文件：CONTEXT.md、film-image-picker.html、index.html、page-home.html、page-map.html、schema.sql、scripts/deploy-proxy-image.sh、supabase/.temp/cli-latest 等
 
 **正在做：** —
 
-**下一步：** 确认三处 Cursor 指令是否已执行（hongkong→hk、mf-col 跳转、线索 CTA）
+**下一步：** 按「进度日报」与 Issue/对话继续推进；新功能上线后记得在 Supabase Dashboard 验证
+<!-- CONTEXT_STATUS_END -->
+
+---
+
+## 进度日报
+<!-- 保留最近 14 天；由 GitHub Actions 每日追加 -->
+<!-- CONTEXT_DAILY_START -->
+### 2026-05-18
+共 10 次提交。涉及文件：CONTEXT.md、film-image-picker.html、index.html、page-home.html、page-map.html、schema.sql、scripts/deploy-proxy-image.sh、supabase/.temp/cli-latest 等
+<!-- CONTEXT_DAILY_END -->
 
 ---
 
 ## 已知 Bug / 待修
-- [ ] `page-home.html`：`imgKey:'hongkong'` 应为 `'hk'`，`cityImgs` key 同步修改（地图城市高亮不生效）
-- [ ] `page-home.html`：更多影展三列 `.mf-col` 缺少 `onclick="nav('page-festival-detail')"`
-- [ ] `index.html`：`navigateAndScroll` bridge 是否已合并进最新版本需确认
+- [ ] 地图封面仅存 `localStorage`，换设备/用户不可见
+- [ ] `place_checkins` / `place-checkins` Storage 需在 Supabase 手动确认已创建
+- [ ] `index.html` 按 `L` 为演示假登录，勿用于测 Supabase 功能
 
 ---
 
