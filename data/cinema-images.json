@@ -232,5 +232,401 @@
         "license": "CC0"
       }
     ]
+  },
+  "hkcc": {
+    "name": "香港文化中心",
+    "city": "香港",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/HK_Hong_Kong_0807_111_%2817028894768%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/a2/HK_Hong_Kong_0807_111_%2817028894768%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "credit": "Diego Tirira from Quito, Ecuador",
+        "license": "CC BY-SA 2.0"
+      },
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Hong_Kong_Cultural_Centre_%285235030056%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Hong_Kong_Cultural_Centre_%285235030056%29.jpg/960px-Hong_Kong_Cultural_Centre_%285235030056%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Rob Young from United Kingdom",
+        "license": "CC BY 2.0"
+      },
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/f/f8/800_-_Flickr_-_-5Nap.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/800_-_Flickr_-_-5Nap.jpg/960px-800_-_Flickr_-_-5Nap.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Sergey Norin from Moscow, Russia",
+        "license": "CC BY 2.0"
+      }
+    ]
+  },
+  "bwy": {
+    "name": "百老汇电影中心",
+    "city": "香港",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/13/HK_YTM_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E7%9C%BE%E5%9D%8A%E8%A1%97_Public_Square_Street_%E7%99%BE%E8%80%81%E5%8C%AF%E9%9B%BB%E5%BD%B1%E4%B8%AD%E5%BF%83_Broadway_Cinematheque_night_March_2023_Px3_01_CLOSE_%E8%A6%AA%E9%99%8C.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/HK_YTM_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E7%9C%BE%E5%9D%8A%E8%A1%97_Public_Square_Street_%E7%99%BE%E8%80%81%E5%8C%AF%E9%9B%BB%E5%BD%B1%E4%B8%AD%E5%BF%83_Broadway_Cinematheque_night_March_2023_Px3_01_CLOSE_%E8%A6%AA%E9%99%8C.jpg/960px-HK_YTM_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E7%9C%BE%E5%9D%8A%E8%A1%97_Public_Square_Street_%E7%99%BE%E8%80%81%E5%8C%AF%E9%9B%BB%E5%BD%B1%E4%B8%AD%E5%BF%83_Broadway_Cinematheque_night_March_2023_Px3_01_CLOSE_%E8%A6%AA%E9%99%8C.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Lau LUO ZCHUNG Homa",
+        "license": "CC BY-SA 4.0"
+      },
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/10/HK_YTM_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E7%9C%BE%E5%9D%8A%E8%A1%97_Public_Square_Street_%E7%99%BE%E8%80%81%E5%8C%AF%E9%9B%BB%E5%BD%B1%E4%B8%AD%E5%BF%83_Broadway_Cinematheque_night_March_2023_Px3_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/HK_YTM_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E7%9C%BE%E5%9D%8A%E8%A1%97_Public_Square_Street_%E7%99%BE%E8%80%81%E5%8C%AF%E9%9B%BB%E5%BD%B1%E4%B8%AD%E5%BF%83_Broadway_Cinematheque_night_March_2023_Px3_03.jpg/960px-HK_YTM_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E7%9C%BE%E5%9D%8A%E8%A1%97_Public_Square_Street_%E7%99%BE%E8%80%81%E5%8C%AF%E9%9B%BB%E5%BD%B1%E4%B8%AD%E5%BF%83_Broadway_Cinematheque_night_March_2023_Px3_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Lau LUO ZCHUNG Homa",
+        "license": "CC BY-SA 4.0"
+      },
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/dc/HK_YTM_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E7%9C%BE%E5%9D%8A%E8%A1%97_Public_Square_Street_%E7%99%BE%E8%80%81%E5%8C%AF%E9%9B%BB%E5%BD%B1%E4%B8%AD%E5%BF%83_Broadway_Cinematheque_night_March_2023_Px3_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/HK_YTM_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E7%9C%BE%E5%9D%8A%E8%A1%97_Public_Square_Street_%E7%99%BE%E8%80%81%E5%8C%AF%E9%9B%BB%E5%BD%B1%E4%B8%AD%E5%BF%83_Broadway_Cinematheque_night_March_2023_Px3_04.jpg/960px-HK_YTM_YMT_%E6%B2%B9%E9%BA%BB%E5%9C%B0_Yau_Ma_Tei_%E7%9C%BE%E5%9D%8A%E8%A1%97_Public_Square_Street_%E7%99%BE%E8%80%81%E5%8C%AF%E9%9B%BB%E5%BD%B1%E4%B8%AD%E5%BF%83_Broadway_Cinematheque_night_March_2023_Px3_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Lau LUO ZCHUNG Homa",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "dgm": {
+    "name": "大光明电影院",
+    "city": "上海",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Grand_theatre_shanghai.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Grand_theatre_shanghai.jpg/960px-Grand_theatre_shanghai.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Pyzhou",
+        "license": "GFDL"
+      }
+    ]
+  },
+  "bab": {
+    "name": "Babylon Kino",
+    "city": "柏林",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/5b/KINO_BABYLON-100x100-2017-HST.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/KINO_BABYLON-100x100-2017-HST.jpg/960px-KINO_BABYLON-100x100-2017-HST.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Claude-Max Lochu",
+        "license": "CC BY-SA 4.0"
+      },
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Berlin_kino_babylon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Berlin_kino_babylon.jpg/960px-Berlin_kino_babylon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Andreas Augstein",
+        "license": "CC BY-SA 3.0 de"
+      },
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/68/Aussenansicht_Kino_Babylon_-_12592495504.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Aussenansicht_Kino_Babylon_-_12592495504.jpg/960px-Aussenansicht_Kino_Babylon_-_12592495504.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "boellstiftung",
+        "license": "CC BY-SA 2.0"
+      }
+    ]
+  },
+  "gtdy": {
+    "name": "国泰电影院",
+    "city": "上海",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Cateay_cinema_of_shanghai.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Cateay_cinema_of_shanghai.jpg/960px-Cateay_cinema_of_shanghai.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Pyzhou",
+        "license": "GFDL"
+      }
+    ]
+  },
+  "shfc": {
+    "name": "上海影城",
+    "city": "上海",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/81/202309_Shanghai_Film_Art_Center.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/202309_Shanghai_Film_Art_Center.jpg/960px-202309_Shanghai_Film_Art_Center.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "MNXANL",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "gdt2": {
+    "name": "光点台北",
+    "city": "台北",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/2f/SPOT-Taipei_Film_House_070729_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/2f/SPOT-Taipei_Film_House_070729_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "credit": "User: (WT-shared) ResTpeTw at  wts wikiv",
+        "license": "CC BY 2.5"
+      }
+    ]
+  },
+  "blp": {
+    "name": "Berlinale Palast",
+    "city": "柏林",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/54/20150208_-_Berlinale_Palast_and_Red_Carpet.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/20150208_-_Berlinale_Palast_and_Red_Carpet.JPG/960px-20150208_-_Berlinale_Palast_and_Red_Carpet.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Tuluqaruk",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "cin": {
+    "name": "La Cinémathèque française",
+    "city": "巴黎",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Cin%C3%A9math%C3%A8que_fran%C3%A7aise_de_nuit_en_janvier_2020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Cin%C3%A9math%C3%A8que_fran%C3%A7aise_de_nuit_en_janvier_2020.jpg/960px-Cin%C3%A9math%C3%A8que_fran%C3%A7aise_de_nuit_en_janvier_2020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Benoît Prieur",
+        "license": "CC0"
+      }
+    ]
+  },
+  "pnt": {
+    "name": "Cinéma du Panthéon",
+    "city": "巴黎",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/44/Cin%C3%A9ma_du_Panth%C3%A9on_%28Paris%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Cin%C3%A9ma_du_Panth%C3%A9on_%28Paris%29.JPG/960px-Cin%C3%A9ma_du_Panth%C3%A9on_%28Paris%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Camille Gévaudan",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
+  },
+  "ace": {
+    "name": "Ace Hotel Theatre",
+    "city": "洛杉矶",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Los_Angeles_United_Artists_Theatre_2008_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Los_Angeles_United_Artists_Theatre_2008_2.jpg/960px-Los_Angeles_United_Artists_Theatre_2008_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Photo: Andreas Praefcke",
+        "license": "CC BY 3.0"
+      }
+    ]
+  },
+  "grm": {
+    "name": "TCL Chinese Theatre",
+    "city": "洛杉矶",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/2/26/GraumansChineseTheatre01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/GraumansChineseTheatre01.JPG/960px-GraumansChineseTheatre01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "MyName (3scandal0)",
+        "license": "Public domain"
+      }
+    ]
+  },
+  "iff": {
+    "name": "IFC Center",
+    "city": "纽约",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Ifc_center.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Ifc_center.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "credit": "Rmannion at  Wikipedia",
+        "license": "CC BY-SA 2.5"
+      }
+    ]
+  },
+  "cfda": {
+    "name": "中国电影资料馆",
+    "city": "北京",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/%E4%B8%AD%E5%9B%BD%E7%94%B5%E5%BD%B1%E8%B5%84%E6%96%99%E9%A6%86_2018-05-26_135725.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/%E4%B8%AD%E5%9B%BD%E7%94%B5%E5%BD%B1%E8%B5%84%E6%96%99%E9%A6%86_2018-05-26_135725.jpg/960px-%E4%B8%AD%E5%9B%BD%E7%94%B5%E5%BD%B1%E8%B5%84%E6%96%99%E9%A6%86_2018-05-26_135725.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "David290",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "cfm": {
+    "name": "中国电影博物馆",
+    "city": "北京",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/ed/China_National_Film_Museum_Chaoyang2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/e/ed/China_National_Film_Museum_Chaoyang2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "credit": "hwanghsuhui",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "sheb": {
+    "name": "上海电影博物馆",
+    "city": "上海",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b6/ShanghaiFilmMuseum.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/ShanghaiFilmMuseum.jpg/960px-ShanghaiFilmMuseum.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Brookqi",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "lch": {
+    "name": "Le Champo",
+    "city": "巴黎",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Le_Champollion.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Le_Champollion.JPG/960px-Le_Champollion.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "LPLT",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
+  },
+  "flql": {
+    "name": "La Filmothèque du Quartier Latin",
+    "city": "巴黎",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/38/La_Filmoth%C3%A8que_Quartier_Latin.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/La_Filmoth%C3%A8que_Quartier_Latin.JPG/960px-La_Filmoth%C3%A8que_Quartier_Latin.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "LPLT",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
+  },
+  "mpl": {
+    "name": "M+ Cinema",
+    "city": "香港",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Grand_Cinema_Sunshine_%2849333406871%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Grand_Cinema_Sunshine_%2849333406871%29.jpg/960px-Grand_Cinema_Sunshine_%2849333406871%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Dick Thomas Johnson from Tokyo, Japan",
+        "license": "CC BY 2.0"
+      }
+    ]
+  },
+  "ggc": {
+    "name": "高先电影院",
+    "city": "香港",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/HK_%E5%A0%85%E5%B0%BC%E5%9C%B0%E5%9F%8E_Kennedy_Town_%E5%8C%97%E8%A1%97_North_Street_%E6%B5%B7%E6%80%A1%E8%8A%B1%E5%9C%92_Harbour_View_Garden_%E9%AB%98%E5%85%88%E9%9B%BB%E5%BD%B1%E9%99%A2_Golden_Scene_Cinema_November_2021_SS2_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/HK_%E5%A0%85%E5%B0%BC%E5%9C%B0%E5%9F%8E_Kennedy_Town_%E5%8C%97%E8%A1%97_North_Street_%E6%B5%B7%E6%80%A1%E8%8A%B1%E5%9C%92_Harbour_View_Garden_%E9%AB%98%E5%85%88%E9%9B%BB%E5%BD%B1%E9%99%A2_Golden_Scene_Cinema_November_2021_SS2_02.jpg/960px-HK_%E5%A0%85%E5%B0%BC%E5%9C%B0%E5%9F%8E_Kennedy_Town_%E5%8C%97%E8%A1%97_North_Street_%E6%B5%B7%E6%80%A1%E8%8A%B1%E5%9C%92_Harbour_View_Garden_%E9%AB%98%E5%85%88%E9%9B%BB%E5%BD%B1%E9%99%A2_Golden_Scene_Cinema_November_2021_SS2_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Leichiem Shauz BULKO",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "bfi": {
+    "name": "BFI Southbank",
+    "city": "伦敦",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Original_Sign_for_the_National_Film_Theatre_-_geograph.org.uk_-_1576099.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Original_Sign_for_the_National_Film_Theatre_-_geograph.org.uk_-_1576099.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "credit": "tristan forward",
+        "license": "CC BY-SA 2.0"
+      }
+    ]
+  },
+  "pcc": {
+    "name": "Prince Charles Cinema",
+    "city": "伦敦",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/06/Prince_Charles_Cinema_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Prince_Charles_Cinema_-_panoramio.jpg/960px-Prince_Charles_Cinema_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Robert Dimov",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
+  },
+  "fmfm": {
+    "name": "Film Forum",
+    "city": "纽约",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/95/Theateroutsidepub.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Theateroutsidepub.jpg/960px-Theateroutsidepub.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "self",
+        "license": "CC0"
+      }
+    ]
+  },
+  "flc": {
+    "name": "Film at Lincoln Center",
+    "city": "纽约",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/WLA_filmlinc_United_Palace_Theater_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/1c/WLA_filmlinc_United_Palace_Theater_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "credit": "Wikipedia Loves Art participant \"The_Gro",
+        "license": "CC BY-SA 2.5"
+      }
+    ]
+  },
+  "aer": {
+    "name": "Aero Theatre",
+    "city": "洛杉矶",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Aero_Theater_Santa_Monica_California_United_States_2023-04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Aero_Theater_Santa_Monica_California_United_States_2023-04.jpg/960px-Aero_Theater_Santa_Monica_California_United_States_2023-04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Jengod",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "ctn2": {
+    "name": "Cineteca Nacional",
+    "city": "墨西哥城",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Cineteca_Nacional_07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Cineteca_Nacional_07.jpg/960px-Cineteca_Nacional_07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "ProtoplasmaKid",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
+  },
+  "cnch": {
+    "name": "Cineteca Nacional Chapultepec",
+    "city": "墨西哥城",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Chapultepec%2C_Naturaleza_y_Cultura_-_Cineteca_Nacional_Chapultepec_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Chapultepec%2C_Naturaleza_y_Cultura_-_Cineteca_Nacional_Chapultepec_-_2.jpg/960px-Chapultepec%2C_Naturaleza_y_Cultura_-_Cineteca_Nacional_Chapultepec_-_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Own work",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  "cdc": {
+    "name": "Casa del Cinema",
+    "city": "罗马",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Castel_Goffredo-Cinema-teatro.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Castel_Goffredo-Cinema-teatro.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "credit": "Massimo Telò",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
+  },
+  "rgc": {
+    "name": "Regal Cinema",
+    "city": "孟买",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/1/16/Melton_Mowbray_Regal_Cinema_2011.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Melton_Mowbray_Regal_Cinema_2011.JPG/960px-Melton_Mowbray_Regal_Cinema_2011.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Russ Hamer",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
+  },
+  "lbty": {
+    "name": "Liberty Cinema",
+    "city": "孟买",
+    "images": [
+      {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/71/Roxy_Theatre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Roxy_Theatre.jpg/960px-Roxy_Theatre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "credit": "Bidgee",
+        "license": "CC BY 3.0"
+      }
+    ]
   }
 }

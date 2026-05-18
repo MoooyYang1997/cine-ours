@@ -398,7 +398,11 @@ function applyPlaceImages(db){
 function applyCinemaImages(db){
   PL.forEach(function(p){
     if(p.img||p.tp!=='ci')return;
-    var slug=CINEMA_IMG_SLUGS[p.id],row=slug?db[slug]:null;
+    var row=db[p.id]||null;
+    if(!row){
+      var slug=CINEMA_IMG_SLUGS[p.id];
+      row=slug?db[slug]:null;
+    }
     if(!row){for(var k in db){if(db[k].name===p.nm){row=db[k];break;}}}
     if(row&&row.images&&row.images.length){
       var im=row.images[0];
