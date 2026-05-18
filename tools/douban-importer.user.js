@@ -1,10 +1,18 @@
 // ==UserScript==
 // @name         CineOurs 豆瓣选图
 // @namespace    cineours
-// @version      2.0
+// @version      2.1
 // @match        https://movie.douban.com/*
 // @run-at       document-idle
 // @grant        GM_xmlhttpRequest
+// @connect      dirrnojiybbwotuqeqww.supabase.co
+// @connect      cine-ours.vercel.app
+// @connect      movie.douban.com
+// @connect      img1.doubanio.com
+// @connect      img2.doubanio.com
+// @connect      img3.doubanio.com
+// @connect      img9.doubanio.com
+// @connect      *.doubanio.com
 // @connect      *
 // ==/UserScript==
 
@@ -19,21 +27,98 @@ let placesCache = null
 let placesLoading = null
 
 function gmRequest(opts) {
+  const label = opts._label || opts.url || '请求'
+  const { _label, ...req } = opts
   return new Promise((resolve, reject) => {
     GM_xmlhttpRequest({
       timeout: 90000,
-      ...opts,
+      ...req,
       onload(res) {
         resolve(res)
       },
       onerror(err) {
-        reject(new Error((err && err.error) || '网络请求失败'))
+        const detail =
+          (err && (err.error || err.statusText || err.status)) ||
+          (typeof err === 'string' ? err : '')
+        const host = (() => {
+          try {
+            return new URL(req.url).hostname
+          } catch (_) {
+            return ''
+          }
+        })()
+        reject(
+          new Error(
+            `${label}失败${host ? '（' + host + '）' : ''}${detail ? '：' + detail : ''}。请确认 Tampermonkey 已允许脚本访问该域名`
+          )
+        )
+      },
+      onabort() {
+        reject(new Error(label + '已取消'))
       },
       ontimeout() {
-        reject(new Error('请求超时'))
+        reject(new Error(label + '超时'))
       },
     })
   })
+}
+
+/** 豆瓣缩略图 → 大图；补全 https */
+function normalizeDoubanImgUrl(src) {
+  let u = (src || '').trim()
+  if (!u) return u
+  if (u.startsWith('//')) u = 'https:' + u
+  u = u.replace(/^http:\/\//i, 'https://')
+  u = u.replace(/\/view\/photo\/[sm]\//i, '/view/photo/l/')
+  return u
+}
+
+function responseToArrayBuffer(res) {
+  const r = res.response
+  if (r instanceof ArrayBuffer) return r
+  if (r && r.buffer instanceof ArrayBuffer) return r.buffer
+  if (typeof res.responseText === 'string' && res.responseText.length) {
+    const bytes = new Uint8Array(res.responseText.length)
+    for (let i = 0; i < res.responseText.length; i++) {
+      bytes[i] = res.responseText.charCodeAt(i) & 0xff
+    }
+    return bytes.buffer
+  }
+  return null
+}
+
+async function downloadDoubanImage(imgSrc) {
+  const candidates = [...new Set([normalizeDoubanImgUrl(imgSrc), imgSrc].filter(Boolean))]
+  let lastErr = null
+
+  for (const url of candidates) {
+    try {
+      const res = await gmRequest({
+        _label: '下载豆瓣图片',
+        method: 'GET',
+        url,
+        responseType: 'arraybuffer',
+        headers: {
+          Referer: 'https://movie.douban.com/',
+          Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+          'User-Agent': navigator.userAgent,
+        },
+      })
+      if (res.status < 200 || res.status >= 300) {
+        throw new Error(parseHttpError(res, '下载豆瓣图片失败'))
+      }
+      const buf = responseToArrayBuffer(res)
+      if (!buf || !buf.byteLength) {
+        throw new Error('图片数据为空')
+      }
+      return buf
+    } catch (e) {
+      lastErr = e
+      console.warn('[CineOurs] 下载失败，尝试下一 URL', url, e)
+    }
+  }
+
+  throw lastErr || new Error('下载豆瓣图片失败')
 }
 
 function loadPlaces() {
@@ -41,6 +126,7 @@ function loadPlaces() {
   if (placesLoading) return placesLoading
 
   placesLoading = gmRequest({
+    _label: '加载地点列表',
     method: 'GET',
     url: PLACES_JSON_URL + '?t=' + Date.now(),
   })
@@ -284,6 +370,7 @@ async function updateCoversManifest(placeId, publicUrl) {
   let manifest = {}
   try {
     const res = await gmRequest({
+      _label: '读取封面索引',
       method: 'GET',
       url: manifestUrl + '?t=' + Date.now(),
     })
@@ -294,6 +381,7 @@ async function updateCoversManifest(placeId, publicUrl) {
 
   manifest[placeId] = publicUrl
   const uploadRes = await gmRequest({
+    _label: '更新封面索引',
     method: 'POST',
     url: `${SUPABASE_URL}/storage/v1/object/place-images/${COVERS_MANIFEST_PATH}`,
     headers: {
@@ -309,6 +397,37 @@ async function updateCoversManifest(placeId, publicUrl) {
   }
 }
 
+/** Edge Function 中转（本地 GM 下载失败时备用） */
+async function uploadViaProxy(imgSrc, placeId) {
+  const res = await gmRequest({
+    _label: '中转上传',
+    method: 'POST',
+    url: `${SUPABASE_URL}/functions/v1/proxy-image`,
+    headers: {
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      apikey: SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json',
+    },
+    data: JSON.stringify({
+      imageUrl: normalizeDoubanImgUrl(imgSrc),
+      placeId,
+    }),
+  })
+  if (res.status < 200 || res.status >= 300) {
+    throw new Error(parseHttpError(res, '中转上传失败'))
+  }
+  let body
+  try {
+    body = JSON.parse(res.responseText || '{}')
+  } catch (_) {
+    throw new Error('中转上传返回格式错误')
+  }
+  if (!body.url) {
+    throw new Error(body.error || '中转上传未返回 URL')
+  }
+  return body.url
+}
+
 async function uploadImage(imgSrc, placeId, div) {
   const status = document.getElementById('co-status')
   const confirmBtn = document.getElementById('co-confirm')
@@ -319,46 +438,51 @@ async function uploadImage(imgSrc, placeId, div) {
   if (confirmBtn) confirmBtn.disabled = true
 
   try {
-    const fetchRes = await gmRequest({
-      method: 'GET',
-      url: imgSrc,
-      responseType: 'blob',
-      headers: { Referer: 'https://movie.douban.com/' },
-    })
+    let publicUrl = null
+    let imageBytes = null
 
-    if (fetchRes.status < 200 || fetchRes.status >= 300) {
-      throw new Error(parseHttpError(fetchRes, '下载豆瓣图片失败'))
+    try {
+      imageBytes = await downloadDoubanImage(imgSrc)
+    } catch (dlErr) {
+      console.warn('[CineOurs] 直链下载失败，尝试 Edge Function', dlErr)
+      status.textContent = '直链失败，改用服务器中转…'
+      try {
+        publicUrl = await uploadViaProxy(imgSrc, placeId)
+      } catch (proxyErr) {
+        const a = (dlErr && dlErr.message) || '下载失败'
+        const b = (proxyErr && proxyErr.message) || '中转失败'
+        throw new Error(a + '；' + b)
+      }
     }
 
-    const blob = fetchRes.response
-    if (!blob || (blob.size !== undefined && blob.size === 0)) {
-      throw new Error('图片数据为空')
+    if (!publicUrl) {
+      const objectPath = `places/${placeId}/${Date.now()}.jpg`
+      status.textContent = '上传到 Supabase…'
+
+      const uploadRes = await gmRequest({
+        _label: '上传到 Supabase',
+        method: 'POST',
+        url: `${SUPABASE_URL}/storage/v1/object/place-images/${objectPath}`,
+        headers: {
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          apikey: SUPABASE_ANON_KEY,
+          'Content-Type': 'image/jpeg',
+          'x-upsert': 'true',
+        },
+        data: imageBytes,
+      })
+
+      if (uploadRes.status !== 200 && uploadRes.status !== 201) {
+        const hint =
+          uploadRes.status === 401 || uploadRes.status === 403
+            ? '（请在 Supabase 执行 supabase/sql/place-images-userscript-upload.sql）'
+            : ''
+        throw new Error(parseHttpError(uploadRes, '上传 Storage 失败') + hint)
+      }
+
+      publicUrl = `${SUPABASE_URL}/storage/v1/object/public/place-images/${objectPath}`
     }
 
-    const objectPath = `places/${placeId}/${Date.now()}.jpg`
-    status.textContent = '上传到 Supabase…'
-
-    const uploadRes = await gmRequest({
-      method: 'POST',
-      url: `${SUPABASE_URL}/storage/v1/object/place-images/${objectPath}`,
-      headers: {
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        apikey: SUPABASE_ANON_KEY,
-        'Content-Type': blob.type || 'image/jpeg',
-        'x-upsert': 'true',
-      },
-      data: blob,
-    })
-
-    if (uploadRes.status !== 200 && uploadRes.status !== 201) {
-      const hint =
-        uploadRes.status === 401 || uploadRes.status === 403
-          ? '（请在 Supabase 执行 supabase/sql/place-images-userscript-upload.sql）'
-          : ''
-      throw new Error(parseHttpError(uploadRes, '上传 Storage 失败') + hint)
-    }
-
-    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/place-images/${objectPath}`
     status.textContent = '更新封面索引…'
     await updateCoversManifest(placeId, publicUrl)
 
@@ -386,7 +510,7 @@ async function uploadImage(imgSrc, placeId, div) {
 
 boot()
 loadPlaces()
-console.log('[CineOurs] 豆瓣选图 v2.0 已加载', location.href)
+console.log('[CineOurs] 豆瓣选图 v2.1 已加载', location.href)
 window.addEventListener('load', boot)
 window.addEventListener('scroll', boot, { passive: true })
 new MutationObserver(boot).observe(document.documentElement, { childList: true, subtree: true })

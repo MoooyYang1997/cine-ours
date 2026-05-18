@@ -4,4 +4,5 @@
 project_id = "dirrnojiybbwotuqeqww"
 
 [functions.proxy-image]
-verify_jwt = true
+# 油猴 publishable key 非 JWT；关闭校验后脚本可走中转上传
+verify_jwt = false
