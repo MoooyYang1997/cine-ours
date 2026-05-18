@@ -1,13 +1,11 @@
 // ==UserScript==
 // @name         CineOurs 豆瓣选图
 // @namespace    cineours
-// @version      1.2
+// @version      1.3
 // @match        https://movie.douban.com/*
 // @run-at       document-idle
 // @grant        GM_xmlhttpRequest
-// @connect      supabase.co
-// @connect      img*.douban.com
-// @connect      *.doubanio.com
+// @connect      *
 // ==/UserScript==
 
 const SUPABASE_URL = 'https://dirrnojiybbwotuqeqww.supabase.co'
@@ -183,7 +181,38 @@ function boot() {
   injectPhotoHero()
 }
 
-console.log('[CineOurs] 豆瓣选图 v1.2 已加载', location.href)
+console.log('[CineOurs] 豆瓣选图 v1.3 已加载', location.href)
+
+function gmRequest(opts) {
+  return new Promise((resolve, reject) => {
+    GM_xmlhttpRequest({
+      timeout: 90000,
+      ...opts,
+      onload(res) {
+        resolve(res)
+      },
+      onerror(err) {
+        reject(new Error((err && err.error) || '网络请求失败'))
+      },
+      ontimeout() {
+        reject(new Error('请求超时'))
+      },
+    })
+  })
+}
+
+function parseHttpError(res, fallback) {
+  let msg = fallback + ' (HTTP ' + res.status + ')'
+  try {
+    const body = typeof res.responseText === 'string' ? res.responseText : ''
+    if (body) {
+      const j = JSON.parse(body)
+      if (j.message) msg += ': ' + j.message
+      else if (j.error) msg += ': ' + j.error
+    }
+  } catch (_) {}
+  return msg
+}
 
 function showPicker(imgSrc, anchor) {
   document.getElementById('co-picker')?.remove()
@@ -218,55 +247,80 @@ function showPicker(imgSrc, anchor) {
   document.getElementById('co-cancel').onclick = () => div.remove()
   document.getElementById('co-confirm').onclick = () => {
     const placeId = document.getElementById('co-select').value
-    uploadImage(imgSrc, placeId, div)
+    uploadImage(imgSrc, placeId, div).catch((e) => console.error('[CineOurs]', e))
   }
 }
 
-function uploadImage(imgSrc, placeId, div) {
+async function uploadImage(imgSrc, placeId, div) {
   const status = document.getElementById('co-status')
-  status.textContent = '上传中...'
+  const confirmBtn = document.getElementById('co-confirm')
+  if (!status) return
 
-  GM_xmlhttpRequest({
-    method: 'GET',
-    url: imgSrc,
-    responseType: 'blob',
-    headers: { 'Referer': 'https://movie.douban.com' },
-    onload: async (res) => {
-      const filename = `places/${placeId}/${Date.now()}.jpg`
-      const blob = res.response
+  status.style.color = '#888'
+  status.textContent = '下载图片中…'
+  if (confirmBtn) confirmBtn.disabled = true
 
-      // 上传到 Supabase Storage
-      GM_xmlhttpRequest({
-        method: 'POST',
-        url: `${SUPABASE_URL}/storage/v1/object/place-images/${filename}`,
-        headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': 'image/jpeg',
-          'x-upsert': 'true'
-        },
-        data: blob,
-        onload: (uploadRes) => {
-          if (uploadRes.status === 200) {
-            const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/place-images/${filename}`
-            status.style.color = '#4CAF50'
-            status.textContent = `✓ 上传成功`
-            
-            // 复制URL到剪贴板
-            navigator.clipboard.writeText(publicUrl)
-            
-            setTimeout(() => {
-              div.remove()
-              // 提示复制结果
-              alert(`已上传并复制URL：\n${publicUrl}\n\n请粘入 data/places.js 中 id:'${placeId}' 的 img 字段`)
-            }, 800)
-          } else {
-            status.style.color = '#f44336'
-            status.textContent = '上传失败，请重试'
-          }
-        }
-      })
+  try {
+    const fetchRes = await gmRequest({
+      method: 'GET',
+      url: imgSrc,
+      responseType: 'blob',
+      headers: { Referer: 'https://movie.douban.com/' },
+    })
+
+    if (fetchRes.status < 200 || fetchRes.status >= 300) {
+      throw new Error(parseHttpError(fetchRes, '下载豆瓣图片失败'))
     }
-  })
+
+    const blob = fetchRes.response
+    if (!blob || (blob.size !== undefined && blob.size === 0)) {
+      throw new Error('图片数据为空')
+    }
+
+    const objectPath = `places/${placeId}/${Date.now()}.jpg`
+    status.textContent = '上传到 Supabase…'
+
+    const uploadRes = await gmRequest({
+      method: 'POST',
+      url: `${SUPABASE_URL}/storage/v1/object/place-images/${objectPath}`,
+      headers: {
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        apikey: SUPABASE_ANON_KEY,
+        'Content-Type': blob.type || 'image/jpeg',
+        'x-upsert': 'true',
+      },
+      data: blob,
+    })
+
+    if (uploadRes.status !== 200 && uploadRes.status !== 201) {
+      const hint =
+        uploadRes.status === 401 || uploadRes.status === 403
+          ? '（请在 Supabase 执行 supabase/sql/place-images-userscript-upload.sql）'
+          : ''
+      throw new Error(parseHttpError(uploadRes, '上传 Storage 失败') + hint)
+    }
+
+    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/place-images/${objectPath}`
+    status.style.color = '#4CAF50'
+    status.textContent = '✓ 上传成功'
+
+    try {
+      await navigator.clipboard.writeText(publicUrl)
+    } catch (_) {}
+
+    setTimeout(() => {
+      div.remove()
+      alert(
+        `已上传并复制 URL：\n${publicUrl}\n\n请粘入 data/places.js 中 id:'${placeId}' 的 img 字段`
+      )
+    }, 600)
+  } catch (err) {
+    status.style.color = '#f44336'
+    status.textContent = (err && err.message) || '上传失败'
+    console.error('[CineOurs] upload failed', err)
+  } finally {
+    if (confirmBtn) confirmBtn.disabled = false
+  }
 }
 
 boot()
