@@ -1,0 +1,100 @@
+# Cine Ours — 项目上下文
+
+## 项目性质
+**Cinema of Our Own** — 跟随电影节发生的社区平台。
+用户在这里记录线下电影节观影、浏览世界各地电影信号、追踪线上策展线索。
+
+---
+
+## 技术栈
+- 纯 HTML / CSS / JS，无框架，无构建工具
+- **Shell + iframe 路由**：`index.html` 是唯一外壳，所有页面作为 iframe 懒加载切换
+- 后端：Supabase（已接入，`supabase.js` 统一初始化，挂载到 `window._sb`）
+- 部署：Vercel（`vercel.json` 已配置）
+
+---
+
+## 目录结构关键点
+```
+index.html                  # Shell：导航栏、路由、message bridge
+page-home.html              # 首页（三屏）
+page-map.html               # 世界地图（D3 + 城市切换）
+page-map-r3.js / .css       # 地图独立逻辑文件
+page-festivals.html         # 电影节聚合页
+page-festival-detail.html   # 电影节详情页
+page-offline-festival.html  # 上影节专区（线下影展）
+page-auth.html              # 登录/注册
+page-profile.html           # 个人主页
+page-creator.html           # 创作空间（V1 隐藏）
+page-history.html           # 影史今天（V1 隐藏）
+supabase.js                 # 数据层统一入口
+data/places.js              # 地图地点数据（var PL 数组）
+data/cinema-images.json     # 影院图片
+data/place-images.json      # 取景地图片
+```
+
+---
+
+## 路由机制
+`index.html` 的 `go(pageKey)` 函数控制 iframe 显示/隐藏，懒加载 src。
+页面间通信通过 `window.parent.postMessage` → message bridge 处理。
+
+**已注册页面（PAGES 表）：**
+| key | 文件 | 导航项 | V1 可见 |
+|---|---|---|---|
+| home | page-home.html | 首页 | ✅ |
+| map | page-map.html | 世界地图 | ✅ |
+| festivals | page-festivals.html | 电影节 | ✅ |
+| festival-detail | page-festival-detail.html | （从电影节进入）| ✅ |
+| offline-festival | page-offline-festival.html | 上影节专区 | ✅ |
+| creator | page-creator.html | 创作（隐藏）| ❌ |
+| history | page-history.html | 影史今天（隐藏）| ❌ |
+| auth | page-auth.html | — | ✅ |
+| profile | page-profile.html | — | ✅ |
+
+**Message bridge 已支持的消息类型：**
+- `navigate` — 跳转页面
+- `navigateAndScroll` — 跳转页面并滚动到指定 section
+- `toast` — 显示提示
+- `login` — 登录状态同步
+
+---
+
+## 首页结构（page-home.html）
+- **第一屏**：上影节主卡（跳 offline-festival）+ ic0/ic1 互动格（带 section 定向跳转）+ 更多影展三列
+- **第二屏**：世界地图信号（城市卡片，跳 map?city=xxx）
+- **第三屏**：策展线索（tab 切换，进入跳 festival-detail）
+
+**上影节专区 section ID 对照：**
+| id | 内容 |
+|---|---|
+| sec-banner | 顶部 banner |
+| sec-lists | 社区片单 |
+| sec-films | 选片视角 |
+| sec-checkin | 现场打卡 |
+| sec-discuss | 散场后讨论 |
+
+---
+
+## 当前状态
+<!-- 每次工作前更新 -->
+**上次完成：** 联动和导航打通（ic0/ic1 定向跳转、navigateAndScroll bridge、上影节 section IDs、导航栏 V1 四页）
+
+**正在做：** —
+
+**下一步：** 确认三处 Cursor 指令是否已执行（hongkong→hk、mf-col 跳转、线索 CTA）
+
+---
+
+## 已知 Bug / 待修
+- [ ] `page-home.html`：`imgKey:'hongkong'` 应为 `'hk'`，`cityImgs` key 同步修改（地图城市高亮不生效）
+- [ ] `page-home.html`：更多影展三列 `.mf-col` 缺少 `onclick="nav('page-festival-detail')"`
+- [ ] `index.html`：`navigateAndScroll` bridge 是否已合并进最新版本需确认
+
+---
+
+## 重要决策记录
+- **Shell + iframe 架构**：统一管理导航状态、登录状态、消息通信，页面间完全隔离
+- **懒加载**：除首页外所有 iframe 首次切换时才注入 src，避免首屏慢
+- **创作/影史今天 V1 隐藏**：`display:none` 保留代码，V2 直接取消隐藏
+- **Supabase 统一初始化**：所有页面引用 `supabase.js`，通过 `supabase-ready` 事件等待客户端就绪

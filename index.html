@@ -478,12 +478,6 @@ function showToast(m) {
 // ── MESSAGE BRIDGE ────────────────────────────────────────────
 window.addEventListener('message', e => {
   const { type, payload, page } = e.data || {};
-  if (type === 'navigate') {
-    const raw = page != null ? page : payload && payload.page;
-    if (raw == null) return;
-    const dest = typeof raw === 'string' && raw.indexOf('page-') === 0 ? raw.slice(5) : raw;
-    go(dest);
-  }
   if (type === 'navigateAndScroll') {
     const dest = payload && payload.page;
     const section = payload && payload.section;
@@ -498,6 +492,12 @@ window.addEventListener('message', e => {
       };
       setTimeout(doScroll, wasLoaded ? 200 : 900);
     }
+  }
+  if (type === 'navigate') {
+    const raw = page != null ? page : payload && payload.page;
+    if (raw == null) return;
+    const dest = typeof raw === 'string' && raw.indexOf('page-') === 0 ? raw.slice(5) : raw;
+    go(dest);
   }
   if (type === 'toast')    showToast(payload.msg);
   if (type === 'login')    { setAuth(true); go('home'); showToast('欢迎回来 余小舟'); }

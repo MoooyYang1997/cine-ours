@@ -216,12 +216,9 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
 .bf:hover{opacity:0.8;transform:translateY(-2px)}
 .bf.on{opacity:1}
 .bf.on::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(201,168,76,0.58)}
-.bf-img{height:148px;overflow:hidden;position:relative}
-.bf-img img{width:100%;height:100%;object-fit:cover;filter:brightness(0.55) saturate(0.7);display:block;transition:filter 0.3s}
-.bf:hover .bf-img img,.bf.on .bf-img img{filter:brightness(0.72) saturate(0.82)}
-.bf-pw{width:100%;height:100%;background:linear-gradient(160deg,#281806,#1a1006,#0e0b05)}
-.bf-pc{width:100%;height:100%;background:linear-gradient(160deg,#121826,#0e1220,#0a0c14)}
-.bf-gr{position:absolute;inset:0;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0.02) 0,rgba(255,255,255,0.02) 1px,transparent 0,transparent 50%);background-size:5px 5px}
+.bf-img{height:148px;overflow:hidden;position:relative;background:#0d0f12}
+.bf-img img{width:100%;height:100%;object-fit:cover;display:block}
+.bf-ph{width:100%;height:100%;background:#0d0f12}
 .bf-tp{position:absolute;top:6px;left:8px;font-size:7.5px;letter-spacing:0.08em;color:rgba(237,232,223,0.32)}
 .bf-in{padding:10px 12px 11px}
 .bf-nm{font-size:12px;color:rgba(237,232,223,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px;transition:color 0.2s}
@@ -558,6 +555,7 @@ function filterCity(city){
     el.classList.toggle('active',(el.getAttribute('data-city')||'')===city);
   });
   doFilter(document.getElementById('sb-inp').value);
+  fillStrip(city);
 }
 
 function doFilter(v){
@@ -577,11 +575,12 @@ function doFilter(v){
 
 /* ── 底部 strip ── */
 function fillStrip(city){
-  document.getElementById('bsn').textContent=city;
-  var cp=PL.filter(function(p){return p.cy===city;});
+  var isAll=!city;
+  document.getElementById('bsn').textContent=isAll?'全部':city;
+  var cp=isAll?PL:PL.filter(function(p){return p.cy===city;});
   document.getElementById('bsk').textContent=cp.length+' 个地点';
-  renderRow('fr-fl',cp.filter(function(p){return p.tp==='fl';}), 'w');
-  renderRow('fr-ci',cp.filter(function(p){return p.tp==='ci';}), 'c');
+  renderRow('fr-fl',cp.filter(function(p){return p.tp==='fl';}),'fl');
+  renderRow('fr-ci',cp.filter(function(p){return p.tp==='ci';}),'ci');
   ['fr-fl','fr-ci'].forEach(function(id){initDrag(document.getElementById(id));});
 }
 
@@ -595,8 +594,8 @@ function renderRow(cid,places,sty){
     var on=p.id===active.id?' on':'';
     var tp=p.tp==='fl'?'电影地标':'影院现场';
     var imgH=p.img
-      ?'<img src="'+p.img+'" alt="'+p.nm+'" loading="lazy" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.55) saturate(0.7);display:block"/>'
-      :'<div class="bf-'+(sty==='w'?'pw':'pc')+'"><div class="bf-gr"></div></div>';
+      ?'<img src="'+p.img+'" alt="'+p.nm+'" loading="lazy"/>'
+      :'<div class="bf-ph"></div>';
     var filmInfo='';
     if(p.tp==='fl'&&p.fm){
       filmInfo='<div class="bf-fm">\u300a'+p.fm+'\u300b '+p.fy+' \u00b7 '+p.dr+'</div>';
