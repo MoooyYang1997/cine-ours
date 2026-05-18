@@ -407,25 +407,64 @@ function applyCinemaImages(db){
   });
 }
 
-/** 油猴上传到 place-images/places/{id}/ 的封面（优先于 JSON） */
+var STORAGE_PUBLIC_BASE='https://dirrnojiybbwotuqeqww.supabase.co/storage/v1/object/public/place-images';
+var COVERS_MANIFEST_URL=STORAGE_PUBLIC_BASE+'/covers-manifest.json';
+
+function applyCoverMap(manifest){
+  if(!manifest||typeof manifest!=='object')return 0;
+  var n=0;
+  PL.forEach(function(p){
+    var url=manifest[p.id];
+    if(url){p.img=url;n++;}
+  });
+  return n;
+}
+
+function fetchCoversManifest(){
+  return fetch(COVERS_MANIFEST_URL+'?t='+Date.now())
+    .then(function(r){return r.ok?r.json():{};})
+    .catch(function(){return {};});
+}
+
+function listStorageCoverForPlace(sb,placeId){
+  return sb.storage.from('place-images').list('places/'+placeId,{
+    limit:20,
+    sortBy:{column:'created_at',order:'desc'}
+  }).then(function(res){
+    if(res.error||!res.data)return null;
+    var files=res.data.filter(function(f){
+      return f&&f.name&&f.id&&/\.(jpe?g|png|webp|gif)$/i.test(f.name);
+    });
+    if(!files.length)return null;
+    var path='places/'+placeId+'/'+files[0].name;
+    var pub=sb.storage.from('place-images').getPublicUrl(path);
+    return pub.data&&pub.data.publicUrl?pub.data.publicUrl:null;
+  });
+}
+
+/** 油猴上传 place-images/places/{id}/ + covers-manifest.json（优先于 JSON） */
 function applySupabaseStorageCovers(){
-  return ensureSbReady().then(function(sb){
-    var jobs=PL.map(function(p){
-      return sb.storage.from('place-images').list('places/'+p.id,{
-        limit:1,
-        sortBy:{column:'created_at',order:'desc'}
-      }).then(function(res){
-        if(res.error||!res.data||!res.data.length)return;
-        var file=res.data[0];
-        if(!file.name)return;
-        var path='places/'+p.id+'/'+file.name;
-        var pub=sb.storage.from('place-images').getPublicUrl(path);
-        if(pub.data&&pub.data.publicUrl)p.img=pub.data.publicUrl;
+  return fetchCoversManifest().then(function(manifest){
+    var n=applyCoverMap(manifest);
+    if(n>0){
+      console.log('[CineOurs] 封面 manifest 已应用',n,'处');
+      return n;
+    }
+    return ensureSbReady().then(function(sb){
+      return Promise.all(PL.map(function(p){
+        if(p.img)return null;
+        return listStorageCoverForPlace(sb,p.id).then(function(url){
+          if(url)p.img=url;
+        });
+      })).then(function(){
+        var c=PL.filter(function(p){return!!p.img;}).length;
+        console.log('[CineOurs] Storage list 封面',c,'处');
+        return c;
       });
     });
-    return Promise.all(jobs);
   }).catch(function(e){
-    console.warn('Supabase storage covers',e);
+    console.warn('[CineOurs] storage covers',e);
+    return 0;
   });
 }
 
@@ -1144,6 +1183,8 @@ Promise.all([
   applyPlaceImages(dbs[0]);
   applyCinemaImages(dbs[1]);
   return applySupabaseStorageCovers();
+}).then(function(){
+  if(typeof active!=='undefined'&&active)fillCard(active);
 }).finally(function(){bootMapPage();});
 
 window.pick=pick;

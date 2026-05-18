@@ -15,3 +15,13 @@ drop policy if exists "userscript authenticated update place-images" on storage.
 create policy "userscript authenticated update place-images"
   on storage.objects for update to authenticated
   using (bucket_id = 'place-images');
+
+drop policy if exists "userscript anon update place-images" on storage.objects;
+create policy "userscript anon update place-images"
+  on storage.objects for update to anon
+  using (bucket_id = 'place-images');
+
+drop policy if exists "anon read place-images" on storage.objects;
+create policy "anon read place-images"
+  on storage.objects for select to anon
+  using (bucket_id = 'place-images');

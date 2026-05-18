@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CineOurs 豆瓣选图
 // @namespace    cineours
-// @version      1.3
+// @version      1.4
 // @match        https://movie.douban.com/*
 // @run-at       document-idle
 // @grant        GM_xmlhttpRequest
@@ -251,6 +251,38 @@ function showPicker(imgSrc, anchor) {
   }
 }
 
+const COVERS_MANIFEST_PATH = 'covers-manifest.json'
+
+async function updateCoversManifest(placeId, publicUrl) {
+  const manifestUrl = `${SUPABASE_URL}/storage/v1/object/public/place-images/${COVERS_MANIFEST_PATH}`
+  let manifest = {}
+  try {
+    const res = await gmRequest({
+      method: 'GET',
+      url: manifestUrl + '?t=' + Date.now(),
+    })
+    if (res.status === 200 && res.responseText) {
+      manifest = JSON.parse(res.responseText)
+    }
+  } catch (_) {}
+
+  manifest[placeId] = publicUrl
+  const uploadRes = await gmRequest({
+    method: 'POST',
+    url: `${SUPABASE_URL}/storage/v1/object/place-images/${COVERS_MANIFEST_PATH}`,
+    headers: {
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      apikey: SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json',
+      'x-upsert': 'true',
+    },
+    data: JSON.stringify(manifest, null, 2),
+  })
+  if (uploadRes.status !== 200 && uploadRes.status !== 201) {
+    console.warn('[CineOurs] manifest 更新失败', uploadRes.status, uploadRes.responseText)
+  }
+}
+
 async function uploadImage(imgSrc, placeId, div) {
   const status = document.getElementById('co-status')
   const confirmBtn = document.getElementById('co-confirm')
@@ -301,6 +333,9 @@ async function uploadImage(imgSrc, placeId, div) {
     }
 
     const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/place-images/${objectPath}`
+    status.textContent = '更新封面索引…'
+    await updateCoversManifest(placeId, publicUrl)
+
     status.style.color = '#4CAF50'
     status.textContent = '✓ 上传成功'
 

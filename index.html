@@ -302,6 +302,37 @@ function trySelectMapCity(frame, slug) {
   } catch (e) {}
 }
 
+function syncRouteHash(pageKey, mapCitySlug) {
+  var dest = pageKey || 'home';
+  if (mapCitySlug) dest += '?city=' + encodeURIComponent(mapCitySlug);
+  var next = '#' + dest;
+  if (location.hash === next) return;
+  try {
+    history.replaceState(null, '', location.pathname + location.search + next);
+  } catch (e) {
+    location.hash = next;
+  }
+}
+
+function routeFromLocation() {
+  var raw = (location.hash || '').replace(/^#/, '').trim();
+  if (!raw) {
+    try {
+      var q = new URLSearchParams(location.search).get('page');
+      if (q) raw = q;
+    } catch (e2) {}
+  }
+  return raw || null;
+}
+
+function applyInitialRoute() {
+  var raw = routeFromLocation();
+  if (!raw) return;
+  var pageKey = raw.indexOf('?') >= 0 ? raw.slice(0, raw.indexOf('?')) : raw;
+  if (!PAGES[pageKey]) return;
+  go(raw, true);
+}
+
 function go(page, force=false) {
   var pageKey = page;
   var mapCitySlug = null;
@@ -375,6 +406,7 @@ function go(page, force=false) {
 
     cur = pageKey;
     document.title = cfg.label + ' — Cine Ours';
+    syncRouteHash(pageKey, mapCitySlug);
     cover.classList.remove('on');
     closeUmenu(); closeSearch();
   }, 150);
@@ -507,6 +539,16 @@ document.addEventListener('keydown', e => {
 
 // ── INIT ─────────────────────────────────────────────────────
 document.getElementById('f-home').addEventListener('load', function(){ wireFrame(this); });
+window.addEventListener('hashchange', function() {
+  var raw = routeFromLocation();
+  if (!raw) {
+    if (cur !== 'home') go('home', true);
+    return;
+  }
+  var pageKey = raw.indexOf('?') >= 0 ? raw.slice(0, raw.indexOf('?')) : raw;
+  if (PAGES[pageKey] && (cur !== pageKey || raw.indexOf('?') >= 0)) go(raw, true);
+});
+applyInitialRoute();
 renderSearch([]);
 setTimeout(() => {
   showToast('⌘K 全局搜索 · 1-5 主导航 · 6 线下影展 · L 演示登录');
