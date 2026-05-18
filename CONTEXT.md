@@ -76,6 +76,12 @@ data/place-images.json      # 取景地图片
 
 ---
 
+## 验证原则
+- **验证数据库写入**：直接去 Supabase Dashboard → Table Editor 查表，不通过页面行为推断
+- **验证页面功能**：用 Supabase Dashboard → Authentication → Users 确认用户存在后，再测试页面
+
+---
+
 ## 当前状态
 <!-- 每次工作前更新 -->
 **上次完成：** 联动和导航打通（ic0/ic1 定向跳转、navigateAndScroll bridge、上影节 section IDs、导航栏 V1 四页）
