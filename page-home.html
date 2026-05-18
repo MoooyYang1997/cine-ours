@@ -164,7 +164,8 @@
     
     /* ── 策展入口 ── */
     .ph-root .entry-section{background:#181818;border-top:1px solid rgba(255,255,255,0.06);min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
-    .ph-root .entry-stage{position:relative;width:100%;min-height:100vh;min-height:100dvh;flex:1;overflow:hidden;background:transparent}
+    .ph-root .entry-stage{position:relative;width:100%;min-height:100vh;min-height:100dvh;flex:1;overflow:hidden;background:transparent;cursor:pointer}
+    .ph-root .entry-stage:focus-visible{outline:1px solid rgba(201,168,76,0.35);outline-offset:-4px}
     .ph-root .e-line-bg{position:absolute;inset:0;z-index:1;pointer-events:none;background-color:#121016;background-position:center;background-size:cover;background-repeat:no-repeat;opacity:1;transition:opacity 0.85s ease,filter 0.85s ease;filter:brightness(0.84) saturate(0.9) contrast(1.03)}
     .ph-root .e-ovr{
       position:absolute;
@@ -377,7 +378,7 @@
     
     <!-- ══ 策展入口 ══ -->
     <section class="entry-section">
-      <div class="entry-stage">
+      <div class="entry-stage" id="entryStage" role="link" tabindex="0" aria-label="进入线上影展">
         <div class="e-line-bg" id="eLineBg" aria-hidden="true"></div>
         <div class="e-ovr"></div>
         <div class="e-inner">
@@ -555,7 +556,7 @@
     
       /* ── 策展入口 ── */
       var ES=[
-        {zh:'城市，以及漂泊的人',en:'The City and Its Shadow',
+        {zh:'城市，以及漂泊的人',en:'The City and Its Shadow',page:'page-festival-detail',
          still:'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1600&q=82',
          note:'这三部片放在一起，是因为它们都在问同一个问题：一个人独自在城市里，算不算失落？',
          films:[
@@ -563,7 +564,7 @@
            {n:'《重庆森林》',l:'城市足够大，孤独就足够近。',m:'1994 · 王家卫',c:'p2'},
            {n:'《天使爱美丽》',l:'一个人决定让别人快乐，但忘了自己。',m:'2001 · 让-皮埃尔·热内',c:'p3'}
          ]},
-        {zh:'港影节散场后，最多人在谈的',en:'After the Last Screening',
+        {zh:'港影节散场后，最多人在谈的',en:'After the Last Screening',page:'page-festival-detail',
          still:'https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=1600&q=82',
          note:'这三部片不是最好看的，但是最难从里面出来的。散场后你会站在外面，不想走。',
          films:[
@@ -571,7 +572,7 @@
            {n:'《花样年华》',l:'所有没有说出口的，比说出口的更真实。',m:'2000 · 王家卫',c:'p2'},
            {n:'《牯岭街少年杀人事件》',l:'给它四个小时。它会给你一整个时代。',m:'1991 · 杨德昌',c:'p3'}
          ]},
-        {zh:'她们彼此看见',en:'The Way They Looked',
+        {zh:'她们彼此看见',en:'The Way They Looked',page:'page-festival-detail',
          still:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1600&q=82',
          note:'三位导演，三种目光。共同的是：她们都在问"被看见"意味着什么。',
          films:[
@@ -579,7 +580,7 @@
            {n:'《卡罗尔》',l:'那个年代，爱本身就是勇气。',m:'2015 · 托德·海因斯',c:'p2'},
            {n:'《钢琴课》',l:'沉默有时比语言更有力量。',m:'1993 · 简·坎皮恩',c:'p3'}
          ]},
-        {zh:'回到杨德昌的台北',en:"A Director's City",
+        {zh:'回到杨德昌的台北',en:"A Director's City",page:'page-festival-detail',
          still:'https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?w=1600&q=82',
          note:'杨德昌用摄影机记录了一个城市正在失去某种东西的时刻。我们现在才看懂。',
          films:[
@@ -587,7 +588,7 @@
            {n:'《一一》',l:'人生的每一段，都值得被好好看见。',m:'2000 · 杨德昌',c:'p2'},
            {n:'《独立时代》',l:'台北的中产生活，有多少是真实的？',m:'1994 · 杨德昌',c:'p3'}
          ]},
-        {zh:'今晚交给别人策展',en:'Tonight, Someone Else Decides',
+        {zh:'今晚交给别人策展',en:'Tonight, Someone Else Decides',page:'page-festival-detail',
          still:'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1600&q=82',
          note:'不告诉你为什么选这三部。进去就知道了。',
          films:[
@@ -659,10 +660,20 @@
           else clearInterval(unlitTimer);
         },26);
       }
+      function goToCurrentClueFestival(){
+        var s=ES[eCur];
+        nav(s&&s.page?s.page:'page-festival-detail');
+      }
+      var entryStage=document.getElementById('entryStage');
+      if(entryStage){
+        entryStage.addEventListener('click',goToCurrentClueFestival);
+        entryStage.addEventListener('keydown',function(e){
+          if(e.key==='Enter'||e.key===' '){e.preventDefault();goToCurrentClueFestival();}
+        });
+      }
       if(ctaBD){
         ctaBD.addEventListener('mouseenter',ctaLightOn);
         ctaBD.addEventListener('mouseleave',ctaLightOff);
-        ctaBD.addEventListener('click',function(){nav('page-festival-detail');});
       }
       /* 自动演示一次 */
       setTimeout(function(){

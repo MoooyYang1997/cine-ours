@@ -275,3 +275,33 @@ $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- ============================================
+-- 地图地点打卡 place_checkins
+-- ============================================
+create table if not exists public.place_checkins (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users(id) on delete cascade not null,
+  place_id text not null,
+  note text,
+  image_url text,
+  created_at timestamptz default now(),
+  unique (user_id, place_id)
+);
+
+create index if not exists place_checkins_place_id_idx on public.place_checkins (place_id);
+
+alter table public.place_checkins enable row level security;
+
+drop policy if exists "place_checkins_read" on public.place_checkins;
+create policy "place_checkins_read" on public.place_checkins for select using (true);
+
+drop policy if exists "place_checkins_insert" on public.place_checkins;
+create policy "place_checkins_insert" on public.place_checkins for insert with check (auth.uid() = user_id);
+
+-- Storage：在 Dashboard 创建 public bucket「place-checkins」后执行
+-- drop policy if exists "place_checkins_img_read" on storage.objects;
+-- create policy "place_checkins_img_read" on storage.objects for select using (bucket_id = 'place-checkins');
+-- drop policy if exists "place_checkins_img_insert" on storage.objects;
+-- create policy "place_checkins_img_insert" on storage.objects for insert to authenticated
+--   with check (bucket_id = 'place-checkins' and auth.uid()::text = (storage.foldername(name))[1]);

@@ -165,8 +165,9 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
 .fc-rec-meta{font-size:7.5px;color:rgba(237,232,223,0.22)}
 .fc-rec-img{width:100%;max-height:100px;object-fit:cover;border-radius:2px;margin-top:6px;display:block}
 .fc-rec-empty{font-size:10px;color:rgba(237,232,223,0.24);font-style:italic;text-align:center;padding:18px 8px}
-#map-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);background:rgba(18,16,12,0.94);border:1px solid rgba(201,168,76,0.22);color:rgba(237,232,223,0.88);font-size:11px;padding:8px 16px;border-radius:4px;z-index:100;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s}
+#map-toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-6px);background:rgba(18,16,12,0.96);border:1px solid rgba(201,168,76,0.28);color:rgba(237,232,223,0.92);font-size:11px;padding:9px 18px;border-radius:4px;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;box-shadow:0 8px 28px rgba(0,0,0,0.55);max-width:90vw;text-align:center}
 #map-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#map-toast.err{border-color:rgba(220,80,60,0.45);color:rgba(255,200,190,0.95)}
 
 /* 缩放控件 */
 #mc{position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:4px;z-index:10;opacity:0.14;transition:opacity 0.25s}
@@ -598,16 +599,80 @@ var userCheckedPlaces={};
 var pendingCheckinFile=null;
 var checkinUiBound=false;
 
-function showFcToast(msg){
+function showFcToast(msg,isErr){
+  try{
+    if(typeof window.shellToast==='function'){window.shellToast(msg);return;}
+    if(window.parent&&window.parent!==window&&typeof window.parent.showToast==='function'){
+      window.parent.showToast(msg);return;
+    }
+  }catch(e){}
   if(window.parent&&window.parent!==window){
-    try{window.parent.postMessage({type:'toast',payload:{msg:msg}},'*');}catch(e){}
+    try{window.parent.postMessage({type:'toast',payload:{msg:msg}},'*');}catch(e2){}
   }
   var t=document.getElementById('map-toast');
   if(!t)return;
   t.textContent=msg;
+  t.classList.toggle('err',!!isErr);
   t.classList.add('show');
   clearTimeout(showFcToast._t);
-  showFcToast._t=setTimeout(function(){t.classList.remove('show');},2000);
+  showFcToast._t=setTimeout(function(){t.classList.remove('show','err');},2400);
+}
+
+function formatSbError(err){
+  if(!err)return '打卡失败，请稍后重试';
+  if(typeof err==='string')return err;
+  if(err.message)return err.message;
+  if(err.error_description)return err.error_description;
+  if(err.details)return err.details;
+  if(err.hint)return err.hint+' ('+(err.code||'')+')';
+  return '打卡失败，请稍后重试';
+}
+
+function readUserFromStorage(){
+  try{
+    var k=Object.keys(localStorage).find(function(key){
+      return key.indexOf('auth-token')>=0&&key.indexOf('supabase')>=0;
+    });
+    if(!k)return null;
+    var raw=JSON.parse(localStorage.getItem(k));
+    return raw&&raw.user?raw.user:null;
+  }catch(e){return null;}
+}
+
+function ensureSbReady(){
+  return new Promise(function(resolve,reject){
+    if(window._sb)return resolve(window._sb);
+    var done=false;
+    var timer=setTimeout(function(){
+      if(done)return;
+      done=true;
+      reject(new Error('地图服务未就绪，请刷新页面后重试'));
+    },15000);
+    window.addEventListener('supabase-ready',function(){
+      if(done)return;
+      done=true;
+      clearTimeout(timer);
+      if(window._sb)resolve(window._sb);
+      else reject(new Error('Supabase 初始化失败'));
+    },{once:true});
+  });
+}
+
+function ensureMapUser(){
+  return ensureSbReady().then(function(sb){
+    if(window.currentUser)return window.currentUser;
+    return sb.auth.getSession().then(function(res){
+      var u=res.data&&res.data.session&&res.data.session.user;
+      if(u){window.currentUser=u;return u;}
+      u=readUserFromStorage();
+      if(u)window.currentUser=u;
+      return u;
+    });
+  });
+}
+
+function syncMapAuth(){
+  return ensureMapUser().catch(function(){return null;});
 }
 
 function navAuth(){
@@ -703,15 +768,19 @@ function refreshCheckinState(placeId){
 }
 
 function onCheckinClick(){
-  if(!window.currentUser){
-    if(typeof requireAuth==='function'){requireAuth('请先登录');}
-    else navAuth();
-    return;
-  }
-  if(userCheckedPlaces[active.id])return;
-  var panel=document.getElementById('fc-checkin');
-  if(panel&&panel.classList.contains('open')){closeCheckinPanel();return;}
-  openCheckinPanel();
+  ensureMapUser().then(function(user){
+    if(!user){
+      if(typeof requireAuth==='function'){requireAuth('请先登录');}
+      else navAuth();
+      return;
+    }
+    if(userCheckedPlaces[active.id])return;
+    var panel=document.getElementById('fc-checkin');
+    if(panel&&panel.classList.contains('open')){closeCheckinPanel();return;}
+    openCheckinPanel();
+  }).catch(function(err){
+    showFcToast(formatSbError(err),true);
+  });
 }
 
 function onFileSelected(e){
@@ -766,39 +835,52 @@ function fileToJpegBlob(file){
 }
 
 async function submitCheckin(){
-  if(!window.currentUser){
-    if(typeof requireAuth==='function'){requireAuth('请先登录');}
-    else navAuth();
-    return;
-  }
-  if(userCheckedPlaces[active.id])return;
   var btn=document.getElementById('fc-submit-checkin');
   var noteEl=document.getElementById('fc-note');
   var note=noteEl&&noteEl.value.trim();
   if(btn){btn.disabled=true;btn.textContent='提交中…';}
+  var ok=false;
   try{
+    var sb=await ensureSbReady();
+    var user=await ensureMapUser();
+    if(!user){
+      if(typeof requireAuth==='function'){requireAuth('请先登录');}
+      else navAuth();
+      return;
+    }
+    if(userCheckedPlaces[active.id])return;
     var imageUrl=null;
     if(pendingCheckinFile){
-      imageUrl=await uploadCheckinImage(window.currentUser.id,active.id,pendingCheckinFile);
+      try{
+        imageUrl=await uploadCheckinImage(user.id,active.id,pendingCheckinFile);
+      }catch(upErr){
+        console.warn('image upload',upErr);
+        showFcToast('图片上传失败，已仅提交文字记录',true);
+      }
     }
     var row={
-      user_id:window.currentUser.id,
+      user_id:user.id,
       place_id:active.id,
       note:note||null,
       image_url:imageUrl
     };
-    var ins=await window._sb.from('place_checkins').insert(row);
+    var ins=await sb.from('place_checkins').insert(row).select('id').single();
     if(ins.error)throw ins.error;
+    if(!ins.data)throw new Error('打卡未写入，请确认已登录且数据表已创建');
     userCheckedPlaces[active.id]=true;
     closeCheckinPanel();
     clearCheckinForm();
     updateCheckinButton(true);
     showFcToast('已记录 · '+active.nm);
+    ok=true;
   }catch(err){
-    console.error(err);
-    showFcToast(err.message||'打卡失败，请稍后重试');
+    console.error('submitCheckin',err);
+    showFcToast(formatSbError(err),true);
   }finally{
-    if(btn){btn.disabled=false;btn.textContent='提交打卡';}
+    if(btn&&!ok){
+      btn.disabled=false;
+      btn.textContent='提交打卡';
+    }
   }
 }
 
@@ -859,7 +941,12 @@ function bindCheckinUi(){
   var btnRm=document.getElementById('fc-img-rm');
   var btnBack=document.getElementById('fc-records-back');
   if(btnCheckin)btnCheckin.addEventListener('click',onCheckinClick);
-  if(btnSubmit)btnSubmit.addEventListener('click',submitCheckin);
+  if(btnSubmit)btnSubmit.addEventListener('click',function(){
+    submitCheckin().catch(function(err){
+      console.error(err);
+      showFcToast(formatSbError(err),true);
+    });
+  });
   if(btnRecords)btnRecords.addEventListener('click',loadPlaceRecords);
   if(btnBack)btnBack.addEventListener('click',showDetailView);
   if(fileInput)fileInput.addEventListener('change',onFileSelected);
@@ -1010,7 +1097,7 @@ function bootMapPage(){
   bindCheckinUi();
   refreshCityViews();
   fillCard(active);
-  whenSbReady(function(){
+  syncMapAuth().then(function(){
     if(active)refreshCheckinState(active.id);
   });
   setTimeout(function(){document.getElementById('fc').classList.add('vis');},500);
