@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CineOurs 豆瓣选图
 // @namespace    cineours
-// @version      1.5
+// @version      2.0
 // @match        https://movie.douban.com/*
 // @run-at       document-idle
 // @grant        GM_xmlhttpRequest
@@ -11,73 +11,72 @@
 const SUPABASE_URL = 'https://dirrnojiybbwotuqeqww.supabase.co'
 const SUPABASE_ANON_KEY = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP'
 
-// 与 data/places.js 同步（改 places.js 后请一并更新此处）
-const PLACES = [
-  {id:'esc', nm:'中环至半山自动扶梯', cy:'香港'},
-  {id:'ck',  nm:'重庆大厦', cy:'香港'},
-  {id:'tsk', nm:'天星码头', cy:'香港'},
-  {id:'hkcc',nm:'香港文化中心', cy:'香港'},
-  {id:'bwy', nm:'百老汇电影中心', cy:'香港'},
-  {id:'btz', nm:'砵典乍街', cy:'香港'},
-  {id:'vhb', nm:'维多利亚港', cy:'香港'},
-  {id:'mkg', nm:'旺角', cy:'香港'},
-  {id:'sao', nm:'石澳', cy:'香港'},
-  {id:'mpl', nm:'M+ Cinema', cy:'香港'},
-  {id:'ggc', nm:'高先电影院', cy:'香港'},
-  {id:'dgm', nm:'大光明电影院', cy:'上海'},
-  {id:'wkl', nm:'武康路', cy:'上海'},
-  {id:'gtdy',nm:'国泰电影院', cy:'上海'},
-  {id:'szh', nm:'苏州河沿岸', cy:'上海'},
-  {id:'shfc',nm:'上海影城', cy:'上海'},
-  {id:'ylj', nm:'延庆路', cy:'上海'},
-  {id:'wjc', nm:'五角场', cy:'上海'},
-  {id:'ljz', nm:'陆家嘴天桥', cy:'上海'},
-  {id:'sheb',nm:'上海电影博物馆', cy:'上海'},
-  {id:'mmsh',nm:'MovieMovie 上海', cy:'上海'},
-  {id:'gfw', nm:'恭王府', cy:'北京'},
-  {id:'msk', nm:'莫斯科餐厅', cy:'北京'},
-  {id:'bzjc',nm:'北展剧场', cy:'北京'},
-  {id:'lth', nm:'龙潭湖', cy:'北京'},
-  {id:'cfda',nm:'中国电影资料馆', cy:'北京'},
-  {id:'cfm', nm:'中国电影博物馆', cy:'北京'},
-  {id:'gdt', nm:'牯岭街', cy:'台北'},
-  {id:'xmt', nm:'西门町', cy:'台北'},
-  {id:'gdt2',nm:'光点台北', cy:'台北'},
-  {id:'dsw', nm:'淡水河边', cy:'台北'},
-  {id:'bab', nm:'Babylon Kino', cy:'柏林'},
-  {id:'blp', nm:'Berlinale Palast', cy:'柏林'},
-  {id:'bbg', nm:'勃兰登堡门', cy:'柏林'},
-  {id:'cin', nm:'La Cinémathèque française', cy:'巴黎'},
-  {id:'pnt', nm:'Cinéma du Panthéon', cy:'巴黎'},
-  {id:'sm',  nm:'圣米歇尔广场', cy:'巴黎'},
-  {id:'lch', nm:'Le Champo', cy:'巴黎'},
-  {id:'flql',nm:'La Filmothèque du Quartier Latin', cy:'巴黎'},
-  {id:'ccc', nm:'Le Christine Cinéma Club', cy:'巴黎'},
-  {id:'sbk', nm:'涩谷十字路口', cy:'东京'},
-  {id:'bun', nm:'涩谷 Bunkamura', cy:'东京'},
-  {id:'shj', nm:'新宿黄金街', cy:'东京'},
-  {id:'lum', nm:'卢米埃尔大厅', cy:'戛纳'},
-  {id:'cnp', nm:'戛纳海滨大道', cy:'戛纳'},
-  {id:'trv', nm:'特雷维喷泉', cy:'罗马'},
-  {id:'via', nm:'威尼托大街', cy:'罗马'},
-  {id:'ace', nm:'Ace Hotel Theatre', cy:'洛杉矶'},
-  {id:'grm', nm:'TCL Chinese Theatre', cy:'洛杉矶'},
-  {id:'grf', nm:'葛里菲斯天文台', cy:'洛杉矶'},
-  {id:'iff', nm:'IFC Center', cy:'纽约'},
-  {id:'brk', nm:'布鲁克林大桥', cy:'纽约'},
-  {id:'wst', nm:'西村街道', cy:'纽约'},
-]
-
+// 与 data/places.js 同步：部署后由 data/places-picker.json 自动提供（无需改油猴）
+const PLACES_JSON_URL = 'https://cine-ours.vercel.app/data/places-picker.json'
 const PLACE_CITY_ORDER = ['香港','上海','北京','台北','柏林','巴黎','东京','戛纳','罗马','洛杉矶','纽约']
 
-function buildPlaceSelectHtml() {
+let placesCache = null
+let placesLoading = null
+
+function gmRequest(opts) {
+  return new Promise((resolve, reject) => {
+    GM_xmlhttpRequest({
+      timeout: 90000,
+      ...opts,
+      onload(res) {
+        resolve(res)
+      },
+      onerror(err) {
+        reject(new Error((err && err.error) || '网络请求失败'))
+      },
+      ontimeout() {
+        reject(new Error('请求超时'))
+      },
+    })
+  })
+}
+
+function loadPlaces() {
+  if (placesCache) return Promise.resolve(placesCache)
+  if (placesLoading) return placesLoading
+
+  placesLoading = gmRequest({
+    method: 'GET',
+    url: PLACES_JSON_URL + '?t=' + Date.now(),
+  })
+    .then((res) => {
+      if (res.status !== 200 || !res.responseText) {
+        throw new Error('HTTP ' + res.status)
+      }
+      const list = JSON.parse(res.responseText)
+      if (!Array.isArray(list) || !list.length) {
+        throw new Error('地点列表为空')
+      }
+      placesCache = list
+      console.log('[CineOurs] 地点列表', list.length, '个（来自 places-picker.json）')
+      return placesCache
+    })
+    .catch((err) => {
+      console.warn('[CineOurs] 加载地点失败', err)
+      placesCache = []
+      return placesCache
+    })
+    .finally(() => {
+      placesLoading = null
+    })
+
+  return placesLoading
+}
+
+function buildPlaceSelectHtml(places) {
   const byCity = {}
-  PLACES.forEach((p) => {
+  places.forEach((p) => {
     if (!byCity[p.cy]) byCity[p.cy] = []
     byCity[p.cy].push(p)
   })
   const cities = PLACE_CITY_ORDER.filter((cy) => byCity[cy])
-  return cities
+  const extra = Object.keys(byCity).filter((cy) => !PLACE_CITY_ORDER.includes(cy))
+  return [...cities, ...extra]
     .map(
       (cy) =>
         `<optgroup label="${cy}">` +
@@ -160,7 +159,10 @@ function attachPlusButton(img) {
   btn.addEventListener('click', (e) => {
     e.preventDefault()
     e.stopPropagation()
-    showPicker(src, btn)
+    showPicker(src, btn).catch((err) => {
+      console.error('[CineOurs]', err)
+      alert((err && err.message) || '打开选图失败')
+    })
   })
 
   document.body.appendChild(btn)
@@ -217,26 +219,6 @@ function boot() {
   injectPhotoHero()
 }
 
-console.log('[CineOurs] 豆瓣选图 v1.3 已加载', location.href)
-
-function gmRequest(opts) {
-  return new Promise((resolve, reject) => {
-    GM_xmlhttpRequest({
-      timeout: 90000,
-      ...opts,
-      onload(res) {
-        resolve(res)
-      },
-      onerror(err) {
-        reject(new Error((err && err.error) || '网络请求失败'))
-      },
-      ontimeout() {
-        reject(new Error('请求超时'))
-      },
-    })
-  })
-}
-
 function parseHttpError(res, fallback) {
   let msg = fallback + ' (HTTP ' + res.status + ')'
   try {
@@ -250,7 +232,15 @@ function parseHttpError(res, fallback) {
   return msg
 }
 
-function showPicker(imgSrc, anchor) {
+async function showPicker(imgSrc, anchor) {
+  const places = await loadPlaces()
+  if (!places.length) {
+    alert(
+      '无法加载地点列表。\n\n请确认已部署 data/places-picker.json（改 places.js 后运行 npm run sync:places 并 push）'
+    )
+    return
+  }
+
   document.getElementById('co-picker')?.remove()
 
   const div = document.createElement('div')
@@ -269,7 +259,7 @@ function showPicker(imgSrc, anchor) {
     <div style="font-size:13px;color:#D4AF37;margin-bottom:12px">选择对应地标</div>
     <img src="${imgSrc}" style="width:100%;border-radius:4px;margin-bottom:12px">
     <select id="co-select" style="width:100%;padding:8px;background:#111;color:#EDE8DF;border:1px solid #333;border-radius:4px;margin-bottom:12px">
-      ${buildPlaceSelectHtml()}
+      ${buildPlaceSelectHtml(places)}
     </select>
     <div style="display:flex;gap:8px">
       <button id="co-confirm" style="flex:1;padding:8px;background:#D4AF37;color:#000;border:none;border-radius:4px;cursor:pointer;font-weight:bold">确认上传</button>
@@ -395,6 +385,8 @@ async function uploadImage(imgSrc, placeId, div) {
 }
 
 boot()
+loadPlaces()
+console.log('[CineOurs] 豆瓣选图 v2.0 已加载', location.href)
 window.addEventListener('load', boot)
 window.addEventListener('scroll', boot, { passive: true })
 new MutationObserver(boot).observe(document.documentElement, { childList: true, subtree: true })
