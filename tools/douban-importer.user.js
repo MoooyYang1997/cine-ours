@@ -311,7 +311,7 @@ async function uploadImage(imgSrc, placeId, div) {
     setTimeout(() => {
       div.remove()
       alert(
-        `已上传并复制 URL：\n${publicUrl}\n\n请粘入 data/places.js 中 id:'${placeId}' 的 img 字段`
+        `已上传并复制 URL：\n${publicUrl}\n\n刷新站点「世界地图」即可显示；也可写入 data/places.js 中 id:'${placeId}' 的 img 字段`
       )
     }, 600)
   } catch (err) {

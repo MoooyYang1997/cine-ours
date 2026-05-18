@@ -407,6 +407,28 @@ function applyCinemaImages(db){
   });
 }
 
+/** 油猴上传到 place-images/places/{id}/ 的封面（优先于 JSON） */
+function applySupabaseStorageCovers(){
+  return ensureSbReady().then(function(sb){
+    var jobs=PL.map(function(p){
+      return sb.storage.from('place-images').list('places/'+p.id,{
+        limit:1,
+        sortBy:{column:'created_at',order:'desc'}
+      }).then(function(res){
+        if(res.error||!res.data||!res.data.length)return;
+        var file=res.data[0];
+        if(!file.name)return;
+        var path='places/'+p.id+'/'+file.name;
+        var pub=sb.storage.from('place-images').getPublicUrl(path);
+        if(pub.data&&pub.data.publicUrl)p.img=pub.data.publicUrl;
+      });
+    });
+    return Promise.all(jobs);
+  }).catch(function(e){
+    console.warn('Supabase storage covers',e);
+  });
+}
+
 var CITIES=[
   {zh:'香港', lng:114.172, lat:22.295},
   {zh:'北京', lng:116.387, lat:39.933},
@@ -1121,6 +1143,7 @@ Promise.all([
 ]).then(function(dbs){
   applyPlaceImages(dbs[0]);
   applyCinemaImages(dbs[1]);
+  return applySupabaseStorageCovers();
 }).finally(function(){bootMapPage();});
 
 window.pick=pick;
