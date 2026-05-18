@@ -87,7 +87,7 @@ data/place-images.json      # 取景地图片
 <!-- CONTEXT_STATUS_START -->
 **最近自动更新：** 2026-05-18 00:00 北京时间
 
-**上次完成（2026-05-18）：** 共 10 次提交。涉及文件：CONTEXT.md、film-image-picker.html、index.html、page-home.html、page-map.html、schema.sql、scripts/deploy-proxy-image.sh、supabase/.temp/cli-latest 等
+**上次完成（2026-05-17）：** Add GitHub Actions workflow for daily SIFF film sync.；add package.json for serverless functions；Refactor page-map with fixed-height map row and scrollable film strip.；Tweak page-map city subtitle and frame placeholder gradients.；Fix page-map scroll layout and enlarge film strip cards.；Improve page-map bottom strip and frame card layout.。涉及文件：.github/workflows/sync-siff.yml、api:/sync-siff.js、data/cinema-images.json、data/place-images.json、data/places.js、film-image-picker.html、index.html、package.json 等
 
 **正在做：** —
 
@@ -99,6 +99,9 @@ data/place-images.json      # 取景地图片
 ## 进度日报
 <!-- 保留最近 14 天；由 GitHub Actions 每日追加 -->
 <!-- CONTEXT_DAILY_START -->
+### 2026-05-17
+Add GitHub Actions workflow for daily SIFF film sync.；add package.json for serverless functions；Refactor page-map with fixed-height map row and scrollable film strip.；Tweak page-map city subtitle and frame placeholder gradients.；Fix page-map scroll layout and enlarge film strip cards.；Improve page-map bottom strip and frame card layout.。涉及文件：.github/workflows/sync-siff.yml、api:/sync-siff.js、data/cinema-images.json、data/place-images.json、data/places.js、film-image-picker.html、index.html、package.json 等
+
 ### 2026-05-18
 共 10 次提交。涉及文件：CONTEXT.md、film-image-picker.html、index.html、page-home.html、page-map.html、schema.sql、scripts/deploy-proxy-image.sh、supabase/.temp/cli-latest 等
 <!-- CONTEXT_DAILY_END -->
