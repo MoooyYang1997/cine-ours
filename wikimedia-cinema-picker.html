@@ -46,7 +46,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .cinema-row{padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s;position:relative}
 .cinema-row:hover{background:rgba(255,255,255,0.025)}
 .cinema-row.active{background:var(--purple2);border-left:2px solid var(--purple)}
-.cinema-row.done .cr-name::after{content:' ✓';color:var(--green);font-size:9px}
+.cinema-row.done .cr-name::after{content:none}
+.sidebar-progress{padding:10px 14px 9px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:2}
+.sidebar-progress-text{font-size:10px;color:var(--text2);margin-bottom:8px;letter-spacing:.03em}
+.btn-reset-progress{font-size:9px;color:var(--text3);background:none;border:1px solid var(--border);padding:4px 10px;cursor:pointer;border-radius:2px;font-family:inherit;transition:color .15s,border-color .15s}
+.btn-reset-progress:hover{color:var(--purple);border-color:rgba(167,139,250,0.35)}
+.cinema-row.done{opacity:0.42}
+.cinema-row.done .cr-name,.cinema-row.done .cr-en,.cinema-row.done .cr-type{color:var(--text3)}
+
 .cr-name{font-size:11.5px;color:var(--text);line-height:1.4}
 .cr-en{font-size:9.5px;color:var(--text3);margin-top:1px;font-style:italic}
 .cr-type{display:inline-block;font-size:7.5px;letter-spacing:.05em;padding:1px 5px;border-radius:2px;margin-top:3px;border:1px solid rgba(167,139,250,0.18);color:rgba(167,139,250,0.55);background:rgba(167,139,250,0.06)}
@@ -237,6 +244,26 @@ const TYPE_LABELS = {
   historic_cinema:'历史影院', arthouse_cinema:'艺术院线', film_institution:'电影机构'
 };
 
+
+// ── 完成进度（localStorage）──
+const DONE_KEY = 'cineours_img_done';
+function markDone(placeId) {
+  const done = JSON.parse(localStorage.getItem(DONE_KEY) || '[]');
+  if (!done.includes(placeId)) done.push(placeId);
+  localStorage.setItem(DONE_KEY, JSON.stringify(done));
+}
+function isDone(placeId) {
+  const done = JSON.parse(localStorage.getItem(DONE_KEY) || '[]');
+  return done.includes(placeId);
+}
+function resetProgress() {
+  if (!confirm('确定清空所有完成记录？')) return;
+  localStorage.removeItem(DONE_KEY);
+  buildSidebar();
+  if (current) updateSidebarRow(current.id);
+  updateStats();
+}
+
 // ── State ──
 const selections = {}; // cinemaId -> [{url, title, author, size}]
 const wikiCache = {};  // queryKey -> results
@@ -257,32 +284,53 @@ function buildSidebar() {
     sb.innerHTML = '<div style="padding:14px;font-size:11px;color:rgba(168,120,220,0.9);line-height:1.6">未加载地点数据。<br>请在项目目录启动本地服务：<br><code style="color:rgba(237,232,223,0.5)">python3 -m http.server 8080</code></div>';
     return;
   }
-  const cities = [...new Set(PL.filter(isCinema).map(c => c.cy))];
-  sb.innerHTML = '';
+  const all = PL.filter(isCinema);
+  const cities = [...new Set(all.map(c => c.cy))];
+  sb.innerHTML = `
+    <div class="sidebar-progress">
+      <div class="sidebar-progress-text" id="sidebarProgText">已完成 0 / ${all.length}</div>
+      <button type="button" class="btn-reset-progress" onclick="resetProgress()">重置进度</button>
+    </div>`;
   cities.forEach(city => {
-    const items = PL.filter(c => isCinema(c) && c.cy === city);
     const grp = document.createElement('div');
     grp.innerHTML = `<div class="city-label">${city}</div>`;
-    items.forEach(c => {
+    PL.filter(c => isCinema(c) && c.cy === city)
+      .sort((a, b) => (isDone(a.id) ? 1 : 0) - (isDone(b.id) ? 1 : 0))
+      .forEach(c => {
       const row = document.createElement('div');
       row.className = 'cinema-row';
       row.id = 'row-' + c.id;
-      const hasSel = selections[c.id] && selections[c.id].length > 0;
-      row.innerHTML = `
-        <div class="cr-name">${hasSel ? '✓ ' : ''}<span>${c.nm}</span></div>
-        <div class="cr-en">${c.cye}</div>
-        <div class="cr-type">${'影院现场'}</div>`;
+      updateSidebarRowEl(row, c);
       row.onclick = () => selectCinema(c);
       grp.appendChild(row);
     });
     sb.appendChild(grp);
   });
+  updateSidebarProgress();
 }
 
+function updateSidebarProgress() {
+  const el = document.getElementById('sidebarProgText');
+  if (!el || typeof PL === 'undefined') return;
+  const all = PL.filter(isCinema);
+  const done = all.filter(c => isDone(c.id)).length;
+  el.textContent = `已完成 ${done} / ${all.length}`;
+}
+
+function updateSidebarRowEl(row, c) {
+  const done = isDone(c.id);
+  row.classList.toggle('done', done);
+  row.innerHTML = `
+    <div class="cr-name">${done ? '✓ ' : ''}<span>${c.nm}</span></div>
+    <div class="cr-en">${c.cye}</div>
+    <div class="cr-type">影院现场</div>`;
+}
 function updateStats() {
-  const done = Object.values(selections).filter(s => s && s.length > 0).length;
+  const all = PL.filter(isCinema);
+  const done = all.filter(c => isDone(c.id)).length;
   document.getElementById('cntDone').textContent = done;
-  document.getElementById('progFill').style.width = (done / PL.filter(isCinema).length * 100) + '%';
+  document.getElementById('progFill').style.width = (all.length ? done / all.length * 100 : 0) + '%';
+  updateSidebarProgress();
 }
 
 // ── SELECT CINEMA ──
@@ -473,9 +521,15 @@ function renderSelBar() {
 
 function confirmAndNext() {
   if (!current) return;
+  if (selections[current.id]?.length) {
+    markDone(current.id);
+    updateSidebarRow(current.id);
+    updateStats();
+    buildSidebar();
+  }
   const currentIdx = PL.filter(isCinema).findIndex(c => c.id === current.id);
-  const next = PL.filter(isCinema).slice(currentIdx+1).find(c => !selections[c.id]?.length)
-             || PL.filter(isCinema).find(c => !selections[c.id]?.length);
+  const next = PL.filter(isCinema).slice(currentIdx+1).find(c => !isDone(c.id))
+             || PL.filter(isCinema).find(c => !isDone(c.id));
   if (next) selectCinema(next);
 }
 
@@ -492,8 +546,7 @@ function updateSidebarRow(id) {
   const cinema = PL.find(c => c.id === id);
   const row = document.getElementById('row-' + id);
   if (!row || !cinema) return;
-  const hasSel = selections[id] && selections[id].length > 0;
-  row.querySelector('.cr-name').innerHTML = `${hasSel ? '✓ ' : ''}<span>${cinema.nm}</span>`;
+  updateSidebarRowEl(row, cinema);
 }
 
 // ── CUSTOM SEARCH ──

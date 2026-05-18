@@ -38,9 +38,15 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .sidebar::-webkit-scrollbar{width:3px}
 .sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
 .city-label{padding:7px 13px 4px;font-size:8.5px;letter-spacing:.13em;color:var(--gold);opacity:.55;position:sticky;top:0;background:var(--bg);border-bottom:1px solid rgba(255,255,255,0.04);z-index:1}
-.film-row{padding:9px 13px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s;position:relative}
+.sidebar-progress{padding:10px 13px 9px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:2}
+.sidebar-progress-text{font-size:10px;color:var(--text2);margin-bottom:8px;letter-spacing:.03em}
+.btn-reset-progress{font-size:9px;color:var(--text3);background:none;border:1px solid var(--border);padding:4px 10px;cursor:pointer;border-radius:2px;font-family:inherit;transition:color .15s,border-color .15s}
+.btn-reset-progress:hover{color:var(--gold);border-color:rgba(201,168,76,0.35)}
+.film-row{padding:9px 13px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.03);transition:background .15s,opacity .15s;position:relative}
 .film-row:hover{background:rgba(255,255,255,0.025)}
 .film-row.active{background:var(--gold2);border-left:2px solid var(--gold)}
+.film-row.done{opacity:0.42}
+.film-row.done .fr-place,.film-row.done .fr-film{color:var(--text3)}
 .fr-place{font-size:11px;color:var(--text);line-height:1.4}
 .fr-film{font-size:9.5px;color:var(--text3);margin-top:1px}
 .fr-done{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--green);font-size:10px}
@@ -276,6 +282,25 @@ function startPicker(){
   }
 }
 
+// ── 完成进度（localStorage）──
+const DONE_KEY = 'cineours_img_done';
+function markDone(placeId) {
+  const done = JSON.parse(localStorage.getItem(DONE_KEY) || '[]');
+  if (!done.includes(placeId)) done.push(placeId);
+  localStorage.setItem(DONE_KEY, JSON.stringify(done));
+}
+function isDone(placeId) {
+  const done = JSON.parse(localStorage.getItem(DONE_KEY) || '[]');
+  return done.includes(placeId);
+}
+function resetProgress() {
+  if (!confirm('确定清空所有完成记录？')) return;
+  localStorage.removeItem(DONE_KEY);
+  buildSidebar();
+  if (current) refreshRow(current.id);
+  updateStats();
+}
+
 // ── State ──
 const selections = {};    // id -> [{url,thumb,source,credit,w,h}]
 const tmdbCache = {};
@@ -295,12 +320,19 @@ function buildSidebar() {
     document.getElementById('cntTotal').textContent = '0';
     return;
   }
-  const cities = [...new Set(PL.filter(isFilm).map(p => p.cy))];
-  sb.innerHTML = '';
+  const all = PL.filter(isFilm);
+  const cities = [...new Set(all.map(p => p.cy))];
+  sb.innerHTML = `
+    <div class="sidebar-progress">
+      <div class="sidebar-progress-text" id="sidebarProgText">已完成 0 / ${all.length}</div>
+      <button type="button" class="btn-reset-progress" onclick="resetProgress()">重置进度</button>
+    </div>`;
   cities.forEach(city => {
     const grp = document.createElement('div');
     grp.innerHTML = `<div class="city-label">${city}</div>`;
-    PL.filter(p => isFilm(p) && p.cy === city).forEach(p => {
+    PL.filter(p => isFilm(p) && p.cy === city)
+      .sort((a, b) => (isDone(a.id) ? 1 : 0) - (isDone(b.id) ? 1 : 0))
+      .forEach(p => {
       const row = document.createElement('div');
       row.className = 'film-row';
       row.id = 'srow-' + p.id;
@@ -310,17 +342,28 @@ function buildSidebar() {
     });
     sb.appendChild(grp);
   });
-  document.getElementById('cntTotal').textContent = PL.filter(isFilm).length;
+  document.getElementById('cntTotal').textContent = all.length;
+  updateSidebarProgress();
+}
+
+function updateSidebarProgress() {
+  const el = document.getElementById('sidebarProgText');
+  if (!el || typeof PL === 'undefined') return;
+  const items = PL.filter(isFilm);
+  const done = items.filter(p => isDone(p.id)).length;
+  el.textContent = `已完成 ${done} / ${items.length}`;
 }
 
 function updateRowHTML(row, p) {
+  const done = isDone(p.id);
   const sel = selections[p.id];
   const hasSel = sel && sel.length > 0;
-  const srcTag = hasSel ? `<span class="src-badge src-${sel[0].source}">${srcLabel(sel[0].source)}</span>` : '';
+  const srcTag = hasSel && !done ? `<span class="src-badge src-${sel[0].source}">${srcLabel(sel[0].source)}</span>` : '';
+  row.classList.toggle('done', done);
   row.innerHTML = `
     <div class="fr-place">${p.nm}${srcTag}</div>
     <div class="fr-film">《${p.fm}》${p.fy||''} · ${p.dr}</div>
-    ${hasSel ? '<div class="fr-done">✓</div>' : ''}`;
+    ${done ? '<div class="fr-done">✓</div>' : ''}`;
 }
 
 function srcLabel(s) { return s==='tmdb'?'TMDB':s==='unsplash'?'Unsplash':s==='manual'?'URL':'URL'; }
@@ -332,10 +375,11 @@ function refreshRow(id) {
 }
 
 function updateStats() {
-  const done = Object.values(selections).filter(s => s && s.length > 0).length;
   const total = (typeof PL !== 'undefined') ? PL.filter(isFilm).length : 0;
+  const done = (typeof PL !== 'undefined') ? PL.filter(isFilm).filter(p => isDone(p.id)).length : 0;
   document.getElementById('cntDone').textContent = done;
   document.getElementById('progFill').style.width = (total ? done / total * 100 : 0) + '%';
+  updateSidebarProgress();
 }
 
 // ── SELECT PLACE ──
@@ -672,9 +716,14 @@ function renderSelBar() {
 }
 
 function goNext() {
-  const idx = PL.findIndex(p => p.id === current?.id);
-  const next = PL.filter(isFilm).slice(PL.filter(isFilm).findIndex(p=>p.id===current?.id)+1).find(p => !selections[p.id]?.length)
-             || PL.filter(isFilm).find(p => !selections[p.id]?.length);
+  if (current && hasSel()) {
+    markDone(current.id);
+    refreshRow(current.id);
+    updateStats();
+    buildSidebar();
+  }
+  const next = PL.filter(isFilm).slice(PL.filter(isFilm).findIndex(p=>p.id===current?.id)+1).find(p => !isDone(p.id))
+             || PL.filter(isFilm).find(p => !isDone(p.id));
   const src = activeSource === 'tmdb' ? 'tmdb' : 'unsplash';
   if (next) selectPlace(next, src);
 }
