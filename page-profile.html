@@ -1087,12 +1087,23 @@ function initAvatarUpload(){
 
 // ── 主初始化 ──────────────────────────────
 async function initPage(){
-  // 等待 supabase 就绪
+  // 等待 supabase SDK 加载
   const waitSB=()=>new Promise(res=>{
     if(window._sb)return res();
     window.addEventListener('supabase-ready',res,{once:true});
   });
   await waitSB();
+
+  // 直接读取当前 session，不依赖 currentUser 缓存时序
+  if(!window.currentUser){
+    const {data:{session}}=await window._sb.auth.getSession();
+    if(session?.user){
+      window.currentUser=session.user;
+      if(!window.currentProfile){
+        window.currentProfile=await getProfile(session.user.id);
+      }
+    }
+  }
 
   const targetUid=getTargetUid();
   const selfUid=window.currentUser?.id;
