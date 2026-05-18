@@ -53,32 +53,40 @@ const PLACES = [
 function injectButtons() {
   document.querySelectorAll('img').forEach(img => {
     if (img.dataset.cineours) return
-    if (img.naturalWidth < 200) return
-    img.dataset.cineours = '1'
 
-    const btn = document.createElement('button')
-    btn.textContent = '+'
-    btn.style.cssText = `
-      position:absolute;
-      top:6px;right:6px;
-      background:#D4AF37;color:#000;
-      border:none;border-radius:50%;
-      width:28px;height:28px;
-      font-size:18px;font-weight:bold;
-      cursor:pointer;z-index:9999;
-    `
+    const tryInject = () => {
+      if (img.naturalWidth < 200) return
+      img.dataset.cineours = '1'
 
-    const wrap = img.parentElement
-    if (getComputedStyle(wrap).position === 'static') {
-      wrap.style.position = 'relative'
+      const btn = document.createElement('button')
+      btn.textContent = '+'
+      btn.style.cssText = `
+        position:absolute;
+        top:6px;right:6px;
+        background:#D4AF37;color:#000;
+        border:none;border-radius:50%;
+        width:28px;height:28px;
+        font-size:18px;font-weight:bold;
+        cursor:pointer;z-index:9999;
+      `
+      const wrap = img.parentElement
+      if (getComputedStyle(wrap).position === 'static') {
+        wrap.style.position = 'relative'
+      }
+      wrap.appendChild(btn)
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        showPicker(img.src, btn)
+      })
     }
-    wrap.appendChild(btn)
 
-    btn.addEventListener('click', (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      showPicker(img.src, btn)
-    })
+    if (img.complete) {
+      tryInject()
+    } else {
+      img.addEventListener('load', tryInject)
+    }
   })
 }
 
