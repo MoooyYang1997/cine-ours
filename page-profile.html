@@ -43,6 +43,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
   align-items:center;justify-content:center;
   gap:14px;padding:28px 20px;
   border-right:1px solid var(--b);
+  align-self:stretch;
 }
 .av-ring{
   width:88px;height:88px;border-radius:50%;
@@ -215,11 +216,13 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
 .fs-n em{font-family:'DM Sans',sans-serif;font-size:11px;font-style:normal;color:var(--gold);margin-left:3px}
 .fs-l{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin-top:3px}
 
-.off-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--b)}
+.off-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:0;background:var(--bg);border:1px solid var(--b)}
 .oc{
   background:var(--bg);padding:18px 20px;cursor:pointer;
   transition:background .15s;position:relative;overflow:hidden;
+  border-right:1px solid var(--b);
 }
+.oc:last-child{border-right:none}
 .oc:hover{background:var(--bg1)}
 .oc:hover .oc-title{color:var(--gold)}
 .oc-bar{position:absolute;left:0;top:0;bottom:0;width:2px}
@@ -248,8 +251,8 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
 .wc:hover .wc-title{color:var(--gold)}
 .wc-cover{
   height:80px;display:flex;align-items:center;justify-content:center;
-  font-family:'Playfair Display',serif;font-size:32px;font-style:italic;
-  border-bottom:1px solid var(--b);
+  font-family:'Playfair Display',serif;font-size:20px;font-style:italic;
+  border-bottom:1px solid var(--b);opacity:.6;
 }
 .wc-body{padding:13px}
 .wc-ey{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
@@ -764,6 +767,50 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
         <div class="bw-name" style="color:var(--ink4)">电影史学家</div>
         <div class="bw-prog" style="color:var(--ink4)">8/50</div>
         <div class="bw-bar"><div class="bw-bar-f" style="width:16%;background:var(--bg5)"></div></div>
+      </div>
+
+      <!-- 500部里程碑 -->
+      <div class="bw" onclick="showBadgeDetail('500')">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="22" stroke="#7A4A3A" stroke-width="1.5"/>
+          <circle cx="24" cy="24" r="18" stroke="#A55A4A" stroke-width="0.8"/>
+          <circle cx="24" cy="24" r="13" fill="rgba(165,90,74,0.07)"/>
+          <text x="24" y="29" text-anchor="middle" font-family="Playfair Display,serif" font-size="14" font-style="italic" fill="#A55A4A">五</text>
+        </svg>
+        <div class="bw-name">500部里程碑</div>
+        <div class="bw-prog" style="color:#A55A4A">已获得</div>
+        <div class="bw-bar"><div class="bw-bar-f" style="width:100%;background:#A55A4A"></div></div>
+      </div>
+
+      <!-- 小津安二郎全集·进行中 -->
+      <div class="bw" onclick="showBadgeDetail('ozu')">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="22" stroke="#2a2820" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <circle cx="24" cy="24" r="18" stroke="#5C9E6A" stroke-width="0.8"/>
+          <circle cx="24" cy="24" r="13" fill="rgba(92,158,106,0.05)"/>
+          <rect x="16" y="17" width="16" height="14" rx="1.5" stroke="#5C9E6A" stroke-width="1.2" stroke-dasharray="2 1.5"/>
+          <circle cx="19.5" cy="21.5" r="1.4" fill="#5C9E6A" opacity="0.5"/>
+          <circle cx="28.5" cy="21.5" r="1.4" fill="#5C9E6A" opacity="0.5"/>
+          <rect x="21" y="19.5" width="6" height="9" rx="0.5" fill="rgba(92,158,106,0.1)" stroke="#5C9E6A" stroke-width="0.8"/>
+        </svg>
+        <div class="bw-name">小津安二郎全集</div>
+        <div class="bw-prog" style="color:#5C9E6A">24/54</div>
+        <div class="bw-bar"><div class="bw-bar-f" style="width:44%;background:#5C9E6A"></div></div>
+      </div>
+
+      <!-- 塔可夫斯基全集·进行中 -->
+      <div class="bw" onclick="showBadgeDetail('tarkovsky')">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="22" stroke="#2a2820" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <circle cx="24" cy="24" r="18" stroke="#4A7FA5" stroke-width="0.8"/>
+          <circle cx="24" cy="24" r="13" fill="rgba(74,127,165,0.05)"/>
+          <circle cx="24" cy="24" r="7" stroke="#4A7FA5" stroke-width="1" stroke-dasharray="2 1.5"/>
+          <ellipse cx="24" cy="24" rx="3.5" ry="7" stroke="#4A7FA5" stroke-width="1" opacity="0.6"/>
+          <line x1="17" y1="24" x2="31" y2="24" stroke="#4A7FA5" stroke-width="0.8" opacity="0.6"/>
+        </svg>
+        <div class="bw-name">塔可夫斯基全集</div>
+        <div class="bw-prog" style="color:#4A7FA5">6/7</div>
+        <div class="bw-bar"><div class="bw-bar-f" style="width:86%;background:#4A7FA5"></div></div>
       </div>
 
     </div>

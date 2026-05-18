@@ -263,5 +263,490 @@
     "id": "ggc",
     "nm": "高先电影院",
     "cy": "香港"
+  },
+  {
+    "id": "lkf",
+    "nm": "兰桂坊/Midnight Express一带",
+    "cy": "香港"
+  },
+  {
+    "id": "jdk",
+    "nm": "金雀餐厅/湾仔旧餐室",
+    "cy": "香港"
+  },
+  {
+    "id": "kdk",
+    "nm": "启德机场旧址",
+    "cy": "香港"
+  },
+  {
+    "id": "wt",
+    "nm": "外滩",
+    "cy": "上海"
+  },
+  {
+    "id": "njl",
+    "nm": "南京路",
+    "cy": "上海"
+  },
+  {
+    "id": "hpfd",
+    "nm": "和平饭店",
+    "cy": "上海"
+  },
+  {
+    "id": "cdn",
+    "nm": "车墩影视基地",
+    "cy": "上海"
+  },
+  {
+    "id": "fxgy",
+    "nm": "复兴公园",
+    "cy": "上海"
+  },
+  {
+    "id": "yyy",
+    "nm": "豫园/老城厢",
+    "cy": "上海"
+  },
+  {
+    "id": "jll",
+    "nm": "巨鹿路/淮海中路",
+    "cy": "上海"
+  },
+  {
+    "id": "shzlc",
+    "nm": "上海展览中心",
+    "cy": "上海"
+  },
+  {
+    "id": "shdb",
+    "nm": "上海电影博物馆",
+    "cy": "上海"
+  },
+  {
+    "id": "sng",
+    "nm": "思南公馆",
+    "cy": "上海"
+  },
+  {
+    "id": "zpl",
+    "nm": "乍浦路桥/苏州河桥群",
+    "cy": "上海"
+  },
+  {
+    "id": "hsdyy",
+    "nm": "衡山电影院/徐家汇",
+    "cy": "上海"
+  },
+  {
+    "id": "wdxl",
+    "nm": "武定西路/静安街区",
+    "cy": "上海"
+  },
+  {
+    "id": "shfc2",
+    "nm": "光点华山电影馆",
+    "cy": "上海"
+  },
+  {
+    "id": "gdh2",
+    "nm": "光点华山电影馆台北",
+    "cy": "台北"
+  },
+  {
+    "id": "tpzc",
+    "nm": "台北车站",
+    "cy": "台北"
+  },
+  {
+    "id": "zhsc",
+    "nm": "中华商场旧址",
+    "cy": "台北"
+  },
+  {
+    "id": "dasl",
+    "nm": "大安森林公园",
+    "cy": "台北"
+  },
+  {
+    "id": "fhdy",
+    "nm": "福和大戏院旧址",
+    "cy": "台北"
+  },
+  {
+    "id": "zsbl",
+    "nm": "中山北路/光点台北周边",
+    "cy": "台北"
+  },
+  {
+    "id": "tp101",
+    "nm": "台北101周边",
+    "cy": "台北"
+  },
+  {
+    "id": "zhde",
+    "nm": "忠孝东路夜街",
+    "cy": "台北"
+  },
+  {
+    "id": "hs14",
+    "nm": "华山1914文创园",
+    "cy": "台北"
+  },
+  {
+    "id": "bpl",
+    "nm": "剥皮寮历史街区",
+    "cy": "台北"
+  },
+  {
+    "id": "lss",
+    "nm": "龙山寺/万华",
+    "cy": "台北"
+  },
+  {
+    "id": "dshj",
+    "nm": "淡水河岸",
+    "cy": "台北"
+  },
+  {
+    "id": "sdys",
+    "nm": "师大夜市/台大周边",
+    "cy": "台北"
+  },
+  {
+    "id": "ysdf",
+    "nm": "圆山大饭店",
+    "cy": "台北"
+  },
+  {
+    "id": "nfaj",
+    "nm": "国立映画档案馆",
+    "cy": "东京"
+  },
+  {
+    "id": "thbz",
+    "nm": "TOHO Cinemas日比谷",
+    "cy": "东京"
+  },
+  {
+    "id": "gwqt",
+    "nm": "歌舞伎町",
+    "cy": "东京"
+  },
+  {
+    "id": "sbcs",
+    "nm": "涩谷公共厕所",
+    "cy": "东京"
+  },
+  {
+    "id": "yltd",
+    "nm": "有乐町/银座街区",
+    "cy": "东京"
+  },
+  {
+    "id": "2mln",
+    "nm": "Café des 2 Moulins/蒙马特",
+    "cy": "巴黎"
+  },
+  {
+    "id": "s&c",
+    "nm": "Shakespeare and Company",
+    "cy": "巴黎"
+  },
+  {
+    "id": "pntf",
+    "nm": "Pont Neuf",
+    "cy": "巴黎"
+  },
+  {
+    "id": "lpc",
+    "nm": "Le Pure Café",
+    "cy": "巴黎"
+  },
+  {
+    "id": "lvrp",
+    "nm": "卢浮宫",
+    "cy": "巴黎"
+  },
+  {
+    "id": "alpd",
+    "nm": "亚历山大广场",
+    "cy": "柏林"
+  },
+  {
+    "id": "blqy",
+    "nm": "柏林墙遗址",
+    "cy": "柏林"
+  },
+  {
+    "id": "ptsd",
+    "nm": "波茨坦广场",
+    "cy": "柏林"
+  },
+  {
+    "id": "slz",
+    "nm": "Siegessäule胜利纪念柱",
+    "cy": "柏林"
+  },
+  {
+    "id": "zly",
+    "nm": "柏林动物园站",
+    "cy": "柏林"
+  },
+  {
+    "id": "bfi",
+    "nm": "BFI Southbank",
+    "cy": "伦敦"
+  },
+  {
+    "id": "pcc",
+    "nm": "Prince Charles Cinema",
+    "cy": "伦敦"
+  },
+  {
+    "id": "ptb",
+    "nm": "Portobello Road",
+    "cy": "伦敦"
+  },
+  {
+    "id": "kcs",
+    "nm": "King's Cross Station",
+    "cy": "伦敦"
+  },
+  {
+    "id": "wlb",
+    "nm": "South Bank/Waterloo Bridge",
+    "cy": "伦敦"
+  },
+  {
+    "id": "slm",
+    "nm": "St Luke Mews",
+    "cy": "伦敦"
+  },
+  {
+    "id": "mlb",
+    "nm": "Millennium Bridge",
+    "cy": "伦敦"
+  },
+  {
+    "id": "fmfm",
+    "nm": "Film Forum",
+    "cy": "纽约"
+  },
+  {
+    "id": "flc",
+    "nm": "Film at Lincoln Center",
+    "cy": "纽约"
+  },
+  {
+    "id": "ktz",
+    "nm": "Katz's Delicatessen",
+    "cy": "纽约"
+  },
+  {
+    "id": "wsp",
+    "nm": "Washington Square Park",
+    "cy": "纽约"
+  },
+  {
+    "id": "tff",
+    "nm": "Tiffany Fifth Avenue",
+    "cy": "纽约"
+  },
+  {
+    "id": "esb",
+    "nm": "Empire State Building",
+    "cy": "纽约"
+  },
+  {
+    "id": "hl8",
+    "nm": "Firehouse Hook & Ladder 8",
+    "cy": "纽约"
+  },
+  {
+    "id": "qbb",
+    "nm": "Queensboro Bridge",
+    "cy": "纽约"
+  },
+  {
+    "id": "egt",
+    "nm": "Egyptian Theatre",
+    "cy": "洛杉矶"
+  },
+  {
+    "id": "aer",
+    "nm": "Aero Theatre",
+    "cy": "洛杉矶"
+  },
+  {
+    "id": "bdb",
+    "nm": "Bradbury Building",
+    "cy": "洛杉矶"
+  },
+  {
+    "id": "mhd",
+    "nm": "Mulholland Drive",
+    "cy": "洛杉矶"
+  },
+  {
+    "id": "agf",
+    "nm": "Angels Flight",
+    "cy": "洛杉矶"
+  },
+  {
+    "id": "rnd",
+    "nm": "Randy's Donuts",
+    "cy": "洛杉矶"
+  },
+  {
+    "id": "ctn2",
+    "nm": "Cineteca Nacional",
+    "cy": "墨西哥城"
+  },
+  {
+    "id": "cnch",
+    "nm": "Cineteca Nacional Chapultepec",
+    "cy": "墨西哥城"
+  },
+  {
+    "id": "crm",
+    "nm": "Colonia Roma/Tepeji Street",
+    "cy": "墨西哥城"
+  },
+  {
+    "id": "unam",
+    "nm": "UNAM大学城",
+    "cy": "墨西哥城"
+  },
+  {
+    "id": "rcnd",
+    "nm": "Roma/Condesa街区",
+    "cy": "墨西哥城"
+  },
+  {
+    "id": "zcl",
+    "nm": "Zócalo",
+    "cy": "墨西哥城"
+  },
+  {
+    "id": "mna",
+    "nm": "国立人类学博物馆",
+    "cy": "墨西哥城"
+  },
+  {
+    "id": "tlt",
+    "nm": "Torre Latinoamericana",
+    "cy": "墨西哥城"
+  },
+  {
+    "id": "kofa",
+    "nm": "Korean Film Archive KOFA",
+    "cy": "首尔"
+  },
+  {
+    "id": "shzh",
+    "nm": "首尔站",
+    "cy": "首尔"
+  },
+  {
+    "id": "xjdq",
+    "nm": "西江大桥/汉江边",
+    "cy": "首尔"
+  },
+  {
+    "id": "lhdbc",
+    "nm": "梨花洞壁画村",
+    "cy": "首尔"
+  },
+  {
+    "id": "nsst",
+    "nm": "南山首尔塔",
+    "cy": "首尔"
+  },
+  {
+    "id": "mpdb",
+    "nm": "麻浦大桥",
+    "cy": "首尔"
+  },
+  {
+    "id": "bchv",
+    "nm": "北村韩屋村",
+    "cy": "首尔"
+  },
+  {
+    "id": "cntv",
+    "nm": "Cinema Trevi",
+    "cy": "罗马"
+  },
+  {
+    "id": "cdc",
+    "nm": "Casa del Cinema",
+    "cy": "罗马"
+  },
+  {
+    "id": "spjt",
+    "nm": "西班牙阶梯",
+    "cy": "罗马"
+  },
+  {
+    "id": "zlzk",
+    "nm": "真理之口",
+    "cy": "罗马"
+  },
+  {
+    "id": "dsc",
+    "nm": "斗兽场",
+    "cy": "罗马"
+  },
+  {
+    "id": "vvn",
+    "nm": "Via Veneto",
+    "cy": "罗马"
+  },
+  {
+    "id": "cct",
+    "nm": "Cinecittà Studios",
+    "cy": "罗马"
+  },
+  {
+    "id": "rgc",
+    "nm": "Regal Cinema",
+    "cy": "孟买"
+  },
+  {
+    "id": "lbty",
+    "nm": "Liberty Cinema",
+    "cy": "孟买"
+  },
+  {
+    "id": "mrd",
+    "nm": "Marine Drive",
+    "cy": "孟买"
+  },
+  {
+    "id": "gtwi",
+    "nm": "Gateway of India",
+    "cy": "孟买"
+  },
+  {
+    "id": "cst",
+    "nm": "Chhatrapati Shivaji Terminus",
+    "cy": "孟买"
+  },
+  {
+    "id": "dhv",
+    "nm": "Dharavi",
+    "cy": "孟买"
+  },
+  {
+    "id": "bbs",
+    "nm": "Bandra Bandstand",
+    "cy": "孟买"
+  },
+  {
+    "id": "mhbs",
+    "nm": "Mehboob Studio",
+    "cy": "孟买"
   }
 ]
