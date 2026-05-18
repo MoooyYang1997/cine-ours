@@ -299,7 +299,7 @@ create policy "place_checkins_read" on public.place_checkins for select using (t
 drop policy if exists "place_checkins_insert" on public.place_checkins;
 create policy "place_checkins_insert" on public.place_checkins for insert with check (auth.uid() = user_id);
 
--- Storage：地点封面 proxy-image（见 supabase/sql/place-images-storage.sql）
+-- Storage：地点封面 proxy-image（见 supabase/sql/place-images-storage.sql，暂未启用）
 -- insert into storage.buckets (id, name, public) values ('place-images', 'place-images', true);
 -- create policy "公开读取" on storage.objects for select using (bucket_id = 'place-images');
 -- create policy "管理员可上传" on storage.objects for insert with check (bucket_id = 'place-images');

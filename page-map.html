@@ -119,24 +119,6 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
 #fc.vis{opacity:1;transform:translateX(0);pointer-events:all}
 .fc-img{height:140px;position:relative;overflow:hidden;background:#0c0e14}
 .fc-img img{width:100%;height:100%;object-fit:cover;filter:brightness(0.68) contrast(1.05) saturate(0.72);display:block}
-.fc-admin-img{
-  position:absolute;left:0;right:0;bottom:0;z-index:8;
-  display:none;gap:4px;padding:6px 8px;
-  background:linear-gradient(to top,rgba(8,10,14,0.96) 0%,rgba(8,10,14,0.72) 100%);
-}
-.fc-admin-img.show{display:flex}
-.fc-admin-inp{
-  flex:1;min-width:0;padding:5px 7px;
-  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
-  border-radius:3px;color:rgba(237,232,223,0.75);font-size:9px;font-family:inherit;
-}
-.fc-admin-inp:focus{outline:none;border-color:rgba(201,168,76,0.35)}
-.fc-admin-btn{
-  flex-shrink:0;padding:5px 8px;
-  background:rgba(201,168,76,0.14);border:1px solid rgba(201,168,76,0.32);
-  border-radius:3px;color:rgba(201,168,76,0.9);font-size:9px;cursor:pointer;font-family:inherit;
-}
-.fc-admin-btn:disabled{opacity:0.45;cursor:wait}
 .fc-ph{width:100%;height:100%;background:linear-gradient(165deg,#1e1508 0%,#141008 35%,#090b10 70%,#060810 100%);position:relative}
 .fc-ph::after{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0.02) 0,rgba(255,255,255,0.02) 1px,transparent 0,transparent 50%);background-size:5px 5px}
 .fc-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,13,19,0.99) 0%,rgba(11,13,19,0.1) 52%,transparent 100%)}
@@ -318,10 +300,6 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
         <div class="fc-img">
           <img id="fc-im" src="" alt="" style="display:none"/>
           <div id="fc-ph" class="fc-ph" style="display:none"></div>
-          <div id="fc-admin-img" class="fc-admin-img">
-            <input id="fc-proxy-url" class="fc-admin-inp" type="url" placeholder="粘贴图片 URL" autocomplete="off"/>
-            <button type="button" id="fc-proxy-btn" class="fc-admin-btn">设为封面</button>
-          </div>
           <div class="fc-grad"></div>
           <div class="fc-bot">
             <div id="fc-vn" class="fc-vn"></div>
@@ -427,23 +405,6 @@ function applyCinemaImages(db){
       p.img=im.thumb||im.url;
     }
   });
-}
-
-function applyCachedPlaceCovers(){
-  try{
-    var cache=JSON.parse(localStorage.getItem('cineours_place_covers')||'{}');
-    PL.forEach(function(p){
-      if(cache[p.id])p.img=cache[p.id];
-    });
-  }catch(e){}
-}
-
-function cachePlaceCover(placeId,url){
-  try{
-    var cache=JSON.parse(localStorage.getItem('cineours_place_covers')||'{}');
-    cache[placeId]=url;
-    localStorage.setItem('cineours_place_covers',JSON.stringify(cache));
-  }catch(e){}
 }
 
 var CITIES=[
@@ -631,7 +592,6 @@ function fillCard(p){
   document.getElementById('fc-lk').textContent=p.lk;
   resetFcViews();
   refreshCheckinState(p.id);
-  updateFcAdminPanel();
 }
 
 /* ── 地点打卡 ── */
@@ -720,66 +680,9 @@ function syncMapAuth(){
     return window._sb.from('profiles').select('role,username,display_name').eq('id',user.id).single()
       .then(function(res){
         window.currentProfile=res.data||null;
-        updateFcAdminPanel();
         return user;
       });
   }).catch(function(){return null;});
-}
-
-var MAP_ADMIN_ROLES={curator:1,creator:1,admin:1};
-
-function isMapAdmin(){
-  var r=window.currentProfile&&window.currentProfile.role;
-  return !!(r&&MAP_ADMIN_ROLES[r]);
-}
-
-function updateFcAdminPanel(){
-  var panel=document.getElementById('fc-admin-img');
-  if(panel)panel.classList.toggle('show',isMapAdmin());
-}
-
-async function proxySetPlaceCover(imageUrl){
-  var sb=await ensureSbReady();
-  var url=String(imageUrl||'').trim();
-  if(!url)throw new Error('请输入图片 URL');
-  if(!active||!active.id)throw new Error('请先选择地点');
-  var res=await sb.functions.invoke('proxy-image',{
-    body:{imageUrl:url,placeId:active.id}
-  });
-  if(res.error)throw res.error;
-  var payload=res.data;
-  if(payload&&payload.error)throw new Error(payload.error);
-  var publicUrl=payload&&payload.url;
-  if(!publicUrl)throw new Error('未返回图片地址');
-  return publicUrl;
-}
-
-async function onProxyCoverSubmit(){
-  if(!isMapAdmin()){showFcToast('无权限',true);return;}
-  var inp=document.getElementById('fc-proxy-url');
-  var btn=document.getElementById('fc-proxy-btn');
-  var url=inp&&inp.value.trim();
-  if(!url){showFcToast('请粘贴图片 URL',true);return;}
-  if(btn){btn.disabled=true;btn.textContent='上传中…';}
-  try{
-    var publicUrl=await proxySetPlaceCover(url);
-    active.img=publicUrl;
-    var row=PL.find(function(x){return x.id===active.id;});
-    if(row)row.img=publicUrl;
-    cachePlaceCover(active.id,publicUrl);
-    var im=document.getElementById('fc-im');
-    var ph=document.getElementById('fc-ph');
-    if(im){im.src=publicUrl+'?t='+Date.now();im.style.display='block';}
-    if(ph)ph.style.display='none';
-    refreshCityViews();
-    if(inp)inp.value='';
-    showFcToast('封面已更新 · '+active.nm);
-  }catch(err){
-    console.error('proxy cover',err);
-    showFcToast(formatSbError(err),true);
-  }finally{
-    if(btn){btn.disabled=false;btn.textContent='设为封面';}
-  }
 }
 
 function navAuth(){
@@ -1047,14 +950,7 @@ function bindCheckinUi(){
   var fileInput=document.getElementById('fc-file');
   var btnRm=document.getElementById('fc-img-rm');
   var btnBack=document.getElementById('fc-records-back');
-  var btnProxy=document.getElementById('fc-proxy-btn');
   if(btnCheckin)btnCheckin.addEventListener('click',onCheckinClick);
-  if(btnProxy)btnProxy.addEventListener('click',function(){
-    onProxyCoverSubmit().catch(function(err){
-      console.error(err);
-      showFcToast(formatSbError(err),true);
-    });
-  });
   if(btnSubmit)btnSubmit.addEventListener('click',function(){
     submitCheckin().catch(function(err){
       console.error(err);
@@ -1225,7 +1121,6 @@ Promise.all([
 ]).then(function(dbs){
   applyPlaceImages(dbs[0]);
   applyCinemaImages(dbs[1]);
-  applyCachedPlaceCovers();
 }).finally(function(){bootMapPage();});
 
 window.pick=pick;
