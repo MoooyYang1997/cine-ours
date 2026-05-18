@@ -1,10 +1,13 @@
 // ==UserScript==
 // @name         CineOurs 豆瓣选图
 // @namespace    cineours
-// @version      1.0
+// @version      1.1
 // @match        https://movie.douban.com/*
+// @run-at       document-idle
 // @grant        GM_xmlhttpRequest
 // @connect      supabase.co
+// @connect      img*.douban.com
+// @connect      *.doubanio.com
 // ==/UserScript==
 
 const SUPABASE_URL = 'https://dirrnojiybbwotuqeqww.supabase.co'
@@ -50,44 +53,102 @@ const PLACES = [
   {id:'wst', nm:'西村街道'},
 ]
 
-function injectButtons() {
-  document.querySelectorAll('img').forEach(img => {
-    if (img.dataset.cineours) return
+/** 跨域图 naturalWidth 常为 0，用显示尺寸回退 */
+function imgVisibleSize(img) {
+  const nw = img.naturalWidth || 0
+  const nh = img.naturalHeight || 0
+  if (nw >= 200 || nh >= 200) return Math.max(nw, nh)
+  return Math.max(
+    img.width || 0,
+    img.height || 0,
+    img.offsetWidth || 0,
+    img.offsetHeight || 0,
+    img.clientWidth || 0,
+    img.clientHeight || 0
+  )
+}
 
-    const tryInject = () => {
-      if (img.naturalWidth < 200) return
-      img.dataset.cineours = '1'
+function imgBestSrc(img) {
+  return img.currentSrc || img.src || img.getAttribute('data-src') || ''
+}
 
-      const btn = document.createElement('button')
-      btn.textContent = '+'
-      btn.style.cssText = `
-        position:absolute;
-        top:6px;right:6px;
-        background:#D4AF37;color:#000;
-        border:none;border-radius:50%;
-        width:28px;height:28px;
-        font-size:18px;font-weight:bold;
-        cursor:pointer;z-index:9999;
-      `
-      const wrap = img.parentElement
-      if (getComputedStyle(wrap).position === 'static') {
-        wrap.style.position = 'relative'
-      }
-      wrap.appendChild(btn)
+function attachPlusButton(img) {
+  if (img.dataset.cineours === '1') return true
+  if (!imgBestSrc(img) || imgBestSrc(img).startsWith('data:')) return false
+  if (imgVisibleSize(img) < 200) return false
 
-      btn.addEventListener('click', (e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        showPicker(img.src, btn)
-      })
-    }
+  img.dataset.cineours = '1'
 
-    if (img.complete) {
-      tryInject()
-    } else {
-      img.addEventListener('load', tryInject)
-    }
+  const btn = document.createElement('button')
+  btn.textContent = '+'
+  btn.title = 'CineOurs 选图上传'
+  btn.style.cssText = `
+    position:absolute;
+    top:6px;right:6px;
+    background:#D4AF37;color:#000;
+    border:none;border-radius:50%;
+    width:28px;height:28px;
+    font-size:18px;font-weight:bold;
+    cursor:pointer;z-index:99999;
+    box-shadow:0 2px 8px rgba(0,0,0,0.35);
+  `
+
+  const wrap = img.parentElement
+  if (!wrap || wrap === document.body) return false
+  if (getComputedStyle(wrap).position === 'static') {
+    wrap.style.position = 'relative'
+  }
+  wrap.appendChild(btn)
+
+  btn.addEventListener('click', (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    showPicker(imgBestSrc(img), btn)
   })
+  return true
+}
+
+function scheduleInjectRetries(img, maxTry = 40) {
+  let n = 0
+  const tick = () => {
+    if (img.dataset.cineours === '1') return
+    if (attachPlusButton(img)) return
+    n += 1
+    if (n < maxTry) setTimeout(tick, 250)
+  }
+  setTimeout(tick, 250)
+}
+
+function watchImage(img) {
+  if (img.dataset.cineours === '1' || img.dataset.cineoursWatch === '1') return
+  img.dataset.cineoursWatch = '1'
+
+  const onReady = () => {
+    if (!attachPlusButton(img)) scheduleInjectRetries(img)
+  }
+
+  if (img.complete) {
+    onReady()
+  } else {
+    img.addEventListener('load', onReady, { once: true })
+    img.addEventListener('error', () => { img.dataset.cineoursWatch = '' }, { once: true })
+  }
+}
+
+function injectButtons() {
+  const sel = [
+    'img[src*="doubanio"]',
+    'img[src*="douban.com"]',
+    '#content img',
+    '.photo-show img',
+    '.mainphoto img',
+    'img'
+  ].join(',')
+  document.querySelectorAll(sel).forEach(watchImage)
+}
+
+function boot() {
+  injectButtons()
 }
 
 function showPicker(imgSrc, anchor) {
@@ -174,7 +235,7 @@ function uploadImage(imgSrc, placeId, div) {
   })
 }
 
-// 页面加载完注入按钮，滚动时也检查新图片
-window.addEventListener('load', injectButtons)
-window.addEventListener('scroll', injectButtons)
-new MutationObserver(injectButtons).observe(document.body, {childList:true, subtree:true})
+boot()
+window.addEventListener('load', boot)
+window.addEventListener('scroll', boot, { passive: true })
+new MutationObserver(boot).observe(document.documentElement, { childList: true, subtree: true })
