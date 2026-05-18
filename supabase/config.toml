@@ -1,0 +1,7 @@
+# Cine Ours — Supabase 本地 CLI 配置
+# 部署: npx supabase functions deploy proxy-image --project-ref dirrnojiybbwotuqeqww
+
+project_id = "dirrnojiybbwotuqeqww"
+
+[functions.proxy-image]
+verify_jwt = true
