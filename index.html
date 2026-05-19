@@ -181,6 +181,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
   <iframe class="pframe"    id="f-profile"          src=""  data-src="page-profile.html"          title="个人主页"></iframe>
   <iframe class="pframe"    id="f-auth"             src=""  data-src="page-auth.html"             title="登录注册"></iframe>
   <iframe class="pframe"    id="f-offline-festival" src=""  data-src="page-offline-festival.html" title="线下影展"></iframe>
+  <iframe class="pframe"    id="f-list-detail"      src=""  data-src="page-list-detail.html"      title="我的片单"></iframe>
 </div>
 
 <!-- USER MENU -->
@@ -237,6 +238,7 @@ const PAGES = {
   profile:           {src:'page-profile.html',           nav:null,           label:'个人主页',     bc:null},
   auth:              {src:'page-auth.html',               nav:null,           label:'加入',         bc:null},
   'offline-festival':{src:'page-offline-festival.html', nav:'nl-offline',   label:'上影节专区',   bc:null},
+  'list-detail':     {src:'page-list-detail.html',       nav:'nl-offline',   label:'我的片单',     bc:{p:'offline-festival',pl:'上海国际电影节',l:'片单详情'}},
 };
 
 const SEARCH = [
