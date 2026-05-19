@@ -477,21 +477,10 @@ async function sb(path, opts = {}) {
 }
 
 // ── Auth ──────────────────────────────────
-async function initUser() {
+function initUser() {
   try {
-    // 优先用 supabase.js 缓存
-    if (window.currentUser) { _user = window.currentUser; return; }
-    // 没有缓存则直接读 session（iframe 环境下 Supabase SDK 自己管理 cookie/storage）
-    const waitSB = () => new Promise(res => {
-      if (window._sb) return res();
-      window.addEventListener('supabase-ready', res, { once: true });
-    });
-    await waitSB();
-    const { data: { session } } = await window._sb.auth.getSession();
-    if (session?.user) {
-      _user = session.user;
-      window.currentUser = session.user;
-    }
+    const k = Object.keys(localStorage).find(k => k.includes('auth-token') && k.includes('supabase'));
+    if (k) { const p = JSON.parse(localStorage.getItem(k)); _user = p?.user || null; }
   } catch(e) { _user = null; }
 }
 
@@ -858,7 +847,7 @@ async function submitMoment() {
 
 // ── 初始化 ────────────────────────────────
 async function init() {
-  await initUser();
+  initUser();
   await Promise.all([loadPhase(), loadAllFilms(), loadUserLists(), loadCheckins(), loadMoments(), loadOnlineCounts()]);
   buildCineTabs();
   buildSectionTabs();
