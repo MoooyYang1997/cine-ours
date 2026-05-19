@@ -31,20 +31,26 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 .banner-status{display:flex;align-items:center;gap:6px;color:#c9a84c;font-size:11px;}
 .banner-btns{display:flex;gap:10px;}
 
-/* 社区片单 */
-.plan-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;min-height:80px;}
-.plan-card{border-radius:4px;overflow:hidden;cursor:pointer;position:relative;height:150px;transition:opacity .2s;}
-.plan-card:hover{opacity:.9;}
-.plan-bg{position:absolute;inset:0;background-size:cover;background-position:center;}
-.plan-grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(10,8,5,0.88) 100%);}
-.plan-inner{position:relative;z-index:2;height:100%;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between;}
-.plan-user{display:flex;align-items:center;gap:6px;}
-.plan-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;}
-.plan-uname{font-size:10px;color:rgba(237,232,223,0.5);}
-.plan-tagline{font-family:Georgia,serif;font-size:13px;color:rgba(237,232,223,0.88);line-height:1.4;}
+/* 社区片单列表 */
+.plan-list{display:flex;flex-direction:column;gap:8px;}
+.plan-card{display:flex;gap:14px;padding:14px;border-radius:3px;border:0.5px solid rgba(237,232,223,0.07);background:#1a1810;cursor:pointer;transition:border-color .2s;}
+.plan-card:hover{border-color:rgba(201,168,76,0.2);}
+.plan-cover{position:relative;width:140px;height:68px;flex-shrink:0;}
+.plan-ci{position:absolute;border-radius:2px;overflow:hidden;}
+.plan-ci img{width:100%;height:100%;object-fit:cover;}
+.pc3{left:34px;top:8px;width:98px;height:59px;filter:brightness(.38);}
+.pc2{left:17px;top:4px;width:98px;height:59px;filter:brightness(.62);}
+.pc1{left:0;top:0;width:98px;height:59px;border:0.5px solid rgba(237,232,223,0.1);}
+.plan-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between;}
+.plan-user{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.plan-av{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;flex-shrink:0;}
+.plan-uname{font-size:10px;color:rgba(237,232,223,0.38);}
+.plan-tagline{font-family:Georgia,serif;font-size:13px;color:rgba(237,232,223,0.88);line-height:1.3;margin-bottom:3px;}
+.plan-desc{font-size:10px;color:rgba(237,232,223,0.32);line-height:1.5;font-style:italic;margin-bottom:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
 .plan-foot{display:flex;align-items:center;justify-content:space-between;}
-.plan-meta{font-size:9px;color:rgba(237,232,223,0.28);}
-.plan-empty{color:rgba(237,232,223,0.2);font-size:12px;padding:40px 0;text-align:center;grid-column:1/-1;}
+.plan-meta{font-size:9px;color:rgba(237,232,223,0.22);}
+.plan-enter{font-size:10px;color:rgba(201,168,76,0.45);}
+.plan-empty{color:rgba(237,232,223,0.2);font-size:12px;padding:40px 0;text-align:center;}
 
 /* 横图影片卡片（通用） */
 .film-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;cursor:grab;-webkit-overflow-scrolling:touch;}
@@ -217,7 +223,7 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
     </div>
     <div class="banner-btns" id="banner-btns">
       <div class="btn-gold" onclick="openCheckinModal()">去打卡 / 记录现场 ◎</div>
-      <div class="btn-dim" onclick="openListModal()">创建我的片单 +</div>
+      <div class="btn-dim" onclick="goMyList()">创建/查看我的片单 +</div>
     </div>
   </div>
 </div>
@@ -226,9 +232,9 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 <div class="section" id="sec-lists">
   <div class="sec-hdr">
     <div><div class="sec-title">大家正在怎么选</div></div>
-    <div class="sec-more" onclick="openListModal()">创建片单 +</div>
+    <div class="sec-more" onclick="goMyList()">创建/查看我的片单 →</div>
   </div>
-  <div class="plan-grid" id="plan-grid">
+  <div class="plan-list" id="plan-grid">
     <div class="plan-empty">加载中…</div>
   </div>
 </div>
@@ -459,7 +465,6 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 
 <div class="toast" id="toast"></div>
 
-<script src="supabase.js"></script>
 <script>
 const SB   = 'https://dirrnojiybbwotuqeqww.supabase.co';
 const KEY  = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
@@ -490,22 +495,11 @@ async function sb(path, opts = {}) {
 }
 
 // ── Auth ──────────────────────────────────
-async function initUser() {
+function initUser() {
   try {
-    // 优先用 supabase.js 缓存
-    if (window.currentUser) { _user = window.currentUser; return; }
-    // 没有缓存则直接读 session（iframe 环境下 Supabase SDK 自己管理 cookie/storage）
-    const waitSB = () => new Promise(res => {
-      if (window._sb) return res();
-      window.addEventListener('supabase-ready', res, { once: true });
-    });
-    await waitSB();
-    const { data: { session } } = await window._sb.auth.getSession();
-    if (session?.user) {
-      _user = session.user;
-      window.currentUser = session.user;
-    }
-  } catch(e) { _user = null; }
+    const k = Object.keys(localStorage).find(k => k.includes('auth-token') && k.includes('supabase'));
+    if (k) { const p = JSON.parse(localStorage.getItem(k)); _user = p?.user || null; }
+  } catch(e) {}
 }
 
 // ── navigate ──────────────────────────────
@@ -534,9 +528,59 @@ function requireLogin(cb) {
   if (!_user) { toast('请先登录', 'err'); setTimeout(() => navigate('page-auth'), 800); return; }
   cb();
 }
-function openCheckinModal() { requireLogin(() => openModal('checkin-modal')); }
-function openMomentModal()  { requireLogin(() => openModal('moment-modal')); }
+function openCheckinModal() {
+  requireLogin(() => {
+    // 重置弹窗状态
+    document.getElementById('ci-film').value = '';
+    document.getElementById('ci-venue').value = '';
+    document.getElementById('ci-quote').value = '';
+    document.getElementById('ci-char').textContent = '0 / 100';
+    document.getElementById('ci-film-sug').innerHTML = '';
+    document.querySelectorAll('#checkin-modal .sug-item').forEach(i => i.classList.remove('sel'));
+    _selFilm.ci = null;
+    openModal('checkin-modal');
+  });
+}
+function openMomentModal()  {
+  requireLogin(() => {
+    document.getElementById('mo-film').value = '';
+    document.getElementById('mo-venue').value = '';
+    document.getElementById('mo-content').value = '';
+    document.getElementById('mo-char').textContent = '0 / 100';
+    document.getElementById('mo-film-sug').innerHTML = '';
+    _selFilm.mo = null;
+    openModal('moment-modal');
+  });
+}
 function openListModal()    { requireLogin(() => openModal('list-modal')); }
+
+// ── 跳转片单页 ────────────────────────────
+function goMyList() {
+  requireLogin(async () => {
+    // 查找或创建用户在该影展的片单
+    try {
+      const existing = await sb(`/rest/v1/user_lists?user_id=eq.${_user.id}&festival=eq.${FEST}&select=id&limit=1`);
+      let listId;
+      if (existing?.length) {
+        listId = existing[0].id;
+      } else {
+        const created = await sb('/rest/v1/user_lists', {
+          method:'POST', prefer:'return=representation',
+          body: JSON.stringify({user_id:_user.id, title:'我的本届片单', festival:FEST, is_public:true})
+        });
+        listId = created?.[0]?.id;
+      }
+      if (listId) {
+        localStorage.setItem('cine_list_id', listId);
+        navigate('page-list-detail');
+      }
+    } catch(e) { toast('跳转失败', 'err'); }
+  });
+}
+function goListDetail(listId) {
+  localStorage.setItem('cine_list_id', listId);
+  navigate('page-list-detail');
+}
 
 // ── helpers ───────────────────────────────
 function updateChar(el, charId, max) {
@@ -664,17 +708,31 @@ function renderSectionFilms(sec) {
   scroll.innerHTML = films.map((f, i) => renderFilmCard(f, i, false)).join('');
 }
 
-// ── 加入片单（快捷）──────────────────────
+// ── 加入片单（自动创建片单）──────────────
 async function quickAdd(tmdbId, title, siffImg) {
   requireLogin(async () => {
     try {
-      const lists = await sb(`/rest/v1/user_lists?user_id=eq.${_user.id}&festival=eq.${FEST}&select=id,title&limit=1`);
-      if (!lists?.length) { toast('请先创建片单', 'err'); openListModal(); return; }
+      // 查找用户在该影展的片单，没有则自动创建
+      let lists = await sb(`/rest/v1/user_lists?user_id=eq.${_user.id}&festival=eq.${FEST}&select=id,title&limit=1`);
+      let listId, listTitle;
+      if (!lists?.length) {
+        const created = await sb('/rest/v1/user_lists', {
+          method:'POST', prefer:'return=representation',
+          body: JSON.stringify({user_id:_user.id, title:'我的本届片单', festival:FEST, is_public:true})
+        });
+        listId    = created?.[0]?.id;
+        listTitle = '我的本届片单';
+      } else {
+        listId    = lists[0].id;
+        listTitle = lists[0].title;
+      }
+      if (!listId) throw new Error('无法获取片单');
+      localStorage.setItem('cine_list_id', listId);
       await sb('/rest/v1/user_list_films', {
         method:'POST', prefer:'return=minimal',
-        body: JSON.stringify({list_id:lists[0].id, tmdb_id:tmdbId, title, poster_path:siffImg||null})
+        body: JSON.stringify({list_id:listId, tmdb_id:tmdbId||null, title, poster_path:siffImg||null})
       });
-      toast(`已加入「${lists[0].title}」✓`, 'ok');
+      toast(`已加入「${listTitle}」✓`, 'ok');
     } catch(e) {
       if ((e.message||'').includes('23505')) toast('已在片单中', '');
       else toast('加入失败', 'err');
@@ -698,7 +756,7 @@ async function loadPhase() {
     if (phase === 'pre') {
       const days = Math.max(0, Math.ceil((new Date(cfg.start_date)-now)/86400000));
       statusEl.textContent = `展前选片中 · ${days} 天后开幕`;
-      btnsEl.innerHTML = `<div class="btn-gold" onclick="openListModal()">创建我的片单 +</div><div class="btn-dim">查看展映单元</div>`;
+      btnsEl.innerHTML = `<div class="btn-gold" onclick="goMyList()">创建/查看我的片单 →</div><div class="btn-dim">查看展映单元</div>`;
     } else if (phase === 'during') {
       const day = Math.ceil((now-new Date(cfg.start_date))/86400000);
       statusEl.textContent = `影展进行中 · 第 ${day} 天`;
@@ -713,18 +771,29 @@ async function loadPhase() {
 async function loadUserLists() {
   const grid = document.getElementById('plan-grid');
   try {
-    const data = await sb(`/rest/v1/user_lists?festival=eq.${FEST}&is_public=eq.true&select=*,user:profiles(username,display_name)&order=follower_count.desc&limit=3`);
+    const data = await sb(`/rest/v1/user_lists?festival=eq.${FEST}&is_public=eq.true&select=*,user:profiles(username,display_name),films:user_list_films(poster_path)&order=follower_count.desc&limit=3`);
     if (!data?.length) { grid.innerHTML = `<div class="plan-empty">还没有片单，来创建第一个</div>`; return; }
-    grid.innerHTML = data.map((list, i) => {
+    grid.innerHTML = data.map(list => {
       const uname = list.user?.display_name || list.user?.username || '影迷';
       const [bg, fg] = avColor(uname);
-      return `<div class="plan-card">
-        <div class="plan-bg" style="background:${BGS[i%5]};"></div>
-        <div class="plan-grad"></div>
-        <div class="plan-inner">
-          <div class="plan-user"><div class="plan-av" style="background:${bg};color:${fg};">${uname[0]}</div><span class="plan-uname">@${list.user?.username||'影迷'}</span></div>
-          <div class="plan-tagline">${list.title}</div>
-          <div class="plan-foot"><span class="plan-meta">${list.film_count} 部 · ${list.follower_count} 人关注</span></div>
+      const imgs = (list.films||[]).filter(f=>f.poster_path).slice(0,3);
+      const mk = (img, bg2) => img ? `<img src="${img.poster_path}" onerror="this.style.display='none'">` : `<div style="width:100%;height:100%;background:${bg2};"></div>`;
+      return `<div class="plan-card" onclick="goListDetail('${list.id}')">
+        <div class="plan-cover">
+          <div class="plan-ci pc3">${mk(imgs[2],'#1a1408')}</div>
+          <div class="plan-ci pc2">${mk(imgs[1],'#1a1408')}</div>
+          <div class="plan-ci pc1">${imgs[0]?`<img src="${imgs[0].poster_path}" onerror="this.style.display='none'">`:`<div style="width:100%;height:100%;background:#1a1408;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:18px;color:rgba(201,168,76,.18);">${list.title[0]}</div>`}</div>
+        </div>
+        <div class="plan-info">
+          <div>
+            <div class="plan-user"><div class="plan-av" style="background:${bg};color:${fg};">${uname[0]}</div><span class="plan-uname">@${list.user?.username||'影迷'}</span></div>
+            <div class="plan-tagline">${list.title}</div>
+            ${list.description ? `<div class="plan-desc">${list.description}</div>` : ''}
+          </div>
+          <div class="plan-foot">
+            <span class="plan-meta">${list.film_count} 部 · ${list.follower_count} 人关注</span>
+            <span class="plan-enter">查看片单 →</span>
+          </div>
         </div>
       </div>`;
     }).join('');
@@ -871,7 +940,7 @@ async function submitList() {
 
 // ── 初始化 ────────────────────────────────
 async function init() {
-  await initUser();
+  initUser();
   await Promise.all([loadPhase(), loadAllFilms(), loadUserLists(), loadCheckins(), loadMoments(), loadOnlineCounts()]);
   buildCineTabs();
   buildSectionTabs();
