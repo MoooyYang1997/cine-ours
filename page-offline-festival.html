@@ -459,6 +459,7 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 
 <div class="toast" id="toast"></div>
 
+<script src="supabase.js"></script>
 <script>
 const SB   = 'https://dirrnojiybbwotuqeqww.supabase.co';
 const KEY  = 'sb_publishable_Rbie_WEsyNAV38b-QKrbCw_bBwuxicP';
@@ -489,11 +490,22 @@ async function sb(path, opts = {}) {
 }
 
 // ── Auth ──────────────────────────────────
-function initUser() {
+async function initUser() {
   try {
-    const k = Object.keys(localStorage).find(k => k.includes('auth-token') && k.includes('supabase'));
-    if (k) { const p = JSON.parse(localStorage.getItem(k)); _user = p?.user || null; }
-  } catch(e) {}
+    // 优先用 supabase.js 缓存
+    if (window.currentUser) { _user = window.currentUser; return; }
+    // 没有缓存则直接读 session（iframe 环境下 Supabase SDK 自己管理 cookie/storage）
+    const waitSB = () => new Promise(res => {
+      if (window._sb) return res();
+      window.addEventListener('supabase-ready', res, { once: true });
+    });
+    await waitSB();
+    const { data: { session } } = await window._sb.auth.getSession();
+    if (session?.user) {
+      _user = session.user;
+      window.currentUser = session.user;
+    }
+  } catch(e) { _user = null; }
 }
 
 // ── navigate ──────────────────────────────
@@ -859,7 +871,7 @@ async function submitList() {
 
 // ── 初始化 ────────────────────────────────
 async function init() {
-  initUser();
+  await initUser();
   await Promise.all([loadPhase(), loadAllFilms(), loadUserLists(), loadCheckins(), loadMoments(), loadOnlineCounts()]);
   buildCineTabs();
   buildSectionTabs();

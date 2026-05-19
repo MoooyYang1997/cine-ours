@@ -690,17 +690,6 @@ function formatSbError(err){
   return '打卡失败，请稍后重试';
 }
 
-function readUserFromStorage(){
-  try{
-    var k=Object.keys(localStorage).find(function(key){
-      return key.indexOf('auth-token')>=0&&key.indexOf('supabase')>=0;
-    });
-    if(!k)return null;
-    var raw=JSON.parse(localStorage.getItem(k));
-    return raw&&raw.user?raw.user:null;
-  }catch(e){return null;}
-}
-
 function ensureSbReady(){
   return new Promise(function(resolve,reject){
     if(window._sb)return resolve(window._sb);
@@ -726,9 +715,7 @@ function ensureMapUser(){
     return sb.auth.getSession().then(function(res){
       var u=res.data&&res.data.session&&res.data.session.user;
       if(u){window.currentUser=u;return u;}
-      u=readUserFromStorage();
-      if(u)window.currentUser=u;
-      return u;
+      return null;
     });
   });
 }
@@ -747,8 +734,8 @@ function syncMapAuth(){
   }).catch(function(){return null;});
 }
 
-function navAuth(){
-  if(typeof requireAuth==='function'){requireAuth('请先登录');return;}
+async function navAuth(){
+  if(typeof requireAuth==='function'){await requireAuth('请先登录');return;}
   showFcToast('请先登录');
   setTimeout(function(){
     try{
@@ -840,10 +827,10 @@ function refreshCheckinState(placeId){
 }
 
 function onCheckinClick(){
-  ensureMapUser().then(function(user){
+  ensureMapUser().then(async function(user){
     if(!user){
-      if(typeof requireAuth==='function'){requireAuth('请先登录');}
-      else navAuth();
+      if(typeof requireAuth==='function'){if(!await requireAuth('请先登录'))return;}
+      else await navAuth();
       return;
     }
     if(userCheckedPlaces[active.id])return;
@@ -916,8 +903,8 @@ async function submitCheckin(){
     var sb=await ensureSbReady();
     var user=await ensureMapUser();
     if(!user){
-      if(typeof requireAuth==='function'){requireAuth('请先登录');}
-      else navAuth();
+      if(typeof requireAuth==='function'){if(!await requireAuth('请先登录'))return;}
+      else await navAuth();
       return;
     }
     if(userCheckedPlaces[active.id])return;

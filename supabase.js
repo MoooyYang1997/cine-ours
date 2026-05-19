@@ -348,13 +348,26 @@ async function getWatched(userId) {
 // 工具函数
 // ════════════════════════════════════════════
 
-// 检查登录状态，未登录则跳转
-function requireAuth(msg = '请先登录') {
+// 检查登录状态，未登录则跳转（异步版，直接读 session 避免时序问题）
+async function requireAuth(msg = '请先登录') {
+  // 优先用缓存，没有则重新读 session
+  if (!window.currentUser) {
+    try {
+      const { data: { session } } = await window._sb.auth.getSession();
+      if (session?.user) {
+        window.currentUser = session.user;
+        if (!window.currentProfile) {
+          window.currentProfile = await getProfile(session.user.id);
+        }
+      }
+    } catch(e) {}
+  }
   if (!window.currentUser) {
     showSbToast(msg);
     setTimeout(() => {
-      if (window.parent && window.parent.navigate) window.parent.navigate('auth');
-      else window.parent.postMessage({ type: 'navigate', payload: { page: 'auth' } }, '*');
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'navigate', page: 'auth' }, '*');
+      }
     }, 800);
     return false;
   }
