@@ -237,4 +237,21 @@ var PL=[
 
 // ── 重庆 CHONGQING（新城市）──
 {id:'fjj', tp:'fl', nm:'奉节 / 三峡库区', cy:'重庆', cye:'CHONGQING', co:'中国', fm:'三峡好人', fy:2006, dr:'贾樟柯', q:'拆迁中的城市，像一段还没说完就被推倒的生活。', u:'场景记录', lk:0, lng:109.4658, lat:31.0198, img:null},
+
+// ── 巴黎新增 ──
+{id:'prm', tp:'fl', nm:'Promenade Plantée', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'Richard Linklater', q:'他们在绿道上继续往前走。', u:'场景记录', lk:0, lng:2.3712, lat:48.8513, img:null},
+
+// ── 东京新增 ──
+{id:'tkt', tp:'fl', nm:'The Tokyo Toilet 系列', cy:'东京', cye:'TOKYO', co:'日本', fm:'完美的日子', fy:2023, dr:'Wim Wenders', q:'城市最普通的角落，也有光照下来。', u:'场景记录', lk:0, lng:139.6988, lat:35.6594, img:null},
+
+// ── 重庆新增 ──
+{id:'cqls', tp:'fl', nm:'重庆老街/山城步道', cy:'重庆', cye:'CHONGQING', co:'中国', fm:'少年的你', fy:2019, dr:'曾国祥', q:'他们在重庆的坡道上并肩走过最艰难的一段路。', u:'场景记录', lk:0, lng:106.5516, lat:29.5630, img:null},
+{id:'lhs', tp:'fl', nm:'罗汉寺', cy:'重庆', cye:'CHONGQING', co:'中国', fm:'疯狂的石头', fy:2006, dr:'宁浩', q:'重庆的庙宇和街道，让这场荒诞更有烟火气。', u:'场景记录', lk:0, lng:106.5756, lat:29.5596, img:null},
+{id:'wltb', tp:'fl', nm:'武隆天生三桥', cy:'重庆', cye:'CHONGQING', co:'中国', fm:'变形金刚4', fy:2014, dr:'Michael Bay', q:'巨大的地貌，让一切追逐都变得更像神话。', u:'场景记录', lk:0, lng:107.7597, lat:29.3253, img:null},
+{id:'yczzh', tp:'fl', nm:'永川茶山竹海', cy:'重庆', cye:'CHONGQING', co:'中国', fm:'十面埋伏', fy:2004, dr:'张艺谋', q:'竹影一层层压下来，杀机也一层层逼近。', u:'场景记录', lk:0, lng:105.8942, lat:29.3561, img:null},
+
+// ── 北京 BEIJING（新城市）──
+{id:'ltp', tp:'fl', nm:'龙潭公园', cy:'北京', cye:'BEIJING', co:'中国', fm:'蓝宇', fy:2001, dr:'关锦鹏', q:'北京的公园，留住过他们短暂而真实的靠近。', u:'场景记录', lk:0, lng:116.4285, lat:39.8923, img:null},
+{id:'btsz', tp:'fl', nm:'白塔寺/妙应寺', cy:'北京', cye:'BEIJING', co:'中国', fm:'白塔之光', fy:2023, dr:'张律', q:'白塔在城市中央，也在他们谈话的空隙里。', u:'场景记录', lk:0, lng:116.3614, lat:39.9298, img:null},
+{id:'bjxt', tp:'fl', nm:'北京戏台/旧城空间', cy:'北京', cye:'BEIJING', co:'中国', fm:'霸王别姬', fy:1993, dr:'陈凯歌', q:'戏台上的一生，和城里的半生互相纠缠。', u:'场景记录', lk:0, lng:116.3974, lat:39.9087, img:null},
 ];
