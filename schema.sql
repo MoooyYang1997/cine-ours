@@ -310,3 +310,5 @@ create policy "place_checkins_insert" on public.place_checkins for insert with c
 -- drop policy if exists "place_checkins_img_insert" on storage.objects;
 -- create policy "place_checkins_img_insert" on storage.objects for insert to authenticated
 --   with check (bucket_id = 'place-checkins' and auth.uid()::text = (storage.foldername(name))[1]);
+
+-- Storage：用户头像 avatars（见 supabase/sql/avatars-storage.sql、page-profile 上传）
