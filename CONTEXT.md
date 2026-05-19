@@ -85,9 +85,9 @@ data/place-images.json      # 取景地图片
 ## 当前状态
 <!-- 由 scripts/update-context.cjs 每日 00:00 北京时间自动更新；也可手动运行 -->
 <!-- CONTEXT_STATUS_START -->
-**最近自动更新：** 2026-05-19 00:00 北京时间
+**最近自动更新：** 2026-05-20 00:00 北京时间
 
-**上次完成（2026-05-18）：** docs: 自动更新 CONTEXT 进度（北京时间）。涉及文件：.github/workflows/sync-places-picker.yml、.github/workflows/update-context.yml、CONTEXT.md、data/places-picker.json、film-image-picker.html、index.html、package.json、page-home.html 等
+**上次完成（2026-05-19）：** Revert "Add list detail page and refresh offline festival list UI"；Add list detail page and refresh offline festival list UI；Add Supabase SQL for avatars storage bucket and RLS policies；地图页底部条全宽：移除左栏并等比放大卡片；docs: 自动更新 CONTEXT 进度（北京时间）；feat: expand places to 150 and refine profile page layout。涉及文件：CONTEXT.md、data/cinema-images.json、data/places-picker.json、data/places.js、index.html、page-auth.html、page-creator.html、page-festival-detail.html 等
 
 **正在做：** —
 
@@ -99,6 +99,9 @@ data/place-images.json      # 取景地图片
 ## 进度日报
 <!-- 保留最近 14 天；由 GitHub Actions 每日追加 -->
 <!-- CONTEXT_DAILY_START -->
+### 2026-05-19
+Revert "Add list detail page and refresh offline festival list UI"；Add list detail page and refresh offline festival list UI；Add Supabase SQL for avatars storage bucket and RLS policies；地图页底部条全宽：移除左栏并等比放大卡片；docs: 自动更新 CONTEXT 进度（北京时间）；feat: expand places to 150 and refine profile page layout。涉及文件：CONTEXT.md、data/cinema-images.json、data/places-picker.json、data/places.js、index.html、page-auth.html、page-creator.html、page-festival-detail.html 等
+
 ### 2026-05-18
 docs: 自动更新 CONTEXT 进度（北京时间）。涉及文件：.github/workflows/sync-places-picker.yml、.github/workflows/update-context.yml、CONTEXT.md、data/places-picker.json、film-image-picker.html、index.html、package.json、page-home.html 等
 
