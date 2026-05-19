@@ -174,35 +174,21 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
 #mc:hover{opacity:0.6}
 .mcb{width:22px;height:22px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.08);border-radius:3px;display:flex;align-items:center;justify-content:center;color:rgba(237,232,223,0.5);font-size:13px;cursor:pointer}
 
-/* ── 底部地点条 ── */
+/* ── 底部地点条（全宽双 strip）── */
 #bs{
-  display:flex;
-  flex-shrink:0;
-  background:#060709;
-  border-top:1px solid rgba(255,255,255,0.048);
-}
-
-/* 左侧城市信息 */
-#bsc{
-  width:160px;
-  flex-shrink:0;
-  border-right:1px solid rgba(255,255,255,0.045);
+  --bs-scale:1.154; /* 原右侧区 +160px 左栏宽度后的等比系数 */
   display:flex;
   flex-direction:column;
-  justify-content:center;
-  padding:24px 22px;
-  gap:8px;
+  flex-shrink:0;
+  width:100%;
+  background:#060709;
+  border-top:1px solid rgba(255,255,255,0.048);
+  overflow:hidden;
 }
-#bsn{font-family:var(--serif);font-size:28px;color:rgba(201,168,76,0.88);line-height:1.1}
-#bss{font-size:10px;color:rgba(237,232,223,0.28);line-height:1.6;letter-spacing:0.03em;white-space:nowrap}
-#bsk{font-size:9px;color:rgba(237,232,223,0.16);font-style:italic}
-
-/* 右侧两行 */
-#bsr{flex:1;display:flex;flex-direction:column;overflow:hidden}
 
 /* 每行 */
 .brow{
-  height:230px;   /* 固定行高 */
+  height:calc(230px * var(--bs-scale));
   flex-shrink:0;
   display:flex;
   align-items:stretch;
@@ -213,8 +199,8 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
 /* 帧滚动区 */
 .bfr{
   flex:1;
-  display:flex;gap:12px;
-  padding:14px 16px;
+  display:flex;gap:calc(12px * var(--bs-scale));
+  padding:calc(14px * var(--bs-scale)) calc(16px * var(--bs-scale));
   overflow-x:auto;overflow-y:hidden;
   scrollbar-width:none;
   cursor:grab;user-select:none;
