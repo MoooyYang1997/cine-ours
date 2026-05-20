@@ -119,24 +119,20 @@ Add GitHub Actions workflow for daily SIFF film sync.；add package.json for ser
 ---
 
 ## 近期已修（归档）
-<!-- 由对话/人工据 git 提交与验收整理；`update-context.cjs` 不修改本节 -->
-
-### 2026-05-20
-- **登录态写库**：父页向 iframe 传播 `access_token`；上影节专区与片单详情等需鉴权的请求改为携带用户 JWT，避免已登录仍按匿名写库。
-- **片单详情**：等待 `authSync` 后再拉列表；加载失败时错误提示更可读。
-- **个人主页**：「我创建的」Tab 对接 `user_lists`，并可跳转片单详情。
-
+<!-- 以下区块由 `scripts/update-context.cjs` 每日写入（与 GitHub Actions 定时任务同源），仅汇总「修复类」提交（见脚本内 `isFixLikeCommit`）；无命中日期不出现在本节。验收口径的短句可放在对话或 Issue；首次启用可本地执行 `node scripts/update-context.cjs --backfill-fixed` 重算近 14 天。 -->
+<!-- CONTEXT_FIXED_START -->
 ### 2026-05-19
-- **地图页**：底部影片条全宽布局，去掉左侧占位列，卡片等比放大。
-- **地图数据 / 个人页**：地点扩充至 150 条；个人页布局收紧（与地图信号展示配套）。
-- **头像资源**：补充 Supabase Storage `avatars` 桶及 RLS 的 SQL，便于按仓库脚本配置。
-- **片单/上影节列表**：片单详情页与线下影展列表 UI 迭代（中间曾 Revert，当前以主干稳定提交为准）。
-
-### 2026-05-18
-- **工程化 / 数据维护**：CONTEXT 日报 workflow、`sync-places-picker`、`film-image-picker` 与 `page-home` 等与地图选点数据流相关的配套更新。
+Revert "Add list detail page and refresh offline festival list UI"；地图页底部条全宽：移除左栏并等比放大卡片。涉及文件：CONTEXT.md、data/cinema-images.json、data/places-picker.json、data/places.js、index.html、page-auth.html 等
 
 ### 2026-05-17
-- **地图页**：固定地图行高 + 可滚动影片条；修复滚动布局、加宽影片条卡片；底部条与画幅卡片布局多轮收紧；城市副标题与占位图渐变微调。
+Fix page-map scroll layout and enlarge film strip cards.；Update page-map: shell layout, no duplicate nav, card and strip fixes.。涉及文件：.github/workflows/sync-siff.yml、api:/sync-siff.js、data/cinema-images.json、data/place-images.json、data/places.js、film-image-picker.html 等
+
+### 2026-05-16
+fix: iframe 子页面缓存版本号，确保地图 Round2 线上生效；Fix festivals page filename and restore page-festivals.html。涉及文件：index.html、page-festivals.html、page-map-r3.css、page-map-r3.js、page-map.html、page-offline-festival.html 等
+
+### 2026-05-14
+fix(home): make curator line-bg visible above canvas blend。涉及文件：page-home.html、page-map.html
+<!-- CONTEXT_FIXED_END -->
 
 ---
 
