@@ -461,10 +461,16 @@ let _selFilm = {};
 
 // ── Supabase ──────────────────────────────
 async function sb(path, opts = {}) {
+  // 优先用用户 JWT，没有则用 publishable key
+  let token = KEY;
+  try {
+    const k = Object.keys(localStorage).find(k => k.includes('auth-token') && k.includes('supabase'));
+    if (k) { const p = JSON.parse(localStorage.getItem(k)); token = p?.access_token || KEY; }
+  } catch(e) {}
   const r = await fetch(SB + path, {
     ...opts,
     headers: {
-      'apikey': KEY, 'Authorization': 'Bearer ' + KEY,
+      'apikey': KEY, 'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json',
       ...(opts.prefer ? {'Prefer': opts.prefer} : {}),
       ...(opts.headers || {})
