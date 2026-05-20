@@ -71,12 +71,12 @@
   },
   {
     "id": "bab",
-    "nm": "Babylon Kino",
+    "nm": "巴比伦电影院",
     "cy": "柏林"
   },
   {
     "id": "blp",
-    "nm": "Berlinale Palast",
+    "nm": "柏林电影节宫",
     "cy": "柏林"
   },
   {
@@ -86,12 +86,12 @@
   },
   {
     "id": "cin",
-    "nm": "La Cinémathèque française",
+    "nm": "法国电影资料馆",
     "cy": "巴黎"
   },
   {
     "id": "pnt",
-    "nm": "Cinéma du Panthéon",
+    "nm": "先贤祠电影院",
     "cy": "巴黎"
   },
   {
@@ -151,7 +151,7 @@
   },
   {
     "id": "iff",
-    "nm": "IFC Center",
+    "nm": "IFC独立电影中心",
     "cy": "纽约"
   },
   {
@@ -456,7 +456,7 @@
   },
   {
     "id": "pntf",
-    "nm": "Pont Neuf",
+    "nm": "新桥",
     "cy": "巴黎"
   },
   {
@@ -496,67 +496,67 @@
   },
   {
     "id": "bfi",
-    "nm": "BFI Southbank",
+    "nm": "英国电影学院南岸",
     "cy": "伦敦"
   },
   {
     "id": "pcc",
-    "nm": "Prince Charles Cinema",
+    "nm": "查尔斯王子电影院",
     "cy": "伦敦"
   },
   {
     "id": "ptb",
-    "nm": "Portobello Road",
+    "nm": "波托贝洛路",
     "cy": "伦敦"
   },
   {
     "id": "kcs",
-    "nm": "King's Cross Station",
+    "nm": "国王十字车站",
     "cy": "伦敦"
   },
   {
     "id": "wlb",
-    "nm": "South Bank/Waterloo Bridge",
+    "nm": "南岸/滑铁卢桥",
     "cy": "伦敦"
   },
   {
     "id": "slm",
-    "nm": "St Luke Mews",
+    "nm": "圣卢克小巷",
     "cy": "伦敦"
   },
   {
     "id": "mlb",
-    "nm": "Millennium Bridge",
+    "nm": "千禧桥",
     "cy": "伦敦"
   },
   {
     "id": "fmfm",
-    "nm": "Film Forum",
+    "nm": "电影论坛影院",
     "cy": "纽约"
   },
   {
     "id": "flc",
-    "nm": "Film at Lincoln Center",
+    "nm": "林肯中心电影院",
     "cy": "纽约"
   },
   {
     "id": "ktz",
-    "nm": "Katz's Delicatessen",
+    "nm": "卡兹熟食店",
     "cy": "纽约"
   },
   {
     "id": "wsp",
-    "nm": "Washington Square Park",
+    "nm": "华盛顿广场公园",
     "cy": "纽约"
   },
   {
     "id": "tff",
-    "nm": "Tiffany Fifth Avenue",
+    "nm": "蒂芙尼第五大道店",
     "cy": "纽约"
   },
   {
     "id": "esb",
-    "nm": "Empire State Building",
+    "nm": "帝国大厦",
     "cy": "纽约"
   },
   {
@@ -566,37 +566,37 @@
   },
   {
     "id": "qbb",
-    "nm": "Queensboro Bridge",
+    "nm": "皇后区大桥",
     "cy": "纽约"
   },
   {
     "id": "egt",
-    "nm": "Egyptian Theatre",
+    "nm": "埃及剧院",
     "cy": "洛杉矶"
   },
   {
     "id": "aer",
-    "nm": "Aero Theatre",
+    "nm": "航空剧院",
     "cy": "洛杉矶"
   },
   {
     "id": "bdb",
-    "nm": "Bradbury Building",
+    "nm": "布拉德伯里大厦",
     "cy": "洛杉矶"
   },
   {
     "id": "mhd",
-    "nm": "Mulholland Drive",
+    "nm": "穆赫兰道",
     "cy": "洛杉矶"
   },
   {
     "id": "agf",
-    "nm": "Angels Flight",
+    "nm": "天使飞行缆车",
     "cy": "洛杉矶"
   },
   {
     "id": "rnd",
-    "nm": "Randy's Donuts",
+    "nm": "兰迪甜甜圈",
     "cy": "洛杉矶"
   },
   {
@@ -641,7 +641,7 @@
   },
   {
     "id": "kofa",
-    "nm": "Korean Film Archive KOFA",
+    "nm": "韩国电影档案馆",
     "cy": "首尔"
   },
   {
@@ -711,92 +711,92 @@
   },
   {
     "id": "rgc",
-    "nm": "Regal Cinema",
+    "nm": "丽晶电影院",
     "cy": "孟买"
   },
   {
     "id": "lbty",
-    "nm": "Liberty Cinema",
+    "nm": "自由电影院",
     "cy": "孟买"
   },
   {
     "id": "mrd",
-    "nm": "Marine Drive",
+    "nm": "海洋大道",
     "cy": "孟买"
   },
   {
     "id": "gtwi",
-    "nm": "Gateway of India",
+    "nm": "印度门",
     "cy": "孟买"
   },
   {
     "id": "cst",
-    "nm": "Chhatrapati Shivaji Terminus",
+    "nm": "贾特拉帕蒂·希瓦吉终点站",
     "cy": "孟买"
   },
   {
     "id": "dhv",
-    "nm": "Dharavi",
+    "nm": "达拉维",
     "cy": "孟买"
   },
   {
     "id": "bbs",
-    "nm": "Bandra Bandstand",
+    "nm": "班德拉海堤",
     "cy": "孟买"
   },
   {
     "id": "mhbs",
-    "nm": "Mehboob Studio",
+    "nm": "迈赫布布影视基地",
     "cy": "孟买"
   },
   {
     "id": "s&co",
-    "nm": "Shakespeare and Company",
+    "nm": "莎士比亚书店",
     "cy": "巴黎"
   },
   {
     "id": "lpc2",
-    "nm": "Le Pure Café",
+    "nm": "纯咖啡馆 Le Pure Café",
     "cy": "巴黎"
   },
   {
     "id": "sed",
-    "nm": "Saint-Étienne-du-Mont",
+    "nm": "圣埃蒂安杜蒙教堂",
     "cy": "巴黎"
   },
   {
     "id": "rdg",
-    "nm": "Rue Daguerre",
+    "nm": "达盖尔街",
     "cy": "巴黎"
   },
   {
     "id": "dlk",
-    "nm": "Delacorte Clock / Central Park",
+    "nm": "中央公园德拉科特钟",
     "cy": "纽约"
   },
   {
     "id": "cni",
-    "nm": "Coney Island",
+    "nm": "科尼岛",
     "cy": "纽约"
   },
   {
     "id": "erw",
-    "nm": "East River Waterfront",
+    "nm": "东河岸边",
     "cy": "纽约"
   },
   {
     "id": "tmsq",
-    "nm": "Times Square / 8th Avenue",
+    "nm": "时代广场",
     "cy": "纽约"
   },
   {
     "id": "pgll",
-    "nm": "Park Güell",
+    "nm": "桂尔公园",
     "cy": "巴塞罗那"
   },
   {
     "id": "pgll2",
-    "nm": "Park Güell 蜥蜴喷泉",
+    "nm": "桂尔公园蜥蜴喷泉",
     "cy": "巴塞罗那"
   },
   {
@@ -816,7 +816,7 @@
   },
   {
     "id": "ebisu",
-    "nm": "Ebisu-higashi Park 公厕",
+    "nm": "惠比寿东公园厕所",
     "cy": "东京"
   },
   {
@@ -826,12 +826,12 @@
   },
   {
     "id": "fap",
-    "nm": "Fontana dell'Acqua Paola",
+    "nm": "保拉水之喷泉",
     "cy": "罗马"
   },
   {
     "id": "pcv",
-    "nm": "Ponte Cavour",
+    "nm": "卡武尔桥",
     "cy": "罗马"
   },
   {
@@ -841,12 +841,12 @@
   },
   {
     "id": "prm",
-    "nm": "Promenade Plantée",
+    "nm": "绿荫步道 Promenade Plantée",
     "cy": "巴黎"
   },
   {
     "id": "tkt",
-    "nm": "The Tokyo Toilet 系列",
+    "nm": "东京公厕计划",
     "cy": "东京"
   },
   {
