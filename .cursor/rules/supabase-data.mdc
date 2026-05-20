@@ -1,51 +1,103 @@
 ---
-description: Supabase 数据层、认证与静态数据文件规范
-globs: supabase.js,page-*.html,api/**/*.js,data/**/*
+description: Supabase 数据层 — 异步鉴权、requireAuth、弱网 Loading、RLS 安全
+globs: supabase.js,page-*.html,api/**/*.js,data/**/*,supabase/**/*
 alwaysApply: false
 ---
 
-# 数据层与 Supabase
+# 数据层与异步鉴权
+
+死守目标：**消灭弱网时序竞态，严守 RLS**。
 
 ## 统一入口
 
-- 所有需数据库的页面顶部：`<script src="supabase.js"></script>`
-- 客户端：`window._sb`；就绪事件：`supabase-ready`
-- 复用 `supabase.js` 内已有方法（`getProfile`、`signInEmail` 等），不要在各页面重复封装相同查询
-
-```javascript
-function whenSbReady(fn) {
-  if (window._sb) return fn();
-  window.addEventListener('supabase-ready', fn, { once: true });
-}
-whenSbReady(async () => {
-  const { data, error } = await window._sb.from('profiles').select('*').eq('id', userId).single();
-});
+```html
+<script src="supabase.js"></script>
 ```
 
-## 认证状态
+- 客户端：`window._sb`；SDK 就绪：`supabase-ready`
+- **禁止**子页再次 `createClient`（`index.html` shell 恢复会话除外）
+- **禁止** `service_role` 或私密 key 进前端
+- 复用 `supabase.js` 已有方法，勿重复封装相同查询
 
-- 全局：`window.currentUser`、`window.currentProfile`
-- 监听：`auth-change` 自定义事件
-- 需登录操作：未登录时 `postMessage` 跳转 `auth`，可用 `localStorage.setItem('cine_redirect', pageKey)`
+## 异步鉴权底盘（高频红线）
 
-## 禁止事项
+**禁止**用以下方式判断「是否已登录」：
 
-- 不要在子页面再 `createClient`（`index.html` shell 侧恢复会话除外，已有独立逻辑）
-- 不要把 `service_role` key 或私密密钥写进前端
-- 不要仅用 `localStorage` 存应跨设备同步的用户数据（已知问题：地图封面）
+- ❌ 同步读 `localStorage`（含 Supabase `auth-token` key）
+- ❌ 仅读 `window.currentUser` / `window.currentProfile` 缓存作唯一依据
+
+**必须**以 Session 为准：
+
+```javascript
+const { data: { session } } = await window._sb.auth.getSession();
+```
+
+`window.currentUser` 仅作展示缓存，**鉴权分支必须先 `getSession()`**。
+
+## requireAuth 严格拦截
+
+`supabase.js` 已提供 `requireAuth`；所有需登录出口：
+
+```javascript
+async function onSubmit() {
+  if (!await requireAuth()) return;
+  // ...
+}
+```
+
+- 调用方外层必须是 `async function`
+- 写法固定：`if (!await requireAuth()) return;`（可传中文提示）
+- 未登录：toast + `postMessage` 跳 `auth`；可用 `localStorage.setItem('cine_redirect', pageKey)` 仅作**回跳页 key**，不作登录态判断
+
+## initUser 异步规范
+
+子页若有 `initUser()`：
+
+```javascript
+async function initUser() {
+  await new Promise(res => {
+    if (window._sb) return res();
+    window.addEventListener('supabase-ready', res, { once: true });
+  });
+  const { data: { session } } = await window._sb.auth.getSession();
+  // 从 session 派生本页用户状态，禁止 parse localStorage token
+}
+
+async function init() {
+  await initUser();
+  await loadData(); // 首屏数据在 initUser 之后
+}
+```
+
+**禁止**同步版 `initUser()` + 首屏直接 `initUser()` 不 await。改造遗留页（如 `page-offline-festival.html`）时优先对齐此模式。
+
+## 并发写入防御
+
+多 iframe 独立运行时：
+
+- **禁止**多点无序并发写同一 Supabase 表/行（易触发鉴权竞态或 RLS 抖动）
+- 写操作串行化或防抖；同一用户动作合并为单次 `insert`/`update`
+
+## 弱网 UI 兜底
+
+境内访问 Supabase 常有 **300–800ms** 延迟：
+
+- 所有异步拉取必须绑定 **Skeleton** 或 **Loading** 状态，数据到达后再渲染
+- 错误态用中文 toast，Console 打 `console.error('[模块名]', error)`
+- 临时 Mock 必须标注：`// TODO: replace with real data`
+
+## 验证
+
+- 写入成功：**Table Editor** 查表，不凭 UI 推断
+- 监听登录变化用 `auth-change`，勿轮询 `localStorage`
 
 ## 静态数据
 
 | 文件 | 用途 |
 |------|------|
-| `data/places.js` | 地图地点，`var PL` 数组 |
+| `data/places.js` | `var PL` 地点数组 |
 | `data/cinema-images.json` | 影院图 |
 | `data/place-images.json` | 取景地图 |
-| `data/places-picker.json` | 选点器数据 |
+| `data/places-picker.json` | 选点器 |
 
-改 `places.js` 后注意与 `sync-places-picker` 等 workflow 的一致性。
-
-## Serverless
-
-- `api/sync-siff.js` 等 Vercel 函数：保持 Node 风格，与 `package.json` scripts 对齐
-- SQL 迁移放 `supabase/sql/`，RLS/Storage 策略在 Dashboard 验证后再依赖
+SQL 迁移：`supabase/sql/`；RLS/Storage 在 Dashboard 验证后再依赖。

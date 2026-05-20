@@ -1,51 +1,68 @@
 ---
-description: Shell 路由、iframe 子页面与页面间通信规范
-globs: index.html,page-*.html,page-map-r3.js
+description: Shell 父层与 iframe 子层 — 路由闭环、懒加载、postMessage、样式隔离
+globs: index.html,page-*.html,page-map-r3.js,page-map-r3.css
 alwaysApply: false
 ---
 
-# Shell 路由与子页面
+# Shell 与页面路由
 
-## 新增/修改页面流程
+死守目标：**Shell（父层）与 iframe（子层）通信管道不崩塌**。
 
-1. 创建 `page-*.html`（或独立 `.js`/`.css` 如地图 `page-map-r3.*`）
-2. 在 `index.html` → `PAGES` 注册：`key`、`src`、`nav`（导航 id，无则 `null`）、`label`、`bc`（面包屑）
-3. 需要导航栏入口时，同步 `index.html` 里对应 `.nl` 元素；V1 隐藏项保持 `display:none`
+## 路由闭环红线
 
-当前已注册 key 见 `CONTEXT.md`；常见：`home`、`map`、`festivals`、`festival-detail`、`offline-festival`、`list-detail`、`auth`、`profile`。
+新页面必须**双向注册**，缺一不可：
 
-## 子页面 → Shell 通信
+1. `index.html` → `PAGES` 表：`key`、`src`、`nav`、`label`、`bc`
+2. `index.html` → `<iframe class="pframe" id="f-{key}" data-src="...">` 列表（`home` 可直写 `src`，其余用 `data-src` + 空 `src`）
 
-在 iframe 内用 `window.parent.postMessage`，由 `index.html` message bridge 处理：
+需要导航入口时同步 `.nl` 元素；V1 隐藏项保持 `display:none`。
+
+## 懒加载时序
+
+- 除 `home` 外：**切换时才注入 `src`**（`go(key)` 首次加载 `assetUrl(PAGES[key].src)`）
+- 新 key 必须加入 `loaded` Set 逻辑，勿破坏 `SITE_BUILD` 缓存刷新机制
+
+## 跨页通信（死锁消息类型）
+
+子页 → 父页仅用 `window.parent.postMessage`，类型不得自造：
 
 ```javascript
-// 跳转
-window.parent.postMessage({ type: 'navigate', page: 'offline-festival' }, '*');
+// 基础跳转
+{ type: 'navigate', page: 'offline-festival' }
 
-// 跳转并滚动到 section（如上影节 sec-lists、sec-checkin 等）
-window.parent.postMessage({
+// 锚点跳转 — section 对齐子页 id="sec-xxx"
+{
   type: 'navigateAndScroll',
   payload: { page: 'offline-festival', section: 'sec-films' }
-}, '*');
+}
 
-// 提示
-window.parent.postMessage({ type: 'toast', payload: { msg: '已保存' } }, '*');
+// 提示 / 登录同步（已有）
+{ type: 'toast', payload: { msg: '...' } }
+{ type: 'login', payload: { profile } }
+{ type: 'logout' }
 ```
 
-支持类型：`navigate`、`navigateAndScroll`、`toast`、`login`、`logout`。不要自造未在 bridge 处理的 type。
+父页 → 子页滚动：`{ type: 'scrollTo', section: 'sec-xxx' }`。
 
-## 子页面样式约定
+**上影节 section 对照**（见 `CONTEXT.md`）：`sec-banner`、`sec-lists`、`sec-films`、`sec-checkin`、`sec-discuss`。
 
-- 样式写在页面内 `<style>`，根容器加前缀类（如 `.ph-root`）避免污染 shell
-- iframe 高度：子页面 `html/body` 设 `min-height: 100%` 或 `100dvh`，注意移动端正文可滚动
-- 子页面**不**依赖 shell 的 CSS 变量；各自定义颜色，但与 shell 深色+金色体系保持一致
-- 地图等复杂页：逻辑抽到 `page-map-r3.js`，样式 `page-map-r3.css`
+## 懒加载 + 消息防丢失
 
-## 地图与城市
+目标 iframe **尚未加载**（`src` 为空 / 未 `loaded`）时：
 
-- URL hash 支持 `map?city=xxx`；城市 slug 经 `slugToMapCityId` 映射
-- 跨页选城市：父页 `go('map')` 后调用 iframe 内 `selectCity(id)`
+- Shell **必须缓存**待执行的 `navigate` / `navigateAndScroll` / `scrollTo` 指令
+- 子页初始化完成后向父页发送 `{ type: 'ready', page: 'xxx' }`
+- Shell 收到 `ready` 后**补发**缓存指令，再清空队列
 
-## 缓存 bust
+修改 `navigateAndScroll` 时禁止仅靠固定 `setTimeout` 碰运气；优先走 ready + 队列机制。
 
-静态页 URL 经 `assetUrl()` 追加 `SITE_BUILD` 版本参数；改 `index.html` 构建号可强制 iframe 刷新。
+## 样式防污染隔离
+
+- 子页根容器使用独立前缀类（如 `.ph-root`、`.siff-root`），**所有**选择器挂在前缀下
+- 禁止污染 `index.html` 全局或兄弟 iframe
+- 移动端兜底：`min-height: 100dvh`、长文本 `word-break` / `overflow-wrap`、可点区域 ≥ 44px、横向不溢出
+
+## 地图
+
+- Hash：`#map?city=xxx`；`slugToMapCityId` 映射后调 iframe 内 `selectCity(id)`
+- 复杂逻辑：`page-map-r3.js` + `page-map-r3.css`

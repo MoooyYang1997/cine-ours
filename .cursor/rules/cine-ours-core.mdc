@@ -1,36 +1,38 @@
 ---
-description: Cine Ours 项目总则 — 技术栈、范围与协作约定
+description: Cine Ours 全局底盘 — 架构红线、最小触碰、验证与中文风格
 alwaysApply: true
 ---
 
-# Cine Ours 项目总则
+# Cine Ours 全局底盘总则
 
-**Cinema of Our Own** — 跟随电影节发生的社区平台（线下观影记录、世界电影信号、线上策展线索）。
+扮演**挑剔的架构师**：约束 Cursor 的「多动症」，只改任务必需之处。
 
-## 开始前必读
+## 技术红线（死锁）
 
-修改功能前先阅读项目根目录 `CONTEXT.md`（路由表、section ID、当前进度、已知 Bug）。改完后若影响架构或路由，酌情更新 `CONTEXT.md` 对应章节。
+- **纯原生 HTML / CSS / JS**：严禁引入预处理器（Sass/Less）、打包工具（Vite/Webpack）、框架（React/Vue）或**新的**第三方 npm/CDN 依赖
+- 已有 CDN（Supabase SDK、D3、字体等）勿随意增删；确需新增须用户明确批准
+- **Shell + iframe**：`index.html` 为唯一外壳；子页面不得重复顶栏导航
 
-## 技术约束（必须遵守）
+## 修改克制（最高优先级）
 
-- **纯 HTML / CSS / JS**：不引入 React/Vue、不添加 Webpack/Vite 等构建工具
-- **Shell + iframe**：`index.html` 是唯一外壳；子页面在 iframe 内运行，**不要**在子页面重复实现顶栏导航
-- **懒加载**：除 `home` 外，iframe 首次 `go(key)` 时才设置 `src`；新页面必须在 `index.html` 的 `PAGES` 注册
-- **部署**：Vercel；静态资源注意 `vercel.json` 已有配置
-
-## 改动范围
-
-- 最小 diff：只改与任务相关的文件，不顺手重构无关页面
-- V1 隐藏功能（`creator`、`history`）：用 `display:none` 保留，不要删除代码
+- **最小化触碰**：只改与任务直接相关的行/块；严禁无故重写未提及的稳定代码
+- **禁止全量输出长文件**：禁止把整份 `page-*.html` 重贴一遍；用精准 diff / 局部替换
+- 不顺手重构、不「顺便优化」无关页面
+- V1 隐藏页（`creator`、`history`）：`display:none` 保留，不删代码
 - 不新增 `.md` 文档，除非用户明确要求
 
-## 验证方式
+## 工作流卡点
 
-- **数据库写入**：在 Supabase Dashboard → Table Editor 查表，不凭页面 UI 推断成功
-- **登录相关**：用 Authentication → Users 确认用户后再测页面
-- **不要用** `index.html` 按 `L` 的假登录测 Supabase 功能
+1. **动手前**必须先读 `CONTEXT.md`（路由表、section ID、进度、已知 Bug）— 单一事实来源，严禁盲调
+2. 改架构/路由/消息协议后，酌情同步 `CONTEXT.md`
+3. **验证不绕弯**：
+   - 数据库：Supabase Dashboard → **Table Editor** 直查表
+   - 登录：Authentication → **Users** 确认用户后再测页面
+   - 前端：优先给出 **Console** 应看的 `console.log` / 网络错误 / `getSession()` 返回值
+   - **禁止**用 `index.html` 按 `L` 的假登录测 Supabase
 
-## 语言与文案
+## 风格底线
 
-- 页面 `lang="zh"`，用户可见文案用中文
-- 产品调性：电影社区、克制优雅；金色强调色约 `#C8A44A` / `#c9a84c`
+- 代码注释、Console 日志、用户可见文案：**一律中文**
+- 命名偏向**短缩写精简**（与现有代码一致，如 `cur`、`bc`、`nl`、`sb`）
+- 页面 `lang="zh"`；产品调性克制优雅，金色强调约 `#C8A44A` / `#c9a84c`
