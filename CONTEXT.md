@@ -85,9 +85,9 @@ data/place-images.json      # 取景地图片
 ## 当前状态
 <!-- 由 scripts/update-context.cjs 每日 00:00 北京时间自动更新；也可手动运行 -->
 <!-- CONTEXT_STATUS_START -->
-**最近自动更新：** 2026-05-20 00:00 北京时间
+**最近自动更新：** 2026-05-21 00:00 北京时间
 
-**上次完成（2026-05-19）：** Revert "Add list detail page and refresh offline festival list UI"；Add list detail page and refresh offline festival list UI；Add Supabase SQL for avatars storage bucket and RLS policies；地图页底部条全宽：移除左栏并等比放大卡片；docs: 自动更新 CONTEXT 进度（北京时间）；feat: expand places to 150 and refine profile page layout。涉及文件：CONTEXT.md、data/cinema-images.json、data/places-picker.json、data/places.js、index.html、page-auth.html、page-creator.html、page-festival-detail.html 等
+**上次完成（2026-05-20）：** chore: 同步 places-picker.json（来自 places.js）；Add SQL to backfill user_list_films metadata from siff_films；Add SQL script to dedupe user_list_films by list_id and title；chore: 同步 places-picker.json（来自 places.js）；List detail: add-film modal with section tabs and combined filter；List detail: enlarge hero cover stack and header padding。涉及文件：.cursor/rules/cine-ours-core.mdc、.cursor/rules/shell-routing-pages.mdc、.cursor/rules/supabase-data.mdc、CONTEXT.md、data/places-picker.json、data/places.js、index.html、page-auth.html 等
 
 **正在做：** —
 
@@ -99,6 +99,9 @@ data/place-images.json      # 取景地图片
 ## 进度日报
 <!-- 保留最近 14 天；由 GitHub Actions 每日追加 -->
 <!-- CONTEXT_DAILY_START -->
+### 2026-05-20
+chore: 同步 places-picker.json（来自 places.js）；Add SQL to backfill user_list_films metadata from siff_films；Add SQL script to dedupe user_list_films by list_id and title；chore: 同步 places-picker.json（来自 places.js）；List detail: add-film modal with section tabs and combined filter；List detail: enlarge hero cover stack and header padding。涉及文件：.cursor/rules/cine-ours-core.mdc、.cursor/rules/shell-routing-pages.mdc、.cursor/rules/supabase-data.mdc、CONTEXT.md、data/places-picker.json、data/places.js、index.html、page-auth.html 等
+
 ### 2026-05-19
 Revert "Add list detail page and refresh offline festival list UI"；Add list detail page and refresh offline festival list UI；Add Supabase SQL for avatars storage bucket and RLS policies；地图页底部条全宽：移除左栏并等比放大卡片；docs: 自动更新 CONTEXT 进度（北京时间）；feat: expand places to 150 and refine profile page layout。涉及文件：CONTEXT.md、data/cinema-images.json、data/places-picker.json、data/places.js、index.html、page-auth.html、page-creator.html、page-festival-detail.html 等
 
@@ -121,6 +124,9 @@ Add GitHub Actions workflow for daily SIFF film sync.；add package.json for ser
 ## 近期已修（归档）
 <!-- 以下区块由 `scripts/update-context.cjs` 每日写入（与 GitHub Actions 定时任务同源），仅汇总「修复类」提交（见脚本内 `isFixLikeCommit`）；无命中日期不出现在本节。验收口径的短句可放在对话或 Issue；首次启用可本地执行 `node scripts/update-context.cjs --backfill-fixed` 重算近 14 天。 -->
 <!-- CONTEXT_FIXED_START -->
+### 2026-05-20
+List detail: wait for authSync before load; friendlier list errors；Propagate user access_token to iframes for authenticated writes；Use user JWT in offline festival and list detail API calls。涉及文件：.cursor/rules/cine-ours-core.mdc、.cursor/rules/shell-routing-pages.mdc、.cursor/rules/supabase-data.mdc、CONTEXT.md、data/places-picker.json、data/places.js 等
+
 ### 2026-05-19
 Revert "Add list detail page and refresh offline festival list UI"；地图页底部条全宽：移除左栏并等比放大卡片。涉及文件：CONTEXT.md、data/cinema-images.json、data/places-picker.json、data/places.js、index.html、page-auth.html 等
 
