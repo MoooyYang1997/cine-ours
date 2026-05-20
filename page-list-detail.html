@@ -588,9 +588,15 @@ function renderFilms() {
       <div class="film-body">
         <div class="film-title-row">
           <span class="film-title" style="${isWatched ? 'color:rgba(237,232,223,0.6);' : ''}">${f.title}</span>
-          ${f.title_en ? `<span class="film-title-en">${f.title_en}${f.year ? ' · ' + f.year : ''}</span>` : (f.year ? `<span class="film-title-en">${f.year}</span>` : '')}
+          ${f.title_en ? `<span class="film-title-en">${f.title_en}</span>` : ''}
         </div>
-        <div class="film-section">${f.note || ''}</div>
+        <div class="film-section" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+          ${f.year ? `<span style="color:rgba(237,232,223,0.28);font-size:9px;">${f.year}</span>` : ''}
+          ${f.year && (f.note || f.director) ? `<span style="color:rgba(237,232,223,0.1);font-size:9px;">·</span>` : ''}
+          ${f.director ? `<span style="color:rgba(237,232,223,0.28);font-size:9px;">导演：${f.director}</span>` : ''}
+          ${(f.year || f.director) && f.note ? `<span style="color:rgba(237,232,223,0.1);font-size:9px;">·</span>` : ''}
+          ${f.note ? `<span style="color:rgba(201,168,76,0.45);font-size:9px;letter-spacing:.06em;">${f.note}</span>` : ''}
+        </div>
         ${extraHtml}
       </div>
     </div>`;
