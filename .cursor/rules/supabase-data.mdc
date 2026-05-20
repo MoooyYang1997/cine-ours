@@ -1,0 +1,51 @@
+---
+description: Supabase 数据层、认证与静态数据文件规范
+globs: supabase.js,page-*.html,api/**/*.js,data/**/*
+alwaysApply: false
+---
+
+# 数据层与 Supabase
+
+## 统一入口
+
+- 所有需数据库的页面顶部：`<script src="supabase.js"></script>`
+- 客户端：`window._sb`；就绪事件：`supabase-ready`
+- 复用 `supabase.js` 内已有方法（`getProfile`、`signInEmail` 等），不要在各页面重复封装相同查询
+
+```javascript
+function whenSbReady(fn) {
+  if (window._sb) return fn();
+  window.addEventListener('supabase-ready', fn, { once: true });
+}
+whenSbReady(async () => {
+  const { data, error } = await window._sb.from('profiles').select('*').eq('id', userId).single();
+});
+```
+
+## 认证状态
+
+- 全局：`window.currentUser`、`window.currentProfile`
+- 监听：`auth-change` 自定义事件
+- 需登录操作：未登录时 `postMessage` 跳转 `auth`，可用 `localStorage.setItem('cine_redirect', pageKey)`
+
+## 禁止事项
+
+- 不要在子页面再 `createClient`（`index.html` shell 侧恢复会话除外，已有独立逻辑）
+- 不要把 `service_role` key 或私密密钥写进前端
+- 不要仅用 `localStorage` 存应跨设备同步的用户数据（已知问题：地图封面）
+
+## 静态数据
+
+| 文件 | 用途 |
+|------|------|
+| `data/places.js` | 地图地点，`var PL` 数组 |
+| `data/cinema-images.json` | 影院图 |
+| `data/place-images.json` | 取景地图 |
+| `data/places-picker.json` | 选点器数据 |
+
+改 `places.js` 后注意与 `sync-places-picker` 等 workflow 的一致性。
+
+## Serverless
+
+- `api/sync-siff.js` 等 Vercel 函数：保持 Node 风格，与 `package.json` scripts 对齐
+- SQL 迁移放 `supabase/sql/`，RLS/Storage 策略在 Dashboard 验证后再依赖

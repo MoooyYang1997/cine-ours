@@ -1,0 +1,36 @@
+---
+description: Cine Ours 项目总则 — 技术栈、范围与协作约定
+alwaysApply: true
+---
+
+# Cine Ours 项目总则
+
+**Cinema of Our Own** — 跟随电影节发生的社区平台（线下观影记录、世界电影信号、线上策展线索）。
+
+## 开始前必读
+
+修改功能前先阅读项目根目录 `CONTEXT.md`（路由表、section ID、当前进度、已知 Bug）。改完后若影响架构或路由，酌情更新 `CONTEXT.md` 对应章节。
+
+## 技术约束（必须遵守）
+
+- **纯 HTML / CSS / JS**：不引入 React/Vue、不添加 Webpack/Vite 等构建工具
+- **Shell + iframe**：`index.html` 是唯一外壳；子页面在 iframe 内运行，**不要**在子页面重复实现顶栏导航
+- **懒加载**：除 `home` 外，iframe 首次 `go(key)` 时才设置 `src`；新页面必须在 `index.html` 的 `PAGES` 注册
+- **部署**：Vercel；静态资源注意 `vercel.json` 已有配置
+
+## 改动范围
+
+- 最小 diff：只改与任务相关的文件，不顺手重构无关页面
+- V1 隐藏功能（`creator`、`history`）：用 `display:none` 保留，不要删除代码
+- 不新增 `.md` 文档，除非用户明确要求
+
+## 验证方式
+
+- **数据库写入**：在 Supabase Dashboard → Table Editor 查表，不凭页面 UI 推断成功
+- **登录相关**：用 Authentication → Users 确认用户后再测页面
+- **不要用** `index.html` 按 `L` 的假登录测 Supabase 功能
+
+## 语言与文案
+
+- 页面 `lang="zh"`，用户可见文案用中文
+- 产品调性：电影社区、克制优雅；金色强调色约 `#C8A44A` / `#c9a84c`

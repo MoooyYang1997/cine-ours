@@ -1,0 +1,51 @@
+---
+description: Shell 路由、iframe 子页面与页面间通信规范
+globs: index.html,page-*.html,page-map-r3.js
+alwaysApply: false
+---
+
+# Shell 路由与子页面
+
+## 新增/修改页面流程
+
+1. 创建 `page-*.html`（或独立 `.js`/`.css` 如地图 `page-map-r3.*`）
+2. 在 `index.html` → `PAGES` 注册：`key`、`src`、`nav`（导航 id，无则 `null`）、`label`、`bc`（面包屑）
+3. 需要导航栏入口时，同步 `index.html` 里对应 `.nl` 元素；V1 隐藏项保持 `display:none`
+
+当前已注册 key 见 `CONTEXT.md`；常见：`home`、`map`、`festivals`、`festival-detail`、`offline-festival`、`list-detail`、`auth`、`profile`。
+
+## 子页面 → Shell 通信
+
+在 iframe 内用 `window.parent.postMessage`，由 `index.html` message bridge 处理：
+
+```javascript
+// 跳转
+window.parent.postMessage({ type: 'navigate', page: 'offline-festival' }, '*');
+
+// 跳转并滚动到 section（如上影节 sec-lists、sec-checkin 等）
+window.parent.postMessage({
+  type: 'navigateAndScroll',
+  payload: { page: 'offline-festival', section: 'sec-films' }
+}, '*');
+
+// 提示
+window.parent.postMessage({ type: 'toast', payload: { msg: '已保存' } }, '*');
+```
+
+支持类型：`navigate`、`navigateAndScroll`、`toast`、`login`、`logout`。不要自造未在 bridge 处理的 type。
+
+## 子页面样式约定
+
+- 样式写在页面内 `<style>`，根容器加前缀类（如 `.ph-root`）避免污染 shell
+- iframe 高度：子页面 `html/body` 设 `min-height: 100%` 或 `100dvh`，注意移动端正文可滚动
+- 子页面**不**依赖 shell 的 CSS 变量；各自定义颜色，但与 shell 深色+金色体系保持一致
+- 地图等复杂页：逻辑抽到 `page-map-r3.js`，样式 `page-map-r3.css`
+
+## 地图与城市
+
+- URL hash 支持 `map?city=xxx`；城市 slug 经 `slugToMapCityId` 映射
+- 跨页选城市：父页 `go('map')` 后调用 iframe 内 `selectCity(id)`
+
+## 缓存 bust
+
+静态页 URL 经 `assetUrl()` 追加 `SITE_BUILD` 版本参数；改 `index.html` 构建号可强制 iframe 刷新。
