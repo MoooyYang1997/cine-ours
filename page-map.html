@@ -345,12 +345,12 @@ html,body{background:#07080a;font-family:-apple-system,BlinkMacSystemFont,"Segoe
       <!-- 电影地标行 -->
       <div class="brow">
         <div id="fr-fl" class="bfr"></div>
-        <div class="bcta"><span class="bcta-t">我来<br>添加 →</span></div>
+        <div class="bcta" id="bcta-add" role="button" tabindex="0" title="为所选电影地标添加记录"><span class="bcta-t">我来<br>添加 →</span></div>
       </div>
       <!-- 影院现场行 -->
       <div class="brow">
         <div id="fr-ci" class="bfr"></div>
-        <div class="bcta"><span class="bcta-t">我来<br>打卡 →</span></div>
+        <div class="bcta" id="bcta-checkin" role="button" tabindex="0" title="为所选影院打卡"><span class="bcta-t">我来<br>打卡 →</span></div>
       </div>
     </div>
   </div>
@@ -994,6 +994,50 @@ function formatRecTime(iso){
   return y+'-'+m+'-'+day;
 }
 
+function ensureFcVisible(){
+  var card=document.getElementById('fc');
+  if(card)card.classList.add('vis');
+}
+
+async function onStripCheckinClick(e){
+  if(e){e.stopPropagation();e.preventDefault();}
+  if(!active||active.tp!=='ci'){
+    showFcToast('请先在下方影院现场条中选择一家影院');
+    return;
+  }
+  ensureFcVisible();
+  await onCheckinClick();
+}
+
+async function onStripAddClick(e){
+  if(e){e.stopPropagation();e.preventDefault();}
+  if(!active||active.tp!=='fl'){
+    showFcToast('请先在下方电影地标条中选择一个地点');
+    return;
+  }
+  ensureFcVisible();
+  await onCheckinClick();
+}
+
+function bindStripCta(){
+  var addEl=document.getElementById('bcta-add');
+  var chkEl=document.getElementById('bcta-checkin');
+  if(addEl&&!addEl._ctaBound){
+    addEl._ctaBound=true;
+    addEl.addEventListener('click',onStripAddClick);
+    addEl.addEventListener('keydown',function(ev){
+      if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();onStripAddClick(ev);}
+    });
+  }
+  if(chkEl&&!chkEl._ctaBound){
+    chkEl._ctaBound=true;
+    chkEl.addEventListener('click',onStripCheckinClick);
+    chkEl.addEventListener('keydown',function(ev){
+      if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();onStripCheckinClick(ev);}
+    });
+  }
+}
+
 function bindCheckinUi(){
   if(checkinUiBound)return;
   var btnCheckin=document.getElementById('fc-btn-checkin');
@@ -1173,6 +1217,7 @@ function initDrag(el){
 function bootMapPage(){
   buildCityTabs();
   initStripClicks();
+  bindStripCta();
   bindCheckinUi();
   refreshCityViews();
   fillCard(active);

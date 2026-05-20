@@ -31,7 +31,7 @@ var PL=[
 
 // ── 东京 TOKYO ──
 {id:'sbk', tp:'fl', nm:'涩谷十字路口', cy:'东京', cye:'TOKYO', co:'日本', fm:'迷失东京', fy:2003, dr:'索菲亚·科波拉', q:'所有人都在过马路，只有我不知道要去哪里。', u:'场景记录', lk:93, lng:139.701, lat:35.659, img:null},
-{id:'bun', tp:'ci', nm:'涩谷 Bunkamura', cy:'东京', cye:'TOKYO', co:'日本', q:'字幕结束后没有人离开，我们都在等灯亮。', u:'@Haruki · 记录于此', lk:41, lng:139.698, lat:35.660, img:null},
+{id:'bun', tp:'ci', nm:'涩谷文化村', cy:'东京', cye:'TOKYO', co:'日本', q:'字幕结束后没有人离开，我们都在等灯亮。', u:'@Haruki · 记录于此', lk:41, lng:139.698, lat:35.660, img:null},
 {id:'shj', tp:'fl', nm:'新宿黄金街', cy:'东京', cye:'TOKYO', co:'日本', fm:'听说桐岛要退部', fy:2012, dr:'吉田大八', q:'小巷深处，每扇门后都是另一个故事。', u:'场景记录', lk:38, lng:139.732, lat:35.694, img:null},
 
 
@@ -44,8 +44,8 @@ var PL=[
 {id:'via', tp:'fl', nm:'威尼托大街', cy:'罗马', cye:'ROME', co:'意大利', fm:'甜蜜的生活', fy:1960, dr:'费里尼', q:'狗仔队的闪光灯，发明了一种新的孤独。', u:'场景记录', lk:49, lng:12.489, lat:41.908, img:null},
 
 // ── 洛杉矶 LOS ANGELES ──
-{id:'ace', tp:'ci', nm:'Ace Hotel Theatre', cy:'洛杉矶', cye:'LOS ANGELES', co:'美国', q:'百老汇街上，独立电影和好莱坞共用同一片天空。', u:'场景记录', lk:27, lng:-118.251, lat:34.044, img:null},
-{id:'grm', tp:'ci', nm:'TCL Chinese Theatre', cy:'洛杉矶', cye:'LOS ANGELES', co:'美国', q:'门口的手印，是另一种意义上的影史。', u:'场景记录', lk:58, lng:-118.341, lat:34.102, img:null},
+{id:'ace', tp:'ci', nm:'王牌酒店剧院', cy:'洛杉矶', cye:'LOS ANGELES', co:'美国', q:'百老汇街上，独立电影和好莱坞共用同一片天空。', u:'场景记录', lk:27, lng:-118.251, lat:34.044, img:null},
+{id:'grm', tp:'ci', nm:'中国剧院', cy:'洛杉矶', cye:'LOS ANGELES', co:'美国', q:'门口的手印，是另一种意义上的影史。', u:'场景记录', lk:58, lng:-118.341, lat:34.102, img:null},
 {id:'grf', tp:'fl', nm:'葛里菲斯天文台', cy:'洛杉矶', cye:'LOS ANGELES', co:'美国', fm:'爱乐之城', fy:2016, dr:'达米安·查泽雷', q:'他们在星空下起舞，像是爱情最后一次彩排。', u:'场景记录', lk:72, lng:-118.300, lat:34.118, img:null},
 
 // ── 纽约 NEW YORK ──
@@ -66,7 +66,7 @@ var PL=[
 {id:'wjc',  tp:'fl', nm:'五角场', cy:'上海', cye:'SHANGHAI', co:'中国', fm:'Her', fy:2013, dr:'斯派克·琼斯', q:'人群里最孤独的声音，是耳机里传来的。', u:'场景记录', lk:38, lng:121.512, lat:31.298, img:null},
 {id:'ljz',  tp:'fl', nm:'陆家嘴天桥', cy:'上海', cye:'SHANGHAI', co:'中国', q:'玻璃幕墙倒映云，站在桥上像在看科幻片。', u:'场景记录', lk:43, lng:121.505, lat:31.236, img:null},
 {id:'sheb', tp:'ci', nm:'上海电影博物馆', cy:'上海', cye:'SHANGHAI', co:'中国', q:'徐汇滨江边，电影史被装进了一栋老厂房。', u:'场景记录', lk:36, lng:121.436, lat:31.189, img:null},
-{id:'mmsh', tp:'ci', nm:'MovieMovie 上海', cy:'上海', cye:'SHANGHAI', co:'中国', q:'选片有态度，爆米花也不将就。', u:'场景记录', lk:28, lng:121.447, lat:31.220, img:null},
+{id:'mmsh', tp:'ci', nm:'上海慕麦影院', cy:'上海', cye:'SHANGHAI', co:'中国', q:'选片有态度，爆米花也不将就。', u:'场景记录', lk:28, lng:121.447, lat:31.220, img:null},
 
 // ── 巴黎新增 ──
 {id:'lch',  tp:'ci', nm:'Le Champo', cy:'巴黎', cye:'PARIS', co:'法国', q:'戈达尔和特吕弗当年的据点，现在还在放他们的片。', u:'场景记录', lk:41, lng:2.343, lat:48.851, img:null},
@@ -78,11 +78,11 @@ var PL=[
 {id:'vhb',  tp:'fl', nm:'维多利亚港', cy:'香港', cye:'HONG KONG', co:'中国香港', fm:'攻壳机动队', fy:1995, dr:'押井守', q:'这座港湾，承载了无数对未来城市的想象。', u:'场景记录', lk:58, lng:114.172, lat:22.285, img:null},
 {id:'mkg',  tp:'fl', nm:'旺角', cy:'香港', cye:'HONG KONG', co:'中国香港', fm:'旺角卡门', fy:1988, dr:'王家卫', q:'霓虹灯下的江湖，比电影里的更真实。', u:'场景记录', lk:72, lng:114.169, lat:22.315, img:null},
 {id:'sao',  tp:'fl', nm:'石澳', cy:'香港', cye:'HONG KONG', co:'中国香港', fm:'喜剧之王', fy:1999, dr:'周星驰·李力持', q:'海边的群演，每个人都是自己故事里的主角。', u:'场景记录', lk:44, lng:114.247, lat:22.232, img:null},
-{id:'mpl',  tp:'ci', nm:'M+ Cinema', cy:'香港', cye:'HONG KONG', co:'中国香港', q:'西九龙的新文化地标，银幕和海景共存。', u:'场景记录', lk:38, lng:114.160, lat:22.300, img:null},
+{id:'mpl',  tp:'ci', nm:'M+ 影院', cy:'香港', cye:'HONG KONG', co:'中国香港', q:'西九龙的新文化地标，银幕和海景共存。', u:'场景记录', lk:38, lng:114.160, lat:22.300, img:null},
 {id:'ggc',  tp:'ci', nm:'高先电影院', cy:'香港', cye:'HONG KONG', co:'中国香港', q:'香港本土院线的坚守者，选片比谁都认真。', u:'场景记录', lk:31, lng:114.171, lat:22.308, img:null},
 
 // ── 香港新增（第二批）──
-{id:'lkf', tp:'fl', nm:'兰桂坊/Midnight Express一带', cy:'香港', cye:'HONG KONG', co:'中国香港', fm:'重庆森林', fy:1994, dr:'王家卫', q:'深夜的快餐店，藏着一个人的等待。', u:'场景记录', lk:0, lng:114.1553, lat:22.281, img:null},
+{id:'lkf', tp:'fl', nm:'兰桂坊一带', cy:'香港', cye:'HONG KONG', co:'中国香港', fm:'重庆森林', fy:1994, dr:'王家卫', q:'深夜的快餐店，藏着一个人的等待。', u:'场景记录', lk:0, lng:114.1553, lat:22.281, img:null},
 {id:'jdk', tp:'fl', nm:'金雀餐厅/湾仔旧餐室', cy:'香港', cye:'HONG KONG', co:'中国香港', fm:'花样年华', fy:2000, dr:'王家卫', q:'餐桌对面的人，像一段不能说出口的时间。', u:'场景记录', lk:0, lng:114.174, lat:22.2773, img:null},
 {id:'kdk', tp:'fl', nm:'启德机场旧址', cy:'香港', cye:'HONG KONG', co:'中国香港', fm:'重庆森林', fy:1994, dr:'王家卫', q:'飞机离开以后，城市还留在原地。', u:'场景记录', lk:0, lng:114.2024, lat:22.3193, img:null},
 
@@ -120,13 +120,13 @@ var PL=[
 
 // ── 东京新增 ──
 {id:'nfaj', tp:'ci', nm:'国立映画档案馆', cy:'东京', cye:'TOKYO', co:'日本', q:'电影被保存，也继续被看见。', u:'场景记录', lk:0, lng:139.7708, lat:35.6762, img:null},
-{id:'thbz', tp:'ci', nm:'TOHO Cinemas日比谷', cy:'东京', cye:'TOKYO', co:'日本', q:'影展的人流从日比谷经过。', u:'场景记录', lk:0, lng:139.7595, lat:35.6738, img:null},
+{id:'thbz', tp:'ci', nm:'东宝影院日比谷', cy:'东京', cye:'TOKYO', co:'日本', q:'影展的人流从日比谷经过。', u:'场景记录', lk:0, lng:139.7595, lat:35.6738, img:null},
 {id:'gwqt', tp:'fl', nm:'歌舞伎町', cy:'东京', cye:'TOKYO', co:'日本', fm:'东京流浪者', fy:1966, dr:'铃木清顺', q:'夜色把城市切成无数个入口。', u:'场景记录', lk:0, lng:139.704, lat:35.6944, img:null},
 {id:'sbcs', tp:'fl', nm:'涩谷公共厕所', cy:'东京', cye:'TOKYO', co:'日本', fm:'完美的日子', fy:2023, dr:'文德斯', q:'重复的一天，也可以是完整的一天。', u:'场景记录', lk:0, lng:139.7, lat:35.662, img:null},
 {id:'yltd', tp:'fl', nm:'有乐町/银座街区', cy:'东京', cye:'TOKYO', co:'日本', fm:'秋刀鱼之味', fy:1962, dr:'小津安二郎', q:'日常最安静的时候，告别已经发生。', u:'场景记录', lk:0, lng:139.7636, lat:35.6746, img:null},
 
 // ── 巴黎新增（第二批）──
-{id:'2mln', tp:'fl', nm:'Café des 2 Moulins/蒙马特', cy:'巴黎', cye:'PARIS', co:'法国', fm:'天使爱美丽', fy:2001, dr:'让-皮埃尔·热内', q:'她把温柔放进了巴黎的角落。', u:'场景记录', lk:0, lng:2.3321, lat:48.8842, img:null},
+{id:'2mln', tp:'fl', nm:'双磨坊咖啡馆/蒙马特', cy:'巴黎', cye:'PARIS', co:'法国', fm:'天使爱美丽', fy:2001, dr:'让-皮埃尔·热内', q:'她把温柔放进了巴黎的角落。', u:'场景记录', lk:0, lng:2.3321, lat:48.8842, img:null},
 {id:'s&c', tp:'fl', nm:'Shakespeare and Company', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'理查德·林克莱特', q:'他们在巴黎重新开始一场谈话。', u:'场景记录', lk:0, lng:2.3472, lat:48.8526, img:null},
 {id:'pntf', tp:'fl', nm:'新桥', cy:'巴黎', cye:'PARIS', co:'法国', fm:'新桥恋人', fy:1991, dr:'莱奥·卡拉克斯', q:'一座桥，照亮了一段摇摇欲坠的爱。', u:'场景记录', lk:0, lng:2.3412, lat:48.857, img:null},
 {id:'lpc', tp:'fl', nm:'Le Pure Café', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'理查德·林克莱特', q:'咖啡馆里，时间被他们说慢了。', u:'场景记录', lk:0, lng:2.385, lat:48.8532, img:null},
@@ -136,7 +136,7 @@ var PL=[
 {id:'alpd', tp:'fl', nm:'亚历山大广场', cy:'柏林', cye:'BERLIN', co:'德国', fm:'柏林亚历山大广场', fy:1980, dr:'法斯宾德', q:'城市越大，人越像被它吞进去。', u:'场景记录', lk:0, lng:13.4132, lat:52.5219, img:null},
 {id:'blqy', tp:'fl', nm:'柏林墙遗址', cy:'柏林', cye:'BERLIN', co:'德国', fm:'柏林苍穹下', fy:1987, dr:'文德斯', q:'边界把城市分开，也把孤独放大。', u:'场景记录', lk:0, lng:13.376, lat:52.5075, img:null},
 {id:'ptsd', tp:'fl', nm:'波茨坦广场', cy:'柏林', cye:'BERLIN', co:'德国', fm:'罗拉快跑', fy:1998, dr:'汤姆·提克威', q:'奔跑，让这座城市重新被剪辑了一遍。', u:'场景记录', lk:0, lng:13.3761, lat:52.5096, img:null},
-{id:'slz', tp:'fl', nm:'Siegessäule胜利纪念柱', cy:'柏林', cye:'BERLIN', co:'德国', fm:'柏林苍穹下', fy:1987, dr:'文德斯', q:'天使在高处看见了人的孤独。', u:'场景记录', lk:0, lng:13.3501, lat:52.5145, img:null},
+{id:'slz', tp:'fl', nm:'胜利纪念柱', cy:'柏林', cye:'BERLIN', co:'德国', fm:'柏林苍穹下', fy:1987, dr:'文德斯', q:'天使在高处看见了人的孤独。', u:'场景记录', lk:0, lng:13.3501, lat:52.5145, img:null},
 {id:'zly', tp:'fl', nm:'柏林动物园站', cy:'柏林', cye:'BERLIN', co:'德国', fm:'Christiane F.', fy:1981, dr:'乌利·艾德尔', q:'青春在车站里失重。', u:'场景记录', lk:0, lng:13.3328, lat:52.5073, img:null},
 
 // ── 伦敦新增 ──
@@ -149,13 +149,13 @@ var PL=[
 {id:'mlb', tp:'fl', nm:'千禧桥', cy:'伦敦', cye:'LONDON', co:'英国', fm:'哈利·波特与混血王子', fy:2009, dr:'大卫·叶茨', q:'魔法世界短暂撕开了伦敦的天空。', u:'场景记录', lk:0, lng:-0.0989, lat:51.5107, img:null},
 
 // ── 纽约新增 ──
-{id:'fmfm', tp:'ci', nm:'电影论坛影院', cy:'纽约', cye:'NEW YORK', co:'美国', q:'老电影在纽约的夜里重新开始。', u:'场景记录', lk:0, lng:-74.0048, lat:40.7281, img:null},
+{id:'fmfm', tp:'ci', nm:'Film Forum', cy:'纽约', cye:'NEW YORK', co:'美国', q:'老电影在纽约的夜里重新开始。', u:'场景记录', lk:0, lng:-74.0048, lat:40.7281, img:null},
 {id:'flc', tp:'ci', nm:'林肯中心电影院', cy:'纽约', cye:'NEW YORK', co:'美国', q:'电影节从广场走进银幕。', u:'场景记录', lk:0, lng:-73.983, lat:40.7737, img:null},
 {id:'ktz', tp:'fl', nm:'卡兹熟食店', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'当哈利遇到莎莉', fy:1989, dr:'罗伯·雷纳', q:'一张餐桌，也能变成城市记忆。', u:'场景记录', lk:0, lng:-73.9874, lat:40.7223, img:null},
 {id:'wsp', tp:'fl', nm:'华盛顿广场公园', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'当哈利遇到莎莉', fy:1989, dr:'罗伯·雷纳', q:'他们在纽约穿行，也在彼此之间绕路。', u:'场景记录', lk:0, lng:-73.9973, lat:40.7308, img:null},
 {id:'tff', tp:'fl', nm:'蒂芙尼第五大道店', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'蒂凡尼的早餐', fy:1961, dr:'布莱克·爱德华兹', q:'清晨的橱窗前，她短暂拥有了梦。', u:'场景记录', lk:0, lng:-73.9739, lat:40.7627, img:null},
 {id:'esb', tp:'fl', nm:'帝国大厦', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'金玉盟', fy:1957, dr:'里奥·麦卡里', q:'约定在城市最高处，等待变成了命运。', u:'场景记录', lk:0, lng:-73.9857, lat:40.7484, img:null},
-{id:'hl8', tp:'fl', nm:'Firehouse Hook & Ladder 8', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'捉鬼敢死队', fy:1984, dr:'伊万·雷特曼', q:'这座消防站，通往纽约最荒诞的另一面。', u:'场景记录', lk:0, lng:-74.0058, lat:40.7196, img:null},
+{id:'hl8', tp:'fl', nm:'第八号消防站', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'捉鬼敢死队', fy:1984, dr:'伊万·雷特曼', q:'这座消防站，通往纽约最荒诞的另一面。', u:'场景记录', lk:0, lng:-74.0058, lat:40.7196, img:null},
 {id:'qbb', tp:'fl', nm:'皇后区大桥', cy:'纽约', cye:'NEW YORK', co:'美国', fm:'曼哈顿', fy:1979, dr:'伍迪·艾伦', q:'黎明之前，纽约像一张黑白照片。', u:'场景记录', lk:0, lng:-73.9503, lat:40.7568, img:null},
 
 // ── 洛杉矶新增 ──
@@ -167,14 +167,14 @@ var PL=[
 {id:'rnd', tp:'fl', nm:'兰迪甜甜圈', cy:'洛杉矶', cye:'LOS ANGELES', co:'美国', fm:'钢铁侠2', fy:2010, dr:'乔恩·法夫罗', q:'城市奇观，有时就是一个巨大的甜甜圈。', u:'场景记录', lk:0, lng:-118.3414, lat:33.9617, img:null},
 
 // ── 墨西哥城新增 ──
-{id:'ctn2', tp:'ci', nm:'Cineteca Nacional', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', q:'电影在这里成为城市生活的一部分。', u:'场景记录', lk:0, lng:-99.1621, lat:19.3614, img:null},
-{id:'cnch', tp:'ci', nm:'Cineteca Nacional Chapultepec', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', q:'新的电影空间，也在等待新的记忆。', u:'场景记录', lk:0, lng:-99.201, lat:19.42, img:null},
-{id:'crm', tp:'fl', nm:'Colonia Roma/Tepeji Street', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'罗马', fy:2018, dr:'阿方索·卡隆', q:'一个家庭的声音，留在街道深处。', u:'场景记录', lk:0, lng:-99.16, lat:19.41, img:null},
-{id:'unam', tp:'fl', nm:'UNAM大学城', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'Güeros', fy:2014, dr:'阿隆索·鲁伊斯帕拉西奥斯', q:'青年在城市里绕行，也在寻找一种答案。', u:'场景记录', lk:0, lng:-99.188, lat:19.332, img:null},
-{id:'rcnd', tp:'fl', nm:'Roma/Condesa街区', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'你妈妈也一样', fy:2001, dr:'阿方索·卡隆', q:'在出发之前，城市已经先改变了他们。', u:'场景记录', lk:0, lng:-99.167, lat:19.412, img:null},
-{id:'zcl', tp:'fl', nm:'Zócalo', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'007：幽灵党', fy:2015, dr:'萨姆·门德斯', q:'广场上，人群像一场盛大的幻觉。', u:'场景记录', lk:0, lng:-99.1332, lat:19.4326, img:null},
+{id:'ctn2', tp:'ci', nm:'国家电影资料馆', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', q:'电影在这里成为城市生活的一部分。', u:'场景记录', lk:0, lng:-99.1621, lat:19.3614, img:null},
+{id:'cnch', tp:'ci', nm:'查普特佩克国家电影资料馆', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', q:'新的电影空间，也在等待新的记忆。', u:'场景记录', lk:0, lng:-99.201, lat:19.42, img:null},
+{id:'crm', tp:'fl', nm:'罗马区/特佩奇街', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'罗马', fy:2018, dr:'阿方索·卡隆', q:'一个家庭的声音，留在街道深处。', u:'场景记录', lk:0, lng:-99.16, lat:19.41, img:null},
+{id:'unam', tp:'fl', nm:'墨西哥国立自治大学', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'Güeros', fy:2014, dr:'阿隆索·鲁伊斯帕拉西奥斯', q:'青年在城市里绕行，也在寻找一种答案。', u:'场景记录', lk:0, lng:-99.188, lat:19.332, img:null},
+{id:'rcnd', tp:'fl', nm:'罗马区/康德萨区', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'你妈妈也一样', fy:2001, dr:'阿方索·卡隆', q:'在出发之前，城市已经先改变了他们。', u:'场景记录', lk:0, lng:-99.167, lat:19.412, img:null},
+{id:'zcl', tp:'fl', nm:'宪法广场', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'007：幽灵党', fy:2015, dr:'萨姆·门德斯', q:'广场上，人群像一场盛大的幻觉。', u:'场景记录', lk:0, lng:-99.1332, lat:19.4326, img:null},
 {id:'mna', tp:'fl', nm:'国立人类学博物馆', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'罗马', fy:2018, dr:'阿方索·卡隆', q:'城市的记忆，比一家人的记忆更深。', u:'场景记录', lk:0, lng:-99.186, lat:19.426, img:null},
-{id:'tlt', tp:'fl', nm:'Torre Latinoamericana', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'Amores Perros', fy:2000, dr:'冈萨雷斯·伊纳里图', q:'城市从高处看，也像一场失控的碰撞。', u:'场景记录', lk:0, lng:-99.1406, lat:19.4331, img:null},
+{id:'tlt', tp:'fl', nm:'拉丁美洲塔', cy:'墨西哥城', cye:'MEXICO CITY', co:'墨西哥', fm:'Amores Perros', fy:2000, dr:'冈萨雷斯·伊纳里图', q:'城市从高处看，也像一场失控的碰撞。', u:'场景记录', lk:0, lng:-99.1406, lat:19.4331, img:null},
 
 // ── 首尔新增 ──
 {id:'kofa', tp:'ci', nm:'韩国电影档案馆', cy:'首尔', cye:'SEOUL', co:'韩国', q:'电影档案，也是一座城市的记忆库。', u:'场景记录', lk:0, lng:126.8915, lat:37.579, img:null},
@@ -186,13 +186,13 @@ var PL=[
 {id:'bchv', tp:'fl', nm:'北村韩屋村', cy:'首尔', cye:'SEOUL', co:'韩国', fm:'下女', fy:1960, dr:'金绮泳', q:'旧屋里的秩序，最容易被欲望推翻。', u:'场景记录', lk:0, lng:126.9849, lat:37.5826, img:null},
 
 // ── 罗马新增 ──
-{id:'cntv', tp:'ci', nm:'Cinema Trevi', cy:'罗马', cye:'ROME', co:'意大利', q:'电影资料馆的银幕，离喷泉很近。', u:'场景记录', lk:0, lng:12.4836, lat:41.9009, img:null},
-{id:'cdc', tp:'ci', nm:'Casa del Cinema', cy:'罗马', cye:'ROME', co:'意大利', q:'在花园里看电影，罗马就变成了片场。', u:'场景记录', lk:0, lng:12.4867, lat:41.916, img:null},
+{id:'cntv', tp:'ci', nm:'特雷维电影院', cy:'罗马', cye:'ROME', co:'意大利', q:'电影资料馆的银幕，离喷泉很近。', u:'场景记录', lk:0, lng:12.4836, lat:41.9009, img:null},
+{id:'cdc', tp:'ci', nm:'电影之家', cy:'罗马', cye:'ROME', co:'意大利', q:'在花园里看电影，罗马就变成了片场。', u:'场景记录', lk:0, lng:12.4867, lat:41.916, img:null},
 {id:'spjt', tp:'fl', nm:'西班牙阶梯', cy:'罗马', cye:'ROME', co:'意大利', fm:'罗马假日', fy:1953, dr:'威廉·惠勒', q:'公主坐在台阶上，第一次像普通人一样看城市。', u:'场景记录', lk:0, lng:12.4823, lat:41.9059, img:null},
 {id:'zlzk', tp:'fl', nm:'真理之口', cy:'罗马', cye:'ROME', co:'意大利', fm:'罗马假日', fy:1953, dr:'威廉·惠勒', q:'一个玩笑，让两个人短暂靠近。', u:'场景记录', lk:0, lng:12.4819, lat:41.8881, img:null},
 {id:'dsc', tp:'fl', nm:'斗兽场', cy:'罗马', cye:'ROME', co:'意大利', fm:'罗马假日', fy:1953, dr:'威廉·惠勒', q:'古老城市在他们身后安静展开。', u:'场景记录', lk:0, lng:12.4922, lat:41.8902, img:null},
-{id:'vvn', tp:'fl', nm:'Via Veneto', cy:'罗马', cye:'ROME', co:'意大利', fm:'甜蜜的生活', fy:1960, dr:'费里尼', q:'夜生活越明亮，空虚越清楚。', u:'场景记录', lk:0, lng:12.4905, lat:41.9082, img:null},
-{id:'cct', tp:'fl', nm:'Cinecittà Studios', cy:'罗马', cye:'ROME', co:'意大利', fm:'八部半', fy:1963, dr:'费里尼', q:'电影梦从摄影棚里长出来。', u:'场景记录', lk:0, lng:12.5743, lat:41.8497, img:null},
+{id:'vvn', tp:'fl', nm:'威尼托大道', cy:'罗马', cye:'ROME', co:'意大利', fm:'甜蜜的生活', fy:1960, dr:'费里尼', q:'夜生活越明亮，空虚越清楚。', u:'场景记录', lk:0, lng:12.4905, lat:41.9082, img:null},
+{id:'cct', tp:'fl', nm:'奇尼奇塔影城', cy:'罗马', cye:'ROME', co:'意大利', fm:'八部半', fy:1963, dr:'费里尼', q:'电影梦从摄影棚里长出来。', u:'场景记录', lk:0, lng:12.5743, lat:41.8497, img:null},
 
 // ── 孟买 MUMBAI（新城市）──
 {id:'rgc', tp:'ci', nm:'丽晶电影院', cy:'孟买', cye:'MUMBAI', co:'印度', q:'老影院门前，孟买仍像一部电影。', u:'场景记录', lk:0, lng:72.8246, lat:18.9239, img:null},
@@ -205,8 +205,8 @@ var PL=[
 {id:'mhbs', tp:'fl', nm:'迈赫布布影视基地', cy:'孟买', cye:'MUMBAI', co:'印度', q:'这里不是一部电影，而是无数电影的起点。', u:'场景记录', lk:0, lng:72.8255, lat:19.0535, img:null},
 
 // ── 巴黎新增（v3/v5）──
-{id:'s&co', tp:'fl', nm:'莎士比亚书店', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'Richard Linklater', q:'他们在巴黎重新开始一场谈话。', u:'场景记录', lk:0, lng:2.3472, lat:48.8526, img:'https://www.rogerebert.com/wp-content/uploads/2024/03/Before-Sunset.jpg'},
-{id:'lpc2', tp:'fl', nm:'纯咖啡馆 Le Pure Café', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'Richard Linklater', q:'有些话，只能隔了九年才说出口。', u:'场景记录', lk:0, lng:2.385, lat:48.8532, img:'https://tse4.mm.bing.net/th/id/OIP.uL89xHHLdviOuwGIMDI5CQHaEL?pid=Api'},
+{id:'s&co', tp:'fl', nm:'Shakespeare and Company', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'Richard Linklater', q:'他们在巴黎重新开始一场谈话。', u:'场景记录', lk:0, lng:2.3472, lat:48.8526, img:'https://www.rogerebert.com/wp-content/uploads/2024/03/Before-Sunset.jpg'},
+{id:'lpc2', tp:'fl', nm:'Le Pure Café', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'Richard Linklater', q:'有些话，只能隔了九年才说出口。', u:'场景记录', lk:0, lng:2.385, lat:48.8532, img:'https://tse4.mm.bing.net/th/id/OIP.uL89xHHLdviOuwGIMDI5CQHaEL?pid=Api'},
 {id:'sed', tp:'fl', nm:'圣埃蒂安杜蒙教堂', cy:'巴黎', cye:'PARIS', co:'法国', fm:'午夜巴黎', fy:2011, dr:'Woody Allen', q:'午夜之后，巴黎把他带回梦里。', u:'场景记录', lk:0, lng:2.3512, lat:48.8519, img:'https://tse2.mm.bing.net/th/id/OIP.NOckK71Hy5o1_XigJJYjIAHaEA?pid=Api'},
 {id:'rdg', tp:'fl', nm:'达盖尔街', cy:'巴黎', cye:'PARIS', co:'法国', fm:'达盖尔风情街', fy:1976, dr:'Agnès Varda', q:'一条街，也可以是一座小小的宇宙。', u:'场景记录', lk:0, lng:2.3267, lat:48.8338, img:'https://tse4.mm.bing.net/th/id/OIP.k64PD-kCeQ7Z3KCC36VoQQHaFA?pid=Api'},
 
@@ -239,7 +239,7 @@ var PL=[
 {id:'fjj', tp:'fl', nm:'奉节 / 三峡库区', cy:'重庆', cye:'CHONGQING', co:'中国', fm:'三峡好人', fy:2006, dr:'贾樟柯', q:'拆迁中的城市，像一段还没说完就被推倒的生活。', u:'场景记录', lk:0, lng:109.4658, lat:31.0198, img:null},
 
 // ── 巴黎新增 ──
-{id:'prm', tp:'fl', nm:'绿荫步道 Promenade Plantée', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'Richard Linklater', q:'他们在绿道上继续往前走。', u:'场景记录', lk:0, lng:2.3712, lat:48.8513, img:null},
+{id:'prm', tp:'fl', nm:'Promenade Plantée', cy:'巴黎', cye:'PARIS', co:'法国', fm:'爱在日落黄昏时', fy:2004, dr:'Richard Linklater', q:'他们在绿道上继续往前走。', u:'场景记录', lk:0, lng:2.3712, lat:48.8513, img:null},
 
 // ── 东京新增 ──
 {id:'tkt', tp:'fl', nm:'东京公厕计划', cy:'东京', cye:'TOKYO', co:'日本', fm:'完美的日子', fy:2023, dr:'Wim Wenders', q:'城市最普通的角落，也有光照下来。', u:'场景记录', lk:0, lng:139.6988, lat:35.6594, img:null},
