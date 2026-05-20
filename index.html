@@ -444,7 +444,11 @@ function setAuth(on, profile) {
     if (umHandle) umHandle.textContent = '@' + (profile.username || '') + (profile.role ? ' · ' + profile.role : '');
   }
 }
-function logout() {
+async function logout() {
+  try {
+    if (window._shellSb) await window._shellSb.auth.signOut();
+  } catch (e) { console.warn('退出登录', e); }
+  window._supaToken = null;
   setAuth(false); closeUmenu(); go('home'); showToast('已退出登录');
 }
 document.getElementById('btn-login').style.display = '';
@@ -539,6 +543,8 @@ window.addEventListener('message', e => {
   if (type === 'toast')    showToast(payload.msg);
   if (type === 'login') {
     const prof = payload && payload.profile;
+    const token = payload && payload.access_token;
+    if (token) window._supaToken = token;
     setAuth(true, prof);
     const redirect = localStorage.getItem('cine_redirect');
     localStorage.removeItem('cine_redirect');
@@ -569,6 +575,7 @@ document.addEventListener('keydown', e => {
   s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
   s.onload = async () => {
     const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+    window._shellSb = sb;
     const { data: { session } } = await sb.auth.getSession();
     if (session?.user) {
       window._supaToken = session.access_token;

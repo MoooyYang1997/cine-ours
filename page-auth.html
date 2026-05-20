@@ -150,19 +150,34 @@ function switchMethod(mode, method) {
 }
 
 // ── On success ────────────────────────────────────────
-async function onAuthSuccess(name) {
-  showToast('欢迎，' + (name || '影迷') + '！', 'ok');
-  let profile = null;
+async function notifyShellLogin(profile, accessToken) {
   try {
-    const { data: { user } } = await _sb.auth.getUser();
-    if (user) {
-      const { data } = await _sb.from('profiles').select('*').eq('id', user.id).single();
+    window.parent.postMessage({
+      type: 'login',
+      payload: { profile, access_token: accessToken || null }
+    }, '*');
+  } catch (e) { console.warn('postMessage login', e); }
+  // shellGo 由 index wireFrame 注入到本 iframe，勿用 parent.shellGo
+  if (typeof window.shellGo === 'function') {
+    const redirect = localStorage.getItem('cine_redirect');
+    localStorage.removeItem('cine_redirect');
+    window.shellGo(redirect || 'home');
+  }
+}
+
+async function onAuthSuccess(name) {
+  let profile = null;
+  let accessToken = null;
+  try {
+    const { data: { session } } = await _sb.auth.getSession();
+    accessToken = session?.access_token || null;
+    if (session?.user) {
+      const { data } = await _sb.from('profiles').select('*').eq('id', session.user.id).single();
       profile = data;
     }
   } catch (e) { console.warn('load profile', e); }
-  setTimeout(() => {
-    try { window.parent.postMessage({ type: 'login', payload: { profile } }, '*'); } catch(e) {}
-  }, 1200);
+  showToast('欢迎，' + (name || profile?.display_name || '影迷') + '！', 'ok');
+  await notifyShellLogin(profile, accessToken);
 }
 
 // ── 邮箱注册 ──────────────────────────────────────────
@@ -181,7 +196,7 @@ async function doRegEmail() {
       options: { data: { username: name, display_name: name } }
     });
     if (error) throw error;
-    onAuthSuccess(name);
+    await onAuthSuccess(name);
   } catch(e) {
     let msg = e.message || '注册失败';
     if (msg.includes('already')) msg = '该邮箱已注册，请直接登录';
@@ -200,13 +215,11 @@ async function doLoginEmail() {
   try {
     const { data, error } = await _sb.auth.signInWithPassword({ email, password: pw });
     if (error) throw error;
-    onAuthSuccess(data.user?.user_metadata?.display_name);
+    await onAuthSuccess(data.user?.user_metadata?.display_name);
+    btn.textContent = '登录'; btn.disabled = false;
   } catch(e) {
     showToast('邮箱或密码不正确', 'err');
     btn.textContent = '登录'; btn.disabled = false;
-    return;
-  } finally {
-    setTimeout(() => { btn.textContent = '登录'; btn.disabled = false; }, 3000);
   }
 }
 
@@ -241,7 +254,7 @@ async function doVerifyReg() {
   try {
     const { error } = await _sb.auth.verifyOtp({ phone, token: code, type: 'sms' });
     if (error) throw error;
-    onAuthSuccess('影迷');
+    await onAuthSuccess('影迷');
   } catch(e) {
     showToast('验证码不正确', 'err');
     btn.textContent = '验证并注册'; btn.disabled = false;
@@ -279,7 +292,7 @@ async function doVerifyLogin() {
   try {
     const { error } = await _sb.auth.verifyOtp({ phone, token: code, type: 'sms' });
     if (error) throw error;
-    onAuthSuccess('影迷');
+    await onAuthSuccess('影迷');
   } catch(e) {
     showToast('验证码不正确', 'err');
     btn.textContent = '验证登录'; btn.disabled = false;
