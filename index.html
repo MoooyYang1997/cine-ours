@@ -432,9 +432,10 @@ function setAuth(on, profile) {
     // 更新头像字母
     const av = document.getElementById('nav-av');
     if (av) av.textContent = (profile.display_name || profile.username || '?')[0].toUpperCase();
-    // 广播登录状态到所有 iframe
+    // 广播登录状态到所有 iframe（含 access_token 用于写入）
+    const token = window._supaToken || null;
     document.querySelectorAll('.pframe').forEach(f => {
-      try { f.contentWindow.postMessage({ type: 'authSync', user: profile }, '*'); } catch(e) {}
+      try { f.contentWindow.postMessage({ type: 'authSync', user: profile, token }, '*'); } catch(e) {}
     });
     // 更新下拉菜单
     const umName   = document.querySelector('.um-name');
@@ -570,16 +571,19 @@ document.addEventListener('keydown', e => {
     const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
     const { data: { session } } = await sb.auth.getSession();
     if (session?.user) {
+      window._supaToken = session.access_token;
       const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
       setAuth(true, profile);
     }
     // 监听登录/登出变化
     sb.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN') {
+        window._supaToken = session.access_token;
         const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
         setAuth(true, profile);
       }
       if (event === 'SIGNED_OUT') {
+        window._supaToken = null;
         setAuth(false);
       }
     });

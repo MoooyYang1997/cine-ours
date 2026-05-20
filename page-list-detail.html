@@ -279,6 +279,7 @@ const FEST = 'siff2026';
 const BGS  = ['linear-gradient(135deg,#1c1408,#120e04)','linear-gradient(135deg,#0e1018,#0a0c12)','linear-gradient(135deg,#0c1810,#080e0a)','linear-gradient(135deg,#181006,#120c04)','linear-gradient(135deg,#100818,#0c0614)'];
 
 let _user = null;
+let _token = null; // 用户 access_token，用于写入操作
 let _listId = null;
 let _listData = null;
 let _films = [];
@@ -288,16 +289,12 @@ let _markingFilm = null;
 
 // ── Supabase ──────────────────────────────
 async function sb(path, opts = {}) {
-  // 优先用用户 JWT，没有则用 publishable key
-  let token = KEY;
-  try {
-    const k = Object.keys(localStorage).find(k => k.includes('auth-token') && k.includes('supabase'));
-    if (k) { const p = JSON.parse(localStorage.getItem(k)); token = p?.access_token || KEY; }
-  } catch(e) {}
+  const isWrite = opts.method && opts.method !== 'GET';
+  const authToken = (isWrite && _token) ? _token : KEY;
   const r = await fetch(SB + path, {
     ...opts,
     headers: {
-      'apikey': KEY, 'Authorization': 'Bearer ' + token,
+      'apikey': KEY, 'Authorization': 'Bearer ' + authToken,
       'Content-Type': 'application/json',
       ...(opts.prefer ? {'Prefer': opts.prefer} : {}),
       ...(opts.headers || {})
@@ -313,8 +310,12 @@ async function sb(path, opts = {}) {
 function initUser() {
   try {
     const k = Object.keys(localStorage).find(k => k.includes('auth-token') && k.includes('supabase'));
-    if (k) { const p = JSON.parse(localStorage.getItem(k)); _user = p?.user || null; }
-  } catch(e) {}
+    if (k) {
+      const p = JSON.parse(localStorage.getItem(k));
+      _user  = p?.user || null;
+      _token = p?.access_token || null;
+    }
+  } catch(e) { _user = null; _token = null; }
 }
 
 function requireLogin(cb) {
@@ -765,7 +766,8 @@ async function init() {
 // 监听来自 index.html 的登录状态同步
 window.addEventListener('message', e => {
   if (e.data?.type === 'authSync' && e.data.user) {
-    _user = e.data.user;
+    _user  = e.data.user;
+    _token = e.data.token || _token;
   }
 });
 
