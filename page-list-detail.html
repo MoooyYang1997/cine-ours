@@ -258,11 +258,13 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 
 <!-- 加片弹窗（浏览影展片单） -->
 <div class="modal-bg" id="add-film-modal">
-  <div class="modal" style="width:480px;">
-    <div class="modal-title">从本届影展加片</div>
+  <div class="modal" style="width:520px;">
+    <div class="modal-title" style="margin-bottom:14px;">从本届影展加片</div>
     <div class="modal-field">
-      <input class="modal-input" id="add-search" placeholder="搜索影片名…" oninput="searchAddFilms(this.value)" style="margin-bottom:8px;">
+      <input class="modal-input" id="add-search" placeholder="搜索影片名…" oninput="filterAddFilms()" style="margin-bottom:10px;">
     </div>
+    <!-- 单元筛选Tab -->
+    <div id="add-section-tabs" style="display:flex;flex-wrap:wrap;gap:0;border-bottom:0.5px solid rgba(237,232,223,0.08);margin-bottom:10px;overflow-x:auto;"></div>
     <div id="add-results" style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;"></div>
     <div class="modal-foot">
       <span class="modal-cancel" onclick="document.getElementById('add-film-modal').classList.remove('open')">关闭</span>
@@ -670,7 +672,9 @@ async function removeFilm(filmId) {
   } catch(e) { toast('操作失败', 'err'); }
 }
 
-// ── 加片（搜索上影节片单）────────────────
+// ── 加片（搜索 + 单元筛选）───────────────
+let _curSection = 'all';
+
 async function openAddFilmModal() {
   if (!_siffFilms.length) {
     try {
@@ -678,15 +682,56 @@ async function openAddFilmModal() {
       _siffFilms = data || [];
     } catch(e) {}
   }
+  _curSection = 'all';
   document.getElementById('add-search').value = '';
-  renderAddResults(_siffFilms.slice(0, 12));
+  renderSectionTabs();
+  renderAddResults(getFilteredFilms());
   document.getElementById('add-film-modal').classList.add('open');
 }
-function searchAddFilms(val) {
-  const hits = val.trim()
-    ? _siffFilms.filter(f => f.title.includes(val) || (f.title_en||'').toLowerCase().includes(val.toLowerCase()))
-    : _siffFilms.slice(0, 12);
-  renderAddResults(hits);
+
+// 提取所有单元（去重，保留顺序）
+function getSections() {
+  const seen = new Set();
+  const list = [];
+  _siffFilms.forEach(f => {
+    if (f.section && !seen.has(f.section)) { seen.add(f.section); list.push(f.section); }
+  });
+  return list;
+}
+
+// 渲染单元Tab
+function renderSectionTabs() {
+  const wrap = document.getElementById('add-section-tabs');
+  const sections = getSections();
+  wrap.innerHTML = ['all', ...sections].map(s => {
+    const label = s === 'all' ? '全部' : s;
+    const active = s === _curSection;
+    return `<div onclick="switchSection('${s}')" style="
+      padding:7px 14px;font-size:10px;cursor:pointer;white-space:nowrap;
+      color:${active ? '#c9a84c' : 'rgba(237,232,223,0.3)'};
+      border-bottom:1.5px solid ${active ? '#c9a84c' : 'transparent'};
+      margin-bottom:-0.5px;transition:color .15s;letter-spacing:.04em;
+    ">${label}</div>`;
+  }).join('');
+}
+
+function switchSection(section) {
+  _curSection = section;
+  renderSectionTabs();
+  renderAddResults(getFilteredFilms());
+}
+
+// 搜索 + 单元 双重过滤
+function getFilteredFilms() {
+  const kw = (document.getElementById('add-search')?.value || '').trim();
+  let list = _curSection === 'all' ? _siffFilms : _siffFilms.filter(f => f.section === _curSection);
+  if (kw) list = list.filter(f => f.title.includes(kw) || (f.title_en||'').toLowerCase().includes(kw.toLowerCase()));
+  return list;
+}
+
+// 搜索框 oninput 调用此函数
+function filterAddFilms() {
+  renderAddResults(getFilteredFilms());
 }
 function renderAddResults(films) {
   const el = document.getElementById('add-results');
@@ -719,7 +764,7 @@ async function addFilm(tmdbId, title, titleEn, year, siffImg, section) {
     updateProgress();
     renderFilms();
     // 刷新加片弹窗
-    searchAddFilms(document.getElementById('add-search').value);
+    filterAddFilms();
     toast(`《${title}》已加入片单 ✓`, 'ok');
   } catch(e) {
     if ((e.message||'').includes('23505')) toast('已在片单中', '');
