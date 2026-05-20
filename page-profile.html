@@ -851,6 +851,10 @@ function nav(page){
     }
   }catch(e){}
 }
+function goListDetail(listId){
+  localStorage.setItem('cine_list_id',listId);
+  nav('list-detail');
+}
 
 // ── 滚动到勋章墙 ──
 function scrollToBadges(){
@@ -988,17 +992,24 @@ async function loadCurations(uid){
   try{
     const sb=window._sb;
     if(!sb)return;
-    // 我参与的
+    // 我参与的（线上电影节）
     const {data:joined}=await sb
       .from('festival_participants')
       .select('festival_id, festivals(id,title,description,start_date,end_date,participant_count,film_count,creator:profiles(username))')
       .eq('user_id',uid)
       .limit(6);
-    // 我创建的
+    // 我创建的线上电影节
     const {data:created}=await sb
       .from('festivals')
       .select('id,title,start_date,end_date,participant_count,film_count')
       .eq('creator_id',uid)
+      .order('created_at',{ascending:false})
+      .limit(6);
+    // 我的线下影展片单
+    const {data:offlineLists}=await sb
+      .from('user_lists')
+      .select('id,title,description,film_count,follower_count,festival,is_public,created_at,films:user_list_films(poster_path)')
+      .eq('user_id',uid)
       .order('created_at',{ascending:false})
       .limit(6);
 
@@ -1024,10 +1035,37 @@ async function loadCurations(uid){
       }
     }
 
-    if(created&&created.length){
-      const wrap=document.getElementById('wl-created');
-      if(wrap){
-        const cards=created.map((f,i)=>`
+    // 合并渲染：线下片单 + 线上电影节
+    const wrap=document.getElementById('wl-created');
+    if(wrap){
+      let cards='';
+      // 线下片单卡片
+      if(offlineLists&&offlineLists.length){
+        cards+=offlineLists.map(list=>{
+          const imgs=(list.films||[]).filter(f=>f.poster_path).slice(0,3);
+          const mk=(img)=>img?`<img src="${img.poster_path}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:`<div style="width:100%;height:100%;background:#1a1408;"></div>`;
+          const coverHtml=`<div style="position:relative;width:100%;height:60px;">
+            <div style="position:absolute;left:28px;top:6px;width:80%;height:48px;border-radius:1px;overflow:hidden;filter:brightness(.38);">${mk(imgs[2])}</div>
+            <div style="position:absolute;left:14px;top:3px;width:80%;height:48px;border-radius:1px;overflow:hidden;filter:brightness(.62);">${mk(imgs[1])}</div>
+            <div style="position:absolute;left:0;top:0;width:80%;height:48px;border-radius:1px;overflow:hidden;border:0.5px solid rgba(237,232,223,0.1);">${imgs[0]?`<img src="${imgs[0].poster_path}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`:`<div style="width:100%;height:100%;background:#1a1408;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;color:rgba(200,164,74,.18);">${(list.title||'?')[0]}</div>`}</div>
+          </div>`;
+          return `<div class="wc" onclick="goListDetail('${list.id}')">
+            <div class="wc-cover" style="background:#111009;padding:8px 10px;height:auto;">${coverHtml}</div>
+            <div class="wc-body">
+              <div class="wc-ey" style="color:var(--gold);font-size:9px;">上影节片单</div>
+              <div class="wc-title">${list.title}</div>
+              <div class="wc-meta">${list.film_count||0}部 · ${list.follower_count||0}人关注</div>
+              <div class="wc-foot">
+                <span class="wc-host">${list.is_public?'公开':'私密'}</span>
+                <span class="wc-prog" style="color:var(--gold)">查看 →</span>
+              </div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+      // 线上电影节卡片
+      if(created&&created.length){
+        cards+=created.map(f=>`
           <div class="cc">
             <div class="cc-top" style="background:var(--gold)"></div>
             <div class="cc-ey" style="color:var(--ink3)">${f.end_date&&new Date(f.end_date)<new Date()?'已结束':'进行中'}</div>
@@ -1038,10 +1076,13 @@ async function loadCurations(uid){
               <span style="font-size:11px;color:var(--gold);letter-spacing:.07em;text-transform:uppercase" data-manage>管理 →</span>
             </div>
           </div>`).join('');
-        wrap.innerHTML=`<div class="cc-cards">${cards}</div>`;
       }
+      if(!cards){
+        cards=`<div style="padding:20px;color:var(--ink4);font-size:12px;text-align:center;">还没有创建片单或电影节</div>`;
+      }
+      wrap.innerHTML=`<div class="cc-cards">${cards}</div>`;
     }
-    return created?.length||0;
+    return (offlineLists?.length||0)+(created?.length||0);
   }catch(e){console.warn('loadCurations',e);}
 }
 
