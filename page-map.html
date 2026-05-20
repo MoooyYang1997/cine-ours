@@ -827,20 +827,23 @@ function refreshCheckinState(placeId){
   });
 }
 
-function onCheckinClick(){
-  ensureMapUser().then(async function(user){
-    if(!user){
-      if(typeof requireAuth==='function'){if(!await requireAuth('请先登录'))return;}
-      else await navAuth();
-      return;
+async function onCheckinClick(){
+  try{
+    await ensureSbReady();
+    if(typeof requireAuth==='function'){
+      if(!await requireAuth('请先登录'))return;
+    }else{
+      var user=await ensureMapUser();
+      if(!user){await navAuth();return;}
     }
+    if(!active)return;
     if(userCheckedPlaces[active.id])return;
     var panel=document.getElementById('fc-checkin');
     if(panel&&panel.classList.contains('open')){closeCheckinPanel();return;}
     openCheckinPanel();
-  }).catch(function(err){
+  }catch(err){
     showFcToast(formatSbError(err),true);
-  });
+  }
 }
 
 function onFileSelected(e){
