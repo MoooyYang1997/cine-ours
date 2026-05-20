@@ -445,6 +445,10 @@ html,body{background:#161616;color:#ede8df;font-family:-apple-system,BlinkMacSys
 </div>
 
 <div class="toast" id="toast"></div>
+<div id="added-bar" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1c16;border:0.5px solid rgba(201,168,76,0.3);color:#c9a84c;font-size:13px;padding:10px 20px;display:flex;align-items:center;gap:14px;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap;">
+  <span id="added-bar-title"></span>
+  <span onclick="goMyList()" style="font-size:11px;color:rgba(237,232,223,0.45);cursor:pointer;border-left:0.5px solid rgba(237,232,223,0.12);padding-left:14px;">查看我的片单 →</span>
+</div>
 
 <script src="supabase.js"></script>
 <script>
@@ -500,6 +504,16 @@ function navigate(page) {
 }
 
 // ── toast ─────────────────────────────────
+// 加入片单成功提示条（带跳转链接）
+function showAddedBar(listTitle) {
+  const bar = document.getElementById('added-bar');
+  if (!bar) return;
+  document.getElementById('added-bar-title').textContent = `已加入「${listTitle}」✓`;
+  bar.style.opacity = '1'; bar.style.pointerEvents = 'all';
+  clearTimeout(bar._t);
+  bar._t = setTimeout(() => { bar.style.opacity = '0'; bar.style.pointerEvents = 'none'; }, 3500);
+}
+
 let _tt;
 function toast(msg, type = '') {
   const t = document.getElementById('toast');
@@ -672,7 +686,7 @@ async function quickAdd(tmdbId, title, siffImg) {
         method:'POST', prefer:'return=minimal',
         body: JSON.stringify({list_id:listId, tmdb_id:tmdbId||null, title, poster_path:siffImg||null})
       });
-      toast(`已加入「${listTitle}」✓`, 'ok');
+      showAddedBar(listTitle);
     } catch(e) {
       if ((e.message||'').includes('23505')) toast('已在片单中', '');
       else toast('加入失败', 'err');

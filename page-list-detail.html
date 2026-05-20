@@ -448,12 +448,17 @@ async function loadList() {
     await ensureList();
   }
   if (!_listId) {
-    document.getElementById('film-list').innerHTML = '<div class="empty">请先登录后使用</div>';
+    document.getElementById('film-list').innerHTML = '<div class="empty">片单不存在，请从上影节页面进入</div>';
     return;
   }
   try {
     const data = await sb(`/rest/v1/user_lists?id=eq.${_listId}&select=*,user:profiles(username,display_name,avatar_url),films:user_list_films(*)`);
-    if (!data?.length) { document.getElementById('film-list').innerHTML = '<div class="empty">片单不存在</div>'; return; }
+    // 如果没有返回数据且有 listId，可能是 RLS 拦截，清掉缓存
+    if (!data?.length) {
+      localStorage.removeItem('cine_list_id');
+      document.getElementById('film-list').innerHTML = '<div class="empty">片单读取失败，请返回上影节页面重新进入</div>';
+      return;
+    }
     _listData = data[0];
     _films = _listData.films || [];
     renderHeader();
@@ -761,6 +766,8 @@ function shareList() {
 // ── 初始化 ────────────────────────────────
 async function init() {
   initUser();
+  // 如果没有 token，等待 100ms 让 authSync 有机会到达
+  if (!_token) await new Promise(r => setTimeout(r, 120));
   await loadList();
 }
 // 监听来自 index.html 的登录状态同步
