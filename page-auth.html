@@ -162,7 +162,6 @@ async function onAuthSuccess(name) {
   } catch (e) { console.warn('load profile', e); }
   setTimeout(() => {
     try { window.parent.postMessage({ type: 'login', payload: { profile } }, '*'); } catch(e) {}
-    try { if (window.parent.navigate) window.parent.navigate('home'); } catch(e) {}
   }, 1200);
 }
 

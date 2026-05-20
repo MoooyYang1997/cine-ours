@@ -507,7 +507,12 @@ document.querySelectorAll('.modal-bg').forEach(el =>
   el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); })
 );
 function requireLogin(cb) {
-  if (!_user) { toast('请先登录', 'err'); setTimeout(() => navigate('page-auth'), 800); return; }
+  if (!_user) {
+    localStorage.setItem('cine_redirect', 'offline-festival');
+    toast('请先登录', 'err');
+    setTimeout(() => navigate('page-auth'), 800);
+    return;
+  }
   cb();
 }
 function openCheckinModal() { requireLogin(() => openModal('checkin-modal')); }

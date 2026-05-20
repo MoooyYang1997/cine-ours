@@ -311,6 +311,16 @@ function initUser() {
   } catch(e) {}
 }
 
+function requireLogin(cb) {
+  if (!_user) {
+    localStorage.setItem('cine_redirect', 'list-detail');
+    toast('请先登录', 'err');
+    setTimeout(() => navigate('page-auth'), 800);
+    return;
+  }
+  cb();
+}
+
 // ── navigate ──────────────────────────────
 function navigate(page) {
   try {

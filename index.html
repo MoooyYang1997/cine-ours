@@ -534,7 +534,9 @@ window.addEventListener('message', e => {
   if (type === 'login') {
     const prof = payload && payload.profile;
     setAuth(true, prof);
-    go('home');
+    const redirect = localStorage.getItem('cine_redirect');
+    localStorage.removeItem('cine_redirect');
+    go(redirect || 'home');
     showToast('欢迎回来' + (prof ? ' ' + (prof.display_name || prof.username) : ''));
   }
   if (type === 'logout')   logout();
