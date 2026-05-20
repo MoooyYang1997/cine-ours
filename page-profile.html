@@ -342,7 +342,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
 
   <!-- 左：头像 -->
   <div class="hero-l">
-    <div class="av-ring" id="av-ring">余</div>
+    <div class="av-ring" id="av-ring" style="background:var(--bg4);border-color:var(--bg5)"></div>
     <input type="file" id="av-input" accept="image/*" style="display:none">
     <div class="av-upload" id="av-upload-btn">更换照片</div>
     <div class="av-social">
@@ -360,9 +360,9 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
   <!-- 中：信息 -->
   <div class="hero-m">
     <div>
-      <div class="hero-name">余小舟 <span class="hero-name-en">Yu Xiaozhou</span></div>
-      <div class="hero-handle">@YuXiaozhou</div>
-      <div class="hero-bio">在黑暗中观看，在城市中游荡，<br>用电影记录我们如何成为自己。</div>
+      <div class="hero-name" id="hero-name-el" style="background:var(--bg3);color:transparent;height:28px;width:180px;border-radius:2px"> </div>
+      <div class="hero-handle" id="hero-handle-el" style="background:var(--bg3);color:transparent;height:13px;width:100px;border-radius:2px;margin-bottom:10px"> </div>
+      <div class="hero-bio" id="hero-bio-el" style="color:transparent"> </div>
       <div class="hero-roles">
         <span class="hero-role">深度影迷</span>
         <span class="hero-role">策展人</span>
@@ -505,7 +505,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
 <div class="sec">
   <div class="sec-hd">
     <div class="sec-title">电影节记录</div>
-    <span class="sec-act">全部记录 →</span>
+    <span class="sec-act" onclick="nav('festivals')">全部记录 →</span>
   </div>
   <div class="fest-sum">
     <div class="fs"><div class="fs-n">5 <em>届</em></div><div class="fs-l">参与的线下影展</div></div>
@@ -514,7 +514,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
     <div class="fs"><div class="fs-n">3 <em>个</em></div><div class="fs-l">参与城市</div></div>
   </div>
   <div class="off-cards">
-    <div class="oc">
+    <div class="oc" onclick="nav('offline-festival')">
       <div class="oc-bar" style="background:var(--gold)"></div>
       <div class="oc-in">
         <div class="oc-ey"><span class="live"><span class="ldot"></span>进行中</span> · 2026 · 上海</div>
@@ -527,7 +527,7 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
         </div>
       </div>
     </div>
-    <div class="oc dim">
+    <div class="oc dim" onclick="nav('festivals')">
       <div class="oc-bar" style="background:var(--bg5)"></div>
       <div class="oc-in">
         <div class="oc-ey" style="color:var(--ink4)">已结束 · 2024 · 香港</div>
@@ -541,13 +541,18 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
       </div>
     </div>
   </div>
+  <!-- 进行中影展片单 -->
+  <div id="active-fest-lists" style="margin-top:12px;display:none">
+    <div style="font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink4);margin-bottom:8px">我的本届片单</div>
+    <div id="active-fest-lists-inner"></div>
+  </div>
 </div>
 
 <!-- ══ 策展线索 / 片单 ══ -->
 <div class="sec">
   <div class="sec-hd">
     <div class="sec-title">策展线索 / 片单</div>
-    <span class="sec-act">+ 创建新片单</span>
+    <span class="sec-act" onclick="nav('offline-festival')">+ 创建新片单</span>
   </div>
   <div class="tab-row" id="wl-tabs">
     <div class="t-tab on" onclick="swTab('wl','joined',this)">我参与的</div>
@@ -831,6 +836,34 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:no
   </div>
 </div>
 
+<!-- ══ 编辑资料弹窗 ══ -->
+<div id="edit-modal" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(12,11,9,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center">
+  <div style="background:var(--bg2);border:1px solid var(--b2);width:480px;max-width:90vw">
+    <div style="padding:24px 28px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:'Playfair Display',serif;font-size:18px">编辑资料</div>
+      <button style="width:28px;height:28px;border:1px solid var(--b2);color:var(--ink3);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;background:none" onclick="closeEditModal()">✕</button>
+    </div>
+    <div style="padding:24px 28px;display:flex;flex-direction:column;gap:16px">
+      <div>
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">显示名称</div>
+        <input id="edit-name" style="width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;outline:none" placeholder="你的显示名称">
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">简介</div>
+        <textarea id="edit-bio" style="width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;outline:none;resize:vertical;min-height:80px" placeholder="介绍一下你自己…" maxlength="200"></textarea>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">所在城市</div>
+        <input id="edit-location" style="width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;outline:none" placeholder="上海 / 香港 / 北京…">
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:4px">
+        <button onclick="closeEditModal()" style="padding:9px 18px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--b2);color:var(--ink3);background:none;cursor:pointer;font-family:'DM Sans',sans-serif">取消</button>
+        <button id="edit-submit-btn" onclick="submitEditProfile()" style="padding:9px 22px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:var(--bg);border:none;cursor:pointer;font-family:'DM Sans',sans-serif">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="supabase.js"></script>
 <script>
 // ── TAB 切换 ──
@@ -893,6 +926,53 @@ function showBadgeDetail(id){
 function closeBadgeModal(){document.getElementById('badge-modal').style.display='none';}
 document.getElementById('badge-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeBadgeModal();});
 
+// ── 编辑资料弹窗 ──────────────────────────
+function openEditModal(){
+  const modal=document.getElementById('edit-modal');
+  if(!modal)return;
+  // 预填当前值
+  const p=window.currentProfile||{};
+  document.getElementById('edit-name').value=p.display_name||'';
+  document.getElementById('edit-bio').value=p.bio||'';
+  document.getElementById('edit-location').value=p.location||'';
+  modal.style.display='flex';
+}
+function closeEditModal(){
+  document.getElementById('edit-modal').style.display='none';
+}
+document.getElementById('edit-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeEditModal();});
+
+async function submitEditProfile(){
+  const sb=window._sb;
+  const uid=window.currentUser?.id;
+  if(!sb||!uid)return;
+  const btn=document.getElementById('edit-submit-btn');
+  const name=document.getElementById('edit-name').value.trim();
+  const bio=document.getElementById('edit-bio').value.trim();
+  const location=document.getElementById('edit-location').value.trim();
+  if(!name){alert('显示名称不能为空');return;}
+  btn.textContent='保存中…';btn.disabled=true;
+  try{
+    const {error}=await sb.from('profiles').update({display_name:name,bio:bio||null,location:location||null}).eq('id',uid);
+    if(error)throw error;
+    // 本地同步
+    if(window.currentProfile){
+      window.currentProfile.display_name=name;
+      window.currentProfile.bio=bio;
+      window.currentProfile.location=location;
+    }
+    renderProfile(window.currentProfile);
+    closeEditModal();
+    // 通知 Shell 更新导航栏
+    window.parent.postMessage({type:'login',payload:{profile:window.currentProfile}},'*');
+  }catch(e){
+    console.error('editProfile',e);
+    alert('保存失败，请重试');
+  }finally{
+    btn.textContent='保存';btn.disabled=false;
+  }
+}
+
 // ── Shell 通信 ──
 if(!window.shellNavigate){
   window.shellNavigate=function(p){
@@ -925,14 +1005,23 @@ function renderAvatar(profile){
 function renderProfile(profile){
   if(!profile)return;
   // 名字
-  const nameEl=document.querySelector('.hero-name');
-  if(nameEl) nameEl.innerHTML=`${profile.display_name||profile.username} <span class="hero-name-en">${profile.username||''}</span>`;
+  const nameEl=document.getElementById('hero-name-el');
+  if(nameEl){
+    nameEl.style.cssText='';
+    nameEl.innerHTML=`${profile.display_name||profile.username} <span class="hero-name-en">${profile.username||''}</span>`;
+  }
   // handle
-  const handleEl=document.querySelector('.hero-handle');
-  if(handleEl) handleEl.textContent='@'+(profile.username||'');
+  const handleEl=document.getElementById('hero-handle-el');
+  if(handleEl){
+    handleEl.style.cssText='';
+    handleEl.textContent='@'+(profile.username||'');
+  }
   // bio
-  const bioEl=document.querySelector('.hero-bio');
-  if(bioEl&&profile.bio) bioEl.textContent=profile.bio;
+  const bioEl=document.getElementById('hero-bio-el');
+  if(bioEl){
+    bioEl.style.cssText='';
+    bioEl.textContent=profile.bio||'';
+  }
   // 头像
   renderAvatar(profile);
 }
@@ -955,7 +1044,7 @@ function renderViewMode(isSelf){
   if(isSelf){
     if(uploadBtn) uploadBtn.style.display='block';
     if(actionsEl) actionsEl.innerHTML=`
-      <button class="btn-follow" style="background:var(--bg3);color:var(--ink2);border:1px solid var(--b2)" onclick="nav('page-auth')">编辑资料</button>
+      <button class="btn-follow" style="background:var(--bg3);color:var(--ink2);border:1px solid var(--b2)" onclick="openEditModal()">编辑资料</button>
     `;
     // 显示「管理 →」按钮（创建的片单）
     document.querySelectorAll('.cc-foot [data-manage]').forEach(el=>el.style.display='inline');
@@ -1086,6 +1175,46 @@ async function loadCurations(uid){
   }catch(e){console.warn('loadCurations',e);}
 }
 
+// ── 加载进行中影展的用户片单 ──────────────────
+async function loadActiveFestLists(uid){
+  try{
+    const sb=window._sb;
+    if(!sb||!uid)return;
+    const {data}=await sb
+      .from('user_lists')
+      .select('id,title,film_count,follower_count,is_public,films:user_list_films(poster_path)')
+      .eq('user_id',uid)
+      .eq('festival','siff2026')
+      .order('created_at',{ascending:false});
+    if(!data||!data.length)return;
+    const wrap=document.getElementById('active-fest-lists');
+    const inner=document.getElementById('active-fest-lists-inner');
+    if(!wrap||!inner)return;
+    inner.innerHTML=data.map(list=>{
+      const imgs=(list.films||[]).filter(f=>f.poster_path).slice(0,3);
+      const mk=(img)=>img
+        ?`<img src="${img.poster_path}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`
+        :`<div style="width:100%;height:100%;background:#1a1408;"></div>`;
+      return `<div style="display:flex;gap:12px;padding:12px 14px;border:1px solid var(--b);background:var(--bg1);cursor:pointer;margin-bottom:6px;transition:border-color .15s" onclick="goListDetail('${list.id}')" onmouseover="this.style.borderColor='rgba(200,164,74,.25)'" onmouseout="this.style.borderColor='var(--b)'">
+        <div style="position:relative;width:130px;height:64px;flex-shrink:0">
+          <div style="position:absolute;left:28px;top:6px;width:92px;height:52px;overflow:hidden;filter:brightness(.38)">${mk(imgs[2])}</div>
+          <div style="position:absolute;left:14px;top:3px;width:92px;height:52px;overflow:hidden;filter:brightness(.62)">${mk(imgs[1])}</div>
+          <div style="position:absolute;left:0;top:0;width:92px;height:52px;overflow:hidden;border:0.5px solid rgba(237,232,223,0.1)">${imgs[0]?mk(imgs[0]):`<div style="width:100%;height:100%;background:#1a1408;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;color:rgba(200,164,74,.18)">${(list.title||'?')[0]}</div>`}</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;min-width:0">
+          <div>
+            <div style="font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold);margin-bottom:4px">上影节片单</div>
+            <div style="font-family:'Playfair Display',serif;font-size:13px;color:var(--ink);line-height:1.35;margin-bottom:3px">${list.title}</div>
+            <div style="font-size:11px;color:var(--ink3)">${list.film_count||0}部 · ${list.follower_count||0}人关注</div>
+          </div>
+          <div style="font-size:11px;color:var(--gold);text-align:right">查看 →</div>
+        </div>
+      </div>`;
+    }).join('');
+    wrap.style.display='block';
+  }catch(e){console.warn('loadActiveFestLists',e);}
+}
+
 // ── 头像上传 ───────────────────────────────
 function initAvatarUpload(){
   const input=document.getElementById('av-input');
@@ -1169,6 +1298,7 @@ async function initPage(){
         Promise.resolve(),
         loadCurations(uid),
       ]);
+      loadActiveFestLists(uid);
       renderStats(profile,placeCount,0,createdCount);
       const countEl=document.getElementById('taste-film-count');
       if(countEl&&profile?.films_watched) countEl.textContent=profile.films_watched;

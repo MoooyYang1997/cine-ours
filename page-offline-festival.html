@@ -669,6 +669,7 @@ function renderSectionFilms(sec) {
 async function quickAdd(tmdbId, title, siffImg) {
   requireLogin(async () => {
     try {
+      // 先查重：同一片单内 title 唯一（tmdb_id 可能为 null 无法依赖）
       let lists = await sb(`/rest/v1/user_lists?user_id=eq.${_user.id}&festival=eq.${FEST}&select=id,title&limit=1`);
       let listId, listTitle;
       if (!lists?.length) {
@@ -682,9 +683,24 @@ async function quickAdd(tmdbId, title, siffImg) {
       }
       if (!listId) throw new Error('无法获取片单');
       localStorage.setItem('cine_list_id', listId);
+
+      // 查重：同片单同片名已存在则跳过
+      const dup = await sb(`/rest/v1/user_list_films?list_id=eq.${listId}&title=eq.${encodeURIComponent(title)}&select=id&limit=1`);
+      if (dup?.length) { toast('已在片单中', ''); return; }
+
+      // 从 _allFilms 补全 title_en / year / section 字段
+      const meta = _allFilms.find(f => f.title === title) || {};
       await sb('/rest/v1/user_list_films', {
-        method:'POST', prefer:'return=minimal',
-        body: JSON.stringify({list_id:listId, tmdb_id:tmdbId||null, title, poster_path:siffImg||null})
+        method:'POST', prefer:'return=representation',
+        body: JSON.stringify({
+          list_id: listId,
+          tmdb_id: tmdbId || null,
+          title,
+          title_en: meta.title_en || null,
+          year: meta.year || null,
+          poster_path: siffImg || null,
+          note: meta.section || null
+        })
       });
       showAddedBar(listTitle);
     } catch(e) {
