@@ -756,6 +756,13 @@ async function init() {
   initUser();
   await loadList();
 }
+// 监听来自 index.html 的登录状态同步
+window.addEventListener('message', e => {
+  if (e.data?.type === 'authSync' && e.data.user) {
+    _user = e.data.user;
+  }
+});
+
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>

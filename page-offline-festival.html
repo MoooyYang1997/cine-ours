@@ -885,6 +885,13 @@ function goListDetail(listId) {
   navigate('page-list-detail');
 }
 
+// 监听来自 index.html 的登录状态同步
+window.addEventListener('message', e => {
+  if (e.data?.type === 'authSync' && e.data.user) {
+    _user = e.data.user;
+  }
+});
+
 document.addEventListener('DOMContentLoaded', init);
 
 // ── 接收来自 shell 的 scrollTo 指令 ──────────────

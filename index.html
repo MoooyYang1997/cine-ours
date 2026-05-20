@@ -424,6 +424,7 @@ function wireFrame(frame) {
 // ── AUTH ──────────────────────────────────────────────────────
 function setAuth(on, profile) {
   loggedIn = on;
+  window._currentUser = on ? profile : null;
   document.getElementById('btn-login').style.display  = on ? 'none' : '';
   document.getElementById('btn-join').style.display   = on ? 'none' : '';
   document.getElementById('nav-av').style.display     = on ? 'flex' : 'none';
@@ -431,6 +432,10 @@ function setAuth(on, profile) {
     // 更新头像字母
     const av = document.getElementById('nav-av');
     if (av) av.textContent = (profile.display_name || profile.username || '?')[0].toUpperCase();
+    // 广播登录状态到所有 iframe
+    document.querySelectorAll('.pframe').forEach(f => {
+      try { f.contentWindow.postMessage({ type: 'authSync', user: profile }, '*'); } catch(e) {}
+    });
     // 更新下拉菜单
     const umName   = document.querySelector('.um-name');
     const umHandle = document.querySelector('.um-handle');

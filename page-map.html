@@ -740,6 +740,7 @@ async function navAuth(){
   setTimeout(function(){
     try{
       if(window.parent&&window.parent!==window)
+        localStorage.setItem('cine_redirect', 'map');
         window.parent.postMessage({type:'navigate',page:'page-auth'},'*');
     }catch(e){}
   },800);
