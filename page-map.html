@@ -996,8 +996,9 @@ function formatRecTime(iso){
 
 function bindCheckinUi(){
   if(checkinUiBound)return;
-  checkinUiBound=true;
   var btnCheckin=document.getElementById('fc-btn-checkin');
+  if(!btnCheckin)return;
+  checkinUiBound=true;
   var btnRecords=document.getElementById('fc-b1');
   var btnSubmit=document.getElementById('fc-submit-checkin');
   var fileInput=document.getElementById('fc-file');
