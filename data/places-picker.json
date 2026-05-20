@@ -106,7 +106,7 @@
   },
   {
     "id": "bun",
-    "nm": "涩谷 Bunkamura",
+    "nm": "涩谷文化村",
     "cy": "东京"
   },
   {
@@ -136,12 +136,12 @@
   },
   {
     "id": "ace",
-    "nm": "Ace Hotel Theatre",
+    "nm": "王牌酒店剧院",
     "cy": "洛杉矶"
   },
   {
     "id": "grm",
-    "nm": "TCL Chinese Theatre",
+    "nm": "中国剧院",
     "cy": "洛杉矶"
   },
   {
@@ -216,7 +216,7 @@
   },
   {
     "id": "mmsh",
-    "nm": "MovieMovie 上海",
+    "nm": "上海慕麦影院",
     "cy": "上海"
   },
   {
@@ -256,7 +256,7 @@
   },
   {
     "id": "mpl",
-    "nm": "M+ Cinema",
+    "nm": "M+ 影院",
     "cy": "香港"
   },
   {
@@ -266,7 +266,7 @@
   },
   {
     "id": "lkf",
-    "nm": "兰桂坊/Midnight Express一带",
+    "nm": "兰桂坊一带",
     "cy": "香港"
   },
   {
@@ -426,7 +426,7 @@
   },
   {
     "id": "thbz",
-    "nm": "TOHO Cinemas日比谷",
+    "nm": "东宝影院日比谷",
     "cy": "东京"
   },
   {
@@ -446,7 +446,7 @@
   },
   {
     "id": "2mln",
-    "nm": "Café des 2 Moulins/蒙马特",
+    "nm": "双磨坊咖啡馆/蒙马特",
     "cy": "巴黎"
   },
   {
@@ -486,7 +486,7 @@
   },
   {
     "id": "slz",
-    "nm": "Siegessäule胜利纪念柱",
+    "nm": "胜利纪念柱",
     "cy": "柏林"
   },
   {
@@ -561,7 +561,7 @@
   },
   {
     "id": "hl8",
-    "nm": "Firehouse Hook & Ladder 8",
+    "nm": "第八号消防站",
     "cy": "纽约"
   },
   {
@@ -601,32 +601,32 @@
   },
   {
     "id": "ctn2",
-    "nm": "Cineteca Nacional",
+    "nm": "国家电影资料馆",
     "cy": "墨西哥城"
   },
   {
     "id": "cnch",
-    "nm": "Cineteca Nacional Chapultepec",
+    "nm": "查普特佩克国家电影资料馆",
     "cy": "墨西哥城"
   },
   {
     "id": "crm",
-    "nm": "Colonia Roma/Tepeji Street",
+    "nm": "罗马区/特佩奇街",
     "cy": "墨西哥城"
   },
   {
     "id": "unam",
-    "nm": "UNAM大学城",
+    "nm": "墨西哥国立自治大学",
     "cy": "墨西哥城"
   },
   {
     "id": "rcnd",
-    "nm": "Roma/Condesa街区",
+    "nm": "罗马区/康德萨区",
     "cy": "墨西哥城"
   },
   {
     "id": "zcl",
-    "nm": "Zócalo",
+    "nm": "宪法广场",
     "cy": "墨西哥城"
   },
   {
@@ -636,7 +636,7 @@
   },
   {
     "id": "tlt",
-    "nm": "Torre Latinoamericana",
+    "nm": "拉丁美洲塔",
     "cy": "墨西哥城"
   },
   {
@@ -676,12 +676,12 @@
   },
   {
     "id": "cntv",
-    "nm": "Cinema Trevi",
+    "nm": "特雷维电影院",
     "cy": "罗马"
   },
   {
     "id": "cdc",
-    "nm": "Casa del Cinema",
+    "nm": "电影之家",
     "cy": "罗马"
   },
   {
@@ -701,12 +701,12 @@
   },
   {
     "id": "vvn",
-    "nm": "Via Veneto",
+    "nm": "威尼托大道",
     "cy": "罗马"
   },
   {
     "id": "cct",
-    "nm": "Cinecittà Studios",
+    "nm": "奇尼奇塔影城",
     "cy": "罗马"
   },
   {
